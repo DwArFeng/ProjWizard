@@ -1,0 +1,16 @@
+Alpha_0.0.1_20171009_build_A
+	Boom!
+Alpha_0.0.2_20171027_build_A
+	将 PlainTextFileProcessor(纯文本笔记本)的编码方式由默认改成了UTF-8。
+	部分 ToolKit 方法性能改进。
+	禁止工程重名。
+	禁止相同目录下的文件重名。
+Alpha_0.0.3
+	拆解 OpenedAndFocusModel，用多个并列关系的其它模型替代。
+	修复了 FolderFileProcessor 编辑面板中图标过大的bug。
+	添加编辑器监视器。
+	更改开发菜单中的按钮的文本。
+	更改对话框标题的文本。
+	添加监视器对话框的图标。
+	添加了 ProjectFileChooser,用于选择工程内部的文件，其样式与JFileChooser类似，在Toolkit中新增了有关方法。
+	大量的细微改动
