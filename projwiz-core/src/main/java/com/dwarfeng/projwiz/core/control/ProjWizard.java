@@ -59,15 +59,16 @@ import com.dwarfeng.dutil.develop.i18n.DelegateI18nHandler;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
 import com.dwarfeng.dutil.develop.i18n.I18nUtil;
 import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
+import com.dwarfeng.dutil.develop.logger.DelegateLoggerHandler;
+import com.dwarfeng.dutil.develop.logger.LoggerHandler;
+import com.dwarfeng.dutil.develop.logger.LoggerUtil;
+import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.DelegateResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceUtil;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.DelegateLoggerHandler;
 import com.dwarfeng.projwiz.core.model.cm.DelegateProcessorConfigHandler;
-import com.dwarfeng.projwiz.core.model.cm.LoggerHandler;
 import com.dwarfeng.projwiz.core.model.cm.MapExternalWindowModel;
-import com.dwarfeng.projwiz.core.model.cm.SyncLoggerHandler;
 import com.dwarfeng.projwiz.core.model.cm.SyncProcessorConfigHandler;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.CoreConfiguration;
@@ -91,8 +92,8 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser;
-import com.dwarfeng.projwiz.core.view.gui.SystemFileChooser;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser.ReturnOption;
+import com.dwarfeng.projwiz.core.view.gui.SystemFileChooser;
 import com.dwarfeng.projwiz.core.view.struct.DefaultMainFrameVisibleModel;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
@@ -954,7 +955,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public LoggerHandler getLoggerHandlerReadOnly() {
-			return ModelUtil.unmodifiableLoggerHandler(loggerHandler);
+			return LoggerUtil.readOnlyLoggerHandler(loggerHandler);
 		}
 
 		/**
@@ -1774,7 +1775,7 @@ public final class ProjWizard {
 	// 标签国际化处理器
 	private final SyncI18nHandler labelI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	// 记录器接口
-	private final SyncLoggerHandler loggerHandler = ModelUtil.syncLoggerHandler(new DelegateLoggerHandler());
+	private final SyncLoggerHandler loggerHandler = LoggerUtil.syncLoggerHandler(new DelegateLoggerHandler());
 	// 记录器国际化处理器
 	private final SyncI18nHandler loggerI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	// 模态配置模型

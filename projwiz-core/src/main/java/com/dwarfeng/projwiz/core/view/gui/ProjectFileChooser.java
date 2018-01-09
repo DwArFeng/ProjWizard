@@ -66,6 +66,7 @@ import com.dwarfeng.dutil.basic.gui.awt.ImageSize;
 import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.gui.swing.MuaListModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
+import com.dwarfeng.dutil.basic.prog.Filter;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.FileChooserDialogType;
@@ -76,12 +77,10 @@ import com.dwarfeng.projwiz.core.model.obv.ProjectAdapter;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
-import com.dwarfeng.projwiz.core.model.struct.Filter;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.util.FileUtil;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
-import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser.ReturnOption;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 
 /**
