@@ -9,6 +9,7 @@
 
 		<RollingFile name="std.info.rollingfile" fileName="logs/info.log"
 			filePattern="logs/$${date:yyyy-MM}/info-%d{MM-dd-yyyy}-%i.log.gz">
+			<param name="Encoding" value="UTF-8" />
 			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" />
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="168" />
@@ -17,6 +18,7 @@
 
 		<RollingFile name="std.warn.rollingfile" fileName="logs/warn.log"
 			filePattern="logs/$${date:yyyy-MM}/error-%d{MM-dd-yyyy}-%i.log.gz">
+			<param name="Encoding" value="UTF-8" />
 			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" />
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="168" />
@@ -25,6 +27,7 @@
 
 		<RollingFile name="std.error.rollingfile" fileName="logs/error.log"
 			filePattern="logs/$${date:yyyy-MM}/error-%d{MM-dd-yyyy}-%i.log.gz">
+			<param name="Encoding" value="UTF-8" />
 			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" />
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="168" />

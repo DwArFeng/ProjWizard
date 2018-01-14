@@ -1,6 +1,7 @@
 package com.dwarfeng.projwiz.core.model.eum;
 
 import com.dwarfeng.dutil.basic.str.Name;
+import com.dwarfeng.projwiz.core.util.Constants;
 
 /**
  * 资源键。
@@ -10,46 +11,64 @@ import com.dwarfeng.dutil.basic.str.Name;
  */
 public enum ResourceKey implements Name {
 
-	/** 记录器设置 */
-	LOGGER_SETTING("logger.setting"),
+	/** 记录器设置。 */
+	LOGGER_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "logger.setting"),
 
-	/** 主程序的配置 */
-	CONFIGURATION_CORE("configuration.core"),
+	/** 主程序的配置。 */
+	CFG_CORE(Constants.RESOURCE_CLASSIFY_CORE, "cfg.core"),
 
-	/** 模态配置 */
-	CONFIGURATION_MODAL("configuration.modal"),
+	/** 模态配置。 */
+	CFG_MODAL(Constants.RESOURCE_CLASSIFY_CORE, "cfg.modal"),
 
-	/** 记录器多语言化的设置 */
-	I18N_LOGGER_SETTING("i18n.logger.setting"),
+	/** 记录器国际化文件的设置。 */
+	I18N_LOGGER_FILE_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "i18n.logger.file.setting"),
 
-	/** 记录器多语言化的设置 */
-	I18N_LABEL_SETTING("i18n.label.setting"),
-	
-	/** 工程处理器的反射设置*/
-	REFLECT_PROJPROC("reflect.projproc"),
-	
-	/** 文件处理器的反射设置*/
-	REFLECT_FILEPROC("reflect.fileproc"),
-	
-	/**处理器的配置设置*/
-	PROCESSOR_CONFIG_SETTING("processor.config.setting"),
+	/** 标签国际化资源的设置。 */
+	I18N_LABEL_FILE_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "i18n.label.file.setting"),
+
+	/** 记录器国际化文件的设置。 */
+	I18N_LOGGER_RESOURCE_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "i18n.logger.resource.setting"),
+
+	/** 标签国际化资源的设置。 */
+	I18N_LABEL_RESOURCE_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "i18n.label.resource.setting"),
+
+	/** 工程处理器的反射设置。 */
+	REFLECT_PROJECT(Constants.RESOURCE_CLASSIFY_CORE, "reflect.projproc"),
+
+	/** 文件处理器的反射设置。 */
+	REFLECT_FILE(Constants.RESOURCE_CLASSIFY_CORE, "reflect.fileproc"),
+
+	/** 处理器的配置设置。 */
+	PROCESSOR_CONFIG_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "processor.config.setting"),
+
+	/** 标签国际化文本默认配置。 */
+	I18N_LABEL(Constants.RESOURCE_CLASSIFY_I18N, "label"),
+
+	/** 标签国际化文本简体中文配置。 */
+	I18N_LABEL_ZH_CN(Constants.RESOURCE_CLASSIFY_I18N, "label_zh_CN"),
+
+	/** 记录器国际化文本默认配置。 */
+	I18N_LOGGER(Constants.RESOURCE_CLASSIFY_I18N, "logger"),
+
+	/** 记录器国际化文本简体中文配置。 */
+	I18N_LOGGER_ZH_CN(Constants.RESOURCE_CLASSIFY_I18N, "logger_zh_CN.pr")
 
 	;
 
+	private final String classify;
 	private final String name;
 
-	private ResourceKey(String name) {
+	private ResourceKey(String classify, String name) {
+		this.classify = classify;
 		this.name = name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.dwarfeng.dutil.basic.str.Name#getName()
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public String getName() {
-		return this.name;
+		return new StringBuilder().append(classify).append(".").append(name).toString();
 	}
 
 }

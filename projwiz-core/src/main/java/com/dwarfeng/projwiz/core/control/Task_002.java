@@ -268,7 +268,7 @@ final class DisposeTask extends ProjWizTask {
 		PropConfigSaver modalConfigSaver = null;
 		try {
 			modalConfigSaver = new PropConfigSaver(
-					forceOpenOutputStream(ResourceKey.CONFIGURATION_MODAL, LoggerStringKey.TASK_DISPOSE_4));
+					forceOpenOutputStream(ResourceKey.CFG_MODAL, LoggerStringKey.TASK_DISPOSE_4));
 			Set<SaveFailedException> saveFailedExceptions = modalConfigSaver
 					.countinuousSave(projWizard.getToolkit().getModalConfigModel());
 			for (SaveFailedException e : saveFailedExceptions) {

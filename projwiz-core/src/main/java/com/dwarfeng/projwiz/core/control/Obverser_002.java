@@ -1,18 +1,16 @@
 package com.dwarfeng.projwiz.core.control;
 
-import java.util.Locale;
-
+import com.dwarfeng.dutil.basic.cna.model.obv.SetObverser;
 import com.dwarfeng.dutil.develop.backgr.AbstractTask;
-import com.dwarfeng.dutil.develop.cfg.ConfigFirmProps;
-import com.dwarfeng.dutil.develop.cfg.ConfigKey;
-import com.dwarfeng.dutil.develop.cfg.obv.ExconfigObverser;
-import com.dwarfeng.dutil.develop.cfg.struct.ValueParser;
-import com.dwarfeng.projwiz.core.model.eum.CoreConfiguration;
+import com.dwarfeng.projwiz.core.model.eum.ToolkitLevel;
+import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
+import com.dwarfeng.projwiz.core.model.struct.LeveledToolkit;
+import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 
-final class CoreConfigObverserImpl extends ProjWizObverser implements ExconfigObverser {
+final class ProjectProcessorObverserImpl extends ProjWizObverser implements SetObverser<ProjectProcessor> {
 
-	public CoreConfigObverserImpl(ProjWizard projWizard) {
+	public ProjectProcessorObverserImpl(ProjWizard projWizard) {
 		super(projWizard);
 	}
 
@@ -20,46 +18,62 @@ final class CoreConfigObverserImpl extends ProjWizObverser implements ExconfigOb
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void fireCurrentValueChanged(ConfigKey configKey, String oldValue, String newValue, String validValue) {
+	public void fireAdded(ProjectProcessor element) {
 		projWizard.getToolkit().submitTask(new AbstractTask() {
 
 			@Override
 			protected void todo() throws Exception {
-				if (configKey.equals(CoreConfiguration.I18N_LOGGER.getConfigKey())) {
-					projWizard.getToolkit().getLoggerI18nHandler()
-							.setCurrentLocale(projWizard.getToolkit().getCoreConfigModel()
-									.getParsedValue(CoreConfiguration.I18N_LOGGER.getConfigKey(), Locale.class));
-				}
-				if (configKey.equals(CoreConfiguration.I18N_LABEL.getConfigKey())) {
-					projWizard.getToolkit().getLabelI18nHandler()
-							.setCurrentLocale(projWizard.getToolkit().getCoreConfigModel()
-									.getParsedValue(CoreConfiguration.I18N_LABEL.getConfigKey(), Locale.class));
-				}
+				element.setToolkit(new LeveledToolkit(projWizard.getToolkit(), ToolkitLevel.WRITE_LIMIT));
 			}
 		}, BackgroundType.CONCURRENT);
 
 	}
 
 	@Override
-	public void fireConfigKeyCleared() {
+	public void fireRemoved(ProjectProcessor element) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void fireConfigFirmPropsChanged(ConfigKey configKey, ConfigFirmProps oldValue, ConfigFirmProps newValue) {
+	public void fireCleared() {
+		// TODO Auto-generated method stub
+
+	}
+
+}
+
+final class FileProcessorObverserImpl extends ProjWizObverser implements SetObverser<FileProcessor> {
+
+	public FileProcessorObverserImpl(ProjWizard projWizard) {
+		super(projWizard);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void fireAdded(FileProcessor element) {
+		projWizard.getToolkit().submitTask(new AbstractTask() {
+
+			@Override
+			protected void todo() throws Exception {
+				element.setToolkit(new LeveledToolkit(projWizard.getToolkit(), ToolkitLevel.WRITE_LIMIT));
+			}
+		}, BackgroundType.CONCURRENT);
+
 	}
 
 	@Override
-	public void fireConfigKeyRemoved(ConfigKey configKey, ConfigFirmProps configFirmProps, ValueParser valueParser,
-			String currentValue) {
+	public void fireRemoved(FileProcessor element) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void fireConfigKeyAdded(ConfigKey configKey, ConfigFirmProps configFirmProps, ValueParser valueParser,
-			String currentValue) {
-	}
+	public void fireCleared() {
+		// TODO Auto-generated method stub
 
-	@Override
-	public void fireValueParserChanged(ConfigKey configKey, ValueParser oldValue, ValueParser newValue) {
 	}
 
 }

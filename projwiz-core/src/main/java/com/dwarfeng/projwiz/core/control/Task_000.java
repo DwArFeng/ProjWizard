@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.dwarfeng.dutil.develop.backgr.AbstractTask;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
-import com.dwarfeng.projwiz.core.util.I18nUtil;
+import com.dwarfeng.projwiz.core.util.Constants;
 
 /**
  * 抽象 Note Wizard 用任务。
@@ -42,8 +42,8 @@ abstract class ProjWizTask extends AbstractTask {
 	protected void info(LoggerStringKey loggerStringKey) {
 		Objects.requireNonNull(loggerStringKey, "入口参数 loggerStringKey 不能为 null。");
 
-		projWizard.getToolkit().info(I18nUtil.getLoggerString(
-				projWizard.getToolkit().getLoggerI18nHandler().getCurrentI18n(), loggerStringKey.getName()));
+		projWizard.getToolkit().info(projWizard.getToolkit().getLoggerI18nHandler().getStringOrDefault(loggerStringKey,
+				Constants.MISSING_LABEL));
 	}
 
 	/**
@@ -60,8 +60,8 @@ abstract class ProjWizTask extends AbstractTask {
 		Objects.requireNonNull(loggerStringKey, "入口参数 loggerStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		projWizard.getToolkit().info(String.format(I18nUtil.getLoggerString(
-				projWizard.getToolkit().getLoggerI18nHandler().getCurrentI18n(), loggerStringKey.getName()), args));
+		projWizard.getToolkit().info(String.format(projWizard.getToolkit().getLoggerI18nHandler()
+				.getStringOrDefault(loggerStringKey, Constants.MISSING_LABEL), args));
 	}
 
 	/**
@@ -75,8 +75,8 @@ abstract class ProjWizTask extends AbstractTask {
 	protected void warn(LoggerStringKey loggerStringKey) {
 		Objects.requireNonNull(loggerStringKey, "入口参数 loggerStringKey 不能为 null。");
 
-		projWizard.getToolkit().warn(I18nUtil.getLoggerString(
-				projWizard.getToolkit().getLoggerI18nHandler().getCurrentI18n(), loggerStringKey.getName()));
+		projWizard.getToolkit().warn(projWizard.getToolkit().getLoggerI18nHandler().getStringOrDefault(loggerStringKey,
+				Constants.MISSING_LABEL));
 	}
 
 	/**
@@ -93,8 +93,8 @@ abstract class ProjWizTask extends AbstractTask {
 		Objects.requireNonNull(loggerStringKey, "入口参数 loggerStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		projWizard.getToolkit().warn(String.format(I18nUtil.getLoggerString(
-				projWizard.getToolkit().getLoggerI18nHandler().getCurrentI18n(), loggerStringKey.getName()), args));
+		projWizard.getToolkit().warn(String.format(projWizard.getToolkit().getLoggerI18nHandler()
+				.getStringOrDefault(loggerStringKey, Constants.MISSING_LABEL), args));
 	}
 
 	/**
@@ -111,8 +111,29 @@ abstract class ProjWizTask extends AbstractTask {
 		Objects.requireNonNull(loggerStringKey, "入口参数 loggerStringKey 不能为 null。");
 		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
 
-		projWizard.getToolkit().warn(I18nUtil.getLoggerString(
-				projWizard.getToolkit().getLoggerI18nHandler().getCurrentI18n(), loggerStringKey.getName()), e);
+		projWizard.getToolkit().warn(projWizard.getToolkit().getLoggerI18nHandler().getStringOrDefault(loggerStringKey,
+				Constants.MISSING_LABEL), e);
+	}
+
+	/**
+	 * 向记录器中格式化输入一条警告。
+	 * 
+	 * @param loggerStringKey
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatWarn(LoggerStringKey loggerStringKey, Throwable e, Object... args) {
+		Objects.requireNonNull(loggerStringKey, "入口参数 loggerStringKey 不能为 null。");
+		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		projWizard.getToolkit().warn(String.format(projWizard.getToolkit().getLoggerI18nHandler()
+				.getStringOrDefault(loggerStringKey, Constants.MISSING_LABEL), args), e);
 	}
 
 	/**
@@ -127,8 +148,8 @@ abstract class ProjWizTask extends AbstractTask {
 	protected String label(LabelStringKey labelStringKey) {
 		Objects.requireNonNull(labelStringKey, "入口参数 labelStringKey 不能为 null。");
 
-		return I18nUtil.getLabelString(projWizard.getToolkit().getLabelI18nHandler().getCurrentI18n(),
-				labelStringKey.getName());
+		return projWizard.getToolkit().getLabelI18nHandler().getStringOrDefault(labelStringKey,
+				Constants.MISSING_LABEL);
 	}
 
 	/**
@@ -146,8 +167,8 @@ abstract class ProjWizTask extends AbstractTask {
 		Objects.requireNonNull(labelStringKey, "入口参数 labelStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		return String.format(I18nUtil.getLabelString(projWizard.getToolkit().getLabelI18nHandler().getCurrentI18n(),
-				labelStringKey.getName()), args);
+		return String.format(projWizard.getToolkit().getLabelI18nHandler().getStringOrDefault(labelStringKey,
+				Constants.MISSING_LABEL), args);
 	}
 
 }

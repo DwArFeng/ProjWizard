@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root dir="null">
+
+	<info key="com.dwarfeng.projwiz.core.logger.setting" classify="com.dwarfeng.projwiz.core"
+		filename="logger.setting.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/logger.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.core.cfg.core" classify="com.dwarfeng.projwiz.core"
+		filename="cfg.core.properties"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.core.properties" />
+
+	<info key="com.dwarfeng.projwiz.core.cfg.modal" classify="com.dwarfeng.projwiz.core"
+		filename="cfg.modal.properties"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.modal.properties" />
+
+	<info key="com.dwarfeng.projwiz.core.i18n.logger.file.setting"
+		classify="com.dwarfeng.projwiz.core" filename="i18n.logger.file.setting.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/i18n.logger.file.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.core.i18n.label.file.setting"
+		classify="com.dwarfeng.projwiz.core" filename="i18n.label.file.setting.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/i18n.label.file.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.core.i18n.logger.resource.setting"
+		classify="com.dwarfeng.projwiz.core" filename="i18n.logger.resource.setting.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/i18n.logger.resource.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.core.i18n.label.resource.setting"
+		classify="com.dwarfeng.projwiz.core" filename="i18n.label.resource.setting.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/i18n.label.resource.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.core.reflect.projproc" classify="com.dwarfeng.projwiz.core"
+		filename="processor.reflect.project.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/processor.reflect.project.xml" />
+
+	<info key="com.dwarfeng.projwiz.core.reflect.fileproc" classify="com.dwarfeng.projwiz.core"
+		filename="processor.reflect.file.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/processor.reflect.file.xml" />
+
+	<info key="com.dwarfeng.projwiz.core.processor.config.setting"
+		classify="com.dwarfeng.projwiz.core" filename="processor.config.setting.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/processor.config.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.i18n.label" classify="com.dwarfeng.projwiz.core"
+		filename="label.properties"
+		default="/com/dwarfeng/projwiz/resources/configuration/i18n/label.properties" />
+
+	<info key="com.dwarfeng.projwiz.i18n.label_zh_CN" classify="com.dwarfeng.projwiz.core"
+		filename="label_zh_CN.properties"
+		default="/com/dwarfeng/projwiz/resources/configuration/i18n/label_zh_CN.properties" />
+
+	<info key="com.dwarfeng.projwiz.i18n.logger" classify="com.dwarfeng.projwiz.core"
+		filename="logger.properties"
+		default="/com/dwarfeng/projwiz/resources/configuration/i18n/logger.properties" />
+
+	<info key="com.dwarfeng.projwiz.i18n.logger_zh_CN" classify="com.dwarfeng.projwiz.core"
+		filename="logger_zh_CN.properties"
+		default="/com/dwarfeng/projwiz/resources/configuration/i18n/logger_zh_CN.properties" />
+
+</root>

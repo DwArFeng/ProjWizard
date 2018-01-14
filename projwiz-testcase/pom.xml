@@ -10,8 +10,8 @@
 		<version>alpha-0.0.3.a-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>projwiz-launch</artifactId>
-	<name>projwiz-launch</name>
+	<artifactId>projwiz-testcase</artifactId>
+	<name>projwiz-testcase</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -27,9 +27,26 @@
 		</dependency>
 		<dependency>
 			<groupId>com.dwarfeng</groupId>
-			<artifactId>projwiz-core</artifactId>
+			<artifactId>projwiz-launch</artifactId>
 			<version>alpha-0.0.3.a-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-classpath</argument> <!-- 这是classpath属性，其值就是下面的<classpath/> -->
+						<classpath /> <!-- 这是exec插件最有价值的地方，关于工程的classpath并不需要手动指定，它将由exec自动计算得出 -->
+						<mainClass>com.dwarfeng.projwiz.testcase.TestRunSingletonLauncher</mainClass>
+					</arguments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

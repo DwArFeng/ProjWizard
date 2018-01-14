@@ -4,10 +4,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
-
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
@@ -25,23 +21,6 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
  * @since 0.0.1-alpha
  */
 public class SingletonLauncher {
-
-	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(new NimbusLookAndFeel());
-		} catch (UnsupportedLookAndFeelException ignore) {
-			// 界面中的所有元素均支持这一外观，因此不可能出现异常。
-		}
-
-		try {
-			INSTANCE.launch();
-			INSTANCE.waitFinish();
-			System.exit(INSTANCE.getExitCode());
-		} catch (InterruptedException ignore) {
-			// 中断也要按照基本法。
-		}
-
-	}
 
 	public static final SingletonLauncher INSTANCE = new SingletonLauncher();
 

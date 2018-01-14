@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -89,6 +88,7 @@ import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
+import com.dwarfeng.projwiz.core.util.Constants;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser;
@@ -663,7 +663,6 @@ public final class ProjWizard {
 				INSTANCES.remove(this);
 
 				// 反编织观察网络。
-				coreConfigModel.removeObverser(coreConfigObverser);
 				projectProcessorModel.removeObverser(projectProcessorObverser);
 				fileProcessorModel.removeObverser(fileProcessorObverser);
 				concurrentBackground.removeObverser(backgroundObverser);
@@ -1085,7 +1084,7 @@ public final class ProjWizard {
 			Objects.requireNonNull(property, "入口参数 key 不能为 null。");
 
 			synchronized (property) {
-				return properties.getOrDefault(property, DEFAULT_PROPERTIES.get(property));
+				return properties.getOrDefault(property, Constants.DEFAULT_PROJWIZ_PROPERTIES.get(property));
 			}
 		}
 
@@ -1094,7 +1093,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public SyncResourceHandler getResourceHandler() {
-			return resourceHandler;
+			return configurationHandler;
 		}
 
 		/**
@@ -1102,7 +1101,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public ResourceHandler getResourceHandlerReadOnly() {
-			return ResourceUtil.readOnlyResourceHandler(resourceHandler);
+			return ResourceUtil.readOnlyResourceHandler(configurationHandler);
 		}
 
 		/**
@@ -1489,7 +1488,6 @@ public final class ProjWizard {
 				setStartFlag(true);
 
 				// 编织观察网络
-				coreConfigModel.addObverser(coreConfigObverser);
 				projectProcessorModel.addObverser(projectProcessorObverser);
 				fileProcessorModel.addObverser(fileProcessorObverser);
 				concurrentBackground.addObverser(backgroundObverser);
@@ -1746,18 +1744,13 @@ public final class ProjWizard {
 	public final static Version VERSION = new DefaultVersion.Builder().type(VersionType.ALPHA).firstVersion((byte) 0)
 			.secondVersion((byte) 0).thirdVersion((byte) 3).buildDate("20171027").buildVersion('A').build();
 
-	private final static Map<ProjWizProperty, String> DEFAULT_PROPERTIES = new EnumMap<>(ProjWizProperty.class);
-
 	// /** 该类的线程工厂 */
 	// private final static ThreadFactory THREAD_FACTORY = new
 	// NumberedThreadFactory("ProjWizard");
 
 	/** 程序的实例列表，用于持有引用 */
 	private static final Set<ProjWizard> INSTANCES = Collections.synchronizedSet(new HashSet<>());
-	static {
-		DEFAULT_PROPERTIES.put(ProjWizProperty.PLUGIN_PATH, "plugins/");
-		DEFAULT_PROPERTIES.put(ProjWizProperty.TEMP_PATH, "temp/");
-	}
+
 	// --------------------------------------------模型--------------------------------------------
 	// 并发后台
 	private final Background concurrentBackground = new ExecutorServiceBackground(
@@ -1784,8 +1777,9 @@ public final class ProjWizard {
 	// 工程处理器模型
 	private final SyncKeySetModel<String, ProjectProcessor> projectProcessorModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncKeySetModel(new MapKeySetModel<>());
-	// 资源处理器
-	private final SyncResourceHandler resourceHandler = ResourceUtil.syncResourceHandler(new DelegateResourceHandler());
+	// 配置处理器
+	private final SyncResourceHandler configurationHandler = ResourceUtil
+			.syncResourceHandler(new DelegateResourceHandler());
 	// 锚点文件模型
 	private final SyncReferenceModel<File> anchorFileModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncReferenceModel(new DefaultReferenceModel<>());
@@ -1874,8 +1868,6 @@ public final class ProjWizard {
 	private final Object mainFrameLock = new Object();
 
 	// --------------------------------------------观察器--------------------------------------------
-	/** 配置观察器。 */
-	private final CoreConfigObverserImpl coreConfigObverser = new CoreConfigObverserImpl(this);
 	/** 程序的工程处理器观察器 */
 	private final SetObverser<ProjectProcessor> projectProcessorObverser = new ProjectProcessorObverserImpl(this);
 	/** 程序的文件处理器观察器 */
@@ -1909,12 +1901,13 @@ public final class ProjWizard {
 			String key;
 			String value;
 			try {
-				key = st.nextToken();
+				// 忽视大小写
+				key = st.nextToken().toUpperCase();
 				value = st.nextToken();
 			} catch (NoSuchElementException e) {
 				throw new IllegalArgumentException("非法的参数：" + string);
 			}
-			if (!DEFAULT_PROPERTIES.containsKey(key)) {
+			if (!Constants.DEFAULT_PROJWIZ_PROPERTIES.containsKey(key)) {
 				throw new IllegalArgumentException("不存在的键：" + key);
 			}
 

@@ -8,13 +8,11 @@ import javax.swing.JPanel;
 
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.threads.ThreadUtil;
-import com.dwarfeng.dutil.develop.i18n.I18n;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
 import com.dwarfeng.dutil.develop.i18n.obv.I18nAdapter;
 import com.dwarfeng.dutil.develop.i18n.obv.I18nObverser;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.util.Constants;
-import com.dwarfeng.projwiz.core.util.I18nUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 
 /**
@@ -25,8 +23,8 @@ import com.dwarfeng.projwiz.core.view.struct.GuiManager;
  */
 public abstract class ProjWizDialog extends JDialog {
 
-	private static final long serialVersionUID = 1899819498719205082L;
-
+	private static final long serialVersionUID = -5285278824537447184L;
+	
 	/** 抽象对话框中的 GUI 管理器。 */
 	protected final GuiManager guiManager;
 	/** 对话框的内容面板 */
@@ -171,7 +169,8 @@ public abstract class ProjWizDialog extends JDialog {
 	protected String formatLabel(LabelStringKey labelStringKey, Object... args) {
 		Objects.requireNonNull(labelStringKey, "入口参数 labelStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-		return String.format(I18nUtil.getLabelString(i18n(), labelStringKey.getName()), args);
+	
+		return String.format(i18nHandler.getStringOrDefault(labelStringKey, Constants.MISSING_LABEL), args);
 	}
 
 	/**
@@ -185,16 +184,13 @@ public abstract class ProjWizDialog extends JDialog {
 	 */
 	protected String label(LabelStringKey labelStringKey) {
 		Objects.requireNonNull(labelStringKey, "入口参数 labelStringKey 不能为 null。");
-		return I18nUtil.getLabelString(i18n(), labelStringKey.getName());
+	
+		return i18nHandler.getStringOrDefault(labelStringKey, Constants.MISSING_LABEL);
 	}
 
 	/**
 	 * 刷新标签。
 	 */
 	protected abstract void refreshLabels();
-
-	private I18n i18n() {
-		return Objects.isNull(i18nHandler) ? null : i18nHandler.getCurrentI18n();
-	}
 
 }

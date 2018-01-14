@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!--使用如下的格式进行默认项目配置：<info-default label="默认" file="directory/default.properties"/> -->
+	<!--使用如下的格式进行一般项目配置：<info locale="zh_CN" label="简体中文" file="directory/zh_CN.properties"/> -->
+</root>

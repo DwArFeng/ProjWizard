@@ -4,6 +4,8 @@ import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -726,25 +728,33 @@ public final class Constants {
 
 	/** 默认的，不执行任何动作的 GUI 管理器 */
 	public final static GuiManager DEFAULT_GUIMANAGER = new NonActionGuiManager();
-	/** 默认的记录器信息的键 */
-	public final static String LOGGER_DEFAULT = "std.all";
-	/** 默认的丢失文本字段 */
-	public final static String MISSING_LABEL = "！文本丢失";
 	/** 处理器默认的，没有权限的工具包。 */
 	public final static Toolkit NON_PERMISSION_TOOLKIT = new NonPermissionToolkit();
 
-	/** 默认标签多语言文件所在的位置 */
-	public final static String RESOURCE_I18N_LABEL_PATH = "/com/dwarfeng/projwiz/resources/defaultres/i18n/label/default.properties";
-	/** 默认记录器多语言文件所在的位置 */
-	public final static String RESOURCE_I18N_LOGGER_PATH = "/com/dwarfeng/projwiz/resources/defaultres/i18n/logger/default.properties";
+	/** 默认的丢失文本字段 */
+	public final static String MISSING_LABEL = "！文本丢失";
 
+	/** 默认的配置列表所在的位置。 */
+	public final static String CFG_DEFAULT_LIST_PATH = "/com/dwarfeng/projwiz/resources/cfg-list.xml";
+	/** 默认记录器多语言文件所在的位置 */
+	public final static String RESOURCE_I18N_LOGGER_PATH = "/com/dwarfeng/projwiz/resources/configuration/i18n/logger.properties";
 	/** 图片根所在的位置 */
 	public final static String RESOURCE_IMAGE_ROOT_PATH = "/com/dwarfeng/projwiz/resources/image/";
-	/** 记录器的默认设置所在的资源位置。 */
-	public final static String RESOURCE_LOGGER_SETTING_PATH = "/com/dwarfeng/projwiz/resources/defaultres/logger/setting.xml";
 
-	/** 路径配置文件所在的位置。 */
-	public final static String RESOURCE_PATH = "/com/dwarfeng/projwiz/resources/paths.xml";
+	/** 主程序的核心配置的资源仓库类别。 */
+	public final static String RESOURCE_CLASSIFY_CORE = "com.dwarfeng.projwiz.core";
+	/** 主程序的国际化配置的资源仓库类别。 */
+	public final static String RESOURCE_CLASSIFY_I18N = "com.dwarfeng.projwiz.i18n";
+
+	/** 默认的程序属性表。 */
+	public final static Map<ProjWizProperty, String> DEFAULT_PROJWIZ_PROPERTIES = new EnumMap<>(ProjWizProperty.class);
+
+	static {
+		DEFAULT_PROJWIZ_PROPERTIES.put(ProjWizProperty.PLUGIN_PATH, "plugins");
+		DEFAULT_PROJWIZ_PROPERTIES.put(ProjWizProperty.TEMP_PATH, "temp");
+		DEFAULT_PROJWIZ_PROPERTIES.put(ProjWizProperty.CFGREPO_PATH, "configuration");
+		DEFAULT_PROJWIZ_PROPERTIES.put(ProjWizProperty.CFG_LISTS, "");
+	}
 
 	// 禁止外部实例化
 	private Constants() {
