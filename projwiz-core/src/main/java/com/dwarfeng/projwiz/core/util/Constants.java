@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +40,7 @@ import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
+import com.dwarfeng.projwiz.core.model.eum.ToolkitLevel;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
@@ -49,6 +51,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
+import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
@@ -297,6 +300,16 @@ public final class Constants {
 		}
 
 		@Override
+		public SyncResourceHandler getCfgHandler() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getResourceHandler");
+		}
+
+		@Override
+		public ResourceHandler getCfgHandlerReadOnly() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getResourceHandlerReadOnly");
+		}
+
+		@Override
 		public SyncExconfigModel getCoreConfigModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getCoreConfigModel");
 		}
@@ -511,16 +524,6 @@ public final class Constants {
 		@Override
 		public String getProperty(ProjWizProperty property) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getProperty");
-		}
-
-		@Override
-		public SyncResourceHandler getResourceHandler() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getResourceHandler");
-		}
-
-		@Override
-		public ResourceHandler getResourceHandlerReadOnly() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getResourceHandlerReadOnly");
 		}
 
 		@Override
@@ -747,13 +750,112 @@ public final class Constants {
 	public final static String RESOURCE_CLASSIFY_I18N = "com.dwarfeng.projwiz.i18n";
 
 	/** 默认的程序属性表。 */
-	public final static Map<ProjWizProperty, String> DEFAULT_PROJWIZ_PROPERTIES = new EnumMap<>(ProjWizProperty.class);
+	public final static Map<ProjWizProperty, String> DEFAULT_PROJWIZ_PROPERTIES;
+
+	/** LeveledToolkit 类中执行每个方法所需要的最小权限。 */
+	public final static Map<Method, ToolkitLevel> LEVELEDTOOLKIT_MIN_LEVEL;
 
 	static {
-		DEFAULT_PROJWIZ_PROPERTIES.put(ProjWizProperty.PLUGIN_PATH, "plugins");
-		DEFAULT_PROJWIZ_PROPERTIES.put(ProjWizProperty.TEMP_PATH, "temp");
-		DEFAULT_PROJWIZ_PROPERTIES.put(ProjWizProperty.CFGREPO_PATH, "configuration");
-		DEFAULT_PROJWIZ_PROPERTIES.put(ProjWizProperty.CFG_LISTS, "");
+		Map<ProjWizProperty, String> init0 = new EnumMap<>(ProjWizProperty.class);
+		init0.put(ProjWizProperty.PLUGIN_PATH, "plugins");
+		init0.put(ProjWizProperty.TEMP_PATH, "temp");
+		init0.put(ProjWizProperty.CFGREPO_PATH, "configuration");
+		init0.put(ProjWizProperty.CFG_LISTS, "");
+		DEFAULT_PROJWIZ_PROPERTIES = Collections.unmodifiableMap(init0);
+
+		Map<Method, ToolkitLevel> init1 = new EnumMap<>(Method.class);
+		// 为各种方法提供权限等级
+		init1.put(Method.ADDCORECONFIGOBVERSER, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.ADDOBVERSERTOFILE, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.ADDOBVERSERTOPROJECT, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.ADDPROGRAMOBVERSER, ToolkitLevel.FULL);
+		init1.put(Method.CHOOSEPROJECTFILE, ToolkitLevel.READ_ONLY);
+		init1.put(Method.CHOOSESYSTEMFILE, ToolkitLevel.READ_ONLY);
+		init1.put(Method.CLEARPROGRAMOBVERSER, ToolkitLevel.FULL);
+		init1.put(Method.CONTAINSDIALOG, ToolkitLevel.READ_ONLY);
+		init1.put(Method.DEBUG, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.DISPOSEMAINFRAME, ToolkitLevel.FULL);
+		init1.put(Method.ERROR, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.EXIT, ToolkitLevel.FULL);
+		init1.put(Method.FATAL, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.GETANCHORFILEMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETANCHORFILEMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETBACKGROUND, ToolkitLevel.FULL);
+		init1.put(Method.GETCFGHANDLER, ToolkitLevel.FULL);
+		init1.put(Method.GETCFGHANDLERREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETBACKGROUNDREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETCORECONFIGMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETCORECONFIGMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETEDITORMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETEDITORMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETEXITCODE, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETEXTERNALWINDOWMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETEXTERNALWINDOWMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETFILEICONIMAGEMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETFILEICONIMAGEMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETFILEICONOBVMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETFILEINDICATEMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETFILEPROCESSORMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETFILEPROCESSORMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETFOCUSEDITORMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETFOCUSEDITORMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETFOCUSFILEMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETFOCUSFILEMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETFOCUSPROJECTMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETFOCUSPROJECTMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETGUIMANAGER, ToolkitLevel.FULL);
+		init1.put(Method.GETHOLDPROJECTMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETHOLDPROJECTMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETLABELI18NHANDLER, ToolkitLevel.FULL);
+		init1.put(Method.GETLABELI18NHANDLERREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETLOGGERHANDLER, ToolkitLevel.FULL);
+		init1.put(Method.GETLOGGERHANDLERREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETLOGGERI18NHANDLER, ToolkitLevel.FULL);
+		init1.put(Method.GETLOGGERI18NHANDLERREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETMAINFRAME, ToolkitLevel.FULL);
+		init1.put(Method.GETMODALCONFIGMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETMODALCONFIGMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETPROGRAMOBVERSERS, ToolkitLevel.FULL);
+		init1.put(Method.GETPROJECTICONIMAGEMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETPROJECTICONIMAGEMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETPROJECTICONOBVMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETPROJECTINDICATEMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETPLUGINCLASSLOADER, ToolkitLevel.FULL);
+		init1.put(Method.GETPROCESSORCONFIGHANDLER, ToolkitLevel.FULL);
+		init1.put(Method.GETPROJECTPROCESSORMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETPROJECTPROCESSORMODELREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETPROPERTY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETRUNTIMESTATE, ToolkitLevel.READ_ONLY);
+		init1.put(Method.INFO, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.ISMAINFRAMEVISIBLE, ToolkitLevel.READ_ONLY);
+		init1.put(Method.NEWMAINFRAME, ToolkitLevel.FULL);
+		init1.put(Method.OPENFILE, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.OPENFILEINPUTSTREAM, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.OPENFILEOUTPUTSTREAM, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.REGISTFILEPROCESSOR, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.REGISTPROJECTPROCESSOR, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.REMOVECORECONFIGOBVERSER, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.REMOVEOBVERSERFROMFILE, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.REMOVEOBVERSERFROMPROJECT, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.REMOVEPROGRAMOBVERSER, ToolkitLevel.FULL);
+		init1.put(Method.SETRUNTIMESTATE, ToolkitLevel.FULL);
+		init1.put(Method.SHOWCOMPONENTDIALOG, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.SHOWCONFIRMDIALOG, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.SHOWDIALOG, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.SHOWEXTERNALWINDOW, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.SHOWINPUTDIALOG, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.SHOWMESSAGEDIALOG, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.SHOWNEWDIALOG, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.SHOWOPTIONDIALOG, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.START, ToolkitLevel.FULL);
+		init1.put(Method.SUBMITTASK, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.TRACE, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.TRYEXIT, ToolkitLevel.FULL);
+		init1.put(Method.UNREGISTFILEPROCESSOR, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.UNREGISTPROJECTPROCESSOR, ToolkitLevel.WRITE_LIMIT);
+		init1.put(Method.WARN, ToolkitLevel.WRITE_LIMIT);
+
+		LEVELEDTOOLKIT_MIN_LEVEL = Collections.unmodifiableMap(init1);
 	}
 
 	// 禁止外部实例化

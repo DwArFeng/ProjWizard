@@ -313,7 +313,7 @@ final class DisposeTask extends ProjWizTask {
 
 	private OutputStream forceOpenOutputStream(ResourceKey resourceKey, LoggerStringKey loggerStringKey)
 			throws IOException {
-		Resource resource = projWizard.getToolkit().getResourceHandler().get(resourceKey.getName());
+		Resource resource = projWizard.getToolkit().getCfgHandler().get(resourceKey.getName());
 		try {
 			return resource.openOutputStream();
 		} catch (IOException e) {

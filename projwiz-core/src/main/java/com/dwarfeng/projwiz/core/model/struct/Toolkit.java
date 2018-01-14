@@ -86,6 +86,8 @@ public interface Toolkit {
 		GETANCHORFILEMODELREADONLY, //
 		GETBACKGROUND, //
 		GETBACKGROUNDREADONLY, //
+		GETCFGHANDLER, //
+		GETCFGHANDLERREADONLY, //
 		GETCORECONFIGMODEL, //
 		GETCORECONFIGMODELREADONLY, //
 		GETEDITORMODEL, //
@@ -127,8 +129,6 @@ public interface Toolkit {
 		GETPROJECTPROCESSORMODEL, //
 		GETPROJECTPROCESSORMODELREADONLY, //
 		GETPROPERTY, //
-		GETRESOURCEHANDLER, //
-		GETRESOURCEHANDLERREADONLY, //
 		GETRUNTIMESTATE, //
 		INFO, //
 		ISMAINFRAMEVISIBLE, //
@@ -380,6 +380,24 @@ public interface Toolkit {
 	 *             入口参数为 <code>null</code>。
 	 */
 	public Background getBackgroundReadOnly(BackgroundType type) throws IllegalStateException;
+
+	/**
+	 * 获取配置处理器。
+	 * 
+	 * @return 资源处理器。
+	 * @throws IllegalStateException
+	 *             因为没有权限而抛出的异常。
+	 */
+	public SyncResourceHandler getCfgHandler() throws IllegalStateException;
+
+	/**
+	 * 获取配置处理器。
+	 * <p>
+	 * 该资源处理器是只读的。
+	 * 
+	 * @return 资源处理器。
+	 */
+	public ResourceHandler getCfgHandlerReadOnly() throws IllegalStateException;
 
 	/**
 	 * 获取程序中的核心配置模型。
@@ -788,24 +806,6 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public String getProperty(ProjWizProperty property) throws IllegalStateException;
-
-	/**
-	 * 获取资源处理器。
-	 * 
-	 * @return 资源处理器。
-	 * @throws IllegalStateException
-	 *             因为没有权限而抛出的异常。
-	 */
-	public SyncResourceHandler getResourceHandler() throws IllegalStateException;
-
-	/**
-	 * 获取资源处理器。
-	 * <p>
-	 * 该资源处理器是只读的。
-	 * 
-	 * @return 资源处理器。
-	 */
-	public ResourceHandler getResourceHandlerReadOnly() throws IllegalStateException;
 
 	/**
 	 * 获取程序的运行状态。

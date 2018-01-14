@@ -4,8 +4,6 @@ import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -44,6 +42,7 @@ import com.dwarfeng.projwiz.core.model.eum.ToolkitLevel;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
+import com.dwarfeng.projwiz.core.util.Constants;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
@@ -64,102 +63,6 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
  * @since 0.0.1-alpha
  */
 public final class LeveledToolkit implements Toolkit {
-
-	private static final Map<Method, ToolkitLevel> MIN_LEVEL_MAP = new EnumMap<>(Method.class);
-
-	static {
-		// 为各种方法提供权限等级
-		MIN_LEVEL_MAP.put(Method.ADDCORECONFIGOBVERSER, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.ADDOBVERSERTOFILE, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.ADDOBVERSERTOPROJECT, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.ADDPROGRAMOBVERSER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.CHOOSEPROJECTFILE, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.CHOOSESYSTEMFILE, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.CLEARPROGRAMOBVERSER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.CONTAINSDIALOG, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.DEBUG, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.DISPOSEMAINFRAME, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.ERROR, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.EXIT, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.FATAL, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.GETANCHORFILEMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETANCHORFILEMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETBACKGROUND, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETBACKGROUNDREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETCORECONFIGMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETCORECONFIGMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETEDITORMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETEDITORMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETEXITCODE, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETEXTERNALWINDOWMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETEXTERNALWINDOWMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETFILEICONIMAGEMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETFILEICONIMAGEMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETFILEICONOBVMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETFILEINDICATEMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETFILEPROCESSORMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETFILEPROCESSORMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETFOCUSEDITORMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETFOCUSEDITORMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETFOCUSFILEMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETFOCUSFILEMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETFOCUSPROJECTMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETFOCUSPROJECTMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETGUIMANAGER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETHOLDPROJECTMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETHOLDPROJECTMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETLABELI18NHANDLER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETLABELI18NHANDLERREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETLOGGERHANDLER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETLOGGERHANDLERREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETLOGGERI18NHANDLER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETLOGGERI18NHANDLERREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETMAINFRAME, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETMODALCONFIGMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETMODALCONFIGMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETPROGRAMOBVERSERS, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETPROJECTICONIMAGEMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETPROJECTICONIMAGEMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETPROJECTICONOBVMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETPROJECTINDICATEMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETPLUGINCLASSLOADER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETPROCESSORCONFIGHANDLER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETPROJECTPROCESSORMODEL, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETPROJECTPROCESSORMODELREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETPROPERTY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETRESOURCEHANDLER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.GETRESOURCEHANDLERREADONLY, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.GETRUNTIMESTATE, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.INFO, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.ISMAINFRAMEVISIBLE, ToolkitLevel.READ_ONLY);
-		MIN_LEVEL_MAP.put(Method.NEWMAINFRAME, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.OPENFILE, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.OPENFILEINPUTSTREAM, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.OPENFILEOUTPUTSTREAM, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.REGISTFILEPROCESSOR, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.REGISTPROJECTPROCESSOR, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.REMOVECORECONFIGOBVERSER, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.REMOVEOBVERSERFROMFILE, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.REMOVEOBVERSERFROMPROJECT, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.REMOVEPROGRAMOBVERSER, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.SETRUNTIMESTATE, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.SHOWCOMPONENTDIALOG, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.SHOWCONFIRMDIALOG, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.SHOWDIALOG, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.SHOWEXTERNALWINDOW, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.SHOWINPUTDIALOG, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.SHOWMESSAGEDIALOG, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.SHOWNEWDIALOG, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.SHOWOPTIONDIALOG, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.START, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.SUBMITTASK, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.TRACE, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.TRYEXIT, ToolkitLevel.FULL);
-		MIN_LEVEL_MAP.put(Method.UNREGISTFILEPROCESSOR, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.UNREGISTPROJECTPROCESSOR, ToolkitLevel.WRITE_LIMIT);
-		MIN_LEVEL_MAP.put(Method.WARN, ToolkitLevel.WRITE_LIMIT);
-
-	}
 
 	private final ToolkitLevel currentLevel;
 	private final Toolkit standardToolkit;
@@ -344,6 +247,24 @@ public final class LeveledToolkit implements Toolkit {
 	public Background getBackgroundReadOnly(BackgroundType type) throws IllegalStateException {
 		checkPermissionAndState(Method.GETBACKGROUNDREADONLY);
 		return standardToolkit.getBackgroundReadOnly(type);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SyncResourceHandler getCfgHandler() throws IllegalStateException {
+		checkPermissionAndState(Method.GETCFGHANDLER);
+		return standardToolkit.getCfgHandler();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ResourceHandler getCfgHandlerReadOnly() throws IllegalStateException {
+		checkPermissionAndState(Method.GETCFGHANDLERREADONLY);
+		return standardToolkit.getCfgHandlerReadOnly();
 	}
 
 	/**
@@ -722,24 +643,6 @@ public final class LeveledToolkit implements Toolkit {
 	public String getProperty(ProjWizProperty property) throws IllegalStateException {
 		checkPermissionAndState(Method.GETPROPERTY);
 		return standardToolkit.getProperty(property);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SyncResourceHandler getResourceHandler() throws IllegalStateException {
-		checkPermissionAndState(Method.GETRESOURCEHANDLER);
-		return standardToolkit.getResourceHandler();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResourceHandler getResourceHandlerReadOnly() throws IllegalStateException {
-		checkPermissionAndState(Method.GETRESOURCEHANDLERREADONLY);
-		return standardToolkit.getResourceHandlerReadOnly();
 	}
 
 	/**
@@ -1127,11 +1030,11 @@ public final class LeveledToolkit implements Toolkit {
 	private ToolkitLevel needLevel(Method method) {
 		Objects.requireNonNull(method, "入口参数 method 不能为 null。");
 
-		if (!MIN_LEVEL_MAP.containsKey(method)) {
+		if (!Constants.LEVELEDTOOLKIT_MIN_LEVEL.containsKey(method)) {
 			throw new IllegalArgumentException(String.format("权限表中没有指定的方法：%s。", method));
 		}
 
-		return MIN_LEVEL_MAP.get(method);
+		return Constants.LEVELEDTOOLKIT_MIN_LEVEL.get(method);
 	}
 
 }

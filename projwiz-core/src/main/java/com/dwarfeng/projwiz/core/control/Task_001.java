@@ -408,7 +408,7 @@ final class PoseTask extends ProjWizTask {
 	}
 
 	private InputStream openResource(ResourceKey resourceKey, LoggerStringKey loggerStringKey) throws IOException {
-		Resource resource = projWizard.getToolkit().getResourceHandler().get(resourceKey.getName());
+		Resource resource = projWizard.getToolkit().getCfgHandler().get(resourceKey.getName());
 		try {
 			return resource.openInputStream();
 		} catch (IOException e) {
@@ -487,7 +487,7 @@ final class PoseTask extends ProjWizTask {
 		XmlJar2RepoResourceLoader loader0 = null;
 		try {
 			loader0 = new XmlJar2RepoResourceLoader(cfgListUrl.openStream(), reopRoot);
-			eptSet0.addAll(loader0.countinuousLoad(projWizard.getToolkit().getResourceHandler()));
+			eptSet0.addAll(loader0.countinuousLoad(projWizard.getToolkit().getCfgHandler()));
 		} finally {
 			if (Objects.nonNull(loader0)) {
 				loader0.close();
@@ -605,7 +605,7 @@ final class PoseTask extends ProjWizTask {
 	 */
 	private InputStream preSetOpenResource(ResourceKey resourceKey, I18n i18n, LoggerStringKey loggerStringKey)
 			throws IOException {
-		Resource resource = projWizard.getToolkit().getResourceHandler().get(resourceKey.getName());
+		Resource resource = projWizard.getToolkit().getCfgHandler().get(resourceKey.getName());
 		try {
 			return resource.openInputStream();
 		} catch (IOException e) {

@@ -734,6 +734,22 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public SyncResourceHandler getCfgHandler() {
+			return configurationHandler;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ResourceHandler getCfgHandlerReadOnly() {
+			return ResourceUtil.readOnlyResourceHandler(configurationHandler);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public SyncExconfigModel getCoreConfigModel() {
 			return coreConfigModel;
 		}
@@ -1086,22 +1102,6 @@ public final class ProjWizard {
 			synchronized (property) {
 				return properties.getOrDefault(property, Constants.DEFAULT_PROJWIZ_PROPERTIES.get(property));
 			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncResourceHandler getResourceHandler() {
-			return configurationHandler;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public ResourceHandler getResourceHandlerReadOnly() {
-			return ResourceUtil.readOnlyResourceHandler(configurationHandler);
 		}
 
 		/**
