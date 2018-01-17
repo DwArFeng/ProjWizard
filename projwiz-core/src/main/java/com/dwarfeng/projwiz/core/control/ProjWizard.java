@@ -641,7 +641,7 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void exit() throws ProcessException {
+		public void exit() {
 			synchronized (startExitLock) {
 
 				if (isDisposeFlag()) {
@@ -669,12 +669,12 @@ public final class ProjWizard {
 
 				// 判断是否出现异常。
 				if (Objects.nonNull(task.getThrowable())) {
-					throw new ProcessException("释放过程失败", task.getThrowable());
+					// 当此过程出现异常时，启动应急退出机制。
+					setExitCode(-12451);
 				}
 
 				// 设置程序的运行状态为已经结束
 				setRuntimeState(RuntimeState.ENDED);
-
 			}
 		}
 
@@ -1474,7 +1474,7 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void start() throws ProcessException {
+		public void start() {
 			synchronized (startExitLock) {
 				if (isStartFlag()) {
 					if (getRuntimeState() == RuntimeState.RUNNING) {
@@ -1497,12 +1497,17 @@ public final class ProjWizard {
 				task.run();
 
 				// 判断是否出现异常。
-				if (Objects.nonNull(task.getThrowable())) {
-					throw new ProcessException("初始化过程失败", task.getThrowable());
+				Throwable throwable = task.getThrowable();
+				if (Objects.nonNull(throwable)) {
+					// 当此过程出现异常时，启动应急退出机制。
+					// TODO 以后会做的更多，此处仅设置退出代码以及设置程序状态。
+					fatal("异常", throwable);
+					setExitCode(-12450);
+					setRuntimeState(RuntimeState.ENDED);
+				} else {
+					// 设置程序的运行状态为正在运行
+					setRuntimeState(RuntimeState.RUNNING);
 				}
-
-				// 设置程序的运行状态为正在运行
-				setRuntimeState(RuntimeState.RUNNING);
 			}
 		}
 

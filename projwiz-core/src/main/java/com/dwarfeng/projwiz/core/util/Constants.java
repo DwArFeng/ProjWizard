@@ -270,7 +270,7 @@ public final class Constants {
 		}
 
 		@Override
-		public void exit() throws IllegalStateException, ProcessException {
+		public void exit() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: exit");
 		}
 
@@ -688,7 +688,7 @@ public final class Constants {
 		}
 
 		@Override
-		public void start() throws IllegalStateException, ProcessException {
+		public void start() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: start");
 		}
 

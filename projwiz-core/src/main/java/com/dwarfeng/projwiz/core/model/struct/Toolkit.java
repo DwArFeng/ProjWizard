@@ -315,10 +315,8 @@ public interface Toolkit {
 	 * 
 	 * @throws IllegalStateException
 	 *             因为没有执行权限而抛出的异常。
-	 * @throws ProcessException
-	 *             过程异常。
 	 */
-	public void exit() throws IllegalStateException, ProcessException;
+	public void exit() throws IllegalStateException;
 
 	/**
 	 * 使用指定的记录器处理器 <code>fatal</code> 一条信息。
@@ -1244,10 +1242,8 @@ public interface Toolkit {
 	 * 
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
-	 * @throws ProcessException
-	 *             过程异常。
 	 */
-	public void start() throws IllegalStateException, ProcessException;
+	public void start() throws IllegalStateException;
 
 	/**
 	 * 向程序的后台提交一个任务。

@@ -46,16 +46,8 @@
 		filename="label.properties"
 		default="/com/dwarfeng/projwiz/resources/configuration/i18n/label.properties" />
 
-	<info key="com.dwarfeng.projwiz.i18n.label_zh_CN" classify="com.dwarfeng.projwiz.core"
-		filename="label_zh_CN.properties"
-		default="/com/dwarfeng/projwiz/resources/configuration/i18n/label_zh_CN.properties" />
-
 	<info key="com.dwarfeng.projwiz.i18n.logger" classify="com.dwarfeng.projwiz.core"
 		filename="logger.properties"
 		default="/com/dwarfeng/projwiz/resources/configuration/i18n/logger.properties" />
-
-	<info key="com.dwarfeng.projwiz.i18n.logger_zh_CN" classify="com.dwarfeng.projwiz.core"
-		filename="logger_zh_CN.properties"
-		default="/com/dwarfeng/projwiz/resources/configuration/i18n/logger_zh_CN.properties" />
 
 </root>

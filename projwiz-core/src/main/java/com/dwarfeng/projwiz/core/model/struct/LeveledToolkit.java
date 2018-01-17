@@ -199,7 +199,7 @@ public final class LeveledToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void exit() throws IllegalStateException, ProcessException {
+	public void exit() throws IllegalStateException {
 		checkPermissionAndState(Method.EXIT);
 		standardToolkit.exit();
 	}
@@ -932,7 +932,7 @@ public final class LeveledToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start() throws IllegalStateException, ProcessException {
+	public void start() throws IllegalStateException {
 		checkPermissionAndState(Method.START);
 		standardToolkit.start();
 	}

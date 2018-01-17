@@ -1,10 +1,10 @@
 package com.dwarfeng.projwiz.launch;
 
+import java.util.Objects;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
 import com.dwarfeng.dutil.develop.backgr.AbstractTask;
@@ -70,13 +70,7 @@ public class SingletonLauncher {
 
 			@Override
 			protected void todo() throws Exception {
-				try {
-					projWizard.getToolkit().start();
-				} catch (ProcessException e) {
-					e.printStackTrace();
-					exitFlag = true;
-					exitCode = 12450;
-				}
+				projWizard.getToolkit().start();
 			}
 		};
 

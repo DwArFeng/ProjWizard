@@ -17,12 +17,12 @@ final class StartTask extends ProjWizTask {
 	 */
 	@Override
 	protected void todo() throws Exception {
-		try {
-			projWizard.getToolkit().start();
-		} catch (ProcessException e) {
-			warn(LoggerStringKey.TASK_START_0);
-			warn(LoggerStringKey.TASK_START_1, e);
-		}
+		projWizard.getToolkit().start();
+		// try {
+		// } catch (ProcessException e) {
+		// warn(LoggerStringKey.TASK_START_0);
+		// warn(LoggerStringKey.TASK_START_1, e);
+		// }
 
 	}
 }
@@ -70,12 +70,12 @@ final class ForceExitTask extends ProjWizTask {
 	 */
 	@Override
 	protected void todo() throws Exception {
-		try {
-			projWizard.getToolkit().exit();
-		} catch (ProcessException e) {
-			warn(LoggerStringKey.TASK_EXIT_0);
-			warn(LoggerStringKey.TASK_EXIT_1, e);
-		}
+		projWizard.getToolkit().exit();
+		// try {
+		// } catch (ProcessException e) {
+		// warn(LoggerStringKey.TASK_EXIT_0);
+		// warn(LoggerStringKey.TASK_EXIT_1, e);
+		// }
 
 	}
 }

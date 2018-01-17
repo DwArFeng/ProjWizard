@@ -576,7 +576,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean addObverser(FileObverser obverser) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("addObverser");
 		}
 
 		/**
@@ -584,7 +584,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void clearObverser() {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("clearObverser");
 		}
 
 		/**
@@ -592,7 +592,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void discardLabel(String label) throws IOException {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("discardLabel");
 		}
 
 		/**
@@ -740,7 +740,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void newLabel(String label) throws IOException {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("newLabel");
 		}
 
 		/**
@@ -748,7 +748,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public InputStream openInputStream(String label) throws IOException {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("openInputStream");
 		}
 
 		/**
@@ -756,7 +756,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public OutputStream openOutputStream(String label) throws IOException {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("openOutputStream");
 		}
 
 		/**
@@ -764,7 +764,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean removeObverser(FileObverser obverser) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("removeObverser");
 		}
 
 		/**
@@ -799,7 +799,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public Logger newLogger() throws Exception {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("newLogger");
 		}
 
 	}
@@ -817,7 +817,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void addURL(URL url) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("addURL");
 		}
 
 		/**
@@ -825,7 +825,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void clearAssertionStatus() {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("clearAssertionStatus");
 		}
 
 		/**
@@ -835,7 +835,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void close() throws IOException {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("close");
 		}
 
 		/**
@@ -923,7 +923,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void setClassAssertionStatus(String className, boolean enabled) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("setClassAssertionStatus");
 		}
 
 		/**
@@ -931,7 +931,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void setDefaultAssertionStatus(boolean enabled) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("setDefaultAssertionStatus");
 		}
 
 		/**
@@ -939,7 +939,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void setPackageAssertionStatus(String packageName, boolean enabled) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("setPackageAssertionStatus");
 		}
 
 		/**
@@ -981,7 +981,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public File addFileByNew(File parent, File file) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("addFileByNew");
 		}
 
 		/**
@@ -989,7 +989,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean addObverser(ProjectObverser obverser) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("addObverser");
 		}
 
 		/**
@@ -997,7 +997,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void clearObverser() {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("clearObverser");
 		}
 
 		/**
@@ -1138,7 +1138,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public File removeFileByDelete(File file) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("removeFileByDelete");
 		}
 
 		/**
@@ -1154,7 +1154,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean removeObverser(ProjectObverser obverser) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("removeObverser");
 		}
 
 		/**
@@ -1250,7 +1250,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public PropSuppiler getFilePropSuppiler(File file) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("getFilePropSuppiler");
 		}
 
 		/**
@@ -1314,7 +1314,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public PropSuppiler getProjectPropSuppiler(Project project) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("getProjectPropSuppiler");
 		}
 
 		/**
@@ -1453,7 +1453,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean add(com.dwarfeng.projwiz.core.model.cm.Tree.ParentChildPair<E> pair) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("add");
 		}
 
 		/**
@@ -1461,7 +1461,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean add(E parent, E element) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("add");
 		}
 
 		/**
@@ -1469,7 +1469,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean addAll(Collection<? extends com.dwarfeng.projwiz.core.model.cm.Tree.ParentChildPair<E>> c) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("addAll");
 		}
 
 		/**
@@ -1477,7 +1477,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean addAll(E parent, Collection<? extends E> c) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("addAll");
 		}
 
 		/**
@@ -1485,7 +1485,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean addRoot(E root) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("addRoot");
 		}
 
 		/**
@@ -1493,7 +1493,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public void clear() {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("clear");
 		}
 
 		/**
@@ -1597,7 +1597,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean remove(Object o) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("remove");
 		}
 
 		/**
@@ -1605,7 +1605,7 @@ public final class ModelUtil {
 		 */
 		@Override
 		public boolean removeAll(Collection<?> c) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("removeAll");
 		}
 
 		/**
