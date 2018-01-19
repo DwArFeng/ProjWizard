@@ -761,6 +761,7 @@ public final class Constants {
 		init0.put(ProjWizProperty.TEMP_PATH, "temp");
 		init0.put(ProjWizProperty.CFGREPO_PATH, "configuration");
 		init0.put(ProjWizProperty.CFG_LISTS, "");
+		init0.put(ProjWizProperty.COMPONENT_PATH, "components");
 		DEFAULT_PROJWIZ_PROPERTIES = Collections.unmodifiableMap(init0);
 
 		Map<Method, ToolkitLevel> init1 = new EnumMap<>(Method.class);

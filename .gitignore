@@ -49,5 +49,7 @@ buildNumber.properties
 ## ProjWizard
 #################
 /projwiz-testcase/configuration/
+/projwiz-testcase/components/
+/projwiz-testcase/plugins/
 /projwiz-testcase/logs/
 

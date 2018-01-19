@@ -38,9 +38,6 @@ public enum ResourceKey implements Name {
 	/** 文件处理器的反射设置。 */
 	REFLECT_FILE(Constants.RESOURCE_CLASSIFY_CORE, "reflect.fileproc"),
 
-	/** 处理器的配置设置。 */
-	PROCESSOR_CONFIG_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "processor.config.setting"),
-
 	/** 标签国际化文本默认配置。 */
 	I18N_LABEL(Constants.RESOURCE_CLASSIFY_I18N, "label"),
 

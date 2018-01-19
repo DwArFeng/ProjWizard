@@ -38,10 +38,6 @@
 		filename="processor.reflect.file.xml"
 		default="/com/dwarfeng/projwiz/resources/configuration/core/processor.reflect.file.xml" />
 
-	<info key="com.dwarfeng.projwiz.core.processor.config.setting"
-		classify="com.dwarfeng.projwiz.core" filename="processor.config.setting.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/processor.config.setting.xml" />
-
 	<info key="com.dwarfeng.projwiz.i18n.label" classify="com.dwarfeng.projwiz.core"
 		filename="label.properties"
 		default="/com/dwarfeng/projwiz/resources/configuration/i18n/label.properties" />

@@ -283,24 +283,24 @@ final class DisposeTask extends ProjWizTask {
 			}
 		}
 
-		// 保存处理器配置
-		XmlProcessorConfigSaver processorConfigSaver = null;
-		try {
-			processorConfigSaver = new XmlProcessorConfigSaver(
-					forceOpenOutputStream(ResourceKey.PROCESSOR_CONFIG_SETTING, LoggerStringKey.TASK_DISPOSE_4));
-			Set<SaveFailedException> saveFailedExceptions = processorConfigSaver
-					.countinuousSave(projWizard.getToolkit().getProcessorConfigHandler());
-			for (SaveFailedException e : saveFailedExceptions) {
-				warn(LoggerStringKey.TASK_DISPOSE_6, e);
-			}
-			if (!saveFailedExceptions.isEmpty()) {
-				modalConfigMask = MODAL_CONFIG_TASK;
-			}
-		} finally {
-			if (Objects.nonNull(processorConfigSaver)) {
-				processorConfigSaver.close();
-			}
-		}
+//		// 保存处理器配置
+//		XmlProcessorConfigSaver processorConfigSaver = null;
+//		try {
+//			processorConfigSaver = new XmlProcessorConfigSaver(
+//					forceOpenOutputStream(ResourceKey.PROCESSOR_CONFIG_SETTING, LoggerStringKey.TASK_DISPOSE_4));
+//			Set<SaveFailedException> saveFailedExceptions = processorConfigSaver
+//					.countinuousSave(projWizard.getToolkit().getProcessorConfigHandler());
+//			for (SaveFailedException e : saveFailedExceptions) {
+//				warn(LoggerStringKey.TASK_DISPOSE_6, e);
+//			}
+//			if (!saveFailedExceptions.isEmpty()) {
+//				modalConfigMask = MODAL_CONFIG_TASK;
+//			}
+//		} finally {
+//			if (Objects.nonNull(processorConfigSaver)) {
+//				processorConfigSaver.close();
+//			}
+//		}
 
 		// 释放界面。
 		SwingUtil.invokeAndWaitInEventQueue(() -> {

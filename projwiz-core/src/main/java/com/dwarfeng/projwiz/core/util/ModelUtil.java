@@ -33,8 +33,6 @@ import com.dwarfeng.projwiz.core.model.obv.ProcessorObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
-import com.dwarfeng.projwiz.core.model.struct.Logger;
-import com.dwarfeng.projwiz.core.model.struct.LoggerInfo;
 import com.dwarfeng.projwiz.core.model.struct.ProcessorConfigInfo;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
@@ -773,33 +771,6 @@ public final class ModelUtil {
 		@Override
 		public String toString() {
 			return delegate.toString();
-		}
-
-	}
-
-	private static class UnmodifiableLoggerInfo implements LoggerInfo {
-
-		private final LoggerInfo delegate;
-
-		public UnmodifiableLoggerInfo(LoggerInfo delegate) {
-			super();
-			this.delegate = delegate;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public String getKey() {
-			return delegate.getKey();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Logger newLogger() throws Exception {
-			throw new UnsupportedOperationException("newLogger");
 		}
 
 	}
@@ -1762,17 +1733,6 @@ public final class ModelUtil {
 	public static File unmodifiableFile(File file) {
 		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
 		return new UnmodifiableFile(file);
-	}
-
-	/**
-	 * 根据指定的记录器信息生成一个不可编辑的记录器信息。
-	 * 
-	 * @param loggerInfo
-	 *            指定的记录器信息。
-	 * @return 根据指定的记录器信息生成的不可编辑的记录器信息。
-	 */
-	public static LoggerInfo unmodifiableLoggerInfo(LoggerInfo loggerInfo) {
-		return new UnmodifiableLoggerInfo(loggerInfo);
 	}
 
 	/**
