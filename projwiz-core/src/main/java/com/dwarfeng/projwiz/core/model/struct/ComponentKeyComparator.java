@@ -9,15 +9,13 @@ import java.util.Objects;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public class ProcessorKeyComparator implements Comparator<Processor> {
+public class ComponentKeyComparator implements Comparator<Component> {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
-	public int compare(Processor o1, Processor o2) {
+	public int compare(Component o1, Component o2) {
 		Objects.requireNonNull(o1, "入口参数 o1 不能为 null。");
 		Objects.requireNonNull(o2, "入口参数 o2 不能为 null。");
 

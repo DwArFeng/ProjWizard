@@ -17,7 +17,7 @@ import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.view.gui.ProcessorSelectDialog;
+import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
 
 final class NewProjectTask extends ProjWizTask {
 
@@ -38,7 +38,7 @@ final class NewProjectTask extends ProjWizTask {
 
 		boolean emptyFlag = true;
 
-		for (ProjectProcessor processor : projWizard.getToolkit().getProjectProcessorModel()) {
+		for (ProjectProcessor processor : projWizard.getToolkit().getComponentModel().getAll(ProjectProcessor.class)) {
 			if (processor.isNewProjectSupported()) {
 				emptyFlag = false;
 				break;
@@ -50,13 +50,16 @@ final class NewProjectTask extends ProjWizTask {
 					DialogMessage.INFORMATION_MESSAGE, null);
 		}
 
-		AtomicReference<ProcessorSelectDialog<ProjectProcessor>> dialogRef = new AtomicReference<>();
+		AtomicReference<ComponentSelectDialog> dialogRef = new AtomicReference<>();
 
 		SwingUtil.invokeAndWaitInEventQueue(() -> {
-			dialogRef.set(new ProcessorSelectDialog<>(projWizard.getToolkit().getGuiManager(),
+			dialogRef.set(new ComponentSelectDialog(projWizard.getToolkit().getGuiManager(),
 					projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getMainFrame(),
-					projWizard.getToolkit().getProjectProcessorModel(), processor -> {
-						return processor.isNewProjectSupported();
+					projWizard.getToolkit().getComponentModel(), component -> {
+						if (!(component instanceof ProjectProcessor)) {
+							return false;
+						}
+						return ((ProjectProcessor) component).isNewProjectSupported();
 					}));
 		});
 
@@ -67,7 +70,7 @@ final class NewProjectTask extends ProjWizTask {
 			return;
 		}
 
-		ProjectProcessor processor = dialogRef.get().getCurrentProcessor();
+		ProjectProcessor processor = dialogRef.get().getCurrentComponent(ProjectProcessor.class);
 		if (Objects.isNull(processor)) {
 			return;
 		}

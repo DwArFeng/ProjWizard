@@ -33,7 +33,7 @@ import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncProcessorConfigHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
@@ -112,15 +112,6 @@ public final class LeveledToolkit implements Toolkit {
 	public boolean addObverserToFile(File file, FileObverser obverser) throws IllegalStateException {
 		checkPermissionAndState(Method.ADDOBVERSERTOFILE);
 		return standardToolkit.addObverserToFile(file, obverser);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean addObverserToProject(Project project, ProjectObverser obverser) {
-		checkPermissionAndState(Method.ADDOBVERSERTOPROJECT);
-		return standardToolkit.addObverserToProject(project, obverser);
 	}
 
 	/**
@@ -271,6 +262,15 @@ public final class LeveledToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public SyncComponentModel getComponentModel() throws IllegalStateException {
+		checkPermissionAndState(Method.GETCOMPONENTMODEL);
+		return standardToolkit.getComponentModel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public SyncExconfigModel getCoreConfigModel() throws IllegalStateException {
 		checkPermissionAndState(Method.GETCORECONFIGMODEL);
 		return standardToolkit.getCoreConfigModel();
@@ -373,24 +373,6 @@ public final class LeveledToolkit implements Toolkit {
 	public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException {
 		checkPermissionAndState(Method.GETFILEINDICATEMODEL);
 		return standardToolkit.getFileIndicateModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SyncKeySetModel<String, FileProcessor> getFileProcessorModel() throws IllegalStateException {
-		checkPermissionAndState(Method.GETFILEPROCESSORMODEL);
-		return standardToolkit.getFileProcessorModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public KeySetModel<String, FileProcessor> getFileProcessorModelReadOnly() throws IllegalStateException {
-		checkPermissionAndState(Method.GETFILEPROCESSORMODELREADONLY);
-		return standardToolkit.getFileProcessorModelReadOnly();
 	}
 
 	/**
@@ -568,15 +550,6 @@ public final class LeveledToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncProcessorConfigHandler getProcessorConfigHandler() throws IllegalStateException {
-		checkPermissionAndState(Method.GETPROCESSORCONFIGHANDLER);
-		return standardToolkit.getProcessorConfigHandler();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Set<ProgramObverser> getProgramObversers() throws IllegalStateException {
 		checkPermissionAndState(Method.GETPROGRAMOBVERSERS);
 		return standardToolkit.getProgramObversers();
@@ -616,24 +589,6 @@ public final class LeveledToolkit implements Toolkit {
 	public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException {
 		checkPermissionAndState(Method.GETPROJECTINDICATEMODEL);
 		return standardToolkit.getProjectIndicateModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SyncKeySetModel<String, ProjectProcessor> getProjectProcessorModel() throws IllegalStateException {
-		checkPermissionAndState(Method.GETPROJECTPROCESSORMODEL);
-		return standardToolkit.getProjectProcessorModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public KeySetModel<String, ProjectProcessor> getProjectProcessorModelReadOnly() throws IllegalStateException {
-		checkPermissionAndState(Method.GETPROJECTPROCESSORMODELREADONLY);
-		return standardToolkit.getProjectProcessorModelReadOnly();
 	}
 
 	/**
@@ -723,24 +678,6 @@ public final class LeveledToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean registFileProcessor(FileProcessor processor) throws IllegalStateException {
-		checkPermissionAndState(Method.REGISTFILEPROCESSOR);
-		return standardToolkit.registFileProcessor(processor);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean registProjectProcessor(ProjectProcessor processor) throws IllegalStateException {
-		checkPermissionAndState(Method.REGISTPROJECTPROCESSOR);
-		return standardToolkit.registProjectProcessor(processor);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
 		checkPermissionAndState(Method.REMOVECORECONFIGOBVERSER);
 		return standardToolkit.removeCoreConfigObverser(coreConfigObverser);
@@ -753,15 +690,6 @@ public final class LeveledToolkit implements Toolkit {
 	public boolean removeObverserFromFile(File file, FileObverser obverser) {
 		checkPermissionAndState(Method.REMOVEOBVERSERFROMFILE);
 		return standardToolkit.removeObverserFromFile(file, obverser);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean removeObverserFromProject(Project project, ProjectObverser obverser) {
-		checkPermissionAndState(Method.REMOVEOBVERSERFROMPROJECT);
-		return standardToolkit.removeObverserFromProject(project, obverser);
 	}
 
 	/**
@@ -977,24 +905,6 @@ public final class LeveledToolkit implements Toolkit {
 	public void tryExit() throws IllegalStateException {
 		checkPermissionAndState(Method.TRYEXIT);
 		standardToolkit.tryExit();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean unregistFileProcessor(FileProcessor processor) throws IllegalStateException {
-		checkPermissionAndState(Method.UNREGISTFILEPROCESSOR);
-		return standardToolkit.unregistFileProcessor(processor);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean unregistProjectProcessor(ProjectProcessor processor) throws IllegalStateException {
-		checkPermissionAndState(Method.UNREGISTPROJECTPROCESSOR);
-		return standardToolkit.unregistProjectProcessor(processor);
 	}
 
 	/**

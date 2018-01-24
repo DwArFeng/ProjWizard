@@ -27,7 +27,6 @@ import com.dwarfeng.dutil.basic.cna.model.DelegateMapModel;
 import com.dwarfeng.dutil.basic.cna.model.DelegateSetModel;
 import com.dwarfeng.dutil.basic.cna.model.KeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.ListModel;
-import com.dwarfeng.dutil.basic.cna.model.MapKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.MapModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SetModel;
@@ -36,7 +35,6 @@ import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
-import com.dwarfeng.dutil.basic.cna.model.obv.SetObverser;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.prog.DefaultVersion;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
@@ -66,10 +64,9 @@ import com.dwarfeng.dutil.develop.resource.DelegateResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceUtil;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.DelegateProcessorConfigHandler;
-import com.dwarfeng.projwiz.core.model.cm.MapExternalWindowModel;
-import com.dwarfeng.projwiz.core.model.cm.SyncProcessorConfigHandler;
-import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
+import com.dwarfeng.projwiz.core.model.cm.DelegateComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.ExternalWindowModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.CoreConfiguration;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
@@ -82,10 +79,8 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
-import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
-import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 import com.dwarfeng.projwiz.core.util.Constants;
@@ -440,17 +435,6 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean addObverserToProject(Project project, ProjectObverser obverser) throws IllegalStateException {
-			Project modifiableProject = projectIndicateModel.get(project.getUniqueLabel());
-			ProtectionProjectObverser obverser2 = new ProtectionProjectObverser(obverser);
-			projectObverserReferences.add(obverser2);
-			return modifiableProject.addObverser(obverser2);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public boolean addProgramObverser(ProgramObverser obverser) {
 			synchronized (programObversers) {
 				return programObversers.add(obverser);
@@ -465,7 +449,7 @@ public final class ProjWizard {
 			Objects.requireNonNull(setting, "入口参数 setting 不能为 null。");
 
 			ProjectFileChooser fileChooser = new ProjectFileChooser(guiManager, labelI18nHandler, holdProjectModel,
-					fileProcessorModel, projectProcessorModel);
+					componentModel);
 			fileChooser.setCurrentDirectory(setting.getCurrentDirectory());
 			fileChooser.setDialogType(setting.getDialogType());
 			fileChooser.setFileFilters(setting.getFileFilters());
@@ -663,8 +647,6 @@ public final class ProjWizard {
 				INSTANCES.remove(this);
 
 				// 反编织观察网络。
-				projectProcessorModel.removeObverser(projectProcessorObverser);
-				fileProcessorModel.removeObverser(fileProcessorObverser);
 				concurrentBackground.removeObverser(backgroundObverser);
 
 				// 判断是否出现异常。
@@ -744,6 +726,14 @@ public final class ProjWizard {
 		@Override
 		public ResourceHandler getCfgHandlerReadOnly() {
 			return ResourceUtil.readOnlyResourceHandler(configurationHandler);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncComponentModel getComponentModel() throws IllegalStateException {
+			return componentModel;
 		}
 
 		/**
@@ -840,23 +830,6 @@ public final class ProjWizard {
 		@Override
 		public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException {
 			return fileIndicateModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncKeySetModel<String, FileProcessor> getFileProcessorModel() {
-			return fileProcessorModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public KeySetModel<String, FileProcessor> getFileProcessorModelReadOnly() {
-			// TODO 使用ReadOnly代替。
-			return fileProcessorModel;
 		}
 
 		/**
@@ -1027,14 +1000,6 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncProcessorConfigHandler getProcessorConfigHandler() throws IllegalStateException {
-			return processorConfigHandler;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public Set<ProgramObverser> getProgramObversers() {
 			return programObversers;
 		}
@@ -1074,22 +1039,6 @@ public final class ProjWizard {
 		@Override
 		public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException {
 			return projectIndicateModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncKeySetModel<String, ProjectProcessor> getProjectProcessorModel() {
-			return projectProcessorModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public KeySetModel<String, ProjectProcessor> getProjectProcessorModelReadOnly() {
-			return ModelUtil.readOnlyProjectProcessorModel(projectProcessorModel);
 		}
 
 		/**
@@ -1155,9 +1104,9 @@ public final class ProjWizard {
 
 				DefaultMainFrameVisibleModel mainFrameVisibleModel = new DefaultMainFrameVisibleModel();
 
-				mainFrame = new MainFrame(guiManager, labelI18nHandler, projectProcessorModel, fileProcessorModel,
-						editorModel, mainFrameVisibleModel, anchorFileModel, focusProjectModel, focusFileModel,
-						holdProjectModel, focusEditorModel, coreConfigModel);
+				mainFrame = new MainFrame(guiManager, labelI18nHandler, componentModel, editorModel,
+						mainFrameVisibleModel, anchorFileModel, focusProjectModel, focusFileModel, holdProjectModel,
+						focusEditorModel, coreConfigModel);
 				return true;
 			}
 		}
@@ -1228,22 +1177,6 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean registFileProcessor(FileProcessor processor) {
-			return fileProcessorModel.add(processor);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean registProjectProcessor(ProjectProcessor processor) {
-			return projectProcessorModel.add(processor);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) {
 			return coreConfigModel.removeObverser(coreConfigObverser);
 		}
@@ -1255,18 +1188,6 @@ public final class ProjWizard {
 		public boolean removeObverserFromFile(File file, FileObverser obverser) throws IllegalStateException {
 			File modifiableFile = fileIndicateModel.get(file.getUniqueLabel());
 			return modifiableFile.removeObverser(obverser);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean removeObverserFromProject(Project project, ProjectObverser obverser)
-				throws IllegalStateException {
-			Project modifiableProject = projectIndicateModel.get(project.getUniqueLabel());
-			ProtectionProjectObverser obverser2 = new ProtectionProjectObverser(obverser);
-			projectObverserReferences.remove(obverser2);
-			return modifiableProject.removeObverser(obverser2);
 		}
 
 		/**
@@ -1488,8 +1409,6 @@ public final class ProjWizard {
 				setStartFlag(true);
 
 				// 编织观察网络
-				projectProcessorModel.addObverser(projectProcessorObverser);
-				fileProcessorModel.addObverser(fileProcessorObverser);
 				concurrentBackground.addObverser(backgroundObverser);
 
 				// 开启初始化过程
@@ -1552,22 +1471,6 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean unregistFileProcessor(FileProcessor processor) {
-			return fileProcessorModel.remove(processor);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean unregistProjectProcessor(ProjectProcessor processor) {
-			return projectProcessorModel.remove(processor);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public void warn(String message) {
 			Objects.requireNonNull(message, "入口参数 message 不能为 null。");
 			loggerHandler.warn(message);
@@ -1624,127 +1527,6 @@ public final class ProjWizard {
 
 	}
 
-	/**
-	 * 保护性质的工程观察器。
-	 * <p>
-	 * 观察器广播时的路径、工程、文件等入口参数均为只读的。
-	 * 
-	 * @author DwArFeng
-	 * @since 0.0.1-alpha
-	 */
-	// TODO Path仍然是不安全的。
-	private static final class ProtectionProjectObverser implements ProjectObverser {
-
-		private final ProjectObverser delegate;
-
-		public ProtectionProjectObverser(ProjectObverser delegate) {
-			Objects.requireNonNull(delegate, "入口参数 delegate 不能为 null。");
-			this.delegate = delegate;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (!(obj instanceof ProtectionProjectObverser)) {
-				return false;
-			}
-			ProtectionProjectObverser other = (ProtectionProjectObverser) obj;
-			if (delegate == null) {
-				if (other.delegate != null) {
-					return false;
-				}
-			} else if (!delegate.equals(other.delegate)) {
-				return false;
-			}
-			return true;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileAddedByCopy(Path<File> path, File parent, File file) {
-			delegate.fireFileAddedByCopy(path, ModelUtil.unmodifiableFile(parent), ModelUtil.unmodifiableFile(file));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileAddedByMove(Path<File> path, File parent, File file) {
-			delegate.fireFileAddedByMove(path, ModelUtil.unmodifiableFile(parent), ModelUtil.unmodifiableFile(file));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileAddedByNew(Path<File> path, File parent, File file) {
-			delegate.fireFileAddedByNew(path, ModelUtil.unmodifiableFile(parent), ModelUtil.unmodifiableFile(file));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileRemovedByDelete(Path<File> path, File parent, File file) {
-			delegate.fireFileRemovedByDelete(path, ModelUtil.unmodifiableFile(parent),
-					ModelUtil.unmodifiableFile(file));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileRemovedByMove(Path<File> path, File parent, File file) {
-			delegate.fireFileRemovedByMove(path, ModelUtil.unmodifiableFile(parent), ModelUtil.unmodifiableFile(file));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileRenamed(Path<File> path, File file, String oldName, String newName) {
-			delegate.fireFileRenamed(path, ModelUtil.unmodifiableFile(file), oldName, newName);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireSaved() {
-			delegate.fireSaved();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireStopped() {
-			delegate.fireStopped();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((delegate == null) ? 0 : delegate.hashCode());
-			return result;
-		}
-
-	}
-
 	/** 程序的版本 */
 	public final static Version VERSION = new DefaultVersion.Builder().type(VersionType.ALPHA).firstVersion((byte) 0)
 			.secondVersion((byte) 0).thirdVersion((byte) 3).buildDate("20171027").buildVersion('A').build();
@@ -1767,9 +1549,6 @@ public final class ProjWizard {
 	// 核心配置模型
 	private final SyncExconfigModel coreConfigModel = ConfigUtil
 			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(CoreConfiguration.values())));
-	// 文件处理器模型
-	private final SyncKeySetModel<String, FileProcessor> fileProcessorModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
-			.syncKeySetModel(new MapKeySetModel<>());
 	// 标签国际化处理器
 	private final SyncI18nHandler labelI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	// 记录器接口
@@ -1779,9 +1558,6 @@ public final class ProjWizard {
 	// 模态配置模型
 	private final SyncExconfigModel modalConfigModel = ConfigUtil
 			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(ModalConfiguration.values())));
-	// 工程处理器模型
-	private final SyncKeySetModel<String, ProjectProcessor> projectProcessorModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
-			.syncKeySetModel(new MapKeySetModel<>());
 	// 配置处理器
 	private final SyncResourceHandler configurationHandler = ResourceUtil
 			.syncResourceHandler(new DelegateResourceHandler());
@@ -1802,7 +1578,7 @@ public final class ProjWizard {
 			.syncMapModel(new DelegateMapModel<>());
 	// 外部窗口
 	private final SyncKeySetModel<String, WindowSuppiler> externalWindowModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
-			.syncKeySetModel(new MapExternalWindowModel());
+			.syncKeySetModel(new ExternalWindowModel());
 	// 编辑器模型
 	private final SyncMapModel<ProjectFilePair, Editor> editorModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
@@ -1812,12 +1588,6 @@ public final class ProjWizard {
 	// 文件指示器模型
 	private final SyncMapModel<String, File> fileIndicateModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
-	// 保护性工程侦听维持引用
-	private final Set<ProtectionProjectObverser> projectObverserReferences = Collections
-			.synchronizedSet(new HashSet<>());
-	// 处理器配置模型
-	private final SyncProcessorConfigHandler processorConfigHandler = ModelUtil
-			.syncProcessorConfigHandler(new DelegateProcessorConfigHandler());
 	// 工程图标图片模型
 	private final SyncMapModel<Project, Image> projectIconImageModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
@@ -1830,6 +1600,8 @@ public final class ProjWizard {
 	// 文件的图标侦听器模型
 	private final SyncMapModel<File, FileObverser> fileIconObvModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
+	// 组件模型
+	private final SyncComponentModel componentModel = ModelUtil.syncComponentModel(new DelegateComponentModel());
 
 	// --------------------------------------------控制--------------------------------------------
 	/** 程序的侦听器集合 */
@@ -1873,10 +1645,6 @@ public final class ProjWizard {
 	private final Object mainFrameLock = new Object();
 
 	// --------------------------------------------观察器--------------------------------------------
-	/** 程序的工程处理器观察器 */
-	private final SetObverser<ProjectProcessor> projectProcessorObverser = new ProjectProcessorObverserImpl(this);
-	/** 程序的文件处理器观察器 */
-	private final SetObverser<FileProcessor> fileProcessorObverser = new FileProcessorObverserImpl(this);
 	/** 后台模型侦听器 */
 	private final BackgroundObverser backgroundObverser = new BackgroundObverserImpl(this);
 

@@ -79,6 +79,8 @@ final class PoseTask extends ProjWizTask {
 		// 加载模态配置。
 		loadModalConfig();
 
+		
+
 		// 加载组件文件夹下jar包。
 		formatInfo(LoggerStringKey.TASK_POSE_13, projWizard.getToolkit().getProperty(ProjWizProperty.COMPONENT_PATH));
 		File component_dir = new File(projWizard.getToolkit().getProperty(ProjWizProperty.COMPONENT_PATH));
@@ -110,6 +112,7 @@ final class PoseTask extends ProjWizTask {
 
 		// 解析插件文件夹下的jar包中的cfg-list.xml
 		loadJarsCfg(plugin_jars);
+		
 
 		// -------------------------------------
 

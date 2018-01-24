@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -12,19 +11,14 @@ import java.util.Set;
 
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.io.SaveFailedException;
-import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.develop.cfg.io.PropConfigSaver;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.eum.ModalConfiguration;
 import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
-import com.dwarfeng.projwiz.core.model.io.XmlProcessorConfigSaver;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
-import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
-import com.dwarfeng.projwiz.core.model.struct.Processor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
-import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 
 final class DisposeTask extends ProjWizTask {
@@ -97,6 +91,13 @@ final class DisposeTask extends ProjWizTask {
 		}
 
 		/**
+		 * @return the maximum
+		 */
+		public boolean isMaximum() {
+			return maximum;
+		}
+
+		/**
 		 * 
 		 * @return
 		 */
@@ -116,13 +117,6 @@ final class DisposeTask extends ProjWizTask {
 		 */
 		public boolean isWestPanelVisible() {
 			return westPanelVisible;
-		}
-
-		/**
-		 * @return the maximum
-		 */
-		public boolean isMaximum() {
-			return maximum;
 		}
 
 		@Override
@@ -184,18 +178,20 @@ final class DisposeTask extends ProjWizTask {
 			projWizard.getToolkit().getHoldProjectModel().getLock().readLock().unlock();
 		}
 
-		// 卸载处理器并存储配置
-		info(LoggerStringKey.TASK_DISPOSE_9);
-		Set<ProjectProcessor> tempProjectProcessors = new HashSet<>(projWizard.getToolkit().getProjectProcessorModel());
-		tempProjectProcessors.forEach(processor -> {
-			saveConfig(processor);
-			projWizard.getToolkit().getProjectProcessorModel().remove(processor);
-		});
-		Set<FileProcessor> tempFileProcessors = new HashSet<>(projWizard.getToolkit().getFileProcessorModel());
-		tempFileProcessors.forEach(processor -> {
-			saveConfig(processor);
-			projWizard.getToolkit().getFileProcessorModel().remove(processor);
-		});
+		// // 卸载处理器并存储配置
+		// info(LoggerStringKey.TASK_DISPOSE_9);
+		// Set<ProjectProcessor> tempProjectProcessors = new
+		// HashSet<>(projWizard.getToolkit().getProjectProcessorModel());
+		// tempProjectProcessors.forEach(processor -> {
+		// saveConfig(processor);
+		// projWizard.getToolkit().getProjectProcessorModel().remove(processor);
+		// });
+		// Set<FileProcessor> tempFileProcessors = new
+		// HashSet<>(projWizard.getToolkit().getFileProcessorModel());
+		// tempFileProcessors.forEach(processor -> {
+		// saveConfig(processor);
+		// projWizard.getToolkit().getFileProcessorModel().remove(processor);
+		// });
 
 		// 试图停止后台。
 		info(LoggerStringKey.TASK_DISPOSE_0);
@@ -323,13 +319,14 @@ final class DisposeTask extends ProjWizTask {
 		}
 	}
 
-	private void saveConfig(Processor processor) {
-		try {
-			processor.saveConfig();
-		} catch (ProcessException e) {
-			warn(LoggerStringKey.TASK_DISPOSE_10);
-			formatWarn(LoggerStringKey.TASK_DISPOSE_11, processor.getKey(), processor.getClass().toString());
-			warn(LoggerStringKey.TASK_DISPOSE_12, e);
-		}
-	}
+	// private void saveConfig(Processor processor) {
+	// try {
+	// processor.saveConfig();
+	// } catch (ProcessException e) {
+	// warn(LoggerStringKey.TASK_DISPOSE_10);
+	// formatWarn(LoggerStringKey.TASK_DISPOSE_11, processor.getKey(),
+	// processor.getClass().toString());
+	// warn(LoggerStringKey.TASK_DISPOSE_12, e);
+	// }
+	// }
 }

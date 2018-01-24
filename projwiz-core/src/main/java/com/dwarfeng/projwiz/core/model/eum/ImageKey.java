@@ -57,6 +57,8 @@ public enum ImageKey implements Name {
 	UPTO("upto.png"),
 	/** 主页 */
 	FRONTPAGE("frontpage.png"),
+	/** 组件 */
+	COMPONENT("component.png"),
 
 	;
 

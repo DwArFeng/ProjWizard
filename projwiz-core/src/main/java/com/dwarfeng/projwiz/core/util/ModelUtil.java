@@ -1,6 +1,5 @@
 package com.dwarfeng.projwiz.core.util;
 
-import java.awt.Component;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,24 +19,20 @@ import com.dwarfeng.dutil.basic.cna.model.obv.SetObverser;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ReadOnlyGenerator;
 import com.dwarfeng.dutil.basic.threads.ThreadUtil;
-import com.dwarfeng.dutil.develop.resource.Resource;
-import com.dwarfeng.dutil.develop.resource.ResourceUtil;
-import com.dwarfeng.projwiz.core.model.cm.ProcessorConfigHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncProcessorConfigHandler;
+import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
-import com.dwarfeng.projwiz.core.model.eum.FixType;
+import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.EditorObverser;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
-import com.dwarfeng.projwiz.core.model.obv.ProcessorObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
+import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
-import com.dwarfeng.projwiz.core.model.struct.ProcessorConfigInfo;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
-import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 
 /**
  * 模型工具。
@@ -47,12 +42,13 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit;
  */
 public final class ModelUtil {
 
-	private static final class SyncProcessorConfigHandlerImpl implements SyncProcessorConfigHandler {
+	private static final class SyncComponentModelImpl implements SyncComponentModel {
 
-		private final ProcessorConfigHandler delegate;
 		private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-		public SyncProcessorConfigHandlerImpl(ProcessorConfigHandler delegate) {
+		private final ComponentModel delegate;
+
+		private SyncComponentModelImpl(ComponentModel delegate) {
 			this.delegate = delegate;
 		}
 
@@ -60,7 +56,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean add(ProcessorConfigInfo e) {
+		public boolean add(Component e) {
 			lock.writeLock().lock();
 			try {
 				return delegate.add(e);
@@ -73,7 +69,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean addAll(Collection<? extends ProcessorConfigInfo> c) {
+		public boolean addAll(Collection<? extends Component> c) {
 			lock.writeLock().lock();
 			try {
 				return delegate.addAll(c);
@@ -86,7 +82,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean addObverser(SetObverser<ProcessorConfigInfo> obverser) {
+		public boolean addObverser(SetObverser<Component> obverser) {
 			lock.writeLock().lock();
 			try {
 				return delegate.addObverser(obverser);
@@ -173,14 +169,19 @@ public final class ModelUtil {
 			}
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
-		public boolean equals(Object o) {
+		public boolean equals(Object obj) {
 			lock.readLock().lock();
 			try {
-				return delegate.equals(o);
+				if (obj == this) {
+					return true;
+				}
+
+				if (obj == delegate) {
+					return true;
+				}
+
+				return delegate.equals(obj);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -190,11 +191,10 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public ProcessorConfigInfo get(String key) {
+		public Component get(String key) {
 			lock.readLock().lock();
 			try {
 				return delegate.get(key);
-
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -204,10 +204,23 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public java.io.File getDirection() {
+		public <T extends Component> T get(String key, Class<T> clas) throws ClassCastException, NullPointerException {
 			lock.readLock().lock();
 			try {
-				return delegate.getDirection();
+				return delegate.get(key, clas);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public <T extends Component> KeySetModel<String, T> getAll(Class<T> clas) throws NullPointerException {
+			lock.readLock().lock();
+			try {
+				return delegate.getAll(clas);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -225,7 +238,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Set<SetObverser<ProcessorConfigInfo>> getObversers() {
+		public Set<SetObverser<Component>> getObversers() {
 			lock.readLock().lock();
 			try {
 				return delegate.getObversers();
@@ -259,23 +272,10 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Iterator<ProcessorConfigInfo> iterator() {
+		public Iterator<Component> iterator() {
 			lock.readLock().lock();
 			try {
 				return delegate.iterator();
-			} finally {
-				lock.readLock().unlock();
-			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Resource newResource(String key) {
-			lock.readLock().lock();
-			try {
-				return delegate.newResource(key);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -337,7 +337,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean removeObverser(SetObverser<ProcessorConfigInfo> obverser) {
+		public boolean removeObverser(SetObverser<Component> obverser) {
 			lock.writeLock().lock();
 			try {
 				return delegate.removeObverser(obverser);
@@ -367,19 +367,6 @@ public final class ModelUtil {
 			lock.writeLock().lock();
 			try {
 				return delegate.retainAllKey(c);
-			} finally {
-				lock.writeLock().unlock();
-			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean setDirection(java.io.File direction) {
-			lock.writeLock().lock();
-			try {
-				return delegate.setDirection(direction);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -475,7 +462,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Component getEditorView() {
+		public java.awt.Component getEditorView() {
 			throw new UnsupportedOperationException("getEditorView");
 		}
 
@@ -1165,27 +1152,17 @@ public final class ModelUtil {
 	private static final class UnmodifiableProjectProcessor implements ProjectProcessor {
 
 		private final ProjectProcessor delegate;
-		private final ReadOnlyGenerator<Resource> resourceGenerator;
 
-		public UnmodifiableProjectProcessor(ProjectProcessor delegate, ReadOnlyGenerator<Resource> resourceGenerator) {
+		public UnmodifiableProjectProcessor(ProjectProcessor delegate) {
 			this.delegate = delegate;
-			this.resourceGenerator = resourceGenerator;
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean addObverser(ProcessorObverser obverser) {
-			throw new UnsupportedOperationException("addObverser");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void clearObverser() {
-			throw new UnsupportedOperationException("clearObverser");
+		public void dispose() {
+			throw new UnsupportedOperationException("dispose");
 		}
 
 		/**
@@ -1198,14 +1175,6 @@ public final class ModelUtil {
 			if (obj == delegate)
 				return true;
 			return delegate.equals(obj);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Resource getConfigResource() {
-			return resourceGenerator.readOnly(delegate.getConfigResource());
 		}
 
 		/**
@@ -1236,6 +1205,14 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public IconVariability getIconVarialibity() {
+			return delegate.getIconVarialibity();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public String getKey() {
 			return delegate.getKey();
 		}
@@ -1260,14 +1237,6 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Set<ProcessorObverser> getObversers() {
-			return delegate.getObversers();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public Image getProjectIcon(Project project) {
 			return delegate.getProjectIcon(project);
 		}
@@ -1276,7 +1245,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public FixType getProjectIconFixType(Project project) {
+		public IconVariability getProjectIconFixType(Project project) {
 			return delegate.getProjectIconFixType(project);
 		}
 
@@ -1300,16 +1269,8 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public FixType getProjectThumbFixType(Project project) {
+		public IconVariability getProjectThumbFixType(Project project) {
 			return delegate.getProjectThumbFixType(project);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Toolkit getToolkit() {
-			return delegate.getToolkit();
 		}
 
 		/**
@@ -1348,14 +1309,6 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void loadConfig() throws ProcessException {
-			throw new UnsupportedOperationException("loadConfig");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public Project newProject() throws ProcessException {
 			throw new UnsupportedOperationException("newProject");
 		}
@@ -1372,32 +1325,8 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean removeObverser(ProcessorObverser obverser) {
-			throw new UnsupportedOperationException("removeObverser");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void saveConfig() throws ProcessException {
-			throw new UnsupportedOperationException("saveConfig");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public Project saveProject(Project project) throws ProcessException {
 			throw new UnsupportedOperationException("saveProject");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean setToolkit(Toolkit toolkit) {
-			throw new UnsupportedOperationException("setToolkit");
 		}
 
 		/**
@@ -1651,21 +1580,21 @@ public final class ModelUtil {
 	}
 
 	/**
-	 * 根据指定的处理器配置处理器生成一个同步的处理器配置处理器。
+	 * 根据指定的组件模型生成一个线程安全的组件模型。
 	 * 
-	 * @param processorConfigHandler
-	 *            指定的处理器配置处理器。
-	 * @return 根据指定的处理器配置处理器生成的同步处理器配置处理器。
+	 * @param componentModel
+	 *            指定的组件模型。
+	 * @return 由指定的组件模型生成的线程安全的组件模型。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public static SyncProcessorConfigHandler syncProcessorConfigHandler(ProcessorConfigHandler processorConfigHandler) {
-		Objects.requireNonNull(processorConfigHandler, "入口参数 processorConfigHandler 不能为 null。");
-		return new SyncProcessorConfigHandlerImpl(processorConfigHandler);
+	public static SyncComponentModel syncComponentModel(ComponentModel componentModel) {
+		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
+		return new SyncComponentModelImpl(componentModel);
 	}
 
 	/**
-	 * 由指定的工程处理器生成一个不可编辑的工程处理器。
+	 * 由指定的工程处理器和指定的只读资源生成器生成一个不可编辑的工程处理器。
 	 * 
 	 * @param projectProcessor
 	 *            指定的工程处理器。
@@ -1675,26 +1604,7 @@ public final class ModelUtil {
 	 */
 	public static ProjectProcessor unmodifableProjectProcessor(ProjectProcessor projectProcessor) {
 		Objects.requireNonNull(projectProcessor, "入口参数 projectProcessor 不能为 null。");
-		return new UnmodifiableProjectProcessor(projectProcessor, resource -> {
-			return ResourceUtil.unmodifiableResource(resource);
-		});
-	}
-
-	/**
-	 * 由指定的工程处理器和指定的只读资源生成器生成一个不可编辑的工程处理器。
-	 * 
-	 * @param projectProcessor
-	 *            指定的工程处理器。
-	 * @param resourceGenerator
-	 *            指定的只读资源生成器。
-	 * @return 由指定的工程处理器生成的不可编辑的工程处理器。
-	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
-	 */
-	public static ProjectProcessor unmodifableProjectProcessor(ProjectProcessor projectProcessor,
-			ReadOnlyGenerator<Resource> resourceGenerator) {
-		Objects.requireNonNull(projectProcessor, "入口参数 projectProcessor 不能为 null。");
-		return new UnmodifiableProjectProcessor(projectProcessor, resourceGenerator);
+		return new UnmodifiableProjectProcessor(projectProcessor);
 	}
 
 	/**

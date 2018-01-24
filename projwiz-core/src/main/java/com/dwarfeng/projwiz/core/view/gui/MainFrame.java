@@ -21,7 +21,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
@@ -33,19 +32,18 @@ import com.dwarfeng.dutil.basic.gui.swing.JExconsole;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
-import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
-import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.view.obv.MainFrameVisibleAdapter;
 import com.dwarfeng.projwiz.core.view.obv.MainFrameVisibleObverser;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
-import com.dwarfeng.projwiz.core.view.struct.MainFrameVisibleModel;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager.ExecType;
+import com.dwarfeng.projwiz.core.view.struct.MainFrameVisibleModel;
 
 /**
  * 主界面。
@@ -79,6 +77,7 @@ public class MainFrame extends ProjWizFrame {
 	private SyncListModel<Project> holdProjectModel;
 	private SyncMapModel<Project, Editor> focusEditorModel;
 	private SyncExconfigModel coreConfigModel;
+	private SyncComponentModel componentModel;
 
 	private final MainFrameVisibleObverser visibleModelObverser = new MainFrameVisibleAdapter() {
 
@@ -144,15 +143,14 @@ public class MainFrame extends ProjWizFrame {
 	 * 新实例。
 	 */
 	public MainFrame() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	/**
 	 * 
 	 * @param guiManager
 	 * @param i18nHandler
-	 * @param projectProcessorModel
-	 * @param fileProcessorModel
+	 * @param componentModel
 	 * @param editorModel
 	 * @param visibleModel
 	 * @param anchorFileModel
@@ -160,10 +158,9 @@ public class MainFrame extends ProjWizFrame {
 	 * @param focusFileModel
 	 * @param holdProjectModel
 	 * @param focusEditorModel
+	 * @param coreConfigModel
 	 */
-	public MainFrame(GuiManager guiManager, I18nHandler i18nHandler,
-			SyncKeySetModel<String, ProjectProcessor> projectProcessorModel,
-			SyncKeySetModel<String, FileProcessor> fileProcessorModel,
+	public MainFrame(GuiManager guiManager, I18nHandler i18nHandler, SyncComponentModel componentModel,
 			SyncMapModel<ProjectFilePair, Editor> editorModel, MainFrameVisibleModel visibleModel,
 			SyncReferenceModel<File> anchorFileModel, SyncReferenceModel<Project> focusProjectModel,
 			SyncSetModel<File> focusFileModel, SyncListModel<Project> holdProjectModel,
@@ -219,12 +216,11 @@ public class MainFrame extends ProjWizFrame {
 		adjPanel_01.add(panel, BorderLayout.WEST);
 		panel.setLayout(new BorderLayout(0, 0));
 
-		mfPanel_01 = new MfPanel_01(guiManager, i18nHandler, focusProjectModel, holdProjectModel,
-				projectProcessorModel);
+		mfPanel_01 = new MfPanel_01(guiManager, i18nHandler, focusProjectModel, holdProjectModel, componentModel);
 		panel.add(mfPanel_01, BorderLayout.NORTH);
 
 		mfPanel_02 = new MfPanel_02(guiManager, i18nHandler, anchorFileModel, focusProjectModel, focusFileModel,
-				projectProcessorModel, fileProcessorModel);
+				componentModel);
 		panel.add(mfPanel_02, BorderLayout.CENTER);
 
 		JPanel panel_1 = new JPanel();
@@ -272,6 +268,7 @@ public class MainFrame extends ProjWizFrame {
 		this.holdProjectModel = holdProjectModel;
 		this.focusEditorModel = focusEditorModel;
 		this.coreConfigModel = coreConfigModel;
+		this.componentModel = componentModel;
 
 		syncVisibleModel();
 
@@ -305,6 +302,13 @@ public class MainFrame extends ProjWizFrame {
 	 */
 	public SyncReferenceModel<File> getAnchorFileModel() {
 		return anchorFileModel;
+	}
+
+	/**
+	 * @return the componentModel
+	 */
+	public SyncComponentModel getComponentModel() {
+		return componentModel;
 	}
 
 	/**
@@ -415,6 +419,16 @@ public class MainFrame extends ProjWizFrame {
 	}
 
 	/**
+	 * @param componentModel
+	 *            the componentModel to set
+	 */
+	public void setComponentModel(SyncComponentModel componentModel) {
+		this.componentModel = componentModel;
+		mfPanel_01.setComponentModel(componentModel);
+		mfPanel_02.setComponentModel(componentModel);
+	}
+
+	/**
 	 * @param coreConfigModel
 	 *            the coreConfigModel to set
 	 */
@@ -484,14 +498,6 @@ public class MainFrame extends ProjWizFrame {
 		// /ProjWizard/src/projwiz/com/dwarfeng/projwiz/view/gui/MfMenu_02.java
 		// /ProjWizard/src/projwiz/com/dwarfeng/projwiz/view/gui/MfDesktopPane_01.java
 		this.holdProjectModel = holdProjectModel;
-	}
-
-	/**
-	 * @param projectProcessorModel
-	 *            the projectProcessorModel to set
-	 */
-	public void setProjectProcessorModel(SyncKeySetModel<String, ProjectProcessor> projectProcessorModel) {
-		mfPanel_01.setProjectProcessorModel(projectProcessorModel);
 	}
 
 	/**

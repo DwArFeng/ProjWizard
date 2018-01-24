@@ -21,7 +21,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.obv.MapAdapter;
 import com.dwarfeng.dutil.basic.cna.model.obv.MapObverser;
@@ -31,6 +30,7 @@ import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.gui.swing.JAdjustableBorderPanel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
@@ -50,7 +50,7 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
  */
 public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 
-	private static final long serialVersionUID = -7817235199574595695L;
+	private static final long serialVersionUID = -641048304185280209L;
 
 	private final JTable focusTable;
 	private final JTable mapTable;
@@ -60,8 +60,7 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 
 	private SyncMapModel<Project, Editor> focusEditorModel;
 	private SyncMapModel<ProjectFilePair, Editor> editorModel;
-	private SyncKeySetModel<String, FileProcessor> fileProcessorModel;
-	private SyncKeySetModel<String, ProjectProcessor> projectProcessorModel;
+	private SyncComponentModel componentModel;
 
 	private final DefaultTableModel focusTableModel = new DefaultTableModel() {
 
@@ -276,7 +275,7 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 	 * 新实例。
 	 */
 	public EditorMonitor() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	/**
@@ -285,13 +284,10 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 	 * @param i18nHandler
 	 * @param focusEditorModel
 	 * @param editorModel
-	 * @param projectProcessorModel
-	 * @param fileProcessorModel
+	 * @param componentModel
 	 */
 	public EditorMonitor(GuiManager guiManager, I18nHandler i18nHandler, SyncMapModel<Project, Editor> focusEditorModel,
-			SyncMapModel<ProjectFilePair, Editor> editorModel,
-			SyncKeySetModel<String, ProjectProcessor> projectProcessorModel,
-			SyncKeySetModel<String, FileProcessor> fileProcessorModel) {
+			SyncMapModel<ProjectFilePair, Editor> editorModel, SyncComponentModel componentModel) {
 		super(guiManager, i18nHandler);
 
 		editorIcon = new ImageIcon(ImageUtil.getInternalImage(ImageKey.EDITOR, ImageSize.ICON_SMALL));
@@ -376,13 +372,11 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 
 		this.focusEditorModel = focusEditorModel;
 		this.editorModel = editorModel;
-		this.fileProcessorModel = fileProcessorModel;
-		this.projectProcessorModel = projectProcessorModel;
+		this.componentModel = componentModel;
 
 		syncFocusEditorModel();
 		syncEditorModel();
-		syncProjectProcessorModel();
-		syncFileProcessorModel();
+		syncComponentModel();
 
 	}
 
@@ -407,17 +401,19 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 	}
 
 	/**
+	 * 返回面板中的组件模型。
+	 * 
+	 * @return 面板中的组件模型。
+	 */
+	public SyncComponentModel getComponentModel() {
+		return componentModel;
+	}
+
+	/**
 	 * @return the editorModel
 	 */
 	public SyncMapModel<ProjectFilePair, Editor> getEditorModel() {
 		return editorModel;
-	}
-
-	/**
-	 * @return the fileProcessorModel
-	 */
-	public SyncKeySetModel<String, FileProcessor> getFileProcessorModel() {
-		return fileProcessorModel;
 	}
 
 	/**
@@ -433,13 +429,6 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 	@Override
 	public String getKey() {
 		return this.getClass().toString();
-	}
-
-	/**
-	 * @return the projectProcessorModel
-	 */
-	public SyncKeySetModel<String, ProjectProcessor> getProjectProcessorModel() {
-		return projectProcessorModel;
 	}
 
 	/**
@@ -464,6 +453,17 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 	}
 
 	/**
+	 * 设置面板文件中的组件模型。
+	 * 
+	 * @param componentModel
+	 *            指定的组件模型。
+	 */
+	public void setComponentModel(SyncComponentModel componentModel) {
+		this.componentModel = componentModel;
+		syncComponentModel();
+	}
+
+	/**
 	 * @param editorModel
 	 *            the editorModel to set
 	 */
@@ -481,17 +481,6 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 	}
 
 	/**
-	 * 设置面板的文件管理模型。
-	 * 
-	 * @param fileProcessorModel
-	 *            指定的文件管理模型。
-	 */
-	public void setFileProcessorModel(SyncKeySetModel<String, FileProcessor> fileProcessorModel) {
-		this.fileProcessorModel = fileProcessorModel;
-		syncFileProcessorModel();
-	}
-
-	/**
 	 * @param focusEditorModel
 	 *            the focusEditorModel to set
 	 */
@@ -506,17 +495,6 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 
 		this.focusEditorModel = focusEditorModel;
 		syncFocusEditorModel();
-	}
-
-	/**
-	 * 设置面板中的工程管理模型。
-	 * 
-	 * @param projectProcessorModel
-	 *            指定的工程管理模型。
-	 */
-	public void setProjectProcessorModel(SyncKeySetModel<String, ProjectProcessor> projectProcessorModel) {
-		this.projectProcessorModel = projectProcessorModel;
-		syncProjectProcessorModel();
 	}
 
 	/**
@@ -561,8 +539,8 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 		label.setText(file.getName());
 		label.setToolTipText(file.getName());
 		Image image = null;
-		if (Objects.nonNull(fileProcessorModel)) {
-			FileProcessor processor = fileProcessorModel.get(file.getRegisterKey());
+		if (Objects.nonNull(componentModel)) {
+			FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
 			if (Objects.nonNull(processor)) {
 				image = processor.getFileIcon(ModelUtil.unmodifiableFile(file));
 			}
@@ -586,8 +564,8 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 		label.setText(project.getName());
 		label.setToolTipText(project.getName());
 		Image image = null;
-		if (Objects.nonNull(projectProcessorModel)) {
-			ProjectProcessor processor = projectProcessorModel.get(project.getRegisterKey());
+		if (Objects.nonNull(componentModel)) {
+			ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class).get(project.getRegisterKey());
 			if (Objects.nonNull(processor)) {
 				image = processor.getProjectIcon(ModelUtil.unmodifiableProject(project));
 			}
@@ -597,6 +575,12 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 		} else {
 			label.setIcon(new ImageIcon(ImageUtil.scaleImage(image, ImageSize.ICON_SMALL)));
 		}
+	}
+
+	private void syncComponentModel() {
+		mapTable.repaint();
+		mapTable.repaint();
+		focusTable.repaint();
 	}
 
 	private void syncEditorModel() {
@@ -618,10 +602,6 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 		}
 	}
 
-	private void syncFileProcessorModel() {
-		mapTable.repaint();
-	}
-
 	private void syncFocusEditorModel() {
 		while (focusTableModel.getRowCount() > 0) {
 			focusTableModel.removeRow(0);
@@ -639,11 +619,6 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 		} finally {
 			focusEditorModel.getLock().readLock().unlock();
 		}
-	}
-
-	private void syncProjectProcessorModel() {
-		mapTable.repaint();
-		focusTable.repaint();
 	}
 
 }

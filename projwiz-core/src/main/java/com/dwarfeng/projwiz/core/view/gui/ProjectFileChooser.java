@@ -57,7 +57,6 @@ import javax.swing.event.ListSelectionListener;
 import com.dwarfeng.dutil.basic.cna.CollectionUtil;
 import com.dwarfeng.dutil.basic.cna.model.DefaultReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.obv.ListAdapter;
 import com.dwarfeng.dutil.basic.cna.model.obv.ListObverser;
@@ -68,6 +67,7 @@ import com.dwarfeng.dutil.basic.gui.swing.MuaListModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.prog.Filter;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.FileChooserDialogType;
 import com.dwarfeng.projwiz.core.model.eum.FileSelectionMode;
@@ -225,8 +225,7 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	private JComboBox<FileFilter> comboBox_fileFilter;
 
 	private SyncListModel<Project> holdProjectModel;
-	private SyncKeySetModel<String, FileProcessor> fileProcessorModel;
-	private SyncKeySetModel<String, ProjectProcessor> projectProcessorModel;
+	private SyncComponentModel componentModel;
 
 	private final ReferenceModel<File> selectedFile = new DefaultReferenceModel<>();
 	private final List<File> selectedFiles = new ArrayList<>();
@@ -251,8 +250,9 @@ public final class ProjectFileChooser extends ProjWizPanel {
 				return this;
 			setText(project.getName());
 			Image image = null;
-			if (Objects.nonNull(projectProcessorModel)) {
-				ProjectProcessor processor = projectProcessorModel.get(project.getRegisterKey());
+			if (Objects.nonNull(componentModel)) {
+				ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class)
+						.get(project.getRegisterKey());
 				if (Objects.nonNull(processor)) {
 					image = processor.getProjectIcon(ModelUtil.unmodifiableProject(project));
 				}
@@ -282,8 +282,8 @@ public final class ProjectFileChooser extends ProjWizPanel {
 			// setText(file.getName());
 			setText(fileNameMap.get(file));
 			Image image = null;
-			if (Objects.nonNull(fileProcessorModel)) {
-				FileProcessor processor = fileProcessorModel.get(file.getRegisterKey());
+			if (Objects.nonNull(componentModel)) {
+				FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
 				if (Objects.nonNull(processor)) {
 					image = processor.getFileIcon(ModelUtil.unmodifiableFile(file));
 				}
@@ -422,7 +422,7 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	 * 新实例。
 	 */
 	public ProjectFileChooser() {
-		this(null, null, null, null, null);
+		this(null, null, null, null);
 	}
 
 	/**
@@ -434,8 +434,7 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	 *            国际化接口。
 	 */
 	public ProjectFileChooser(GuiManager guiManager, I18nHandler i18nHandler, SyncListModel<Project> holdProjectModel,
-			SyncKeySetModel<String, FileProcessor> fileProcessorModel,
-			SyncKeySetModel<String, ProjectProcessor> projectProcessorModel) {
+			SyncComponentModel componentModel) {
 		super(guiManager, i18nHandler);
 
 		setPreferredSize(new Dimension(500, 300));
@@ -456,8 +455,7 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		}
 
 		this.holdProjectModel = holdProjectModel;
-		this.projectProcessorModel = projectProcessorModel;
-		this.fileProcessorModel = fileProcessorModel;
+		this.componentModel = componentModel;
 		setLayout(new BorderLayout(0, 0));
 
 		JPanel panel_1 = new JPanel();
@@ -771,8 +769,7 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		syncSettings();
 
 		syncHoldProjectModel();
-		syncFileProcessorModel();
-		syncProjectProcessorModel();
+		syncComponentModel();
 
 	}
 
@@ -784,6 +781,13 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		if (Objects.nonNull(this.currentProject)) {
 			currentProject.removeObverser(currentProjectObverser);
 		}
+	}
+
+	/**
+	 * @return the componentModel
+	 */
+	public SyncComponentModel getComponentModel() {
+		return componentModel;
 	}
 
 	/**
@@ -808,13 +812,6 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	}
 
 	/**
-	 * @return the fileProcessorModel
-	 */
-	public SyncKeySetModel<String, FileProcessor> getFileProcessorModel() {
-		return fileProcessorModel;
-	}
-
-	/**
 	 * @return the fileSelectionMode
 	 */
 	public FileSelectionMode getFileSelectionMode() {
@@ -826,13 +823,6 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	 */
 	public SyncListModel<Project> getHoldProjectModel() {
 		return holdProjectModel;
-	}
-
-	/**
-	 * @return the projectProcessorModel
-	 */
-	public SyncKeySetModel<String, ProjectProcessor> getProjectProcessorModel() {
-		return projectProcessorModel;
 	}
 
 	/**
@@ -897,6 +887,15 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	}
 
 	/**
+	 * @param componentModel
+	 *            the componentModel to set
+	 */
+	public void setComponentModel(SyncComponentModel componentModel) {
+		this.componentModel = componentModel;
+		syncComponentModel();
+	}
+
+	/**
 	 * @param controlButtonsAreShown
 	 *            the controlButtonsAreShown to set
 	 */
@@ -950,15 +949,6 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	}
 
 	/**
-	 * @param fileProcessorModel
-	 *            the fileProcessorModel to set
-	 */
-	public void setFileProcessorModel(SyncKeySetModel<String, FileProcessor> fileProcessorModel) {
-		this.fileProcessorModel = fileProcessorModel;
-		syncFileProcessorModel();
-	}
-
-	/**
 	 * @param fileSelectionMode
 	 *            the fileSelectionMode to set
 	 */
@@ -994,15 +984,6 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		} else {
 			list_file.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		}
-	}
-
-	/**
-	 * @param projectProcessorModel
-	 *            the projectProcessorModel to set
-	 */
-	public void setProjectProcessorModel(SyncKeySetModel<String, ProjectProcessor> projectProcessorModel) {
-		this.projectProcessorModel = projectProcessorModel;
-		syncProjectProcessorModel();
 	}
 
 	/**
@@ -1179,7 +1160,8 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		rootFileAdjustFlag = false;
 	}
 
-	private void syncFileProcessorModel() {
+	private void syncComponentModel() {
+		comboBox_project.repaint();
 		list_file.repaint();
 	}
 
@@ -1198,10 +1180,6 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		} finally {
 			holdProjectModel.getLock().readLock().unlock();
 		}
-	}
-
-	private void syncProjectProcessorModel() {
-		comboBox_project.repaint();
 	}
 
 	/**

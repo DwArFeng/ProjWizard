@@ -30,11 +30,11 @@ import javax.swing.KeyStroke;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.num.NumberUtil;
 import com.dwarfeng.dutil.basic.num.unit.DataSize;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.obv.FileAdapter;
@@ -52,7 +52,7 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppiler {
 
-	private static final long serialVersionUID = 3769321676991221395L;
+	private static final long serialVersionUID = -777552149357910518L;
 	
 	private final JButton cancelButton;
 	private final JButton applyButton;
@@ -79,8 +79,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 
 	private Project project;
 	private File file;
-	private SyncKeySetModel<String, FileProcessor> fileProcessorModel;
-	private SyncKeySetModel<String, ProjectProcessor> projectProcessorModel;
+	private SyncComponentModel componentModel;
 
 	private final Lock disposeLock = new ReentrantLock();
 	private final Condition disposeCondition = disposeLock.newCondition();
@@ -243,7 +242,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 	 * 新实例。
 	 */
 	public FilePropertiesDialog() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	/**
@@ -267,8 +266,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 	 *             入口参数为 <code>null</code>。
 	 */
 	public FilePropertiesDialog(GuiManager guiManager, I18nHandler i18nHandler, Window owner,
-			SyncKeySetModel<String, ProjectProcessor> projectProcessorModel,
-			SyncKeySetModel<String, FileProcessor> fileProcessorModel, Project project, File file) {
+			SyncComponentModel componentModel, Project project, File file) {
 		super(guiManager, i18nHandler, owner);
 
 		addWindowListener(new WindowAdapter() {
@@ -539,8 +537,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 			file.addObverser(fileObverser);
 		}
 
-		this.projectProcessorModel = projectProcessorModel;
-		this.fileProcessorModel = fileProcessorModel;
+		this.componentModel = componentModel;
 		this.project = project;
 		this.file = file;
 
@@ -561,21 +558,21 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 	}
 
 	/**
+	 * 获取当前对话框的组件模型。
+	 * 
+	 * @return 当前对话框的组件模型。
+	 */
+	public SyncComponentModel getComponentModel() {
+		return componentModel;
+	}
+
+	/**
 	 * 获取面板中的文件。
 	 * 
 	 * @return 面板中的文件。
 	 */
 	public File getFile() {
 		return file;
-	}
-
-	/**
-	 * 获取当前的文件处理器模型。
-	 * 
-	 * @return 当前的文件处理器模型。
-	 */
-	public SyncKeySetModel<String, FileProcessor> getFileProcessorModel() {
-		return fileProcessorModel;
 	}
 
 	/**
@@ -593,15 +590,6 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 	 */
 	public Project getProject() {
 		return project;
-	}
-
-	/**
-	 * 获取当前的工程处理器模型。
-	 * 
-	 * @return 当前的工程处理器模型。
-	 */
-	public SyncKeySetModel<String, ProjectProcessor> getProjectProcessorModel() {
-		return projectProcessorModel;
 	}
 
 	/**
@@ -626,6 +614,17 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 	}
 
 	/**
+	 * 设置当前对话框的组件模型。
+	 * 
+	 * @param componentModel
+	 *            指定的组件模型。
+	 */
+	public void setComponentModel(SyncComponentModel componentModel) {
+		this.componentModel = componentModel;
+		syncModel();
+	}
+
+	/**
 	 * 设置面板中的文件。
 	 * 
 	 * @param file
@@ -646,18 +645,6 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 	}
 
 	/**
-	 * 设置当前的文件处理器模型。
-	 * 
-	 * @param fileProcessorModel
-	 *            指定的文件处理器模型。
-	 */
-	public void setFileProcessorModel(SyncKeySetModel<String, FileProcessor> fileProcessorModel) {
-		this.fileProcessorModel = fileProcessorModel;
-
-		syncModel();
-	}
-
-	/**
 	 * 设置当前的工程。
 	 * 
 	 * @param project
@@ -673,18 +660,6 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 		}
 
 		this.project = project;
-
-		syncModel();
-	}
-
-	/**
-	 * 设置当前的工程处理器模型。
-	 * 
-	 * @param projectProcessorModel
-	 *            指定的工程处理器模型。
-	 */
-	public void setProjectProcessorModel(SyncKeySetModel<String, ProjectProcessor> projectProcessorModel) {
-		this.projectProcessorModel = projectProcessorModel;
 
 		syncModel();
 	}
@@ -806,12 +781,12 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 			project.getLock().readLock().unlock();
 		}
 
-		if (Objects.isNull(projectProcessorModel) || Objects.isNull(project) || !projectFitFlag)
+		if (Objects.isNull(componentModel) || Objects.isNull(project) || !projectFitFlag)
 			return;
 
-		projectProcessorModel.getLock().readLock().lock();
+		componentModel.getLock().readLock().lock();
 		try {
-			ProjectProcessor processor = projectProcessorModel.get(project.getRegisterKey());
+			ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class).get(project.getRegisterKey());
 			if (Objects.nonNull(processor)
 					&& Objects.nonNull((propSuppilerFromProject = processor.getFilePropSuppiler(file)))) {
 				Component component = null;
@@ -823,15 +798,12 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 			}
 
 		} finally {
-			projectProcessorModel.getLock().readLock().unlock();
+			componentModel.getLock().readLock().unlock();
 		}
 
-		if (Objects.isNull(fileProcessorModel) || Objects.isNull(file))
-			return;
-
-		fileProcessorModel.getLock().readLock().lock();
+		componentModel.getLock().readLock().lock();
 		try {
-			FileProcessor processor = fileProcessorModel.get(file.getRegisterKey());
+			FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
 			if (Objects.nonNull(processor)
 					&& Objects.nonNull((propSuppilerFromFile = processor.getPropSuppiler(file)))) {
 				Component component = null;
@@ -843,7 +815,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 			}
 
 		} finally {
-			fileProcessorModel.getLock().readLock().unlock();
+			componentModel.getLock().readLock().unlock();
 		}
 
 	}

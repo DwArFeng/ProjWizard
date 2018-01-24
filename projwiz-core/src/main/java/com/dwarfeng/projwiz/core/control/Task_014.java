@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
@@ -48,12 +48,12 @@ final class OpenFocusFileTask extends ProjWizTask {
 		}
 
 		SyncMapModel<ProjectFilePair, Editor> editorModel = projWizard.getToolkit().getEditorModel();
-		SyncKeySetModel<String, FileProcessor> fileProcessorModel = projWizard.getToolkit().getFileProcessorModel();
+		SyncComponentModel componentModel = projWizard.getToolkit().getComponentModel();
 
 		Editor lastEditor = null;
 
 		bk: for (File file : focusFiles) {
-			FileProcessor fileProcessor = fileProcessorModel.get(file.getRegisterKey());
+			FileProcessor fileProcessor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
 			ProjectFilePair pair = new ProjectFilePair(focusProject, file);
 			boolean alreadyContainsFlag = editorModel.containsKey(pair);
 
@@ -131,9 +131,9 @@ final class OpenAnchorFileTask extends ProjWizTask {
 		}
 
 		SyncMapModel<ProjectFilePair, Editor> editorModel = projWizard.getToolkit().getEditorModel();
-		SyncKeySetModel<String, FileProcessor> fileProcessorModel = projWizard.getToolkit().getFileProcessorModel();
+		SyncComponentModel componentModel = projWizard.getToolkit().getComponentModel();
 
-		FileProcessor fileProcessor = fileProcessorModel.get(anchorFile.getRegisterKey());
+		FileProcessor fileProcessor = componentModel.getAll(FileProcessor.class).get(anchorFile.getRegisterKey());
 
 		ProjectFilePair pair = new ProjectFilePair(focusProject, anchorFile);
 		boolean alreadyContainsFlag = editorModel.containsKey(pair);
@@ -198,9 +198,9 @@ final class OpenCertainFileTask extends ProjWizTask {
 		SyncMapModel<Project, Editor> focusEditorModel = projWizard.getToolkit().getFocusEditorModel();
 
 		SyncMapModel<ProjectFilePair, Editor> editorModel = projWizard.getToolkit().getEditorModel();
-		SyncKeySetModel<String, FileProcessor> fileProcessorModel = projWizard.getToolkit().getFileProcessorModel();
+		SyncComponentModel componentModel = projWizard.getToolkit().getComponentModel();
 
-		FileProcessor fileProcessor = fileProcessorModel.get(file.getRegisterKey());
+		FileProcessor fileProcessor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
 
 		ProjectFilePair pair = new ProjectFilePair(project, file);
 		boolean alreadyContainsFlag = editorModel.containsKey(pair);

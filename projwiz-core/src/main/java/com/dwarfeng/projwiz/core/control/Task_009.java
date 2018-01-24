@@ -14,7 +14,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
-import com.dwarfeng.projwiz.core.view.gui.ProcessorSelectDialog;
+import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
 
 final class NewFileTask extends ProjWizTask {
 
@@ -55,7 +55,7 @@ final class NewFileTask extends ProjWizTask {
 
 		boolean emptyFlag = true;
 
-		for (FileProcessor processor : projWizard.getToolkit().getFileProcessorModel()) {
+		for (FileProcessor processor : projWizard.getToolkit().getComponentModel().getAll(FileProcessor.class)) {
 			if (processor.isNewFileSupported()) {
 				emptyFlag = false;
 				break;
@@ -67,13 +67,16 @@ final class NewFileTask extends ProjWizTask {
 					DialogMessage.INFORMATION_MESSAGE, null);
 		}
 
-		AtomicReference<ProcessorSelectDialog<FileProcessor>> dialogRef = new AtomicReference<>();
+		AtomicReference<ComponentSelectDialog> dialogRef = new AtomicReference<>();
 
 		SwingUtil.invokeAndWaitInEventQueue(() -> {
-			dialogRef.set(new ProcessorSelectDialog<>(projWizard.getToolkit().getGuiManager(),
+			dialogRef.set(new ComponentSelectDialog(projWizard.getToolkit().getGuiManager(),
 					projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getMainFrame(),
-					projWizard.getToolkit().getFileProcessorModel(), processor -> {
-						return processor.isNewFileSupported();
+					projWizard.getToolkit().getComponentModel(), component -> {
+						if (!(component instanceof FileProcessor)) {
+							return false;
+						}
+						return ((FileProcessor) component).isNewFileSupported();
 					}));
 		});
 
@@ -84,7 +87,7 @@ final class NewFileTask extends ProjWizTask {
 			return;
 		}
 
-		FileProcessor processor = dialogRef.get().getCurrentProcessor();
+		FileProcessor processor = dialogRef.get().getCurrentComponent(FileProcessor.class);
 		if (Objects.isNull(processor)) {
 			return;
 		}

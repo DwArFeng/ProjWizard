@@ -32,7 +32,7 @@ import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncProcessorConfigHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
@@ -71,7 +71,6 @@ public interface Toolkit {
 		ADDCORECONFIGOBVERSER, //
 		ADDFILE2PROJECTASNEW, //
 		ADDOBVERSERTOFILE, //
-		ADDOBVERSERTOPROJECT, //
 		ADDPROGRAMOBVERSER, //
 		CHOOSEPROJECTFILE, //
 		CHOOSESYSTEMFILE, //
@@ -88,6 +87,7 @@ public interface Toolkit {
 		GETBACKGROUNDREADONLY, //
 		GETCFGHANDLER, //
 		GETCFGHANDLERREADONLY, //
+		GETCOMPONENTMODEL, //
 		GETCORECONFIGMODEL, //
 		GETCORECONFIGMODELREADONLY, //
 		GETEDITORMODEL, //
@@ -99,8 +99,6 @@ public interface Toolkit {
 		GETFILEICONIMAGEMODELREADONLY(), //
 		GETFILEICONOBVMODEL, //
 		GETFILEINDICATEMODEL, //
-		GETFILEPROCESSORMODEL, //
-		GETFILEPROCESSORMODELREADONLY, //
 		GETFOCUSEDITORMODEL, //
 		GETFOCUSEDITORMODELREADONLY, //
 		GETFOCUSFILEMODEL, //
@@ -120,14 +118,11 @@ public interface Toolkit {
 		GETMODALCONFIGMODEL, //
 		GETMODALCONFIGMODELREADONLY, //
 		GETPLUGINCLASSLOADER, //
-		GETPROCESSORCONFIGHANDLER, //
 		GETPROGRAMOBVERSERS, //
 		GETPROJECTICONIMAGEMODEL, //
 		GETPROJECTICONIMAGEMODELREADONLY(), //
 		GETPROJECTICONOBVMODEL, //
 		GETPROJECTINDICATEMODEL, //
-		GETPROJECTPROCESSORMODEL, //
-		GETPROJECTPROCESSORMODELREADONLY, //
 		GETPROPERTY, //
 		GETRUNTIMESTATE, //
 		INFO, //
@@ -136,11 +131,8 @@ public interface Toolkit {
 		OPENFILE, //
 		OPENFILEINPUTSTREAM, //
 		OPENFILEOUTPUTSTREAM, //
-		REGISTFILEPROCESSOR, //
-		REGISTPROJECTPROCESSOR, //
 		REMOVECORECONFIGOBVERSER, //
 		REMOVEOBVERSERFROMFILE, //
-		REMOVEOBVERSERFROMPROJECT, //
 		REMOVEPROGRAMOBVERSER, //
 		SETEXITCODE, //
 		SETRUNTIMESTATE, //
@@ -156,8 +148,6 @@ public interface Toolkit {
 		SUBMITTASK, //
 		TRACE, //
 		TRYEXIT, //
-		UNREGISTFILEPROCESSOR, //
-		UNREGISTPROJECTPROCESSOR, //
 		WARN,//
 	}
 
@@ -205,21 +195,6 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public boolean addObverserToFile(File file, FileObverser obverser) throws IllegalStateException;
-
-	/**
-	 * 向指定的工程中添加指定的观察器。
-	 * 
-	 * @param project
-	 *            指定的工程。
-	 * @param obverser
-	 *            指定的观察器。
-	 * @return 是否添加成功。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public boolean addObverserToProject(Project project, ProjectObverser obverser) throws IllegalStateException;
 
 	/**
 	 * 移除指定的程序观察器。
@@ -398,6 +373,15 @@ public interface Toolkit {
 	public ResourceHandler getCfgHandlerReadOnly() throws IllegalStateException;
 
 	/**
+	 * 获取组件模型。
+	 * 
+	 * @return 组件模型。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public SyncComponentModel getComponentModel() throws IllegalStateException;
+
+	/**
 	 * 获取程序中的核心配置模型。
 	 * 
 	 * @return 程序中的核心配置模型。
@@ -504,24 +488,6 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException;
-
-	/**
-	 * 获取程序中的文件处理器模型。
-	 * 
-	 * @return 程序中的文件处理器模型。
-	 * @throws IllegalStateException
-	 *             因为没有权限而抛出的异常。
-	 */
-	public SyncKeySetModel<String, FileProcessor> getFileProcessorModel() throws IllegalStateException;
-
-	/**
-	 * 获取程序中的文件处理器模型。
-	 * <p>
-	 * 文件处理器模型是只读的。
-	 * 
-	 * @return 程序中的文件处理器模型。
-	 */
-	public KeySetModel<String, FileProcessor> getFileProcessorModelReadOnly() throws IllegalStateException;
 
 	/**
 	 * 获取焦点编辑器模型。
@@ -718,15 +684,6 @@ public interface Toolkit {
 	public PluginClassLoader getPluginClassLoader() throws IllegalStateException;
 
 	/**
-	 * 获取处理器配置处理器。
-	 * 
-	 * @return 处理器配置处理器。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public SyncProcessorConfigHandler getProcessorConfigHandler() throws IllegalStateException;
-
-	/**
 	 * 获取程序的程序观察器集合。
 	 * 
 	 * @return 程序中的程序观察器集合。
@@ -773,26 +730,6 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException;
-
-	/**
-	 * 获取工程处理器模型。
-	 * 
-	 * @return 工程处理器模型。
-	 * @throws IllegalStateException
-	 *             因为没有权限而抛出的异常。
-	 */
-	public SyncKeySetModel<String, ProjectProcessor> getProjectProcessorModel() throws IllegalStateException;
-
-	/**
-	 * 获取工程处理器模型。
-	 * <p>
-	 * 该模型是只读的。
-	 * 
-	 * @return 工程处理器模型。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public KeySetModel<String, ProjectProcessor> getProjectProcessorModelReadOnly() throws IllegalStateException;
 
 	/**
 	 * 获取程序属性。
@@ -913,31 +850,6 @@ public interface Toolkit {
 			throws IllegalStateException, IllegalArgumentException, IOException;
 
 	/**
-	 * 向程序中注册一个指定的文件处理器。
-	 * 
-	 * @param processor
-	 *            指定的文件处理器。
-	 * @return 是否注册成功。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public boolean registFileProcessor(FileProcessor processor) throws IllegalStateException;
-
-	/**
-	 * 向程序中注册一个指定的工程处理器。
-	 * 
-	 * @param 指定的工程处理器。
-	 * @return 是否注册成功。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public boolean registProjectProcessor(ProjectProcessor processor) throws IllegalStateException;
-
-	/**
 	 * 向程序中移除一个核心配置观察器。
 	 * 
 	 * @param coreConfigObverser
@@ -962,21 +874,6 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public boolean removeObverserFromFile(File file, FileObverser obverser) throws IllegalStateException;
-
-	/**
-	 * 从指定的工程中移除指定的观察器。
-	 * 
-	 * @param project
-	 *            指定的工程。
-	 * @param obverser
-	 *            指定的观察器。
-	 * @return 是否移除成功。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public boolean removeObverserFromProject(Project project, ProjectObverser obverser) throws IllegalStateException;
 
 	/**
 	 * 移除指定的程序观察器。
@@ -1276,32 +1173,6 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public void tryExit() throws IllegalStateException;
-
-	/**
-	 * 从程序中解除注册一个指定的文件处理器。
-	 * 
-	 * @param processor
-	 *            指定的文件处理器。
-	 * @return 是否注册成功。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public boolean unregistFileProcessor(FileProcessor processor) throws IllegalStateException;
-
-	/**
-	 * 从程序中解除注册一个指定的工程处理器。
-	 * 
-	 * @param processor
-	 *            指定的工程处理器。
-	 * @return 是否解除注册成功。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public boolean unregistProjectProcessor(ProjectProcessor processor) throws IllegalStateException;
 
 	/**
 	 * 使用指定的记录器处理器 <code>warn</code> 一条信息。

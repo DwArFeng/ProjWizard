@@ -10,8 +10,6 @@ import com.dwarfeng.projwiz.core.model.struct.File;
  * @since 0.0.1-alpha
  */
 public abstract class ProjectAdapter implements ProjectObverser {
-	
-	
 
 	@Override
 	public void fireFileAddedByCopy(Path<File> path, File parent, File file) {

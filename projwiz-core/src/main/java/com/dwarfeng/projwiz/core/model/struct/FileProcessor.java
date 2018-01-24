@@ -3,7 +3,7 @@ package com.dwarfeng.projwiz.core.model.struct;
 import java.awt.Image;
 
 import com.dwarfeng.dutil.basic.prog.ProcessException;
-import com.dwarfeng.projwiz.core.model.eum.FixType;
+import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 
 /**
  * 注册处理器。
@@ -14,7 +14,7 @@ import com.dwarfeng.projwiz.core.model.eum.FixType;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public interface FileProcessor extends Processor {
+public interface FileProcessor extends Component {
 
 	/**
 	 * 返回文件处理器是否能打开指定的文件。
@@ -41,22 +41,22 @@ public interface FileProcessor extends Processor {
 	public Image getFileIcon(File file);
 
 	/**
-	 * 返回指定的文档对应的图标的固定类型。
+	 * 返回指定的文档对应的图标的可变性。
 	 * <p>
 	 * 良好的定义该方法可以更高效的获取图标。
 	 * 
 	 * @param file
 	 *            指定的文档。
-	 * @return 指定的文档对应的图标的固定类型。
+	 * @return 指定的文档对应的图标的可变性。
 	 * @throws IllegalArgumentException
 	 *             注册信息无法处理指定的文件。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public FixType getFileIconFixType(File file);
+	public IconVariability getFileIconVariability(File file);
 
 	/**
-	 * 返回指定的文档对应的缩略图的固定类型。
+	 * 返回指定的文档对应的缩略图的可变性。
 	 * <p>
 	 * 良好的定义该方法可以更高效的获取缩略图。
 	 * 
@@ -68,7 +68,7 @@ public interface FileProcessor extends Processor {
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public FixType getFileThumbFixType(File file);
+	public IconVariability getFileThumbVariability(File file);
 
 	/**
 	 * 获取文件处理器指定的文件对应的属性提供器。

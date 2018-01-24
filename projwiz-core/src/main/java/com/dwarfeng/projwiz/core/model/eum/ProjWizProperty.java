@@ -16,7 +16,9 @@ public enum ProjWizProperty {
 	CFGREPO_PATH,
 	/** 配置列表所在的路径。 */
 	CFG_LISTS,
-	/**组件的路径。*/
+	/** 组件的路径。 */
 	COMPONENT_PATH,
+	/** 元数据的路径。 */
+	METADATA_PATH,
 
 }

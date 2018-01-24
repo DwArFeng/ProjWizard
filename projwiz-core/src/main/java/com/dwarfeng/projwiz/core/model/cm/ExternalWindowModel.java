@@ -21,7 +21,7 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public final class MapExternalWindowModel extends MapKeySetModel<String, WindowSuppiler> {
+public final class ExternalWindowModel extends MapKeySetModel<String, WindowSuppiler> {
 
 	private final class WindowInspector extends WindowAdapter {
 
@@ -74,7 +74,7 @@ public final class MapExternalWindowModel extends MapKeySetModel<String, WindowS
 	/**
 	 * 新实例。
 	 */
-	public MapExternalWindowModel() {
+	public ExternalWindowModel() {
 		this(new HashMap<>(), Collections.newSetFromMap(new WeakHashMap<>()));
 	}
 
@@ -88,7 +88,7 @@ public final class MapExternalWindowModel extends MapKeySetModel<String, WindowS
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public MapExternalWindowModel(Map<String, WindowSuppiler> map, Set<SetObverser<WindowSuppiler>> obversers) {
+	public ExternalWindowModel(Map<String, WindowSuppiler> map, Set<SetObverser<WindowSuppiler>> obversers) {
 		super(map, obversers);
 		addObverser(externalWindowObverser);
 	}

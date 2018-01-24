@@ -3,14 +3,16 @@ package com.dwarfeng.projwiz.api;
 import java.awt.Image;
 import java.util.Objects;
 
+import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
-import com.dwarfeng.dutil.develop.resource.Resource;
-import com.dwarfeng.projwiz.core.model.eum.FixType;
+import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
+import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
+import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 
 /**
  * 抽象文件处理器。
@@ -24,19 +26,23 @@ import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public abstract class AbstractFileProcessor extends AbstractProcessor implements FileProcessor {
+public abstract class AbstractFileProcessor extends AbstractComponent implements FileProcessor {
 
 	/**
 	 * 新实例。
 	 * 
 	 * @param key
-	 *            指定的键值。
-	 * @param 指向配置的资源。
+	 *            指定的键。
+	 * @param toolkitRef
+	 *            指定的工具包引用。
+	 * @param metaDataStorage
+	 *            指定的元数据仓库。
 	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
+	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public AbstractFileProcessor(String key, Resource configResource) {
-		super(key, configResource);
+	public AbstractFileProcessor(String key, ReferenceModel<? extends Toolkit> toolkitRef,
+			MetaDataStorage metaDataStorage) {
+		super(key, toolkitRef, metaDataStorage);
 	}
 
 	/**
@@ -63,16 +69,16 @@ public abstract class AbstractFileProcessor extends AbstractProcessor implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public FixType getFileIconFixType(File file) {
-		return FixType.FIX;
+	public IconVariability getFileIconVariability(File file) {
+		return IconVariability.FIX;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public FixType getFileThumbFixType(File file) {
-		return FixType.FIX;
+	public IconVariability getFileThumbVariability(File file) {
+		return IconVariability.FIX;
 	}
 
 	/**

@@ -36,7 +36,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.dwarfeng.dutil.basic.cna.CollectionUtil;
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.obv.SetAdapter;
 import com.dwarfeng.dutil.basic.cna.model.obv.SetObverser;
 import com.dwarfeng.dutil.basic.gui.awt.CommonIconLib;
@@ -44,59 +43,43 @@ import com.dwarfeng.dutil.basic.gui.awt.ImageSize;
 import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.gui.swing.MuaListModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
+import com.dwarfeng.dutil.basic.prog.Filter;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
-import com.dwarfeng.projwiz.core.model.struct.Processor;
-import com.dwarfeng.projwiz.core.model.struct.ProcessorKeyComparator;
+import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.ComponentKeyComparator;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.JListMouseListener4Selection;
 import com.dwarfeng.projwiz.core.view.struct.JListMouseMotionListener4Selection;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 /**
- * 工程处理器选择面板。
+ * 组件处理器选择面板。
  * 
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDialog implements WindowSuppiler {
+public final class ComponentSelectDialog extends ProjWizDialog implements WindowSuppiler {
 
-	private static final long serialVersionUID = -3909625518055979076L;
-
-	/**
-	 * 处理器过滤器。
-	 * 
-	 * @author DwArFeng
-	 * @since 0.0.1-alpha
-	 */
-	public static interface ProcessorFilter<T extends Processor> {
-
-		/**
-		 * 询问该过滤器是否接受指定的处理器。
-		 * 
-		 * @param processor
-		 *            指定的处理器。
-		 * @return 是否接受。
-		 */
-		public boolean accept(T processor);
-	}
+	private static final long serialVersionUID = 1481629325183704700L;
 
 	private final JTextArea textArea;
-	private final JList<T> list;
+	private final JList<Component> list;
 	private final JButton okButton;
 	private final JButton cancelButton;
 
 	private final Lock disposeLock = new ReentrantLock();
 	private final Condition disposeCondition = disposeLock.newCondition();
 
-	private SyncKeySetModel<String, T> processorModel;
-	private ProcessorFilter<T> processorFilter;
+	private SyncComponentModel componentModel;
+	private Filter<Component> filter;
 
-	private final MuaListModel<T> listModel = new MuaListModel<>();
+	private final MuaListModel<Component> listModel = new MuaListModel<>();
 	private final ListCellRenderer<Object> listRenderer = new DefaultListCellRenderer() {
 
-		private static final long serialVersionUID = -7069222384518497810L;
+		private static final long serialVersionUID = 3104667765050182488L;
 
 		@Override
 		public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index,
@@ -108,33 +91,31 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 			setVerticalTextPosition(JLabel.BOTTOM);
 
 			setText(null);
-			if (Objects.nonNull(((Processor) value).getIcon())) {
-				setIcon(new ImageIcon(ImageUtil.scaleImage(((Processor) value).getIcon(), ImageSize.ICON_MEDIUM)));
+			if (Objects.nonNull(((Component) value).getIcon())) {
+				setIcon(new ImageIcon(ImageUtil.scaleImage(((Component) value).getIcon(), ImageSize.ICON_MEDIUM)));
 			} else {
 				setIcon(new ImageIcon(ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_MEDIUM)));
 			}
-			setToolTipText(((Processor) value).getName());
+			setToolTipText(((Component) value).getName());
 			return this;
 		};
 	};
-	private final SetObverser<T> listObverser = new SetAdapter<T>() {
+	private final SetObverser<Component> listObverser = new SetAdapter<Component>() {
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void fireAdded(T element) {
+		public void fireAdded(Component element) {
 			SwingUtil.invokeInEventQueue(() -> {
-				if (Objects.isNull(processorFilter) || processorFilter.accept(element)) {
-					CollectionUtil.insertByOrder(listModel, element, new ProcessorKeyComparator());
+				if (Objects.isNull(filter) || filter.accept(element)) {
+					CollectionUtil.insertByOrder(listModel, element, new ComponentKeyComparator());
 				}
 			});
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.dwarfeng.dutil.basic.cna.model.obv.SetAdapter#fireCleared()
+		/**
+		 * {@inheritDoc}
 		 */
 		@Override
 		public void fireCleared() {
@@ -147,32 +128,35 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void fireRemoved(T element) {
+		public void fireRemoved(Component element) {
 			SwingUtil.invokeInEventQueue(() -> {
 				listModel.remove(element);
 			});
 		}
 	};
 
-	private T currentProcessor;
+	private Component currentComponent;
 	private boolean disposeFlag = false;
 	private DialogOption option = DialogOption.CLOSED;
 
 	/**
 	 * 新实例。
 	 */
-	public ProcessorSelectDialog() {
+	public ComponentSelectDialog() {
 		this(null, null, null, null, null);
 	}
 
 	/**
 	 * 新实例。
 	 * 
-	 * @param processorModel
-	 *            指定的工程处理器模型。
+	 * @param guiManager
+	 * @param i18nHandler
+	 * @param owner
+	 * @param componentModel
+	 * @param filter
 	 */
-	public ProcessorSelectDialog(GuiManager guiManager, I18nHandler i18nHandler, Window owner,
-			SyncKeySetModel<String, T> processorModel, ProcessorFilter<T> processorFilter) {
+	public ComponentSelectDialog(GuiManager guiManager, I18nHandler i18nHandler, Window owner,
+			SyncComponentModel componentModel, Filter<Component> filter) {
 		super(guiManager, i18nHandler, owner);
 
 		addWindowListener(new WindowAdapter() {
@@ -228,9 +212,9 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
-					currentProcessor = list.getSelectedValue();
-					if (Objects.nonNull(currentProcessor)) {
-						textArea.setText(currentProcessor.getDescription());
+					currentComponent = list.getSelectedValue();
+					if (Objects.nonNull(currentComponent)) {
+						textArea.setText(currentComponent.getDescription());
 					} else {
 						textArea.setText(null);
 					}
@@ -284,7 +268,7 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 
 		contentPane.registerKeyboardAction(new AbstractAction() {
 
-			private static final long serialVersionUID = 694312027933589369L;
+			private static final long serialVersionUID = 435777217375395794L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -298,20 +282,20 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 
 		pack();
 
-		if (Objects.nonNull(processorModel)) {
-			processorModel.addObverser(listObverser);
+		if (Objects.nonNull(componentModel)) {
+			componentModel.addObverser(listObverser);
 		}
 
-		this.processorModel = processorModel;
-		this.processorFilter = processorFilter;
+		this.componentModel = componentModel;
+		this.filter = filter;
 
 		syncInit();
 	}
 
 	@Override
 	public void dispose() {
-		if (Objects.nonNull(processorModel)) {
-			processorModel.removeObverser(listObverser);
+		if (Objects.nonNull(componentModel)) {
+			componentModel.removeObverser(listObverser);
 		}
 		super.dispose();
 	}
@@ -321,8 +305,22 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 	 * 
 	 * @return 该面板中当前的处理器。
 	 */
-	public T getCurrentProcessor() {
-		return currentProcessor;
+	public Component getCurrentComponent() {
+		return currentComponent;
+	}
+
+	/**
+	 * 以指定的类获取该面板中当前的处理器。
+	 * 
+	 * @param clas
+	 *            指定的类。
+	 * @return 转化成指定类的面板中的当前处理器。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 */
+	public <T extends Component> T getCurrentComponent(Class<T> clas) {
+		Objects.requireNonNull(clas, "入口参数 clas 不能为 null。");
+		return clas.cast(currentComponent);
 	}
 
 	/**
@@ -347,17 +345,17 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 	 * 
 	 * @return 该面板中当前的文件过滤器。
 	 */
-	public ProcessorFilter<T> getProcessorFilter() {
-		return processorFilter;
+	public Filter<Component> getFilter() {
+		return filter;
 	}
 
 	/**
-	 * 获取该面板的工程处理器模型。
+	 * 获取该面板的组件处理器模型。
 	 * 
-	 * @return 该免肝的工程处理器模型。
+	 * @return 该免肝的组件处理器模型。
 	 */
-	public SyncKeySetModel<String, T> getProcessorModel() {
-		return processorModel;
+	public SyncComponentModel getComponentModel() {
+		return componentModel;
 	}
 
 	/**
@@ -384,31 +382,32 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 	/**
 	 * 设置该面板中当前的文件过滤器。
 	 * 
-	 * @param processorFilter
+	 * @param filter
 	 *            面板中当前的文件过滤器。
 	 */
-	public void setProcessorFilter(ProcessorFilter<T> processorFilter) {
-		this.processorFilter = processorFilter;
-		syncProcessorFiliter();
+	public void setFilter(Filter<Component> filter) {
+		this.filter = filter;
+		syncFiliter();
 	}
 
 	/**
-	 * 设置该面板的工程处理器模型。
+	 * 设置该面板的组件处理器模型。
 	 * 
-	 * @param processorModel
+	 * @param componentModel
+	 *            指定的组件处理器模型。
 	 */
-	public void setProcessorModel(SyncKeySetModel<String, T> processorModel) {
-		if (Objects.nonNull(this.processorModel)) {
-			this.processorModel.removeObverser(listObverser);
+	public void setComponentModel(SyncComponentModel componentModel) {
+		if (Objects.nonNull(this.componentModel)) {
+			this.componentModel.removeObverser(listObverser);
 		}
 
-		if (Objects.nonNull(processorModel)) {
-			processorModel.addObverser(listObverser);
+		if (Objects.nonNull(componentModel)) {
+			componentModel.addObverser(listObverser);
 		}
 
-		this.processorModel = processorModel;
+		this.componentModel = componentModel;
 
-		syncProcessorModel();
+		syncComponentModel();
 	}
 
 	/**
@@ -437,25 +436,25 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 		cancelButton.setText(label(LabelStringKey.PROCSELDIA_3));
 	}
 
-	private void syncProcessorFiliter() {
+	private void syncFiliter() {
 		listModel.clear();
 		textArea.setText(null);
 
-		if (Objects.isNull(this.processorModel)) {
+		if (Objects.isNull(this.componentModel)) {
 			return;
 		}
 
-		Comparator<Processor> c = new ProcessorKeyComparator();
+		Comparator<Component> c = new ComponentKeyComparator();
 
-		this.processorModel.getLock().readLock().lock();
+		this.componentModel.getLock().readLock().lock();
 		try {
-			this.processorModel.forEach(processor -> {
-				if (Objects.isNull(processorFilter) || processorFilter.accept(processor)) {
-					CollectionUtil.insertByOrder(listModel, processor, c);
+			this.componentModel.forEach(component -> {
+				if (Objects.isNull(filter) || filter.accept(component)) {
+					CollectionUtil.insertByOrder(listModel, component, c);
 				}
 			});
 		} finally {
-			this.processorModel.getLock().readLock().unlock();
+			this.componentModel.getLock().readLock().unlock();
 		}
 
 		if (listModel.size() > 0) {
@@ -466,25 +465,25 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 
 	}
 
-	private void syncProcessorModel() {
+	private void syncComponentModel() {
 		listModel.clear();
 		textArea.setText(null);
 
-		if (Objects.isNull(this.processorModel)) {
+		if (Objects.isNull(this.componentModel)) {
 			return;
 		}
 
-		Comparator<Processor> c = new ProcessorKeyComparator();
+		Comparator<Component> c = new ComponentKeyComparator();
 
-		this.processorModel.getLock().readLock().lock();
+		this.componentModel.getLock().readLock().lock();
 		try {
-			this.processorModel.forEach(processor -> {
-				if (Objects.isNull(processorFilter) || processorFilter.accept(processor)) {
-					CollectionUtil.insertByOrder(listModel, processor, c);
+			this.componentModel.forEach(component -> {
+				if (Objects.isNull(filter) || filter.accept(component)) {
+					CollectionUtil.insertByOrder(listModel, component, c);
 				}
 			});
 		} finally {
-			this.processorModel.getLock().readLock().unlock();
+			this.componentModel.getLock().readLock().unlock();
 		}
 
 		if (listModel.size() > 0) {
@@ -499,21 +498,21 @@ public final class ProcessorSelectDialog<T extends Processor> extends ProjWizDia
 		listModel.clear();
 		textArea.setText(null);
 
-		if (Objects.isNull(this.processorModel)) {
+		if (Objects.isNull(this.componentModel)) {
 			return;
 		}
 
-		Comparator<Processor> c = new ProcessorKeyComparator();
+		Comparator<Component> c = new ComponentKeyComparator();
 
-		this.processorModel.getLock().readLock().lock();
+		this.componentModel.getLock().readLock().lock();
 		try {
-			this.processorModel.forEach(processor -> {
-				if (Objects.isNull(processorFilter) || processorFilter.accept(processor)) {
-					CollectionUtil.insertByOrder(listModel, processor, c);
+			this.componentModel.forEach(component -> {
+				if (Objects.isNull(filter) || filter.accept(component)) {
+					CollectionUtil.insertByOrder(listModel, component, c);
 				}
 			});
 		} finally {
-			this.processorModel.getLock().readLock().unlock();
+			this.componentModel.getLock().readLock().unlock();
 		}
 
 		if (listModel.size() > 0) {

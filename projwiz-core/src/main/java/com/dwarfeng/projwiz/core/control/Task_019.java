@@ -18,7 +18,7 @@ final class SuperSecretSettingsTask extends ProjWizTask {
 	protected void todo() throws Exception {
 		ProjectFileChooser projectFileChooser = new ProjectFileChooser(projWizard.getToolkit().getGuiManager(),
 				projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getHoldProjectModel(),
-				projWizard.getToolkit().getFileProcessorModel(), projWizard.getToolkit().getProjectProcessorModel());
+				projWizard.getToolkit().getComponentModel());
 
 		projectFileChooser.setMultiSelectionEnabled(true);
 

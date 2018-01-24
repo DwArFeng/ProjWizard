@@ -21,7 +21,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
@@ -38,6 +37,7 @@ import com.dwarfeng.dutil.basic.gui.swing.JAdjustableBorderPanel;
 import com.dwarfeng.dutil.basic.gui.swing.MuaListModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.struct.File;
@@ -55,7 +55,7 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
  */
 public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppiler {
 
-	private static final long serialVersionUID = -2265605517513357798L;
+	private static final long serialVersionUID = -1595187740965306253L;
 
 	private final JLabel label_1;
 	private final JLabel label_2;
@@ -70,15 +70,14 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	private SyncReferenceModel<Project> focusProjectModel;
 	private SyncSetModel<File> focusFileModel;
 	private SyncListModel<Project> holdProjectModel;
-	private SyncKeySetModel<String, ProjectProcessor> projectProcessorModel;
-	private SyncKeySetModel<String, FileProcessor> fileProcessorModel;
+	private SyncComponentModel componentModel;
 
 	private final MuaListModel<Project> holdProjects = new MuaListModel<>();
 	private final MuaListModel<File> focusFiles = new MuaListModel<>();
 
 	private final DefaultListCellRenderer projectRenderer = new DefaultListCellRenderer() {
 
-		private static final long serialVersionUID = -2275832641886821517L;
+		private static final long serialVersionUID = -1918212081384630363L;
 
 		@Override
 		public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index,
@@ -89,8 +88,9 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 				return this;
 			setText(project.getName());
 			Image image = null;
-			if (Objects.nonNull(projectProcessorModel)) {
-				ProjectProcessor processor = projectProcessorModel.get(project.getRegisterKey());
+			if (Objects.nonNull(componentModel)) {
+				ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class)
+						.get(project.getRegisterKey());
 				if (Objects.nonNull(processor)) {
 					image = processor.getProjectIcon(ModelUtil.unmodifiableProject(project));
 				}
@@ -106,7 +106,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 
 	private final DefaultListCellRenderer fileRenderer = new DefaultListCellRenderer() {
 
-		private static final long serialVersionUID = 708333555821796334L;
+		private static final long serialVersionUID = 401566907987607482L;
 
 		@Override
 		public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index,
@@ -117,8 +117,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 				return this;
 			setText(file.getName());
 			Image image = null;
-			if (Objects.nonNull(fileProcessorModel)) {
-				FileProcessor processor = fileProcessorModel.get(file.getRegisterKey());
+			if (Objects.nonNull(componentModel)) {
+				FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
 				if (Objects.nonNull(processor)) {
 					image = processor.getFileIcon(ModelUtil.unmodifiableFile(file));
 				}
@@ -155,8 +155,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 					label_6.setIcon(null);
 					label_6.setText("null");
 				} else {
-					FileProcessor processor = Objects.isNull(fileProcessorModel) ? null
-							: fileProcessorModel.get(newValue.getRegisterKey());
+					FileProcessor processor = Objects.isNull(componentModel) ? null
+							: componentModel.getAll(FileProcessor.class).get(newValue.getRegisterKey());
 					Image image = Objects.isNull(processor) ? null
 							: processor.getFileIcon(ModelUtil.unmodifiableFile(newValue));
 					if (Objects.isNull(image)) {
@@ -227,8 +227,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 					label_5.setIcon(null);
 					label_5.setText("null");
 				} else {
-					ProjectProcessor processor = Objects.isNull(projectProcessorModel) ? null
-							: projectProcessorModel.get(newValue.getRegisterKey());
+					ProjectProcessor processor = Objects.isNull(componentModel) ? null
+							: componentModel.getAll(ProjectProcessor.class).get(newValue.getRegisterKey());
 					Image image = Objects.isNull(processor) ? null
 							: processor.getProjectIcon(ModelUtil.unmodifiableProject(newValue));
 					if (Objects.isNull(image)) {
@@ -294,7 +294,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	 * 新实例。
 	 */
 	public ProjectAndFileMonitor() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	/**
@@ -308,8 +308,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	public ProjectAndFileMonitor(GuiManager guiManager, I18nHandler i18nHandler,
 			SyncReferenceModel<File> anchorFileModel, SyncReferenceModel<Project> focusProjectModel,
 			SyncSetModel<File> focusFileModel, SyncListModel<Project> holdProjectModel,
-			SyncKeySetModel<String, ProjectProcessor> projectProcessorModel,
-			SyncKeySetModel<String, FileProcessor> fileProcessorModel) {
+			SyncComponentModel componentModel) {
 		super(guiManager, i18nHandler);
 
 		addWindowListener(new WindowAdapter() {
@@ -428,13 +427,11 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		this.focusProjectModel = focusProjectModel;
 		this.focusFileModel = focusFileModel;
 		this.holdProjectModel = holdProjectModel;
-		this.projectProcessorModel = projectProcessorModel;
-		this.fileProcessorModel = fileProcessorModel;
+		this.componentModel = componentModel;
 
 		// TODO 此处的处理不是特别好，有几个步骤是重复的。
 		syncOpenedAndFocusModel();
-		syncProjectProcessorModel();
-		syncFileProcessorModel();
+		syncComponentModel();
 	}
 
 	/**
@@ -471,12 +468,12 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	}
 
 	/**
-	 * 获取面板的文件管理模型。
+	 * 获取面板的组件模型。
 	 * 
-	 * @return 指定的文件管理模型。
+	 * @return 面板的组件模型。
 	 */
-	public SyncKeySetModel<String, FileProcessor> getFileProcessorModel() {
-		return fileProcessorModel;
+	public SyncComponentModel getComponentModel() {
+		return componentModel;
 	}
 
 	/**
@@ -506,15 +503,6 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	@Override
 	public String getKey() {
 		return this.getClass().toString();
-	}
-
-	/**
-	 * 获取面板中的工程管理模型。
-	 * 
-	 * @return 面板中的工程管理模型。
-	 */
-	public SyncKeySetModel<String, ProjectProcessor> getProjectProcessorModel() {
-		return projectProcessorModel;
 	}
 
 	/**
@@ -556,14 +544,14 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	}
 
 	/**
-	 * 设置面板的文件管理模型。
+	 * 设置面板的组件模型。
 	 * 
-	 * @param fileProcessorModel
-	 *            指定的文件管理模型。
+	 * @param componentModel
+	 *            指定的面板组件模型。
 	 */
-	public void setFileProcessorModel(SyncKeySetModel<String, FileProcessor> fileProcessorModel) {
-		this.fileProcessorModel = fileProcessorModel;
-		syncFileProcessorModel();
+	public void setComponentModel(SyncComponentModel componentModel) {
+		this.componentModel = componentModel;
+		syncComponentModel();
 	}
 
 	/**
@@ -618,17 +606,6 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	}
 
 	/**
-	 * 设置面板中的工程管理模型。
-	 * 
-	 * @param projectProcessorModel
-	 *            指定的工程管理模型。
-	 */
-	public void setProjectProcessorModel(SyncKeySetModel<String, ProjectProcessor> projectProcessorModel) {
-		this.projectProcessorModel = projectProcessorModel;
-		syncProjectProcessorModel();
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -648,12 +625,16 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			return;
 		}
 
+		if (Objects.isNull(componentModel)) {
+			return;
+		}
+
 		// TODO 此处对于fileProcessorModel的处理不是太好。
 		anchorFileModel.getLock().readLock().lock();
 		try {
 			if (Objects.nonNull(anchorFileModel.get())) {
-				FileProcessor processor = Objects.isNull(fileProcessorModel) ? null
-						: fileProcessorModel.get(anchorFileModel.get().getRegisterKey());
+				FileProcessor processor = Objects.isNull(componentModel) ? null
+						: componentModel.getAll(FileProcessor.class).get(anchorFileModel.get().getRegisterKey());
 				Image image = Objects.isNull(processor) ? null
 						: processor.getFileIcon(ModelUtil.unmodifiableFile(anchorFileModel.get()));
 				if (Objects.isNull(image)) {
@@ -669,7 +650,12 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		}
 	}
 
-	private void syncFileProcessorModel() {
+	private void syncComponentModel() {
+		syncFileProcessor();
+		syncProjectProcessor();
+	}
+
+	private void syncFileProcessor() {
 		projectList.repaint();
 		label_6.setIcon(null);
 		label_6.setText("null");
@@ -682,13 +668,17 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			return;
 		}
 
+		if (Objects.isNull(componentModel)) {
+			return;
+		}
+
 		// TODO 此处对于projectProcessorModel的处理不是太好。
-		fileProcessorModel.getLock().readLock().lock();
+		componentModel.getLock().readLock().lock();
 		try {
 			projectList.repaint();
 
-			FileProcessor processor = Objects.isNull(fileProcessorModel) ? null
-					: fileProcessorModel.get(anchorFileModel.get().getRegisterKey());
+			FileProcessor processor = Objects.isNull(componentModel) ? null
+					: componentModel.getAll(FileProcessor.class).get(anchorFileModel.get().getRegisterKey());
 			Image image = Objects.isNull(processor) ? null
 					: processor.getFileIcon(ModelUtil.unmodifiableFile(anchorFileModel.get()));
 			if (Objects.isNull(image)) {
@@ -699,7 +689,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			}
 			label_6.setText(anchorFileModel.get().getName());
 		} finally {
-			fileProcessorModel.getLock().readLock().unlock();
+			componentModel.getLock().readLock().unlock();
 		}
 	}
 
@@ -728,11 +718,16 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			return;
 		}
 
+		if (Objects.isNull(componentModel)) {
+			return;
+		}
+
 		focusProjectModel.getLock().readLock().lock();
+		componentModel.getLock().readLock().lock();
 		try {
 			if (Objects.nonNull(focusProjectModel.get())) {
-				ProjectProcessor processor = Objects.isNull(projectProcessorModel) ? null
-						: projectProcessorModel.get(focusProjectModel.get().getRegisterKey());
+				ProjectProcessor processor = Objects.isNull(componentModel) ? null
+						: componentModel.getAll(ProjectProcessor.class).get(focusProjectModel.get().getRegisterKey());
 				Image image = Objects.isNull(processor) ? null
 						: processor.getProjectIcon(ModelUtil.unmodifiableProject(focusProjectModel.get()));
 				if (Objects.isNull(image)) {
@@ -744,6 +739,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 				label_5.setText(focusProjectModel.get().getName());
 			}
 		} finally {
+			componentModel.getLock().readLock().unlock();
 			focusProjectModel.getLock().readLock().unlock();
 		}
 	}
@@ -785,16 +781,20 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		if (Objects.isNull(holdProjectModel)) {
 			return;
 		}
+		if (Objects.isNull(componentModel)) {
+			return;
+		}
 
 		anchorFileModel.getLock().readLock().lock();
 		focusProjectModel.getLock().readLock().lock();
 		focusFileModel.getLock().readLock().lock();
 		holdProjectModel.getLock().readLock().lock();
+		componentModel.getLock().readLock().lock();
 		try {
 
 			if (Objects.nonNull(focusProjectModel.get())) {
-				ProjectProcessor processor = Objects.isNull(projectProcessorModel) ? null
-						: projectProcessorModel.get(focusProjectModel.get().getRegisterKey());
+				ProjectProcessor processor = Objects.isNull(componentModel) ? null
+						: componentModel.getAll(ProjectProcessor.class).get(focusProjectModel.get().getRegisterKey());
 				Image image = Objects.isNull(processor) ? null
 						: processor.getProjectIcon(ModelUtil.unmodifiableProject(focusProjectModel.get()));
 				if (Objects.isNull(image)) {
@@ -807,8 +807,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			}
 
 			if (Objects.nonNull(anchorFileModel.get())) {
-				FileProcessor processor = Objects.isNull(fileProcessorModel) ? null
-						: fileProcessorModel.get(anchorFileModel.get().getRegisterKey());
+				FileProcessor processor = Objects.isNull(componentModel) ? null
+						: componentModel.getAll(FileProcessor.class).get(anchorFileModel.get().getRegisterKey());
 				Image image = Objects.isNull(processor) ? null
 						: processor.getFileIcon(ModelUtil.unmodifiableFile(anchorFileModel.get()));
 				if (Objects.isNull(image)) {
@@ -829,6 +829,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			}
 
 		} finally {
+			componentModel.getLock().readLock().unlock();
 			holdProjectModel.getLock().readLock().unlock();
 			focusFileModel.getLock().readLock().unlock();
 			focusProjectModel.getLock().readLock().unlock();
@@ -837,7 +838,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 
 	}
 
-	private void syncProjectProcessorModel() {
+	private void syncProjectProcessor() {
 		fileList.repaint();
 		label_5.setIcon(null);
 		label_5.setText("null");
@@ -850,12 +851,16 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			return;
 		}
 
-		projectProcessorModel.getLock().readLock().lock();
+		if (Objects.isNull(componentModel)) {
+			return;
+		}
+
+		componentModel.getLock().readLock().lock();
 		try {
 			projectList.repaint();
 
-			ProjectProcessor processor = Objects.isNull(projectProcessorModel) ? null
-					: projectProcessorModel.get(focusProjectModel.get().getRegisterKey());
+			ProjectProcessor processor = Objects.isNull(componentModel) ? null
+					: componentModel.getAll(ProjectProcessor.class).get(focusProjectModel.get().getRegisterKey());
 			Image image = Objects.isNull(processor) ? null
 					: processor.getProjectIcon(ModelUtil.unmodifiableProject(focusProjectModel.get()));
 			if (Objects.isNull(image)) {
@@ -866,7 +871,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			}
 			label_5.setText(focusProjectModel.get().getName());
 		} finally {
-			projectProcessorModel.getLock().readLock().unlock();
+			componentModel.getLock().readLock().unlock();
 		}
 
 	}

@@ -32,7 +32,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import com.dwarfeng.dutil.basic.cna.ArrayUtil;
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.dutil.basic.cna.model.obv.ReferenceAdapter;
@@ -47,6 +46,7 @@ import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.backgr.AbstractTask;
 import com.dwarfeng.dutil.develop.backgr.Task;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
@@ -55,7 +55,6 @@ import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
-import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.core.util.SwingTreeUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
@@ -63,7 +62,7 @@ import com.dwarfeng.projwiz.core.view.struct.GuiManager.ExecType;
 
 final class MfPanel_02 extends ProjWizPanel {
 
-	private static final long serialVersionUID = 9177857181581910358L;
+	private static final long serialVersionUID = -135339695754567012L;
 	private static final String DF_ANCHORFILEMODEL_FIRECLEARED = "A";
 	private static final String DF_ANCHORFILEMODEL_FIRECHANGED = "B";
 	private static final String DF_FOCUSPROJECTMODEL_FIRECLEARED = "C";
@@ -83,8 +82,7 @@ final class MfPanel_02 extends ProjWizPanel {
 	private final JMenuItem mi_07;
 	private final JMenuItem mi_08;
 
-	// private SyncKeySetModel<String, ProjectProcessor> projectProcessorModel;
-	private SyncKeySetModel<String, FileProcessor> fileProcessorModel;
+	private SyncComponentModel componentModel;
 	private SyncReferenceModel<File> anchorFileModel;
 	private SyncReferenceModel<Project> focusProjectModel;
 	private SyncSetModel<File> focusFileModel;
@@ -96,7 +94,7 @@ final class MfPanel_02 extends ProjWizPanel {
 
 	private final TreeCellRenderer treeRenderer = new DefaultTreeCellRenderer() {
 
-		private static final long serialVersionUID = -6630645225494609239L;
+		private static final long serialVersionUID = -985606345206483223L;
 
 		@Override
 		public java.awt.Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
@@ -111,8 +109,8 @@ final class MfPanel_02 extends ProjWizPanel {
 			// setText(file.getName());
 			setText(fileNameMap.get(file));
 			Image image = null;
-			if (Objects.nonNull(fileProcessorModel)) {
-				FileProcessor processor = fileProcessorModel.get(file.getRegisterKey());
+			if (Objects.nonNull(componentModel)) {
+				FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
 				if (Objects.nonNull(processor)) {
 					image = processor.getFileIcon(ModelUtil.unmodifiableFile(file));
 				}
@@ -570,7 +568,7 @@ final class MfPanel_02 extends ProjWizPanel {
 	 * 新实例。
 	 */
 	public MfPanel_02() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	/**
@@ -580,13 +578,11 @@ final class MfPanel_02 extends ProjWizPanel {
 	 * @param anchorFileModel
 	 * @param focusProjectModel
 	 * @param focusFileModel
-	 * @param projectProcessorModel
-	 * @param fileProcessorModel
+	 * @param componentModel
 	 */
 	public MfPanel_02(GuiManager guiManager, I18nHandler i18nHandler, SyncReferenceModel<File> anchorFileModel,
 			SyncReferenceModel<Project> focusProjectModel, SyncSetModel<File> focusFileModel,
-			SyncKeySetModel<String, ProjectProcessor> projectProcessorModel,
-			SyncKeySetModel<String, FileProcessor> fileProcessorModel) {
+			SyncComponentModel componentModel) {
 		super(guiManager, i18nHandler);
 
 		setLayout(new BorderLayout(0, 0));
@@ -769,12 +765,13 @@ final class MfPanel_02 extends ProjWizPanel {
 		}
 
 		// this.projectProcessorModel = projectProcessorModel;
-		this.fileProcessorModel = fileProcessorModel;
+		this.componentModel = componentModel;
 		this.anchorFileModel = anchorFileModel;
 		this.focusProjectModel = focusProjectModel;
 		this.focusFileModel = focusFileModel;
 
 		syncModel();
+		syncComponentModel();
 
 	}
 
@@ -817,10 +814,10 @@ final class MfPanel_02 extends ProjWizPanel {
 	}
 
 	/**
-	 * @return the fileProcessorModel
+	 * @return the componentModel
 	 */
-	public SyncKeySetModel<String, FileProcessor> getFileProcessorModel() {
-		return fileProcessorModel;
+	public SyncComponentModel getComponentModel() {
+		return componentModel;
 	}
 
 	/**
@@ -855,17 +852,12 @@ final class MfPanel_02 extends ProjWizPanel {
 	}
 
 	/**
-	 * @param fileProcessorModel
-	 *            the fileProcessorModel to set
+	 * @param componentModel
+	 *            the componentModel to set
 	 */
-	public void setFileProcessorModel(SyncKeySetModel<String, FileProcessor> fileProcessorModel) {
-		this.fileProcessorModel = fileProcessorModel;
-		adjustFlag = true;
-		try {
-			tree.repaint();
-		} finally {
-			adjustFlag = false;
-		}
+	public void setComponentModel(SyncComponentModel componentModel) {
+		this.componentModel = componentModel;
+		syncComponentModel();
 	}
 
 	/**
@@ -902,16 +894,6 @@ final class MfPanel_02 extends ProjWizPanel {
 		syncModel();
 	}
 
-	// /**
-	// * @param projectProcessorModel
-	// * the projectProcessorModel to set
-	// */
-	// public void setProjectProcessorModel(SyncKeySetModel<String,
-	// ProjectProcessor> projectProcessorModel) {
-	// this.projectProcessorModel = projectProcessorModel;
-	// tree.repaint();
-	// }
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -926,6 +908,16 @@ final class MfPanel_02 extends ProjWizPanel {
 		mi_07.setText(label(LabelStringKey.MFPANEL_2_7));
 
 	}
+
+	// /**
+	// * @param projectProcessorModel
+	// * the projectProcessorModel to set
+	// */
+	// public void setProjectProcessorModel(SyncKeySetModel<String,
+	// ProjectProcessor> projectProcessorModel) {
+	// this.projectProcessorModel = projectProcessorModel;
+	// tree.repaint();
+	// }
 
 	private boolean checkDuplexingForecast(Object[] objs) {
 		if (duplexingForecast.isEmpty()) {
@@ -956,6 +948,15 @@ final class MfPanel_02 extends ProjWizPanel {
 	private File getFileFromPath(TreePath treePath) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 		return (File) node.getUserObject();
+	}
+
+	private void syncComponentModel() {
+		adjustFlag = true;
+		try {
+			tree.repaint();
+		} finally {
+			adjustFlag = false;
+		}
 	}
 
 	private void syncModel() {

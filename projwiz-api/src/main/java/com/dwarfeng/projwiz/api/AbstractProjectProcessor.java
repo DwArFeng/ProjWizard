@@ -2,13 +2,15 @@ package com.dwarfeng.projwiz.api;
 
 import java.awt.Image;
 
+import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
-import com.dwarfeng.dutil.develop.resource.Resource;
-import com.dwarfeng.projwiz.core.model.eum.FixType;
+import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.struct.File;
+import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
+import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 
 /**
  * 抽象工程处理器。
@@ -22,20 +24,24 @@ import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public abstract class AbstractProjectProcessor extends AbstractProcessor implements ProjectProcessor {
+public abstract class AbstractProjectProcessor extends AbstractComponent implements ProjectProcessor {
 
 	/**
 	 * 新实例。
 	 * 
 	 * @param key
 	 *            指定的键值。
-	 * @param configResource
-	 *            指向配置的资源。
+	 * @param toolkitRef
+	 *            指定的工具包引用。
+	 * @param metaDataStorage
+	 *            指定的元数据仓库。
 	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
+	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public AbstractProjectProcessor(String key, Resource configResource) {
-		super(key, configResource);
+	public AbstractProjectProcessor(String key, ReferenceModel<? extends Toolkit> toolkitRef,
+			MetaDataStorage metaDataStorage) {
+		super(key, toolkitRef, metaDataStorage);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -66,8 +72,8 @@ public abstract class AbstractProjectProcessor extends AbstractProcessor impleme
 	 * {@inheritDoc}
 	 */
 	@Override
-	public FixType getProjectIconFixType(Project project) {
-		return FixType.FIX;
+	public IconVariability getProjectIconFixType(Project project) {
+		return IconVariability.FIX;
 	}
 
 	/**
@@ -90,8 +96,8 @@ public abstract class AbstractProjectProcessor extends AbstractProcessor impleme
 	 * {@inheritDoc}
 	 */
 	@Override
-	public FixType getProjectThumbFixType(Project project) {
-		return FixType.FIX;
+	public IconVariability getProjectThumbFixType(Project project) {
+		return IconVariability.FIX;
 	}
 
 	/**

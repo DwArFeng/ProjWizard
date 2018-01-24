@@ -29,9 +29,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.obv.ProjectAdapter;
@@ -45,7 +45,7 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSuppiler {
 
-	private static final long serialVersionUID = -9110138970715746022L;
+	private static final long serialVersionUID = -4834676328225083456L;
 
 	private final JButton applyButton;
 	private final JButton cancelButton;
@@ -62,7 +62,7 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 	private final JPanel fromProjectProcessor;
 
 	private Project project;
-	private SyncKeySetModel<String, ProjectProcessor> projectProcessorModel;
+	private SyncComponentModel componentModel;
 
 	private final Lock disposeLock = new ReentrantLock();
 	private final Condition disposeCondition = disposeLock.newCondition();
@@ -156,27 +156,15 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 	}
 
 	/**
-	 * 新实例。
 	 * 
 	 * @param guiManager
-	 *            指定的界面管理器。
 	 * @param i18nHandler
-	 *            指定的国际化处理器。
 	 * @param owner
-	 *            窗口的所有者。
-	 * @param projectProcessorModel
-	 *            指定的工程处理器模型。
-	 * @param fileProcessorModel
-	 *            指定的文件处理器模型。
+	 * @param componentModel
 	 * @param project
-	 *            指定的工程。
-	 * @param file
-	 *            指定的文件。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
 	 */
 	public ProjectPropertiesDialog(GuiManager guiManager, I18nHandler i18nHandler, Window owner,
-			SyncKeySetModel<String, ProjectProcessor> projectProcessorModel, Project project) {
+			SyncComponentModel componentModel, Project project) {
 		super(guiManager, i18nHandler, owner);
 
 		addWindowListener(new WindowAdapter() {
@@ -353,7 +341,7 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 			project.addObverser(projectObverser);
 		}
 
-		this.projectProcessorModel = projectProcessorModel;
+		this.componentModel = componentModel;
 		this.project = project;
 
 		syncModel();
@@ -378,12 +366,12 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 	}
 
 	/**
-	 * 获取当前的工程处理器模型。
+	 * 获取当前对话框的组件模型。
 	 * 
-	 * @return 当前的工程处理器模型。
+	 * @return 当前对话框的组件模型。
 	 */
-	public SyncKeySetModel<String, ProjectProcessor> getProjectProcessorModel() {
-		return projectProcessorModel;
+	public SyncComponentModel getComponentModel() {
+		return componentModel;
 	}
 
 	/**
@@ -428,14 +416,13 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 	}
 
 	/**
-	 * 设置当前的工程处理器模型。
+	 * 设置当前对话框的组件模型。
 	 * 
-	 * @param projectProcessorModel
-	 *            指定的工程处理器模型。
+	 * @param componentModel
+	 *            指定的组件模型。
 	 */
-	public void setProjectProcessorModel(SyncKeySetModel<String, ProjectProcessor> projectProcessorModel) {
-		this.projectProcessorModel = projectProcessorModel;
-
+	public void setComponentModel(SyncComponentModel componentModel) {
+		this.componentModel = componentModel;
 		syncModel();
 	}
 
@@ -518,12 +505,12 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 			project.getLock().readLock().unlock();
 		}
 
-		if (Objects.isNull(projectProcessorModel) || Objects.isNull(project))
+		if (Objects.isNull(componentModel) || Objects.isNull(project))
 			return;
 
-		projectProcessorModel.getLock().readLock().lock();
+		componentModel.getLock().readLock().lock();
 		try {
-			ProjectProcessor processor = projectProcessorModel.get(project.getRegisterKey());
+			ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class).get(project.getRegisterKey());
 			if (Objects.nonNull(processor)
 					&& Objects.nonNull((propSuppiler = processor.getProjectPropSuppiler(project)))) {
 				Component component = null;
@@ -535,7 +522,7 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 			}
 
 		} finally {
-			projectProcessorModel.getLock().readLock().unlock();
+			componentModel.getLock().readLock().unlock();
 		}
 
 	}

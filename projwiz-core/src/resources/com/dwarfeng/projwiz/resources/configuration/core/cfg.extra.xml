@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+	<!--使用如下格式: <info key="com.dwarfeng.projwiz.core.logger.setting" classify="com.dwarfeng.projwiz.core" 
+		filename="logger.setting.xml" default="/com/dwarfeng/projwiz/resources/configuration/core/logger.setting.xml" 
+		/> -->
+</root>

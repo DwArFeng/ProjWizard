@@ -21,6 +21,9 @@ import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
+import com.dwarfeng.dutil.basic.gui.awt.CommonIconLib;
+import com.dwarfeng.dutil.basic.gui.awt.ImageSize;
+import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
@@ -35,7 +38,7 @@ import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncProcessorConfigHandler;
+import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
@@ -46,10 +49,8 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
-import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
-import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
@@ -225,11 +226,6 @@ public final class Constants {
 		}
 
 		@Override
-		public boolean addObverserToProject(Project project, ProjectObverser obverser) {
-			throw new IllegalStateException("没有权限运行方法: addObverserToProject");
-		}
-
-		@Override
 		public boolean addProgramObverser(ProgramObverser obverser) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: addProgramObverser");
 		}
@@ -310,6 +306,11 @@ public final class Constants {
 		}
 
 		@Override
+		public SyncComponentModel getComponentModel() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getComponentModel");
+		}
+
+		@Override
 		public SyncExconfigModel getCoreConfigModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getCoreConfigModel");
 		}
@@ -362,16 +363,6 @@ public final class Constants {
 		@Override
 		public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getFileIndicateModel");
-		}
-
-		@Override
-		public SyncKeySetModel<String, FileProcessor> getFileProcessorModel() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getFileProcessorModel");
-		}
-
-		@Override
-		public KeySetModel<String, FileProcessor> getFileProcessorModelReadOnly() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getFileProcessorModelReadOnly");
 		}
 
 		@Override
@@ -482,11 +473,6 @@ public final class Constants {
 		}
 
 		@Override
-		public SyncProcessorConfigHandler getProcessorConfigHandler() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getProcessorConfigHandler");
-		}
-
-		@Override
 		public Set<ProgramObverser> getProgramObversers() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getProgramObversers");
 		}
@@ -509,16 +495,6 @@ public final class Constants {
 		@Override
 		public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getProjectIndicateModel");
-		}
-
-		@Override
-		public SyncKeySetModel<String, ProjectProcessor> getProjectProcessorModel() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getProjectProcessorModel");
-		}
-
-		@Override
-		public KeySetModel<String, ProjectProcessor> getProjectProcessorModelReadOnly() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getProjectProcessorModelReadOnly");
 		}
 
 		@Override
@@ -569,16 +545,6 @@ public final class Constants {
 		}
 
 		@Override
-		public boolean registFileProcessor(FileProcessor processor) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: registFileProcessor");
-		}
-
-		@Override
-		public boolean registProjectProcessor(ProjectProcessor processor) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: registProjectProcessor");
-		}
-
-		@Override
 		public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: removeCoreConfigObverser");
 		}
@@ -586,11 +552,6 @@ public final class Constants {
 		@Override
 		public boolean removeObverserFromFile(File file, FileObverser obverser) {
 			throw new IllegalStateException("没有权限运行方法: removeObverserFromFile");
-		}
-
-		@Override
-		public boolean removeObverserFromProject(Project project, ProjectObverser obverser) {
-			throw new IllegalStateException("没有权限运行方法: removeObverserFromProject");
 		}
 
 		@Override
@@ -708,16 +669,6 @@ public final class Constants {
 		}
 
 		@Override
-		public boolean unregistFileProcessor(FileProcessor processor) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: unregistFileProcessor");
-		}
-
-		@Override
-		public boolean unregistProjectProcessor(ProjectProcessor processor) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: unregistProjectProcessor");
-		}
-
-		@Override
 		public void warn(String message) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: warn");
 		}
@@ -755,6 +706,10 @@ public final class Constants {
 	/** LeveledToolkit 类中执行每个方法所需要的最小权限。 */
 	public final static Map<Method, ToolkitLevel> LEVELEDTOOLKIT_MIN_LEVEL;
 
+	/** 代表图片不存在的图片。 */
+	public final static Image IMAGE_LOAD_FAILED = ImageUtil.getInternalImage(CommonIconLib.IMG_LOAD_FAILED_BLUE,
+			ImageUtil.getDefaultImage(), ImageSize.ICON_SUPER_LARGE);
+
 	static {
 		Map<ProjWizProperty, String> init0 = new EnumMap<>(ProjWizProperty.class);
 		init0.put(ProjWizProperty.PLUGIN_PATH, "plugins");
@@ -762,13 +717,13 @@ public final class Constants {
 		init0.put(ProjWizProperty.CFGREPO_PATH, "configuration");
 		init0.put(ProjWizProperty.CFG_LISTS, "");
 		init0.put(ProjWizProperty.COMPONENT_PATH, "components");
+		init0.put(ProjWizProperty.METADATA_PATH, "metadata");
 		DEFAULT_PROJWIZ_PROPERTIES = Collections.unmodifiableMap(init0);
 
 		Map<Method, ToolkitLevel> init1 = new EnumMap<>(Method.class);
 		// 为各种方法提供权限等级
 		init1.put(Method.ADDCORECONFIGOBVERSER, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.ADDOBVERSERTOFILE, ToolkitLevel.WRITE_LIMIT);
-		init1.put(Method.ADDOBVERSERTOPROJECT, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.ADDPROGRAMOBVERSER, ToolkitLevel.FULL);
 		init1.put(Method.CHOOSEPROJECTFILE, ToolkitLevel.READ_ONLY);
 		init1.put(Method.CHOOSESYSTEMFILE, ToolkitLevel.READ_ONLY);
@@ -785,6 +740,7 @@ public final class Constants {
 		init1.put(Method.GETCFGHANDLER, ToolkitLevel.FULL);
 		init1.put(Method.GETCFGHANDLERREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETBACKGROUNDREADONLY, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETCOMPONENTMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETCORECONFIGMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETCORECONFIGMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETEDITORMODEL, ToolkitLevel.FULL);
@@ -796,8 +752,6 @@ public final class Constants {
 		init1.put(Method.GETFILEICONIMAGEMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETFILEICONOBVMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETFILEINDICATEMODEL, ToolkitLevel.FULL);
-		init1.put(Method.GETFILEPROCESSORMODEL, ToolkitLevel.FULL);
-		init1.put(Method.GETFILEPROCESSORMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETFOCUSEDITORMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETFOCUSEDITORMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETFOCUSFILEMODEL, ToolkitLevel.FULL);
@@ -822,9 +776,6 @@ public final class Constants {
 		init1.put(Method.GETPROJECTICONOBVMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETPROJECTINDICATEMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETPLUGINCLASSLOADER, ToolkitLevel.FULL);
-		init1.put(Method.GETPROCESSORCONFIGHANDLER, ToolkitLevel.FULL);
-		init1.put(Method.GETPROJECTPROCESSORMODEL, ToolkitLevel.FULL);
-		init1.put(Method.GETPROJECTPROCESSORMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETPROPERTY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETRUNTIMESTATE, ToolkitLevel.READ_ONLY);
 		init1.put(Method.INFO, ToolkitLevel.WRITE_LIMIT);
@@ -833,11 +784,8 @@ public final class Constants {
 		init1.put(Method.OPENFILE, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.OPENFILEINPUTSTREAM, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.OPENFILEOUTPUTSTREAM, ToolkitLevel.WRITE_LIMIT);
-		init1.put(Method.REGISTFILEPROCESSOR, ToolkitLevel.WRITE_LIMIT);
-		init1.put(Method.REGISTPROJECTPROCESSOR, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.REMOVECORECONFIGOBVERSER, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.REMOVEOBVERSERFROMFILE, ToolkitLevel.WRITE_LIMIT);
-		init1.put(Method.REMOVEOBVERSERFROMPROJECT, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.REMOVEPROGRAMOBVERSER, ToolkitLevel.FULL);
 		init1.put(Method.SETRUNTIMESTATE, ToolkitLevel.FULL);
 		init1.put(Method.SHOWCOMPONENTDIALOG, ToolkitLevel.WRITE_LIMIT);
@@ -852,11 +800,9 @@ public final class Constants {
 		init1.put(Method.SUBMITTASK, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.TRACE, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.TRYEXIT, ToolkitLevel.FULL);
-		init1.put(Method.UNREGISTFILEPROCESSOR, ToolkitLevel.WRITE_LIMIT);
-		init1.put(Method.UNREGISTPROJECTPROCESSOR, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.WARN, ToolkitLevel.WRITE_LIMIT);
-
 		LEVELEDTOOLKIT_MIN_LEVEL = Collections.unmodifiableMap(init1);
+
 	}
 
 	// 禁止外部实例化

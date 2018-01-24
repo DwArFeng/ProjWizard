@@ -46,8 +46,7 @@ final class ShowAnchorFilePropertiesDialogTask extends ProjWizTask {
 			SwingUtil.invokeAndWaitInEventQueue(() -> {
 				dialogRef.set(new FilePropertiesDialog(projWizard.getToolkit().getGuiManager(),
 						projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getMainFrame(),
-						projWizard.getToolkit().getProjectProcessorModel(),
-						projWizard.getToolkit().getFileProcessorModel(), focusProject, anchorFile));
+						projWizard.getToolkit().getComponentModel(), focusProject, anchorFile));
 			});
 			projWizard.getToolkit().showExternalWindow(dialogRef.get());
 
@@ -80,7 +79,7 @@ final class ShowFocusProjectPropertiesDialogTask extends ProjWizTask {
 			SwingUtil.invokeAndWaitInEventQueue(() -> {
 				dialogRef.set(new ProjectPropertiesDialog(projWizard.getToolkit().getGuiManager(),
 						projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getMainFrame(),
-						projWizard.getToolkit().getProjectProcessorModel(), focusProject));
+						projWizard.getToolkit().getComponentModel(), focusProject));
 			});
 			projWizard.getToolkit().showExternalWindow(dialogRef.get());
 

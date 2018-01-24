@@ -3,7 +3,7 @@ package com.dwarfeng.projwiz.core.model.struct;
 import java.awt.Image;
 
 import com.dwarfeng.dutil.basic.prog.ProcessException;
-import com.dwarfeng.projwiz.core.model.eum.FixType;
+import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 
 /**
  * 工程处理器。
@@ -14,7 +14,7 @@ import com.dwarfeng.projwiz.core.model.eum.FixType;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public interface ProjectProcessor extends Processor {
+public interface ProjectProcessor extends Component {
 
 	/**
 	 * 获取文件处理器指定的文件对应的属性提供器。
@@ -46,7 +46,7 @@ public interface ProjectProcessor extends Processor {
 	 *            指定的工程。
 	 * @return 指定的工程的图标的固定类型。
 	 */
-	public FixType getProjectIconFixType(Project project);
+	public IconVariability getProjectIconFixType(Project project);
 
 	/**
 	 * 获取工程处理器指定的工程对应的属性提供器。
@@ -72,7 +72,7 @@ public interface ProjectProcessor extends Processor {
 	 * @param project
 	 * @return
 	 */
-	public FixType getProjectThumbFixType(Project project);
+	public IconVariability getProjectThumbFixType(Project project);
 
 	/**
 	 * 是否支持新建工程操作。
