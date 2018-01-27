@@ -12,12 +12,12 @@ import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
 import com.dwarfeng.dutil.develop.cfg.struct.ValueParser;
 
 /**
- * 模态配置。
+ * 界面配置。
  * 
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public enum ModalConfiguration implements ExconfigEntry {
+public enum ViewConfiguration implements ExconfigEntry {
 
 	/** 主界面的西方面板是否可见。 */
 	GUI_VISIBLE_MAINFRAME_WEST("gui.visible.mainframe.west", "true", new BooleanConfigChecker(), new BooleanValueParser()),
@@ -53,7 +53,7 @@ public enum ModalConfiguration implements ExconfigEntry {
 	private final ConfigChecker configChecker;
 	private final ValueParser valueParser;
 
-	private ModalConfiguration(String name, String defaultValue, ConfigChecker configChecker, ValueParser valueParser) {
+	private ViewConfiguration(String name, String defaultValue, ConfigChecker configChecker, ValueParser valueParser) {
 		this.name = name;
 		this.defaultValue = defaultValue;
 		this.configChecker = configChecker;

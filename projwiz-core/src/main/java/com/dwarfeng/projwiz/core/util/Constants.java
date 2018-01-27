@@ -466,16 +466,6 @@ public final class Constants {
 		}
 
 		@Override
-		public SyncExconfigModel getModalConfigModel() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getModalConfigModel");
-		}
-
-		@Override
-		public ExconfigModel getModalConfigModelReadOnly() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getModalConfigModelReadOnly");
-		}
-
-		@Override
 		public PluginClassLoader getPluginClassLoader() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getPluginClassLoader");
 		}
@@ -518,6 +508,16 @@ public final class Constants {
 		@Override
 		public RuntimeState getRuntimeState() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getRuntimeState");
+		}
+
+		@Override
+		public SyncExconfigModel getViewConfigModel() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getViewConfigModel");
+		}
+
+		@Override
+		public ExconfigModel getViewConfigModelReadOnly() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getViewConfigModelReadOnly");
 		}
 
 		@Override
@@ -717,6 +717,8 @@ public final class Constants {
 	public final static String RESOURCE_CLASSIFY_CORE = "com.dwarfeng.projwiz.core";
 	/** 主程序的国际化配置的资源仓库类别。 */
 	public final static String RESOURCE_CLASSIFY_I18N = "com.dwarfeng.projwiz.i18n";
+	/** 主程序的测试情形配置的资源仓库类别。 */
+	public final static String RESOURCE_CLASSIFY_TESTCASE = "com.dwarfeng.projwiz.testcase";
 
 	/** 默认的程序属性表。 */
 	public final static Map<ProjWizProperty, String> DEFAULT_PROJWIZ_PROPERTIES;
@@ -736,6 +738,7 @@ public final class Constants {
 		init0.put(ProjWizProperty.CFG_LISTS, "");
 		init0.put(ProjWizProperty.COMPONENT_PATH, "components");
 		init0.put(ProjWizProperty.METADATA_PATH, "metadata");
+		init0.put(ProjWizProperty.TEST_CASE, "false");
 		DEFAULT_PROJWIZ_PROPERTIES = Collections.unmodifiableMap(init0);
 
 		Map<Method, ToolkitLevel> init1 = new EnumMap<>(Method.class);
@@ -787,8 +790,6 @@ public final class Constants {
 		init1.put(Method.GETLOGGERI18NHANDLER, ToolkitLevel.FULL);
 		init1.put(Method.GETLOGGERI18NHANDLERREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETMAINFRAME, ToolkitLevel.FULL);
-		init1.put(Method.GETMODALCONFIGMODEL, ToolkitLevel.FULL);
-		init1.put(Method.GETMODALCONFIGMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETPROGRAMOBVERSERS, ToolkitLevel.FULL);
 		init1.put(Method.GETPROJECTICONIMAGEMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETPROJECTPROCESSORS, ToolkitLevel.READ_ONLY);
@@ -798,6 +799,8 @@ public final class Constants {
 		init1.put(Method.GETPLUGINCLASSLOADER, ToolkitLevel.FULL);
 		init1.put(Method.GETPROPERTY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETRUNTIMESTATE, ToolkitLevel.READ_ONLY);
+		init1.put(Method.GETVIEWCONFIGMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETVIEWCONFIGMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.INFO, ToolkitLevel.WRITE_LIMIT);
 		init1.put(Method.ISMAINFRAMEVISIBLE, ToolkitLevel.READ_ONLY);
 		init1.put(Method.NEWMAINFRAME, ToolkitLevel.FULL);

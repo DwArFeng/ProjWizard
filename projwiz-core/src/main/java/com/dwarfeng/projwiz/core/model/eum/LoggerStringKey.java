@@ -38,6 +38,7 @@ public enum LoggerStringKey implements Name {
 	TASK_POSE_24(new DefaultName("task.pose.24")), //
 	TASK_POSE_25(new DefaultName("task.pose.25")), //
 	TASK_POSE_26(new DefaultName("task.pose.26")), //
+	TASK_POSE_27(new DefaultName("task.pose.27")), //
 	TASK_POSE_28(new DefaultName("task.pose.28")), //
 	TASK_POSE_29(new DefaultName("task.pose.29")), //
 	TASK_POSE_30(new DefaultName("task.pose.30")), //
@@ -59,13 +60,9 @@ public enum LoggerStringKey implements Name {
 	TASK_DISPOSE_3(new DefaultName("task.dispose.3")), //
 	TASK_DISPOSE_4(new DefaultName("task.dispose.4")), //
 	TASK_DISPOSE_5(new DefaultName("task.dispose.5")), //
-	TASK_DISPOSE_6(new DefaultName("task.dispose.6")), //
 	TASK_DISPOSE_7(new DefaultName("task.dispose.7")), //
 	TASK_DISPOSE_8(new DefaultName("task.dispose.8")), //
 	TASK_DISPOSE_9(new DefaultName("task.dispose.9")), //
-	TASK_DISPOSE_10(new DefaultName("task.dispose.10")), //
-	TASK_DISPOSE_11(new DefaultName("task.dispose.11")), //
-	TASK_DISPOSE_12(new DefaultName("task.dispose.12")), //
 
 	TASK_START_0(new DefaultName("task.start.0")), //
 	TASK_START_1(new DefaultName("task.start.1")), //

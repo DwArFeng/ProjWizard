@@ -10,9 +10,9 @@
 		filename="cfg.core.properties"
 		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.core.properties" />
 
-	<info key="com.dwarfeng.projwiz.core.cfg.modal" classify="com.dwarfeng.projwiz.core"
-		filename="cfg.modal.properties"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.modal.properties" />
+	<info key="com.dwarfeng.projwiz.core.cfg.view" classify="com.dwarfeng.projwiz.core"
+		filename="cfg.view.properties"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.view.properties" />
 
 	<info key="com.dwarfeng.projwiz.core.i18n.logger.file.setting"
 		classify="com.dwarfeng.projwiz.core" filename="i18n.logger.file.setting.xml"
@@ -61,5 +61,9 @@
 	<info key="com.dwarfeng.projwiz.i18n.logger" classify="com.dwarfeng.projwiz.core"
 		filename="logger.properties"
 		default="/com/dwarfeng/projwiz/resources/configuration/i18n/logger.properties" />
+		
+			<info key="com.dwarfeng.projwiz.testcase.logger.setting" classify="com.dwarfeng.projwiz.testcase"
+		filename="logger.setting.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/testcase/logger.setting.xml" />
 
 </root>

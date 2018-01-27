@@ -116,8 +116,6 @@ public interface Toolkit {
 		GETLOGGERI18NHANDLER, //
 		GETLOGGERI18NHANDLERREADONLY, //
 		GETMAINFRAME, //
-		GETMODALCONFIGMODEL, //
-		GETMODALCONFIGMODELREADONLY, //
 		GETPLUGINCLASSLOADER, //
 		GETPROGRAMOBVERSERS, //
 		GETPROJECTICONIMAGEMODEL, //
@@ -127,6 +125,8 @@ public interface Toolkit {
 		GETPROJECTPROCESSORS, //
 		GETPROPERTY, //
 		GETRUNTIMESTATE, //
+		GETVIEWCONFIGMODEL, //
+		GETVIEWCONFIGMODELREADONLY, //
 		INFO, //
 		ISMAINFRAMEVISIBLE, //
 		NEWMAINFRAME, //
@@ -663,27 +663,6 @@ public interface Toolkit {
 	public MainFrame getMainFrame() throws IllegalStateException;
 
 	/**
-	 * 获取模态配置模型。
-	 * 
-	 * @return 模态配置模型。
-	 * @throws IllegalStateException
-	 *             因为没有权限而抛出的异常。
-	 */
-	public SyncExconfigModel getModalConfigModel() throws IllegalStateException;
-
-	/**
-	 * 获取程序中的模态配置模型。
-	 * 
-	 * <p>
-	 * 模态配置模型是只读的。
-	 * 
-	 * @return 程序中的模态配置模型。
-	 * @throws IllegalStateException
-	 *             因为没有权限而抛出的异常。
-	 */
-	public ExconfigModel getModalConfigModelReadOnly() throws IllegalStateException;
-
-	/**
 	 * 获取接口中的插件类加载器。
 	 * <p>
 	 * 该插件类加载器是只读的。
@@ -768,6 +747,27 @@ public interface Toolkit {
 	 * @return 程序的运行状态。
 	 */
 	public RuntimeState getRuntimeState() throws IllegalStateException;
+
+	/**
+	 * 获取视图配置模型。
+	 * 
+	 * @return 视图配置模型。
+	 * @throws IllegalStateException
+	 *             因为没有权限而抛出的异常。
+	 */
+	public SyncExconfigModel getViewConfigModel() throws IllegalStateException;
+
+	/**
+	 * 获取程序中的视图配置模型。
+	 * 
+	 * <p>
+	 * 视图配置模型是只读的。
+	 * 
+	 * @return 程序中的视图配置模型。
+	 * @throws IllegalStateException
+	 *             因为没有权限而抛出的异常。
+	 */
+	public ExconfigModel getViewConfigModelReadOnly() throws IllegalStateException;
 
 	/**
 	 * 返回工具包是否拥有权限执行指定的方法。

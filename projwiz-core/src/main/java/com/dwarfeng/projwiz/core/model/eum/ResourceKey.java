@@ -11,14 +11,17 @@ import com.dwarfeng.projwiz.core.util.Constants;
  */
 public enum ResourceKey implements Name {
 
-	/** 记录器设置。 */
-	LOGGER_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "logger.setting"),
+	/** 核心下的记录器设置。 */
+	CORE_LOGGER_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "logger.setting"),
+
+	/** 测试下的记录器设置。 */
+	TEST_LOGGER_SETTING(Constants.RESOURCE_CLASSIFY_TESTCASE, "logger.setting"),
 
 	/** 主程序的配置。 */
 	CFG_CORE(Constants.RESOURCE_CLASSIFY_CORE, "cfg.core"),
 
-	/** 模态配置。 */
-	CFG_MODAL(Constants.RESOURCE_CLASSIFY_CORE, "cfg.modal"),
+	/** 视图配置。 */
+	CFG_VIEW(Constants.RESOURCE_CLASSIFY_CORE, "cfg.view"),
 
 	/** 记录器国际化文件的设置。 */
 	I18N_LOGGER_FILE_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "i18n.logger.file.setting"),

@@ -7,7 +7,7 @@
 			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" />
 		</Console>
 
-		<RollingFile name="std.info.rollingfile" fileName="logs/info.log"
+		<RollingFile name="std.info.rollingfile" fileName="logs/test-info.log"
 			filePattern="logs/$${date:yyyy-MM}/info-%d{MM-dd-yyyy}-%i.log.gz">
 			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" />
 			<Policies>
@@ -16,7 +16,7 @@
 			</Policies>
 		</RollingFile>
 
-		<RollingFile name="std.warn.rollingfile" fileName="logs/warn.log"
+		<RollingFile name="std.warn.rollingfile" fileName="logs/test-warn.log"
 			filePattern="logs/$${date:yyyy-MM}/error-%d{MM-dd-yyyy}-%i.log.gz">
 			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" />
 			<Policies>
@@ -25,7 +25,7 @@
 			</Policies>
 		</RollingFile>
 
-		<RollingFile name="std.error.rollingfile" fileName="logs/error.log"
+		<RollingFile name="std.error.rollingfile" fileName="logs/test-error.log"
 			filePattern="logs/$${date:yyyy-MM}/error-%d{MM-dd-yyyy}-%i.log.gz">
 			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" />
 			<Policies>

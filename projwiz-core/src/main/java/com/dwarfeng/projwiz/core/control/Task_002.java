@@ -2,6 +2,7 @@ package com.dwarfeng.projwiz.core.control;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +15,9 @@ import com.dwarfeng.dutil.basic.io.SaveFailedException;
 import com.dwarfeng.dutil.develop.cfg.io.PropConfigSaver;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
-import com.dwarfeng.projwiz.core.model.eum.ModalConfiguration;
+import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
+import com.dwarfeng.projwiz.core.model.eum.ViewConfiguration;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
@@ -23,7 +25,7 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 
 final class DisposeTask extends ProjWizTask {
 
-	private final class ModalGetter implements Runnable {
+	private final class ViewGetter implements Runnable {
 
 		private boolean westPanelVisible;
 		private boolean eastPanelVisible;
@@ -42,83 +44,8 @@ final class DisposeTask extends ProjWizTask {
 		private int extendedState;
 
 		/**
-		 * @return the eastPanelSize
+		 * {@inheritDoc}
 		 */
-		public int getEastPanelSize() {
-			return eastPanelSize;
-		}
-
-		/**
-		 * @return the extendedState
-		 */
-		public int getExtendedState() {
-			return extendedState;
-		}
-
-		/**
-		 * @return the frameHeight
-		 */
-		public int getFrameHeight() {
-			return frameHeight;
-		}
-
-		/**
-		 * @return the frameWidth
-		 */
-		public int getFrameWidth() {
-			return frameWidth;
-		}
-
-		/**
-		 * @return the southPanelSize
-		 */
-		public int getSouthPanelSize() {
-			return southPanelSize;
-		}
-
-		/**
-		 * @return the westPanelSize
-		 */
-		public int getWestPanelSize() {
-			return westPanelSize;
-		}
-
-		/**
-		 * @return the eastPanelVisible
-		 */
-		public boolean isEastPanelVisible() {
-			return eastPanelVisible;
-		}
-
-		/**
-		 * @return the maximum
-		 */
-		public boolean isMaximum() {
-			return maximum;
-		}
-
-		/**
-		 * 
-		 * @return
-		 */
-		public boolean isNorthPanelVisible() {
-			return northPanelVisible;
-		}
-
-		/**
-		 * @return the southPanelVisible
-		 */
-		public boolean isSouthPanelVisible() {
-			return southPanelVisible;
-		}
-
-		/**
-		 * @return the westPanelVisible
-		 */
-		public boolean isWestPanelVisible() {
-			return westPanelVisible;
-		}
-
 		@Override
 		public void run() {
 			westPanelVisible = projWizard.getToolkit().getMainFrame().getVisibleModel().isWestVisible();
@@ -142,10 +69,10 @@ final class DisposeTask extends ProjWizTask {
 
 	private static final int BACKGROUND_MASK = 1;
 
-	private static final int MODAL_CONFIG_TASK = 2;
+	private static final int VIEW_CONFIG_TASK = 2;
 	private int backgroundMask = 0;
 
-	private int modalConfigMask = 0;
+	private int viewConfigMask = 0;
 
 	public DisposeTask(ProjWizard projWizard) {
 		super(projWizard);
@@ -156,49 +83,112 @@ final class DisposeTask extends ProjWizTask {
 	 */
 	@Override
 	protected void todo() throws Exception {
+		// 定义变量
+		boolean isTestCase;
+
+		// 是否属于测试环境
+		isTestCase = Boolean.parseBoolean(projWizard.getToolkit().getProperty(ProjWizProperty.TEST_CASE));
+
 		// 强制关闭正在编辑的文件。
-		info(LoggerStringKey.TASK_DISPOSE_7);
-		Map<ProjectFilePair, Editor> tempEditorModel = new HashMap<>(projWizard.getToolkit().getEditorModel());
-		tempEditorModel.forEach((pair, editor) -> {
-			editor.stop();
-			projWizard.getToolkit().getEditorModel().remove(pair);
-		});
+		closeEditingFile();
 
 		// 强制关闭已经打开的工程。
-		info(LoggerStringKey.TASK_DISPOSE_8);
-		projWizard.getToolkit().getFocusProjectModel().clear();
-		projWizard.getToolkit().getHoldProjectModel().getLock().readLock().lock();
-		try {
-			List<Project> tempOpenedProjects = new ArrayList<>(projWizard.getToolkit().getHoldProjectModel());
-			tempOpenedProjects.forEach(project -> {
-				project.stop();
-				projWizard.getToolkit().getHoldProjectModel().remove(project);
-			});
-		} finally {
-			projWizard.getToolkit().getHoldProjectModel().getLock().readLock().unlock();
-		}
-
-		// // 卸载处理器并存储配置
-		// info(LoggerStringKey.TASK_DISPOSE_9);
-		// Set<ProjectProcessor> tempProjectProcessors = new
-		// HashSet<>(projWizard.getToolkit().getProjectProcessorModel());
-		// tempProjectProcessors.forEach(processor -> {
-		// saveConfig(processor);
-		// projWizard.getToolkit().getProjectProcessorModel().remove(processor);
-		// });
-		// Set<FileProcessor> tempFileProcessors = new
-		// HashSet<>(projWizard.getToolkit().getFileProcessorModel());
-		// tempFileProcessors.forEach(processor -> {
-		// saveConfig(processor);
-		// projWizard.getToolkit().getFileProcessorModel().remove(processor);
-		// });
+		closeOpeningProject();
 
 		// 试图停止后台。
+		stopBackground();
+
+		// 测试情形下并不加载界面，因此没必要释放界面
+		if (!isTestCase) {
+			// 释放图形交互界面。
+			disposeGui();
+		}
+
+		// 设置退出代码。
+		projWizard.getToolkit().setExitCode(0 | backgroundMask | viewConfigMask);
+	}
+
+	/**
+	 * 释放图形交互界面。
+	 * 
+	 * @throws IOException
+	 *             IO异常。
+	 */
+	private void disposeGui() throws IOException {
+		// 保存视图配置。
+		ViewGetter viewGetter = new ViewGetter();
+		try {
+			SwingUtil.invokeAndWaitInEventQueue(viewGetter);
+		} catch (InterruptedException | InvocationTargetException ignore) {
+			// 中断也要按照基本法。
+		}
+		projWizard.getToolkit().getViewConfigModel().setParsedValue(
+				ViewConfiguration.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelVisible);
+		projWizard.getToolkit().getViewConfigModel().setParsedValue(
+				ViewConfiguration.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelVisible);
+		projWizard.getToolkit().getViewConfigModel().setParsedValue(
+				ViewConfiguration.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), viewGetter.northPanelVisible);
+		projWizard.getToolkit().getViewConfigModel().setParsedValue(
+				ViewConfiguration.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), viewGetter.southPanelVisible);
+
+		projWizard.getToolkit().getViewConfigModel()
+				.setParsedValue(ViewConfiguration.GUI_MAXIMUM_MAINFRAME.getConfigKey(), viewGetter.maximum);
+
+		projWizard.getToolkit().getViewConfigModel()
+				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelSize);
+		projWizard.getToolkit().getViewConfigModel()
+				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelSize);
+		projWizard.getToolkit().getViewConfigModel()
+				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(), viewGetter.southPanelSize);
+
+		projWizard.getToolkit().getViewConfigModel()
+				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(), viewGetter.frameWidth);
+		projWizard.getToolkit().getViewConfigModel()
+				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(), viewGetter.frameHeight);
+
+		projWizard.getToolkit().getViewConfigModel().setParsedValue(
+				ViewConfiguration.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), viewGetter.extendedState);
+
+		info(LoggerStringKey.TASK_DISPOSE_3);
+		PropConfigSaver viewConfigSaver = null;
+		try {
+			viewConfigSaver = new PropConfigSaver(
+					forceOpenOutputStream(ResourceKey.CFG_VIEW, LoggerStringKey.TASK_DISPOSE_4));
+			Set<SaveFailedException> saveFailedExceptions = viewConfigSaver
+					.countinuousSave(projWizard.getToolkit().getViewConfigModel());
+			for (SaveFailedException e : saveFailedExceptions) {
+				warn(LoggerStringKey.TASK_DISPOSE_5, e);
+			}
+			if (!saveFailedExceptions.isEmpty()) {
+				viewConfigMask = VIEW_CONFIG_TASK;
+			}
+		} finally {
+			if (Objects.nonNull(viewConfigSaver)) {
+				viewConfigSaver.close();
+			}
+		}
+
+		// 释放界面。
+		try {
+			SwingUtil.invokeAndWaitInEventQueue(() -> {
+				projWizard.getToolkit().disposeMainFrame();
+			});
+		} catch (InvocationTargetException | InterruptedException ignore) {
+			// 抛异常也要按照基本法。
+		}
+	}
+
+	/**
+	 * 停止后台。
+	 */
+	private void stopBackground() {
+		// 停止后台。
 		info(LoggerStringKey.TASK_DISPOSE_0);
 		projWizard.getToolkit().getBackground(BackgroundType.CONCURRENT).shutdown();
 		projWizard.getToolkit().getBackground(BackgroundType.FIFO).shutdown();
 
 		// 当后台没有停止时执行的调度。
+		// TODO 此时后台不会停止，因为正在运行本任务。
 		if (!projWizard.getToolkit().getBackground(BackgroundType.CONCURRENT).isTerminated()) {
 			backgroundMask = BACKGROUND_MASK;
 			formatWarn(LoggerStringKey.TASK_DISPOSE_1,
@@ -225,86 +215,36 @@ final class DisposeTask extends ProjWizTask {
 				projWizard.getToolkit().getBackground(BackgroundType.FIFO).getLock().readLock().unlock();
 			}
 		}
+	}
 
-		// 保存模态配置。
-		ModalGetter modalGetter = new ModalGetter();
+	/**
+	 * 强制关闭已经打开的文件。
+	 */
+	private void closeOpeningProject() {
+		info(LoggerStringKey.TASK_DISPOSE_8);
+		projWizard.getToolkit().getFocusProjectModel().clear();
+		projWizard.getToolkit().getHoldProjectModel().getLock().readLock().lock();
 		try {
-			SwingUtil.invokeAndWaitInEventQueue(modalGetter);
-		} catch (InterruptedException ignore) {
-			// 中断也要按照基本法。
-		}
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), modalGetter.isWestPanelVisible());
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), modalGetter.isEastPanelVisible());
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), modalGetter.isNorthPanelVisible());
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), modalGetter.isSouthPanelVisible());
-
-		projWizard.getToolkit().getModalConfigModel()
-				.setParsedValue(ModalConfiguration.GUI_MAXIMUM_MAINFRAME.getConfigKey(), modalGetter.isMaximum());
-
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_SIZE_MAINFRAME_WEST.getConfigKey(), modalGetter.getWestPanelSize());
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_SIZE_MAINFRAME_EAST.getConfigKey(), modalGetter.getEastPanelSize());
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(), modalGetter.getSouthPanelSize());
-
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(), modalGetter.getFrameWidth());
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(), modalGetter.getFrameHeight());
-
-		projWizard.getToolkit().getModalConfigModel().setParsedValue(
-				ModalConfiguration.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), modalGetter.getExtendedState());
-
-		info(LoggerStringKey.TASK_DISPOSE_3);
-		PropConfigSaver modalConfigSaver = null;
-		try {
-			modalConfigSaver = new PropConfigSaver(
-					forceOpenOutputStream(ResourceKey.CFG_MODAL, LoggerStringKey.TASK_DISPOSE_4));
-			Set<SaveFailedException> saveFailedExceptions = modalConfigSaver
-					.countinuousSave(projWizard.getToolkit().getModalConfigModel());
-			for (SaveFailedException e : saveFailedExceptions) {
-				warn(LoggerStringKey.TASK_DISPOSE_5, e);
-			}
-			if (!saveFailedExceptions.isEmpty()) {
-				modalConfigMask = MODAL_CONFIG_TASK;
-			}
+			List<Project> tempOpenedProjects = new ArrayList<>(projWizard.getToolkit().getHoldProjectModel());
+			tempOpenedProjects.forEach(project -> {
+				project.stop();
+				projWizard.getToolkit().getHoldProjectModel().remove(project);
+			});
 		} finally {
-			if (Objects.nonNull(modalConfigSaver)) {
-				modalConfigSaver.close();
-			}
+			projWizard.getToolkit().getHoldProjectModel().getLock().readLock().unlock();
 		}
+	}
 
-//		// 保存处理器配置
-//		XmlProcessorConfigSaver processorConfigSaver = null;
-//		try {
-//			processorConfigSaver = new XmlProcessorConfigSaver(
-//					forceOpenOutputStream(ResourceKey.PROCESSOR_CONFIG_SETTING, LoggerStringKey.TASK_DISPOSE_4));
-//			Set<SaveFailedException> saveFailedExceptions = processorConfigSaver
-//					.countinuousSave(projWizard.getToolkit().getProcessorConfigHandler());
-//			for (SaveFailedException e : saveFailedExceptions) {
-//				warn(LoggerStringKey.TASK_DISPOSE_6, e);
-//			}
-//			if (!saveFailedExceptions.isEmpty()) {
-//				modalConfigMask = MODAL_CONFIG_TASK;
-//			}
-//		} finally {
-//			if (Objects.nonNull(processorConfigSaver)) {
-//				processorConfigSaver.close();
-//			}
-//		}
-
-		// 释放界面。
-		SwingUtil.invokeAndWaitInEventQueue(() -> {
-			projWizard.getToolkit().disposeMainFrame();
+	/**
+	 * 强制关闭正在编辑的文件。
+	 */
+	private void closeEditingFile() {
+		info(LoggerStringKey.TASK_DISPOSE_7);
+		Map<ProjectFilePair, Editor> tempEditorModel = new HashMap<>(projWizard.getToolkit().getEditorModel());
+		tempEditorModel.forEach((pair, editor) -> {
+			editor.stop();
+			projWizard.getToolkit().getEditorModel().remove(pair);
 		});
-
-		// 设置退出代码。
-		projWizard.getToolkit().setExitCode(0 | backgroundMask | modalConfigMask);
 	}
 
 	private OutputStream forceOpenOutputStream(ResourceKey resourceKey, LoggerStringKey loggerStringKey)
@@ -319,14 +259,4 @@ final class DisposeTask extends ProjWizTask {
 		}
 	}
 
-	// private void saveConfig(Processor processor) {
-	// try {
-	// processor.saveConfig();
-	// } catch (ProcessException e) {
-	// warn(LoggerStringKey.TASK_DISPOSE_10);
-	// formatWarn(LoggerStringKey.TASK_DISPOSE_11, processor.getKey(),
-	// processor.getClass().toString());
-	// warn(LoggerStringKey.TASK_DISPOSE_12, e);
-	// }
-	// }
 }

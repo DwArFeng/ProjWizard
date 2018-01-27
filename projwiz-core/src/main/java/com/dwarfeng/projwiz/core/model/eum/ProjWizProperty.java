@@ -20,5 +20,7 @@ public enum ProjWizProperty {
 	COMPONENT_PATH,
 	/** 元数据的路径。 */
 	METADATA_PATH,
+	/** 测试情形。 */
+	TEST_CASE,
 
 }

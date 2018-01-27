@@ -72,14 +72,14 @@ public final class LeveledToolkit implements Toolkit {
 	 */
 	public enum ToolkitLevel implements NumberValue {
 
+		/** 完全权限，可以调用任意方法。 */
+		FULL(1000),
 		/** 最低权限，不可以调用任何方法。 */
 		NONE(0),
 		/** 只读权限，可以获得各个属性，但是无权修改它们。 */
 		READ_ONLY(333),
 		/** 有限的写权限，可以使用某些方法对模型或属性进行修改，但无权对模型直接修改。 */
 		WRITE_LIMIT(667),
-		/** 完全权限，可以调用任意方法。 */
-		FULL(1000),
 
 		;
 
@@ -100,9 +100,9 @@ public final class LeveledToolkit implements Toolkit {
 
 	private final NumberValue currentLevel;
 	private final Toolkit standardToolkit;
+	private final Object stopFlagLock = new Object();
 
 	private boolean stopFlag = false;
-	private final Object stopFlagLock = new Object();
 
 	/**
 	 * 新建一个分级工具包。
@@ -566,24 +566,6 @@ public final class LeveledToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncExconfigModel getModalConfigModel() throws IllegalStateException {
-		checkPermissionAndState(Method.GETMODALCONFIGMODEL);
-		return standardToolkit.getModalConfigModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ExconfigModel getModalConfigModelReadOnly() throws IllegalStateException {
-		checkPermissionAndState(Method.GETMODALCONFIGMODELREADONLY);
-		return standardToolkit.getModalConfigModelReadOnly();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public PluginClassLoader getPluginClassLoader() throws IllegalStateException {
 		checkPermissionAndState(Method.GETPLUGINCLASSLOADER);
 		return standardToolkit.getPluginClassLoader();
@@ -659,6 +641,24 @@ public final class LeveledToolkit implements Toolkit {
 	public RuntimeState getRuntimeState() throws IllegalStateException {
 		checkPermissionAndState(Method.GETRUNTIMESTATE);
 		return standardToolkit.getRuntimeState();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SyncExconfigModel getViewConfigModel() throws IllegalStateException {
+		checkPermissionAndState(Method.GETVIEWCONFIGMODEL);
+		return standardToolkit.getViewConfigModel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ExconfigModel getViewConfigModelReadOnly() throws IllegalStateException {
+		checkPermissionAndState(Method.GETVIEWCONFIGMODELREADONLY);
+		return standardToolkit.getViewConfigModelReadOnly();
 	}
 
 	/**

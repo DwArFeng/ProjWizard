@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -71,8 +71,8 @@ import com.dwarfeng.projwiz.core.model.eum.CoreConfiguration;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
-import com.dwarfeng.projwiz.core.model.eum.ModalConfiguration;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
+import com.dwarfeng.projwiz.core.model.eum.ViewConfiguration;
 import com.dwarfeng.projwiz.core.model.io.DefaultPluginClassLoader;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
@@ -838,6 +838,17 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException {
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil
+					.readOnlyKeySetModel(componentModel.getAll(FileProcessor.class), fileProcessor -> {
+						return ModelUtil.unmodifiableFileProcessor(fileProcessor);
+					});
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public SyncMapModel<Project, Editor> getFocusEditorModel() throws IllegalStateException {
 			return focusEditorModel;
 		}
@@ -978,22 +989,6 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncExconfigModel getModalConfigModel() {
-			return modalConfigModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public ExconfigModel getModalConfigModelReadOnly() {
-			return ConfigUtil.unmodifiableExconfigModel(modalConfigModel);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public PluginClassLoader getPluginClassLoader() {
 			return pluginClassLoader;
 		}
@@ -1074,6 +1069,22 @@ public final class ProjWizard {
 			synchronized (runtimeStateLock) {
 				return runtimeState;
 			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncExconfigModel getViewConfigModel() {
+			return viewConfigModel;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ExconfigModel getViewConfigModelReadOnly() {
+			return ConfigUtil.unmodifiableExconfigModel(viewConfigModel);
 		}
 
 		/**
@@ -1538,17 +1549,6 @@ public final class ProjWizard {
 			}
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil
-					.readOnlyKeySetModel(componentModel.getAll(FileProcessor.class), fileProcessor -> {
-						return ModelUtil.unmodifiableFileProcessor(fileProcessor);
-					});
-		}
-
 	}
 
 	/** 程序的版本 */
@@ -1579,9 +1579,9 @@ public final class ProjWizard {
 	private final SyncLoggerHandler loggerHandler = LoggerUtil.syncLoggerHandler(new DelegateLoggerHandler());
 	// 记录器国际化处理器
 	private final SyncI18nHandler loggerI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
-	// 模态配置模型
-	private final SyncExconfigModel modalConfigModel = ConfigUtil
-			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(ModalConfiguration.values())));
+	// 视图配置模型
+	private final SyncExconfigModel viewConfigModel = ConfigUtil
+			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(ViewConfiguration.values())));
 	// 配置处理器
 	private final SyncResourceHandler configurationHandler = ResourceUtil
 			.syncResourceHandler(new DelegateResourceHandler());
@@ -1632,7 +1632,7 @@ public final class ProjWizard {
 	private final Set<ProgramObverser> programObversers = Collections.newSetFromMap(new WeakHashMap<>());
 
 	/** 程序的属性集合。 */
-	private final Map<String, String> properties = new HashMap<>();
+	private final Map<ProjWizProperty, String> properties = new EnumMap<>(ProjWizProperty.class);
 	/** 插件类加载器 */
 	private final PluginClassLoader pluginClassLoader = new DefaultPluginClassLoader();
 
@@ -1704,11 +1704,13 @@ public final class ProjWizard {
 			} catch (NoSuchElementException e) {
 				throw new IllegalArgumentException("非法的参数：" + string);
 			}
-			if (!Constants.DEFAULT_PROJWIZ_PROPERTIES.containsKey(key)) {
+			
+			ProjWizProperty property = null;
+			if (Objects.isNull(property = ProjWizProperty.valueOf(key))) {
 				throw new IllegalArgumentException("不存在的键：" + key);
 			}
 
-			properties.put(key, value);
+			properties.put(property, value);
 		}
 
 		// 为自己保留引用。

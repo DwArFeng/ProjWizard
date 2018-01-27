@@ -28,9 +28,9 @@ import com.dwarfeng.dutil.develop.logger.SysOutLoggerInfo;
 import com.dwarfeng.dutil.develop.logger.io.Log4jLoggerLoader;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
-import com.dwarfeng.projwiz.core.model.eum.ModalConfiguration;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
+import com.dwarfeng.projwiz.core.model.eum.ViewConfiguration;
 import com.dwarfeng.projwiz.core.model.io.ComponentLoader;
 import com.dwarfeng.projwiz.core.model.io.ConfigurationLoader;
 import com.dwarfeng.projwiz.core.model.io.IgnoredComponentLoader;
@@ -62,18 +62,22 @@ final class PoseTask extends ProjWizTask {
 		File[] plugin_jars;
 		Collection<String> ignoreCfgKeys;
 		Collection<String> ignoreCmpoentKeys;
+		boolean isTestCase;
+
+		// 是否属于测试环境
+		isTestCase = Boolean.parseBoolean(projWizard.getToolkit().getProperty(ProjWizProperty.TEST_CASE));
 
 		// 用于在读取配置之前对模型进行必要的操作。
 		initModel();
 
 		// 向记录器中输出初始化信息
-		info(LoggerStringKey.TASK_POSE_6);
+		infoInitMessage(isTestCase);
 
 		// 加载配置信息。
 		loadCfg();
 
 		// 加载记录器资源。
-		loadLogger();
+		loadLogger(isTestCase);
 
 		// 加载记录器国际化文件配置。
 		loadLoggerI18nFile();
@@ -81,17 +85,23 @@ final class PoseTask extends ProjWizTask {
 		// 加载记录器国际化资源配置。
 		loadLoggerI18nResource();
 
-		// 加载标签国际化文件配置。
-		loadLabelI18nFile();
+		// 测试情形下并不加载界面，因此没必要加载标签国际化模型。
+		if (!isTestCase) {
+			// 加载标签国际化文件配置。
+			loadLabelI18nFile();
 
-		// 加载标签国际化文件配置。
-		loadLabelI18nResource();
+			// 加载标签国际化文件配置。
+			loadLabelI18nResource();
+		}
 
 		// 加载核心配置。
 		loadCoreConfig();
 
-		// 加载模态配置。
-		loadModalConfig();
+		// 测试情形下并不加载界面，因此没必要加载视图配置。
+		if (!isTestCase) {
+			// 加载视图配置。
+			loadViewConfig();
+		}
 
 		// 加载配置忽略清单。
 		ignoreCfgKeys = new HashSet<>();
@@ -139,145 +149,25 @@ final class PoseTask extends ProjWizTask {
 		// 解析并实例化插件文件夹下的jar包中的组件。
 		loadJarsCmpoent(plugin_jars, ignoreCmpoentKeys);
 
-		// -------------------------------------
-
-		// // 加载并实例化ProjectProcessor
-		// info(LoggerStringKey.TASK_POSE_16);
-		// XmlProjectProcessorLoader projectProcessorLoader = null;
-		// try {
-		// projectProcessorLoader = new XmlProjectProcessorLoader(
-		// openResource(ResourceKey.REFLECT_PROJECT,
-		// LoggerStringKey.TASK_POSE_0),
-		// projWizard.getToolkit().getPluginClassLoader(),
-		// projWizard.getToolkit().getProcessorConfigHandler());
-		// Set<LoadFailedException> loadFailedExceptions =
-		// projectProcessorLoader
-		// .countinuousLoad(projWizard.getToolkit().getProjectProcessorModel());
-		// for (LoadFailedException e : loadFailedExceptions) {
-		// warn(LoggerStringKey.TASK_POSE_27, e);
-		// }
-		// } finally {
-		// if (Objects.nonNull(projectProcessorLoader)) {
-		// projectProcessorLoader.close();
-		// }
-		// }
-		//
-		// formatInfo(LoggerStringKey.TASK_POSE_17,
-		// projWizard.getToolkit().getProjectProcessorModel().size());
-		// projWizard.getToolkit().getProjectProcessorModel().getLock().readLock().lock();
-		// try {
-		// for (ProjectProcessor processor :
-		// projWizard.getToolkit().getProjectProcessorModel()) {
-		// formatInfo(LoggerStringKey.TASK_POSE_18, processor.getKey(),
-		// processor.getClass());
-		// }
-		// } finally {
-		// projWizard.getToolkit().getProjectProcessorModel().getLock().readLock().unlock();
-		// }
-		//
-		// // 加载并实例化FileProcessor
-		// info(LoggerStringKey.TASK_POSE_19);
-		// XmlFileProcessorLoader fileProcessorLoader = null;
-		// try {
-		// fileProcessorLoader = new XmlFileProcessorLoader(
-		// openResource(ResourceKey.REFLECT_FILE, LoggerStringKey.TASK_POSE_0),
-		// projWizard.getToolkit().getPluginClassLoader(),
-		// projWizard.getToolkit().getProcessorConfigHandler());
-		// Set<LoadFailedException> loadFailedExceptions = fileProcessorLoader
-		// .countinuousLoad(projWizard.getToolkit().getFileProcessorModel());
-		// for (LoadFailedException e : loadFailedExceptions) {
-		// warn(LoggerStringKey.TASK_POSE_28, e);
-		// }
-		// } finally {
-		// if (Objects.nonNull(fileProcessorLoader)) {
-		// fileProcessorLoader.close();
-		// }
-		// }
-		//
-		// formatInfo(LoggerStringKey.TASK_POSE_20,
-		// projWizard.getToolkit().getFileProcessorModel().size());
-		// projWizard.getToolkit().getFileProcessorModel().getLock().readLock().lock();
-		// try {
-		// for (FileProcessor processor :
-		// projWizard.getToolkit().getFileProcessorModel()) {
-		// formatInfo(LoggerStringKey.TASK_POSE_18, processor.getKey(),
-		// processor.getClass());
-		// }
-		// } finally {
-		// projWizard.getToolkit().getFileProcessorModel().getLock().readLock().unlock();
-		// }
-
-		// // 处理器载入配置
-		// info(LoggerStringKey.TASK_POSE_23);
-		// Set<ProjectProcessor> tempProjectProcessors = new
-		// HashSet<>(projWizard.getToolkit().getProjectProcessorModel());
-		// tempProjectProcessors.forEach(processor -> {
-		// loadConfig(processor);
-		// });
-		// Set<FileProcessor> tempFileProcessors = new
-		// HashSet<>(projWizard.getToolkit().getFileProcessorModel());
-		// tempFileProcessors.forEach(processor -> {
-		// loadConfig(processor);
-		// });
-
-		// 生成界面
-		initGui();
+		// 测试情形下并不加载界面，因此没必要加载界面
+		if (!isTestCase) {
+			// 生成界面
+			initGui();
+		}
 
 	}
 
 	/**
-	 * 解析并实例化jar包中的组件。
 	 * 
-	 * @param jars
-	 *            指定的jar包组成的数组。
-	 * @param ignoreCmpoentKeys
-	 *            组件的忽略清单。
-	 * @throws IOException
-	 *             IO异常。
+	 * @param isTestCase
+	 *            是否在测试环境下。
 	 */
-	private void loadJarsCmpoent(File[] jars, Collection<String> ignoreCmpoentKeys) throws IOException {
-		info(LoggerStringKey.TASK_POSE_40);
-
-		for (File jar : jars) {
-			formatInfo(LoggerStringKey.TASK_POSE_41, jar.getPath());
-
-			JarFile jarFile = null;
-			try {
-				jarFile = new JarFile(jar);
-				ZipEntry entry = jarFile.getEntry(Constants.CMPOENT_LIST_PATH);
-				if (Objects.nonNull(entry)) {
-					loadCmpoent0(jarFile.getInputStream(entry), projWizard.getToolkit().getPluginClassLoader(),
-							ignoreCmpoentKeys);
-				}
-			} catch (IllegalStateException | MalformedURLException e) {
-				warn(LoggerStringKey.TASK_POSE_24, e);
-			} finally {
-				if (Objects.nonNull(jarFile)) {
-					jarFile.close();
-				}
-			}
+	private void infoInitMessage(boolean isTestCase) {
+		if (isTestCase) {
+			info(LoggerStringKey.TASK_POSE_27);
+		} else {
+			info(LoggerStringKey.TASK_POSE_6);
 		}
-
-	}
-
-	private void loadCmpoent0(InputStream inputStream, PluginClassLoader pluginClassLoader,
-			Collection<String> ignoreCmpoentKeys) throws IOException {
-		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
-		ComponentLoader loader = null;
-		try {
-			loader = new ComponentLoader(inputStream, ignoreCmpoentKeys, pluginClassLoader);
-			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getComponentModel()));
-		} finally {
-			if (Objects.nonNull(loader)) {
-				loader.close();
-			}
-		}
-
-		for (LoadFailedException e : eptSet) {
-			warn(LoggerStringKey.TASK_POSE_29, e);
-		}
-		eptSet = null;
-		loader = null;
 	}
 
 	/**
@@ -286,34 +176,34 @@ final class PoseTask extends ProjWizTask {
 	private void initGui() {
 		try {
 			SwingUtil.invokeAndWaitInEventQueue(() -> {
-				final ExconfigModel c = projWizard.getToolkit().getModalConfigModel();
+				final ExconfigModel c = projWizard.getToolkit().getViewConfigModel();
 
 				final boolean westPanelVisible = c
-						.getParsedValue(ModalConfiguration.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), Boolean.class);
+						.getParsedValue(ViewConfiguration.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), Boolean.class);
 				final boolean eastPanelVisible = c
-						.getParsedValue(ModalConfiguration.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), Boolean.class);
+						.getParsedValue(ViewConfiguration.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), Boolean.class);
 				final boolean northPanelVisible = c
-						.getParsedValue(ModalConfiguration.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), Boolean.class);
+						.getParsedValue(ViewConfiguration.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), Boolean.class);
 				final boolean southPanelVisible = c
-						.getParsedValue(ModalConfiguration.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), Boolean.class);
+						.getParsedValue(ViewConfiguration.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), Boolean.class);
 
-				final boolean maximum = c.getParsedValue(ModalConfiguration.GUI_MAXIMUM_MAINFRAME.getConfigKey(),
+				final boolean maximum = c.getParsedValue(ViewConfiguration.GUI_MAXIMUM_MAINFRAME.getConfigKey(),
 						Boolean.class);
 
-				final int westPanelSize = c.getParsedValue(ModalConfiguration.GUI_SIZE_MAINFRAME_WEST.getConfigKey(),
+				final int westPanelSize = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_WEST.getConfigKey(),
 						Integer.class);
-				final int eastPanelSize = c.getParsedValue(ModalConfiguration.GUI_SIZE_MAINFRAME_EAST.getConfigKey(),
+				final int eastPanelSize = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_EAST.getConfigKey(),
 						Integer.class);
-				final int southPanelSize = c.getParsedValue(ModalConfiguration.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(),
+				final int southPanelSize = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(),
 						Integer.class);
 
-				final int frameWidth = c.getParsedValue(ModalConfiguration.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(),
+				final int frameWidth = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(),
 						Integer.class);
-				final int frameHeight = c.getParsedValue(ModalConfiguration.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(),
+				final int frameHeight = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(),
 						Integer.class);
 
 				final int extendedState = c
-						.getParsedValue(ModalConfiguration.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), Integer.class);
+						.getParsedValue(ViewConfiguration.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), Integer.class);
 
 				projWizard.getToolkit().newMainFrame();
 
@@ -406,6 +296,26 @@ final class PoseTask extends ProjWizTask {
 
 		for (LoadFailedException e : eptSet) {
 			warn(LoggerStringKey.TASK_POSE_37, e);
+		}
+		eptSet = null;
+		loader = null;
+	}
+
+	private void loadCmpoent0(InputStream inputStream, PluginClassLoader pluginClassLoader,
+			Collection<String> ignoreCmpoentKeys) throws IOException {
+		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
+		ComponentLoader loader = null;
+		try {
+			loader = new ComponentLoader(inputStream, ignoreCmpoentKeys, pluginClassLoader);
+			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getComponentModel()));
+		} finally {
+			if (Objects.nonNull(loader)) {
+				loader.close();
+			}
+		}
+
+		for (LoadFailedException e : eptSet) {
+			warn(LoggerStringKey.TASK_POSE_29, e);
 		}
 		eptSet = null;
 		loader = null;
@@ -514,6 +424,41 @@ final class PoseTask extends ProjWizTask {
 	}
 
 	/**
+	 * 解析并实例化jar包中的组件。
+	 * 
+	 * @param jars
+	 *            指定的jar包组成的数组。
+	 * @param ignoreCmpoentKeys
+	 *            组件的忽略清单。
+	 * @throws IOException
+	 *             IO异常。
+	 */
+	private void loadJarsCmpoent(File[] jars, Collection<String> ignoreCmpoentKeys) throws IOException {
+		info(LoggerStringKey.TASK_POSE_40);
+
+		for (File jar : jars) {
+			formatInfo(LoggerStringKey.TASK_POSE_41, jar.getPath());
+
+			JarFile jarFile = null;
+			try {
+				jarFile = new JarFile(jar);
+				ZipEntry entry = jarFile.getEntry(Constants.CMPOENT_LIST_PATH);
+				if (Objects.nonNull(entry)) {
+					loadCmpoent0(jarFile.getInputStream(entry), projWizard.getToolkit().getPluginClassLoader(),
+							ignoreCmpoentKeys);
+				}
+			} catch (IllegalStateException | MalformedURLException e) {
+				warn(LoggerStringKey.TASK_POSE_24, e);
+			} finally {
+				if (Objects.nonNull(jarFile)) {
+					jarFile.close();
+				}
+			}
+		}
+
+	}
+
+	/**
 	 * 加载标签国际化文件配置。
 	 * 
 	 * @throws IOException
@@ -577,19 +522,29 @@ final class PoseTask extends ProjWizTask {
 	/**
 	 * 载记录器资源。
 	 * 
+	 * @param isTestCase
+	 *            是否为测试环境。
 	 * @throws IOException
 	 *             异常。
 	 */
-	private void loadLogger() throws IOException {
-		info(LoggerStringKey.TASK_POSE_8);
+	private void loadLogger(boolean isTestCase) throws IOException {
+		ResourceKey resourceKey = null;
 
+		if (isTestCase) {
+			resourceKey = ResourceKey.TEST_LOGGER_SETTING;
+		} else {
+			resourceKey = ResourceKey.CORE_LOGGER_SETTING;
+		}
+
+		info(LoggerStringKey.TASK_POSE_8);
 		projWizard.getToolkit().getLoggerHandler().unuseKey(null);
+		projWizard.getToolkit().getLoggerHandler().removeKey(null);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
 		Log4jLoggerLoader loader = null;
 
 		try {
-			loader = new Log4jLoggerLoader(openResource(ResourceKey.LOGGER_SETTING, LoggerStringKey.TASK_POSE_0));
+			loader = new Log4jLoggerLoader(openResource(resourceKey, LoggerStringKey.TASK_POSE_0));
 			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getLoggerHandler()));
 		} finally {
 			if (Objects.nonNull(loader)) {
@@ -610,12 +565,15 @@ final class PoseTask extends ProjWizTask {
 	/**
 	 * 加载记录器国际化资源配置。
 	 * 
+	 * @param isTestCase
+	 *            是否为测试情形。
 	 * @throws IOException
 	 *             IO异常。
 	 */
 	private void loadLoggerI18nFile() throws IOException {
 		info(LoggerStringKey.TASK_POSE_9);
 
+		projWizard.getToolkit().getLoggerI18nHandler().removeKey(null);
 		projWizard.getToolkit().getLoggerI18nHandler().setCurrentLocale(null);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
@@ -668,20 +626,20 @@ final class PoseTask extends ProjWizTask {
 	}
 
 	/**
-	 * 加载模态配置。
+	 * 加载视图配置。
 	 * 
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadModalConfig() throws IOException {
+	private void loadViewConfig() throws IOException {
 		info(LoggerStringKey.TASK_POSE_12);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
 		PropConfigLoader loader = null;
 
 		try {
-			loader = new PropConfigLoader(openResource(ResourceKey.CFG_MODAL, LoggerStringKey.TASK_POSE_0));
-			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getModalConfigModel()));
+			loader = new PropConfigLoader(openResource(ResourceKey.CFG_VIEW, LoggerStringKey.TASK_POSE_0));
+			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getViewConfigModel()));
 		} finally {
 			if (Objects.nonNull(loader)) {
 				loader.close();
