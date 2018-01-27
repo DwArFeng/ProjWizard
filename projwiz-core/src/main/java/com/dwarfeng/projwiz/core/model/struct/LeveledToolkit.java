@@ -19,6 +19,7 @@ import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
+import com.dwarfeng.dutil.basic.num.NumberValue;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
@@ -38,7 +39,6 @@ import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
-import com.dwarfeng.projwiz.core.model.eum.ToolkitLevel;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
@@ -64,7 +64,41 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
  */
 public final class LeveledToolkit implements Toolkit {
 
-	private final ToolkitLevel currentLevel;
+	/**
+	 * 工具包的权限分级。
+	 * 
+	 * @author DwArFeng
+	 * @since 0.0.1-alpha
+	 */
+	public enum ToolkitLevel implements NumberValue {
+
+		/** 最低权限，不可以调用任何方法。 */
+		NONE(0),
+		/** 只读权限，可以获得各个属性，但是无权修改它们。 */
+		READ_ONLY(333),
+		/** 有限的写权限，可以使用某些方法对模型或属性进行修改，但无权对模型直接修改。 */
+		WRITE_LIMIT(667),
+		/** 完全权限，可以调用任意方法。 */
+		FULL(1000),
+
+		;
+
+		private final int level;
+
+		private ToolkitLevel(int level) {
+			this.level = level;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public double doubleValue() {
+			return level;
+		}
+	}
+
+	private final NumberValue currentLevel;
 	private final Toolkit standardToolkit;
 
 	private boolean stopFlag = false;
@@ -78,7 +112,7 @@ public final class LeveledToolkit implements Toolkit {
 	 * @param currentLevel
 	 *            当前的分级。
 	 */
-	public LeveledToolkit(Toolkit standardToolkit, ToolkitLevel currentLevel) {
+	public LeveledToolkit(Toolkit standardToolkit, NumberValue currentLevel) {
 		Objects.requireNonNull(standardToolkit, "入口参数 standardToolkit 不能为 null。");
 		Objects.requireNonNull(currentLevel, "入口参数 currentLevel 不能为 null。");
 
@@ -290,7 +324,7 @@ public final class LeveledToolkit implements Toolkit {
 	 * 
 	 * @return 当前的权限等级。
 	 */
-	public ToolkitLevel getCurrentLevel() {
+	public NumberValue getCurrentLevel() {
 		return currentLevel;
 	}
 
@@ -373,6 +407,15 @@ public final class LeveledToolkit implements Toolkit {
 	public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException {
 		checkPermissionAndState(Method.GETFILEINDICATEMODEL);
 		return standardToolkit.getFileIndicateModel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException {
+		checkPermissionAndState(Method.GETFILEPROCESSORS);
+		return standardToolkit.getFileProcessors();
 	}
 
 	/**
@@ -595,6 +638,15 @@ public final class LeveledToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public KeySetModel<String, ProjectProcessor> getProjectProcessors() throws IllegalStateException {
+		checkPermissionAndState(Method.GETPROJECTPROCESSORS);
+		return standardToolkit.getProjectProcessors();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String getProperty(ProjWizProperty property) throws IllegalStateException {
 		checkPermissionAndState(Method.GETPROPERTY);
 		return standardToolkit.getProperty(property);
@@ -615,7 +667,7 @@ public final class LeveledToolkit implements Toolkit {
 	@Override
 	public boolean hasPermission(Method method) {
 		Objects.requireNonNull(method, "入口参数 method 不能为 null。");
-		return currentLevel.getLevelValue() >= needLevel(method).getLevelValue();
+		return currentLevel.doubleValue() >= needLevel(method).doubleValue();
 	}
 
 	/**
@@ -932,12 +984,12 @@ public final class LeveledToolkit implements Toolkit {
 			if (stopFlag)
 				throw new IllegalStateException("这个工具包已经被停用。");
 		}
-		if (currentLevel.getLevelValue() < needLevel(method).getLevelValue())
+		if (currentLevel.doubleValue() < needLevel(method).doubleValue())
 			throw new IllegalStateException(String.format("方法 %s 需要的最小权限为 %s，而当前的权限为 %s。", method,
 					needLevel(method).toString(), currentLevel.toString()));
 	}
 
-	private ToolkitLevel needLevel(Method method) {
+	private NumberValue needLevel(Method method) {
 		Objects.requireNonNull(method, "入口参数 method 不能为 null。");
 
 		if (!Constants.LEVELEDTOOLKIT_MIN_LEVEL.containsKey(method)) {

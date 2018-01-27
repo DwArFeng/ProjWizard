@@ -79,8 +79,10 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
+import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
+import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 import com.dwarfeng.projwiz.core.util.Constants;
@@ -1045,6 +1047,17 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public KeySetModel<String, ProjectProcessor> getProjectProcessors() throws IllegalStateException {
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil
+					.readOnlyKeySetModel(componentModel.getAll(ProjectProcessor.class), projectProcessor -> {
+						return ModelUtil.unmodifableProjectProcessor(projectProcessor);
+					});
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public String getProperty(ProjWizProperty property) {
 			Objects.requireNonNull(property, "入口参数 key 不能为 null。");
 
@@ -1523,6 +1536,17 @@ public final class ProjWizard {
 			synchronized (startFlagLock) {
 				ProjWizard.this.startFlag = startFlag;
 			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException {
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil
+					.readOnlyKeySetModel(componentModel.getAll(FileProcessor.class), fileProcessor -> {
+						return ModelUtil.unmodifiableFileProcessor(fileProcessor);
+					});
 		}
 
 	}

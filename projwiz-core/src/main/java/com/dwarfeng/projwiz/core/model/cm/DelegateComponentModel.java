@@ -19,7 +19,7 @@ import com.dwarfeng.projwiz.core.model.struct.Component;
  * 通过代理一个键值集合模型来实现的代理组件模型。
  * 
  * @author DwArFeng
- * @since 0.0.1-alpha
+ * @since 0.0.3-alpha
  */
 public final class DelegateComponentModel implements ComponentModel {
 

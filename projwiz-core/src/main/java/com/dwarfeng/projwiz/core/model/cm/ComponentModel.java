@@ -7,7 +7,7 @@ import com.dwarfeng.projwiz.core.model.struct.Component;
  * 组件模型。
  * 
  * @author DwArFeng
- * @since 0.0.1-alpha
+ * @since 0.0.3-alpha
  */
 public interface ComponentModel extends KeySetModel<String, Component> {
 

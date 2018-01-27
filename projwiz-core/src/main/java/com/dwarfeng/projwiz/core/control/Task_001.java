@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -12,7 +15,6 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
-import com.dwarfeng.dutil.basic.io.CT;
 import com.dwarfeng.dutil.basic.io.FileUtil;
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.develop.cfg.ExconfigModel;
@@ -25,11 +27,15 @@ import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SysOutLoggerInfo;
 import com.dwarfeng.dutil.develop.logger.io.Log4jLoggerLoader;
 import com.dwarfeng.dutil.develop.resource.Resource;
-import com.dwarfeng.dutil.develop.resource.io.XmlJar2RepoResourceLoader;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.eum.ModalConfiguration;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
+import com.dwarfeng.projwiz.core.model.io.ComponentLoader;
+import com.dwarfeng.projwiz.core.model.io.ConfigurationLoader;
+import com.dwarfeng.projwiz.core.model.io.IgnoredComponentLoader;
+import com.dwarfeng.projwiz.core.model.io.IgnoredConfigurationLoader;
+import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.util.Constants;
 
 /**
@@ -49,6 +55,14 @@ final class PoseTask extends ProjWizTask {
 	 */
 	@Override
 	protected void todo() throws Exception {
+		// 定义变量
+		File cmpoent_dir;
+		File[] cmpoent_jars;
+		File plugin_dir;
+		File[] plugin_jars;
+		Collection<String> ignoreCfgKeys;
+		Collection<String> ignoreCmpoentKeys;
+
 		// 用于在读取配置之前对模型进行必要的操作。
 		initModel();
 
@@ -79,29 +93,38 @@ final class PoseTask extends ProjWizTask {
 		// 加载模态配置。
 		loadModalConfig();
 
-		
+		// 加载配置忽略清单。
+		ignoreCfgKeys = new HashSet<>();
+		loadCfgIgnore(ignoreCfgKeys);
+
+		// 加载组件忽略清单。
+		ignoreCmpoentKeys = new HashSet<>();
+		loadCmpoentIgnore(ignoreCmpoentKeys);
 
 		// 加载组件文件夹下jar包。
 		formatInfo(LoggerStringKey.TASK_POSE_13, projWizard.getToolkit().getProperty(ProjWizProperty.COMPONENT_PATH));
-		File component_dir = new File(projWizard.getToolkit().getProperty(ProjWizProperty.COMPONENT_PATH));
-		FileUtil.createDirIfNotExists(component_dir);
-		File[] component_jars = FileUtil.listAllFile(component_dir, file -> {
+		cmpoent_dir = new File(projWizard.getToolkit().getProperty(ProjWizProperty.COMPONENT_PATH));
+		FileUtil.createDirIfNotExists(cmpoent_dir);
+		cmpoent_jars = FileUtil.listAllFile(cmpoent_dir, file -> {
 			if (file.getName().endsWith(".jar"))
 				return true;
 			return false;
 		});
 
 		// 读取组件文件夹下的Jar包。
-		loadJars(component_jars);
+		loadJars(cmpoent_jars);
 
-		// 解析组件文件夹下的jar包中的cfg-list.xml
-		loadJarsCfg(component_jars);
+		// 解析组件文件夹下的jar包中的配置。
+		loadJarsCfg(cmpoent_jars, ignoreCfgKeys);
+
+		// 解析并实例化组件文件夹下的jar包中的组件。
+		loadJarsCmpoent(cmpoent_jars, ignoreCmpoentKeys);
 
 		// 加载插件文件夹下jar包。
 		formatInfo(LoggerStringKey.TASK_POSE_13, projWizard.getToolkit().getProperty(ProjWizProperty.PLUGIN_PATH));
-		File plugin_dir = new File(projWizard.getToolkit().getProperty(ProjWizProperty.PLUGIN_PATH));
+		plugin_dir = new File(projWizard.getToolkit().getProperty(ProjWizProperty.PLUGIN_PATH));
 		FileUtil.createDirIfNotExists(plugin_dir);
-		File[] plugin_jars = FileUtil.listAllFile(plugin_dir, file -> {
+		plugin_jars = FileUtil.listAllFile(plugin_dir, file -> {
 			if (file.getName().endsWith(".jar"))
 				return true;
 			return false;
@@ -110,9 +133,11 @@ final class PoseTask extends ProjWizTask {
 		// 读取插件文件夹下的Jar包。
 		loadJars(plugin_jars);
 
-		// 解析插件文件夹下的jar包中的cfg-list.xml
-		loadJarsCfg(plugin_jars);
-		
+		// 解析插件文件夹下的jar包中的配置。
+		loadJarsCfg(plugin_jars, ignoreCfgKeys);
+
+		// 解析并实例化插件文件夹下的jar包中的组件。
+		loadJarsCmpoent(plugin_jars, ignoreCmpoentKeys);
 
 		// -------------------------------------
 
@@ -201,6 +226,61 @@ final class PoseTask extends ProjWizTask {
 	}
 
 	/**
+	 * 解析并实例化jar包中的组件。
+	 * 
+	 * @param jars
+	 *            指定的jar包组成的数组。
+	 * @param ignoreCmpoentKeys
+	 *            组件的忽略清单。
+	 * @throws IOException
+	 *             IO异常。
+	 */
+	private void loadJarsCmpoent(File[] jars, Collection<String> ignoreCmpoentKeys) throws IOException {
+		info(LoggerStringKey.TASK_POSE_40);
+
+		for (File jar : jars) {
+			formatInfo(LoggerStringKey.TASK_POSE_41, jar.getPath());
+
+			JarFile jarFile = null;
+			try {
+				jarFile = new JarFile(jar);
+				ZipEntry entry = jarFile.getEntry(Constants.CMPOENT_LIST_PATH);
+				if (Objects.nonNull(entry)) {
+					loadCmpoent0(jarFile.getInputStream(entry), projWizard.getToolkit().getPluginClassLoader(),
+							ignoreCmpoentKeys);
+				}
+			} catch (IllegalStateException | MalformedURLException e) {
+				warn(LoggerStringKey.TASK_POSE_24, e);
+			} finally {
+				if (Objects.nonNull(jarFile)) {
+					jarFile.close();
+				}
+			}
+		}
+
+	}
+
+	private void loadCmpoent0(InputStream inputStream, PluginClassLoader pluginClassLoader,
+			Collection<String> ignoreCmpoentKeys) throws IOException {
+		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
+		ComponentLoader loader = null;
+		try {
+			loader = new ComponentLoader(inputStream, ignoreCmpoentKeys, pluginClassLoader);
+			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getComponentModel()));
+		} finally {
+			if (Objects.nonNull(loader)) {
+				loader.close();
+			}
+		}
+
+		for (LoadFailedException e : eptSet) {
+			warn(LoggerStringKey.TASK_POSE_29, e);
+		}
+		eptSet = null;
+		loader = null;
+	}
+
+	/**
 	 * 生成GUI。
 	 */
 	private void initGui() {
@@ -284,18 +364,17 @@ final class PoseTask extends ProjWizTask {
 	 */
 	private void loadCfg() throws IOException {
 		info(LoggerStringKey.TASK_POSE_7);
-		loadCfg0(ProjWizard.class.getResource(Constants.CFG_DEFAULT_LIST_PATH).openStream());
-
+		loadCfg0(ProjWizard.class.getResource(Constants.CFG_DEFAULT_LIST_PATH).openStream(), Collections.emptySet());
 	}
 
-	private void loadCfg0(InputStream in) throws IOException {
+	private void loadCfg0(InputStream in, Collection<String> ignoreCfgKeys) throws IOException {
 		String repoRootString = projWizard.getToolkit().getProperty(ProjWizProperty.CFGREPO_PATH);
 		File reopRoot = new File(repoRootString);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
-		XmlJar2RepoResourceLoader loader = null;
+		ConfigurationLoader loader = null;
 		try {
-			loader = new XmlJar2RepoResourceLoader(in, reopRoot, true);
+			loader = new ConfigurationLoader(in, reopRoot, ignoreCfgKeys, true);
 			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getCfgHandler()));
 		} finally {
 			if (Objects.nonNull(loader)) {
@@ -304,7 +383,51 @@ final class PoseTask extends ProjWizTask {
 		}
 
 		for (LoadFailedException e : eptSet) {
-			warn(LoggerStringKey.TASK_POSE_29, e);
+			warn(LoggerStringKey.TASK_POSE_16, e);
+		}
+		eptSet = null;
+		loader = null;
+	}
+
+	private void loadCfgIgnore(Collection<String> ignoreCfgKeys) throws IOException {
+		info(LoggerStringKey.TASK_POSE_36);
+
+		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
+		IgnoredConfigurationLoader loader = null;
+
+		try {
+			loader = new IgnoredConfigurationLoader(openResource(ResourceKey.CFG_IGNORE, LoggerStringKey.TASK_POSE_0));
+			eptSet.addAll(loader.countinuousLoad(ignoreCfgKeys));
+		} finally {
+			if (Objects.nonNull(loader)) {
+				loader.close();
+			}
+		}
+
+		for (LoadFailedException e : eptSet) {
+			warn(LoggerStringKey.TASK_POSE_37, e);
+		}
+		eptSet = null;
+		loader = null;
+	}
+
+	private void loadCmpoentIgnore(Collection<String> ignoreCmpoentKeys) throws IOException {
+		info(LoggerStringKey.TASK_POSE_38);
+
+		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
+		IgnoredComponentLoader loader = null;
+
+		try {
+			loader = new IgnoredComponentLoader(openResource(ResourceKey.CMPOENT_IGNORE, LoggerStringKey.TASK_POSE_0));
+			eptSet.addAll(loader.countinuousLoad(ignoreCmpoentKeys));
+		} finally {
+			if (Objects.nonNull(loader)) {
+				loader.close();
+			}
+		}
+
+		for (LoadFailedException e : eptSet) {
+			warn(LoggerStringKey.TASK_POSE_39, e);
 		}
 		eptSet = null;
 		loader = null;
@@ -366,18 +489,18 @@ final class PoseTask extends ProjWizTask {
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadJarsCfg(File[] jars) throws IOException {
+	private void loadJarsCfg(File[] jars, Collection<String> ignoreCfgKeys) throws IOException {
 		info(LoggerStringKey.TASK_POSE_34);
 
 		for (File jar : jars) {
-			formatInfo(LoggerStringKey.TASK_POSE_14, jar.getPath());
+			formatInfo(LoggerStringKey.TASK_POSE_35, jar.getPath());
 
 			JarFile jarFile = null;
 			try {
 				jarFile = new JarFile(jar);
-				ZipEntry entry = jarFile.getEntry("cfg-list.xml");
+				ZipEntry entry = jarFile.getEntry(Constants.CFG_LIST_PATH);
 				if (Objects.nonNull(entry)) {
-					loadCfg0(jarFile.getInputStream(entry));
+					loadCfg0(jarFile.getInputStream(entry), ignoreCfgKeys);
 				}
 			} catch (IllegalStateException | MalformedURLException e) {
 				warn(LoggerStringKey.TASK_POSE_24, e);
@@ -461,8 +584,6 @@ final class PoseTask extends ProjWizTask {
 		info(LoggerStringKey.TASK_POSE_8);
 
 		projWizard.getToolkit().getLoggerHandler().unuseKey(null);
-		CT.trace(projWizard.getToolkit().getLoggerHandler().removeKey(null)
-				+ "--------------------------------------- 默认记录器是否被移除！！！");
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
 		Log4jLoggerLoader loader = null;
@@ -496,8 +617,6 @@ final class PoseTask extends ProjWizTask {
 		info(LoggerStringKey.TASK_POSE_9);
 
 		projWizard.getToolkit().getLoggerI18nHandler().setCurrentLocale(null);
-		CT.trace(projWizard.getToolkit().getLoggerI18nHandler().removeKey(null)
-				+ "--------------------------------------- 默认记国际化是否被移除！！！");
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
 		XmlPropFileI18nLoader loader = null;

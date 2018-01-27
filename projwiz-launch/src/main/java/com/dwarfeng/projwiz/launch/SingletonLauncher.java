@@ -1,6 +1,5 @@
 package com.dwarfeng.projwiz.launch;
 
-import java.util.Objects;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

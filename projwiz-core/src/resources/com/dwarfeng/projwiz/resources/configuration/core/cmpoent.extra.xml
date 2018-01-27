@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+	<!-- 
+		使用如下格式: 
+		<info key="com.dwarfeng.projwiz.Foo.0" class="com.dwarfeng.projwiz.Foo"/> 
+		<info key="com.dwarfeng.projwiz.Foo.1" class="com.dwarfeng.projwiz.Foo"/> 
+		<info key="com.dwarfeng.projwiz.Bar.0" class="com.dwarfeng.projwiz.Bar"/> 
+		<info key="com.dwarfeng.projwiz.Bar.1" class="com.dwarfeng.projwiz.Bar"/>
+	-->
+</root>

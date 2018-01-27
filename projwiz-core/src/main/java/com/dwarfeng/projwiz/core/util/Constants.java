@@ -24,6 +24,7 @@ import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.dutil.basic.gui.awt.CommonIconLib;
 import com.dwarfeng.dutil.basic.gui.awt.ImageSize;
 import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
+import com.dwarfeng.dutil.basic.num.NumberValue;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
@@ -43,14 +44,16 @@ import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
-import com.dwarfeng.projwiz.core.model.eum.ToolkitLevel;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
+import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
+import com.dwarfeng.projwiz.core.model.struct.LeveledToolkit.ToolkitLevel;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
+import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
@@ -366,6 +369,11 @@ public final class Constants {
 		}
 
 		@Override
+		public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getFileProcessors");
+		}
+
+		@Override
 		public SyncMapModel<Project, Editor> getFocusEditorModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getFocusEditorModel");
 		}
@@ -495,6 +503,11 @@ public final class Constants {
 		@Override
 		public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getProjectIndicateModel");
+		}
+
+		@Override
+		public KeySetModel<String, ProjectProcessor> getProjectProcessors() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getProjectProcessors");
 		}
 
 		@Override
@@ -688,6 +701,11 @@ public final class Constants {
 	/** 默认的丢失文本字段 */
 	public final static String MISSING_LABEL = "！文本丢失";
 
+	/** Jar包内配置列表的文件路径。 */
+	public final static String CFG_LIST_PATH = "cfg-list.xml";
+	/** Jar包内组件列表文件路径。 */
+	public final static String CMPOENT_LIST_PATH = "cmpoent-list.xml";
+
 	/** 默认的配置列表所在的位置。 */
 	public final static String CFG_DEFAULT_LIST_PATH = "/com/dwarfeng/projwiz/resources/cfg-list.xml";
 	/** 默认记录器多语言文件所在的位置 */
@@ -704,7 +722,7 @@ public final class Constants {
 	public final static Map<ProjWizProperty, String> DEFAULT_PROJWIZ_PROPERTIES;
 
 	/** LeveledToolkit 类中执行每个方法所需要的最小权限。 */
-	public final static Map<Method, ToolkitLevel> LEVELEDTOOLKIT_MIN_LEVEL;
+	public final static Map<Method, NumberValue> LEVELEDTOOLKIT_MIN_LEVEL;
 
 	/** 代表图片不存在的图片。 */
 	public final static Image IMAGE_LOAD_FAILED = ImageUtil.getInternalImage(CommonIconLib.IMG_LOAD_FAILED_BLUE,
@@ -752,6 +770,7 @@ public final class Constants {
 		init1.put(Method.GETFILEICONIMAGEMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETFILEICONOBVMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETFILEINDICATEMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETFILEPROCESSORS, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETFOCUSEDITORMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETFOCUSEDITORMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETFOCUSFILEMODEL, ToolkitLevel.FULL);
@@ -772,6 +791,7 @@ public final class Constants {
 		init1.put(Method.GETMODALCONFIGMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETPROGRAMOBVERSERS, ToolkitLevel.FULL);
 		init1.put(Method.GETPROJECTICONIMAGEMODEL, ToolkitLevel.FULL);
+		init1.put(Method.GETPROJECTPROCESSORS, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETPROJECTICONIMAGEMODELREADONLY, ToolkitLevel.READ_ONLY);
 		init1.put(Method.GETPROJECTICONOBVMODEL, ToolkitLevel.FULL);
 		init1.put(Method.GETPROJECTINDICATEMODEL, ToolkitLevel.FULL);

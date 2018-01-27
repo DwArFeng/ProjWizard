@@ -30,6 +30,7 @@ import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
+import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
@@ -758,6 +759,152 @@ public final class ModelUtil {
 		@Override
 		public String toString() {
 			return delegate.toString();
+		}
+
+	}
+
+	private static final class UnmodifiableFileProcessor implements FileProcessor {
+
+		private final FileProcessor delegate;
+
+		public UnmodifiableFileProcessor(FileProcessor delegate) {
+			this.delegate = delegate;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean canOpenFile(File file) {
+			return delegate.canOpenFile(file);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void dispose() {
+			throw new UnsupportedOperationException("dispose");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String getDescription() {
+			return delegate.getDescription();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Image getFileIcon(File file) {
+			return delegate.getFileIcon(file);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public IconVariability getFileIconVariability(File file) {
+			return delegate.getFileIconVariability(file);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public IconVariability getFileThumbVariability(File file) {
+			return delegate.getFileThumbVariability(file);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Image getIcon() {
+			return delegate.getIcon();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public IconVariability getIconVarialibity() {
+			return delegate.getIconVarialibity();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String getKey() {
+			return delegate.getKey();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ReadWriteLock getLock() {
+			return delegate.getLock();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String getName() {
+			return delegate.getName();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public PropSuppiler getPropSuppiler(File file) {
+			return delegate.getPropSuppiler(file);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Image getThumb(File file) {
+			return delegate.getThumb(file);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isNewEditorSupported() {
+			return delegate.isNewEditorSupported();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isNewFileSupported() {
+			return delegate.isNewFileSupported();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Editor newEditor(Project editProject, File editFile) throws ProcessException {
+			throw new UnsupportedOperationException("newEditor");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public File newFile() throws ProcessException {
+			throw new UnsupportedOperationException("newFile");
 		}
 
 	}
@@ -1643,6 +1790,20 @@ public final class ModelUtil {
 	public static File unmodifiableFile(File file) {
 		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
 		return new UnmodifiableFile(file);
+	}
+
+	/**
+	 * 由指定的工程文件生成的不可编辑的工程文件。
+	 * 
+	 * @param editor
+	 *            指定的工程文件。
+	 * @return 由指定的工程文件生成的不可编辑的工程文件。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	public static FileProcessor unmodifiableFileProcessor(FileProcessor fileProcessor) {
+		Objects.requireNonNull(fileProcessor, "入口参数 fileProcessor 不能为 null。");
+		return new UnmodifiableFileProcessor(fileProcessor);
 	}
 
 	/**

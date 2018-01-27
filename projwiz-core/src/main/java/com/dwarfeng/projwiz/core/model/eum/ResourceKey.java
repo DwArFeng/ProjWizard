@@ -45,10 +45,10 @@ public enum ResourceKey implements Name {
 	CFG_EXTRA(Constants.RESOURCE_CLASSIFY_CORE, "cfg.extra"),
 
 	/** 组件忽略设置。 */
-	COMPONENT_IGNORE(Constants.RESOURCE_CLASSIFY_CORE, "component.ignore"),
+	CMPOENT_IGNORE(Constants.RESOURCE_CLASSIFY_CORE, "cmpoent.ignore"),
 
 	/** 组件额外设置。 */
-	COMPONENT_EXTRA(Constants.RESOURCE_CLASSIFY_CORE, "component.extra"),
+	CMPOENT_EXTRA(Constants.RESOURCE_CLASSIFY_CORE, "cmpoent.extra"),
 
 	/** 标签国际化文本默认配置。 */
 	I18N_LABEL(Constants.RESOURCE_CLASSIFY_I18N, "label"),

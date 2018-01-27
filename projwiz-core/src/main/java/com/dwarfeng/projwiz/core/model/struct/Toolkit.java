@@ -99,6 +99,7 @@ public interface Toolkit {
 		GETFILEICONIMAGEMODELREADONLY(), //
 		GETFILEICONOBVMODEL, //
 		GETFILEINDICATEMODEL, //
+		GETFILEPROCESSORS,//
 		GETFOCUSEDITORMODEL, //
 		GETFOCUSEDITORMODELREADONLY, //
 		GETFOCUSFILEMODEL, //
@@ -123,6 +124,7 @@ public interface Toolkit {
 		GETPROJECTICONIMAGEMODELREADONLY(), //
 		GETPROJECTICONOBVMODEL, //
 		GETPROJECTINDICATEMODEL, //
+		GETPROJECTPROCESSORS, //
 		GETPROPERTY, //
 		GETRUNTIMESTATE, //
 		INFO, //
@@ -490,6 +492,15 @@ public interface Toolkit {
 	public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException;
 
 	/**
+	 * 获取程序中所有注册的文件处理器。
+	 * 
+	 * @return 程序中所有注册的文件处理器。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException;
+
+	/**
 	 * 获取焦点编辑器模型。
 	 * <p>
 	 * 该模型是只读的。
@@ -730,6 +741,15 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException;
+
+	/**
+	 * 获取程序中所有注册的工程处理器。
+	 * 
+	 * @return 程序中所有注册的工程处理器。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public KeySetModel<String, ProjectProcessor> getProjectProcessors() throws IllegalStateException;
 
 	/**
 	 * 获取程序属性。
@@ -1185,7 +1205,7 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public void warn(String message) throws IllegalStateException;
-
+	
 	/**
 	 * 使用指定的记录器处理器 <code>warn</code> 一条信息。
 	 * 
