@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -15,12 +17,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.dwarfeng.dutil.basic.cna.CollectionUtil;
 import com.dwarfeng.dutil.basic.cna.model.KeySetModel;
+import com.dwarfeng.dutil.basic.cna.model.obv.MapObverser;
 import com.dwarfeng.dutil.basic.cna.model.obv.SetObverser;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ReadOnlyGenerator;
 import com.dwarfeng.dutil.basic.threads.ThreadUtil;
 import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
+import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
@@ -34,6 +39,7 @@ import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
+import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
 
 /**
  * 模型工具。
@@ -420,6 +426,317 @@ public final class ModelUtil {
 			lock.readLock().lock();
 			try {
 				return delegate.toString();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+	}
+
+	private static final class SyncToolkitPermModelImpl implements SyncToolkitPermModel {
+
+		private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+		private final ToolkitPermModel delegate;
+
+		private SyncToolkitPermModelImpl(ToolkitPermModel delegate) {
+			this.delegate = delegate;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean addObverser(MapObverser<Method, Integer> obverser) {
+			lock.writeLock().lock();
+			try {
+				return delegate.addObverser(obverser);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clear() {
+			lock.writeLock().lock();
+			try {
+				delegate.clear();
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clearObverser() {
+			lock.writeLock().lock();
+			try {
+				delegate.clearObverser();
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsKey(Object key) {
+			lock.readLock().lock();
+			try {
+				return delegate.containsKey(key);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsValue(Object value) {
+			lock.readLock().lock();
+			try {
+				return delegate.containsValue(value);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<Entry<Method, Integer>> entrySet() {
+			lock.readLock().lock();
+			try {
+				return delegate.entrySet();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			lock.readLock().lock();
+			try {
+				if (obj == this)
+					return true;
+				if (obj == delegate)
+					return true;
+				return delegate.equals(obj);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Integer get(Object key) {
+			lock.readLock().lock();
+			try {
+				return delegate.get(key);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int getDpl() {
+			lock.readLock().lock();
+			try {
+				return delegate.getDpl();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ReadWriteLock getLock() {
+			return lock;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<MapObverser<Method, Integer>> getObversers() {
+			lock.readLock().lock();
+			try {
+				return delegate.getObversers();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int getPermLevel(Method method) {
+			lock.readLock().lock();
+			try {
+				return delegate.getPermLevel(method);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int hashCode() {
+			lock.readLock().lock();
+			try {
+				return delegate.hashCode();
+
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean hasPerm(Method method, int permLevel) {
+			lock.readLock().lock();
+			try {
+				return delegate.hasPerm(method, permLevel);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isEmpty() {
+			lock.readLock().lock();
+			try {
+				return delegate.isEmpty();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<Method> keySet() {
+			lock.readLock().lock();
+			try {
+				return delegate.keySet();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Integer put(Method key, Integer value) {
+			lock.writeLock().lock();
+			try {
+				return delegate.put(key, value);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void putAll(Map<? extends Method, ? extends Integer> m) {
+			lock.writeLock().lock();
+			try {
+				delegate.putAll(m);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Integer remove(Object key) {
+			lock.writeLock().lock();
+			try {
+				return delegate.remove(key);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeObverser(MapObverser<Method, Integer> obverser) {
+			lock.writeLock().lock();
+			try {
+				return delegate.removeObverser(obverser);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean setDpl(int value) {
+			lock.writeLock().lock();
+			try {
+				return delegate.setDpl(value);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int size() {
+			lock.readLock().lock();
+			try {
+				return delegate.size();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Collection<Integer> values() {
+			lock.readLock().lock();
+			try {
+				return delegate.values();
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -1486,6 +1803,196 @@ public final class ModelUtil {
 
 	}
 
+	private static final class UnmodifiableToolkitPermModel implements ToolkitPermModel {
+
+		private final ToolkitPermModel delegate;
+
+		private UnmodifiableToolkitPermModel(ToolkitPermModel delegate) {
+			this.delegate = delegate;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean addObverser(MapObverser<Method, Integer> obverser) {
+			throw new UnsupportedOperationException("addObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException("clear");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clearObverser() {
+			throw new UnsupportedOperationException("clearObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsKey(Object key) {
+			return delegate.containsKey(key);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsValue(Object value) {
+			return delegate.containsValue(value);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<Entry<Method, Integer>> entrySet() {
+			return Collections.unmodifiableSet(delegate.entrySet());
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == this)
+				return true;
+			if (obj == delegate)
+				return true;
+			return delegate.equals(obj);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Integer get(Object key) {
+			return delegate.get(key);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int getDpl() {
+			return delegate.getDpl();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<MapObverser<Method, Integer>> getObversers() {
+			return delegate.getObversers();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int getPermLevel(Method method) {
+			return delegate.getPermLevel(method);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int hashCode() {
+			return delegate.hashCode();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean hasPerm(Method method, int permLevel) {
+			return delegate.hasPerm(method, permLevel);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isEmpty() {
+			return delegate.isEmpty();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<Method> keySet() {
+			return Collections.unmodifiableSet(delegate.keySet());
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Integer put(Method key, Integer value) {
+			throw new UnsupportedOperationException("put");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void putAll(Map<? extends Method, ? extends Integer> m) {
+			throw new UnsupportedOperationException("putAll");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Integer remove(Object key) {
+			throw new UnsupportedOperationException("remove");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeObverser(MapObverser<Method, Integer> obverser) {
+			throw new UnsupportedOperationException("removeObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean setDpl(int value) {
+			throw new UnsupportedOperationException("setDpl");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int size() {
+			return delegate.size();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Collection<Integer> values() {
+			return Collections.unmodifiableCollection(delegate.values());
+		}
+
+	}
+
 	private static class UnmodifiableTree<E> implements Tree<E> {
 
 		private final Tree<E> delegate;
@@ -1741,6 +2248,20 @@ public final class ModelUtil {
 	}
 
 	/**
+	 * 根据指定的工具包权限模型生成一个线程安全的工具包权限模型。
+	 * 
+	 * @param toolkitPermModel
+	 *            指定的工具包权限模型。
+	 * @return 根据指定的工具包权限模型生成的线程安全的工具包权限模型。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	public static SyncToolkitPermModel syncToolkitPermModel(ToolkitPermModel toolkitPermModel) {
+		Objects.requireNonNull(toolkitPermModel, "入口参数 toolkitPermModel 不能为 null。");
+		return new SyncToolkitPermModelImpl(toolkitPermModel);
+	}
+
+	/**
 	 * 由指定的工程处理器和指定的只读资源生成器生成一个不可编辑的工程处理器。
 	 * 
 	 * @param projectProcessor
@@ -1818,6 +2339,18 @@ public final class ModelUtil {
 	public static Project unmodifiableProject(Project project) {
 		Objects.requireNonNull(project, "入口参数 project 不能为 null。");
 		return new UnmodifiableProject(project);
+	}
+
+	/**
+	 * 根据指定的工具包权限模型生成的不可编辑的工具包权限模型。
+	 * 
+	 * @param toolkitPermModel
+	 *            指定的工具包权限模型。
+	 * @return 根据指定的工具包权限模型生成的不可编辑的工具包权限模型。
+	 */
+	public static ToolkitPermModel unmodifiableToolkitPermModel(ToolkitPermModel toolkitPermModel) {
+		Objects.requireNonNull(toolkitPermModel, "入口参数 toolkitPermModel 不能为 null。");
+		return new UnmodifiableToolkitPermModel(toolkitPermModel);
 	}
 
 	/**

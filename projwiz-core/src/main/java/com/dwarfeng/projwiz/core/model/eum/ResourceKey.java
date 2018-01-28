@@ -47,6 +47,9 @@ public enum ResourceKey implements Name {
 	/** 配置额外设置。 */
 	CFG_EXTRA(Constants.RESOURCE_CLASSIFY_CORE, "cfg.extra"),
 
+	/** 工具包权限配置。 */
+	TOOLKIT_PERM(Constants.RESOURCE_CLASSIFY_CORE, "toolkit.perm"),
+
 	/** 组件忽略设置。 */
 	CMPOENT_IGNORE(Constants.RESOURCE_CLASSIFY_CORE, "cmpoent.ignore"),
 

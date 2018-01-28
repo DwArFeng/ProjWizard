@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<dpl value="0" />
+	<defines>
+		<define key="NONE" value="0" />
+		<define key="READ_ONLY" value="333" />
+		<define key="WRITE_LIMIT" value="667" />
+		<define key="FULL" value="1000" />
+	</defines>
+	<perms>
+		<perm method="ADDCORECONFIGOBVERSER" pl="WRITE_LIMIT" />
+		<perm method="ADDOBVERSERTOFILE" pl="WRITE_LIMIT" />
+		<perm method="ADDPROGRAMOBVERSER" pl="FULL" />
+		<perm method="CHOOSEPROJECTFILE" pl="READ_ONLY" />
+		<perm method="CHOOSESYSTEMFILE" pl="READ_ONLY" />
+		<perm method="CLEARPROGRAMOBVERSER" pl="FULL" />
+		<perm method="CONTAINSDIALOG" pl="READ_ONLY" />
+		<perm method="DEBUG" pl="WRITE_LIMIT" />
+		<perm method="DISPOSEMAINFRAME" pl="FULL" />
+		<perm method="ERROR" pl="WRITE_LIMIT" />
+		<perm method="EXIT" pl="FULL" />
+		<perm method="FATAL" pl="WRITE_LIMIT" />
+		<perm method="GETANCHORFILEMODEL" pl="FULL" />
+		<perm method="GETANCHORFILEMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETBACKGROUND" pl="FULL" />
+		<perm method="GETCFGHANDLER" pl="FULL" />
+		<perm method="GETCFGHANDLERREADONLY" pl="READ_ONLY" />
+		<perm method="GETBACKGROUNDREADONLY" pl="READ_ONLY" />
+		<perm method="GETCOMPONENTMODEL" pl="FULL" />
+		<perm method="GETCORECONFIGMODEL" pl="FULL" />
+		<perm method="GETCORECONFIGMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETEDITORMODEL" pl="FULL" />
+		<perm method="GETEDITORMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETEXITCODE" pl="READ_ONLY" />
+		<perm method="GETEXTERNALWINDOWMODEL" pl="FULL" />
+		<perm method="GETEXTERNALWINDOWMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETFILEICONIMAGEMODEL" pl="FULL" />
+		<perm method="GETFILEICONIMAGEMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETFILEICONOBVMODEL" pl="FULL" />
+		<perm method="GETFILEINDICATEMODEL" pl="FULL" />
+		<perm method="GETFILEPROCESSORS" pl="READ_ONLY" />
+		<perm method="GETFOCUSEDITORMODEL" pl="FULL" />
+		<perm method="GETFOCUSEDITORMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETFOCUSFILEMODEL" pl="FULL" />
+		<perm method="GETFOCUSFILEMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETFOCUSPROJECTMODEL" pl="FULL" />
+		<perm method="GETFOCUSPROJECTMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETGUIMANAGER" pl="FULL" />
+		<perm method="GETHOLDPROJECTMODEL" pl="FULL" />
+		<perm method="GETHOLDPROJECTMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETLABELI18NHANDLER" pl="FULL" />
+		<perm method="GETLABELI18NHANDLERREADONLY" pl="READ_ONLY" />
+		<perm method="GETLOGGERHANDLER" pl="FULL" />
+		<perm method="GETLOGGERHANDLERREADONLY" pl="READ_ONLY" />
+		<perm method="GETLOGGERI18NHANDLER" pl="FULL" />
+		<perm method="GETLOGGERI18NHANDLERREADONLY" pl="READ_ONLY" />
+		<perm method="GETMAINFRAME" pl="FULL" />
+		<perm method="GETPROGRAMOBVERSERS" pl="FULL" />
+		<perm method="GETPROJECTICONIMAGEMODEL" pl="FULL" />
+		<perm method="GETPROJECTPROCESSORS" pl="READ_ONLY" />
+		<perm method="GETPROJECTICONIMAGEMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETPROJECTICONOBVMODEL" pl="FULL" />
+		<perm method="GETPROJECTINDICATEMODEL" pl="FULL" />
+		<perm method="GETPLUGINCLASSLOADER" pl="FULL" />
+		<perm method="GETPROPERTY" pl="READ_ONLY" />
+		<perm method="GETRUNTIMESTATE" pl="READ_ONLY" />
+		<perm method="GETTOOLKITPERMMODEL" pl="FULL" />
+		<perm method="GETTOOLKITPERMMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETVIEWCONFIGMODEL" pl="FULL" />
+		<perm method="GETVIEWCONFIGMODELREADONLY" pl="READ_ONLY" />
+		<perm method="INFO" pl="WRITE_LIMIT" />
+		<perm method="ISMAINFRAMEVISIBLE" pl="READ_ONLY" />
+		<perm method="NEWMAINFRAME" pl="FULL" />
+		<perm method="OPENFILE" pl="WRITE_LIMIT" />
+		<perm method="OPENFILEINPUTSTREAM" pl="WRITE_LIMIT" />
+		<perm method="OPENFILEOUTPUTSTREAM" pl="WRITE_LIMIT" />
+		<perm method="REMOVECORECONFIGOBVERSER" pl="WRITE_LIMIT" />
+		<perm method="REMOVEOBVERSERFROMFILE" pl="WRITE_LIMIT" />
+		<perm method="REMOVEPROGRAMOBVERSER" pl="FULL" />
+		<perm method="SETRUNTIMESTATE" pl="FULL" />
+		<perm method="SHOWCOMPONENTDIALOG" pl="WRITE_LIMIT" />
+		<perm method="SHOWCONFIRMDIALOG" pl="WRITE_LIMIT" />
+		<perm method="SHOWDIALOG" pl="WRITE_LIMIT" />
+		<perm method="SHOWEXTERNALWINDOW" pl="WRITE_LIMIT" />
+		<perm method="SHOWINPUTDIALOG" pl="WRITE_LIMIT" />
+		<perm method="SHOWMESSAGEDIALOG" pl="WRITE_LIMIT" />
+		<perm method="SHOWNEWDIALOG" pl="WRITE_LIMIT" />
+		<perm method="SHOWOPTIONDIALOG" pl="WRITE_LIMIT" />
+		<perm method="START" pl="FULL" />
+		<perm method="SUBMITTASK" pl="WRITE_LIMIT" />
+		<perm method="TRACE" pl="WRITE_LIMIT" />
+		<perm method="TRYEXIT" pl="FULL" />
+		<perm method="WARN" pl="WRITE_LIMIT" />
+	</perms>
+</root>

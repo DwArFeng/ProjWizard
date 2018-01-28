@@ -64,9 +64,12 @@ import com.dwarfeng.dutil.develop.resource.DelegateResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceUtil;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
+import com.dwarfeng.projwiz.core.model.cm.DefaultToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.DelegateComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.ExternalWindowModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
+import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.eum.CoreConfiguration;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
@@ -1075,6 +1078,22 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public SyncToolkitPermModel getToolkitPermModel() throws IllegalStateException {
+			return toolkitPermModel;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ToolkitPermModel getToolkitPermModelReadOnly() throws IllegalStateException {
+			return ModelUtil.unmodifiableToolkitPermModel(toolkitPermModel);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public SyncExconfigModel getViewConfigModel() {
 			return viewConfigModel;
 		}
@@ -1626,6 +1645,8 @@ public final class ProjWizard {
 			.syncMapModel(new DelegateMapModel<>());
 	// 组件模型
 	private final SyncComponentModel componentModel = ModelUtil.syncComponentModel(new DelegateComponentModel());
+	// 工具包权限模型
+	private final SyncToolkitPermModel toolkitPermModel = ModelUtil.syncToolkitPermModel(new DefaultToolkitPermModel());
 
 	// --------------------------------------------控制--------------------------------------------
 	/** 程序的侦听器集合 */
@@ -1704,7 +1725,7 @@ public final class ProjWizard {
 			} catch (NoSuchElementException e) {
 				throw new IllegalArgumentException("非法的参数：" + string);
 			}
-			
+
 			ProjWizProperty property = null;
 			if (Objects.isNull(property = ProjWizProperty.valueOf(key))) {
 				throw new IllegalArgumentException("不存在的键：" + key);

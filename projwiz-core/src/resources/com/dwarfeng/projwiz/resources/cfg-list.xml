@@ -30,14 +30,6 @@
 		classify="com.dwarfeng.projwiz.core" filename="i18n.label.resource.setting.xml"
 		default="/com/dwarfeng/projwiz/resources/configuration/core/i18n.label.resource.setting.xml" />
 
-	<info key="com.dwarfeng.projwiz.core.reflect.projproc" classify="com.dwarfeng.projwiz.core"
-		filename="processor.reflect.project.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/processor.reflect.project.xml" />
-
-	<info key="com.dwarfeng.projwiz.core.reflect.fileproc" classify="com.dwarfeng.projwiz.core"
-		filename="processor.reflect.file.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/processor.reflect.file.xml" />
-
 	<info key="com.dwarfeng.projwiz.core.cfg.ignore" classify="com.dwarfeng.projwiz.core"
 		filename="cfg.ignore.xml"
 		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.ignore.xml" />
@@ -54,6 +46,10 @@
 		filename="cmpoent.extra.xml"
 		default="/com/dwarfeng/projwiz/resources/configuration/core/cmpoent.extra.xml" />
 
+	<info key="com.dwarfeng.projwiz.core.toolkit.perm" classify="com.dwarfeng.projwiz.core"
+		filename="toolkit.perm.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/toolkit.perm.xml" />
+
 	<info key="com.dwarfeng.projwiz.i18n.label" classify="com.dwarfeng.projwiz.core"
 		filename="label.properties"
 		default="/com/dwarfeng/projwiz/resources/configuration/i18n/label.properties" />
@@ -61,8 +57,8 @@
 	<info key="com.dwarfeng.projwiz.i18n.logger" classify="com.dwarfeng.projwiz.core"
 		filename="logger.properties"
 		default="/com/dwarfeng/projwiz/resources/configuration/i18n/logger.properties" />
-		
-			<info key="com.dwarfeng.projwiz.testcase.logger.setting" classify="com.dwarfeng.projwiz.testcase"
+
+	<info key="com.dwarfeng.projwiz.testcase.logger.setting" classify="com.dwarfeng.projwiz.testcase"
 		filename="logger.setting.xml"
 		default="/com/dwarfeng/projwiz/resources/configuration/testcase/logger.setting.xml" />
 

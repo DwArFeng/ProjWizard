@@ -33,6 +33,8 @@ import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
+import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
@@ -99,7 +101,7 @@ public interface Toolkit {
 		GETFILEICONIMAGEMODELREADONLY(), //
 		GETFILEICONOBVMODEL, //
 		GETFILEINDICATEMODEL, //
-		GETFILEPROCESSORS,//
+		GETFILEPROCESSORS, //
 		GETFOCUSEDITORMODEL, //
 		GETFOCUSEDITORMODELREADONLY, //
 		GETFOCUSFILEMODEL, //
@@ -125,6 +127,8 @@ public interface Toolkit {
 		GETPROJECTPROCESSORS, //
 		GETPROPERTY, //
 		GETRUNTIMESTATE, //
+		GETTOOLKITPERMMODEL, //
+		GETTOOLKITPERMMODELREADONLY, //
 		GETVIEWCONFIGMODEL, //
 		GETVIEWCONFIGMODELREADONLY, //
 		INFO, //
@@ -749,6 +753,26 @@ public interface Toolkit {
 	public RuntimeState getRuntimeState() throws IllegalStateException;
 
 	/**
+	 * 获取程序中的工具包权限模型。
+	 * 
+	 * @return 程序中的工具包权限模型。
+	 * @throws IllegalStateException
+	 *             因为没有权限而抛出的异常。
+	 */
+	public SyncToolkitPermModel getToolkitPermModel() throws IllegalStateException;
+
+	/**
+	 * 获取程序中的工具包权限模型。
+	 * 
+	 * <p>
+	 * 工具包权限模型是只读的。
+	 * 
+	 * @throws IllegalStateException
+	 *             因为没有权限而抛出的异常。
+	 */
+	public ToolkitPermModel getToolkitPermModelReadOnly() throws IllegalStateException;
+
+	/**
 	 * 获取视图配置模型。
 	 * 
 	 * @return 视图配置模型。
@@ -1205,7 +1229,7 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public void warn(String message) throws IllegalStateException;
-	
+
 	/**
 	 * 使用指定的记录器处理器 <code>warn</code> 一条信息。
 	 * 

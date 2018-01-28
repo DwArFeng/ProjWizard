@@ -36,6 +36,7 @@ import com.dwarfeng.projwiz.core.model.io.ConfigurationLoader;
 import com.dwarfeng.projwiz.core.model.io.IgnoredComponentLoader;
 import com.dwarfeng.projwiz.core.model.io.IgnoredConfigurationLoader;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
+import com.dwarfeng.projwiz.core.model.io.ToolkitPermLoader;
 import com.dwarfeng.projwiz.core.util.Constants;
 
 /**
@@ -103,6 +104,9 @@ final class PoseTask extends ProjWizTask {
 			loadViewConfig();
 		}
 
+		// 加载工具包权限配置。
+		loadToolkitPerm();
+
 		// 加载配置忽略清单。
 		ignoreCfgKeys = new HashSet<>();
 		loadCfgIgnore(ignoreCfgKeys);
@@ -155,6 +159,34 @@ final class PoseTask extends ProjWizTask {
 			initGui();
 		}
 
+	}
+
+	/**
+	 * 加载工具包权限配置。
+	 * 
+	 * @throws IOException
+	 *             IO异常。
+	 */
+	private void loadToolkitPerm() throws IOException {
+		info(LoggerStringKey.TASK_POSE_42);
+
+		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
+		ToolkitPermLoader loader = null;
+
+		try {
+			loader = new ToolkitPermLoader(openResource(ResourceKey.TOOLKIT_PERM, LoggerStringKey.TASK_POSE_0));
+			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getToolkitPermModel()));
+		} finally {
+			if (Objects.nonNull(loader)) {
+				loader.close();
+			}
+		}
+		
+		for (LoadFailedException e : eptSet) {
+			warn(LoggerStringKey.TASK_POSE_3, e);
+		}
+		eptSet = null;
+		loader = null;
 	}
 
 	/**
@@ -561,7 +593,6 @@ final class PoseTask extends ProjWizTask {
 		projWizard.getToolkit().getLoggerHandler().useAll();
 	}
 
-	//
 	/**
 	 * 加载记录器国际化资源配置。
 	 * 

@@ -83,11 +83,6 @@ public final class IgnoredComponentLoader extends StreamLoader<Collection<String
 
 		Objects.requireNonNull(collection, "入口参数 collection 不能为 null。");
 
-		if (readFlag)
-			throw new IllegalStateException("读取器已经使用过了。");
-
-		Objects.requireNonNull(collection, "入口参数 collection 不能为 null。");
-
 		final Set<LoadFailedException> exceptions = new LinkedHashSet<>();
 		try {
 			readFlag = true;

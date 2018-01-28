@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,7 +20,6 @@ import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
-import com.dwarfeng.dutil.basic.num.NumberValue;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
@@ -35,6 +35,8 @@ import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
+import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
@@ -42,7 +44,6 @@ import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
-import com.dwarfeng.projwiz.core.util.Constants;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
@@ -50,74 +51,41 @@ import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 /**
- * 分级工具包。
+ * 等级与特权工具包。
  * 
  * <p>
- * 根据其中的分级确定什么方法是有权限的。
+ * LnpToolkit的权限管理分为两个方面：权限等级和特权。
  * <p>
- * 该工具包代理一个标准工具，如果当前的权限小于指定方法运行所需的最小权限，则抛出权限不足异常；
- * 如果大于运行指定方法所需的最小权限，则代理标准工具的相应方法。 <br>
- * 要求标准工具应该能够执行所有方法，每个方法都不会抛出权限异常。
+ * 权限等级基于 LeveledToolkit。<br>
+ * 特权允许Toolkit进行一部分特定的权限之外的操作。
  * 
  * @author DwArFeng
- * @since 0.0.1-alpha
+ * @since 0.0.3-alpha
  */
-public final class LeveledToolkit implements Toolkit {
+public final class LnpToolkit implements Toolkit {
 
-	/**
-	 * 工具包的权限分级。
-	 * 
-	 * @author DwArFeng
-	 * @since 0.0.1-alpha
-	 */
-	public enum ToolkitLevel implements NumberValue {
+	/** 工具包权限模型。 */
+	protected final ToolkitPermModel toolkitPermModel;
+	/** 工具包当前的权限等级。 */
+	protected final int currentLevel;
+	/** 具有完整权限的标准工具包。 */
+	protected final Toolkit standardToolkit;
+	/** 该工具包的特权。 */
+	protected final Collection<Method> privileges;
 
-		/** 完全权限，可以调用任意方法。 */
-		FULL(1000),
-		/** 最低权限，不可以调用任何方法。 */
-		NONE(0),
-		/** 只读权限，可以获得各个属性，但是无权修改它们。 */
-		READ_ONLY(333),
-		/** 有限的写权限，可以使用某些方法对模型或属性进行修改，但无权对模型直接修改。 */
-		WRITE_LIMIT(667),
-
-		;
-
-		private final int level;
-
-		private ToolkitLevel(int level) {
-			this.level = level;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public double doubleValue() {
-			return level;
-		}
-	}
-
-	private final NumberValue currentLevel;
-	private final Toolkit standardToolkit;
 	private final Object stopFlagLock = new Object();
-
 	private boolean stopFlag = false;
 
-	/**
-	 * 新建一个分级工具包。
-	 * 
-	 * @param standardToolkit
-	 *            指定的标准工具包。
-	 * @param currentLevel
-	 *            当前的分级。
-	 */
-	public LeveledToolkit(Toolkit standardToolkit, NumberValue currentLevel) {
+	public LnpToolkit(ToolkitPermModel toolkitPermModel, int currentLevel, Toolkit standardToolkit,
+			Collection<Method> privileges) {
+		Objects.requireNonNull(toolkitPermModel, "入口参数 toolkitPermModel 不能为 null。");
 		Objects.requireNonNull(standardToolkit, "入口参数 standardToolkit 不能为 null。");
-		Objects.requireNonNull(currentLevel, "入口参数 currentLevel 不能为 null。");
+		Objects.requireNonNull(privileges, "入口参数 privileges 不能为 null。");
 
-		this.standardToolkit = standardToolkit;
+		this.toolkitPermModel = toolkitPermModel;
 		this.currentLevel = currentLevel;
+		this.standardToolkit = standardToolkit;
+		this.privileges = privileges;
 	}
 
 	/**
@@ -324,7 +292,7 @@ public final class LeveledToolkit implements Toolkit {
 	 * 
 	 * @return 当前的权限等级。
 	 */
-	public NumberValue getCurrentLevel() {
+	public int getCurrentLevel() {
 		return currentLevel;
 	}
 
@@ -647,6 +615,24 @@ public final class LeveledToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public SyncToolkitPermModel getToolkitPermModel() throws IllegalStateException {
+		checkPermissionAndState(Method.WARN);
+		return standardToolkit.getToolkitPermModel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ToolkitPermModel getToolkitPermModelReadOnly() throws IllegalStateException {
+		checkPermissionAndState(Method.GETTOOLKITPERMMODELREADONLY);
+		return standardToolkit.getToolkitPermModelReadOnly();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public SyncExconfigModel getViewConfigModel() throws IllegalStateException {
 		checkPermissionAndState(Method.GETVIEWCONFIGMODEL);
 		return standardToolkit.getViewConfigModel();
@@ -667,7 +653,7 @@ public final class LeveledToolkit implements Toolkit {
 	@Override
 	public boolean hasPermission(Method method) {
 		Objects.requireNonNull(method, "入口参数 method 不能为 null。");
-		return currentLevel.doubleValue() >= needLevel(method).doubleValue();
+		return !toolkitPermModel.hasPerm(method, currentLevel) && !privileges.contains(method);
 	}
 
 	/**
@@ -984,19 +970,10 @@ public final class LeveledToolkit implements Toolkit {
 			if (stopFlag)
 				throw new IllegalStateException("这个工具包已经被停用。");
 		}
-		if (currentLevel.doubleValue() < needLevel(method).doubleValue())
-			throw new IllegalStateException(String.format("方法 %s 需要的最小权限为 %s，而当前的权限为 %s。", method,
-					needLevel(method).toString(), currentLevel.toString()));
-	}
-
-	private NumberValue needLevel(Method method) {
-		Objects.requireNonNull(method, "入口参数 method 不能为 null。");
-
-		if (!Constants.LEVELEDTOOLKIT_MIN_LEVEL.containsKey(method)) {
-			throw new IllegalArgumentException(String.format("权限表中没有指定的方法：%s。", method));
+		if (!toolkitPermModel.hasPerm(method, currentLevel) && !privileges.contains(method)) {
+			throw new IllegalStateException(String.format("方法 %s 需要的最小权限为 %d，而当前的权限为 %d，且没有特权。",
+					toolkitPermModel.getPermLevel(method), currentLevel));
 		}
-
-		return Constants.LEVELEDTOOLKIT_MIN_LEVEL.get(method);
 	}
 
 }
