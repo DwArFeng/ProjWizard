@@ -420,7 +420,7 @@ public final class ProjWizard {
 				throw new ProcessException("目标文件不是文件夹");
 			}
 
-			File actualAddedFile = project.addFileByNew(src, dest);
+			File actualAddedFile = project.addFile(src, dest, Project.AddingSituation.BY_NEW);
 
 			if (Objects.isNull(actualAddedFile)) {
 				throw new ProcessException("由于工程处理器的原因，文件没有成功添加");

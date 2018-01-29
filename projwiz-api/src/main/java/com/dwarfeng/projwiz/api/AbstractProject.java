@@ -88,24 +88,8 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File addFileByCopy(File parent, File file) {
-		throw new UnsupportedOperationException("addFileByCopy");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File addFileByMove(File parent, File file) {
-		throw new UnsupportedOperationException("addFileByMove");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File addFileByNew(File parent, File file) {
-		throw new UnsupportedOperationException("addFileByNew");
+	public File addFile(File parent, File file, AddingSituation situation) {
+		throw new UnsupportedOperationException("addFile");
 	}
 
 	/**
@@ -294,16 +278,8 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File removeFileByDelete(File file) {
-		throw new UnsupportedOperationException("removeFileByDelete");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File removeFileByMove(File file) {
-		throw new UnsupportedOperationException("removeFileByMove");
+	public File removeFile(File file, RemovingSituation situation) {
+		throw new UnsupportedOperationException("removeFile");
 	}
 
 	/**

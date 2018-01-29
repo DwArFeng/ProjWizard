@@ -15,4 +15,5 @@ Alpha_0.0.3
 	添加了 ProjectFileChooser,用于选择工程内部的文件，其样式与JFileChooser类似，在Toolkit中新增了有关方法。
 	更改了程序的文件结构。
 	Toolkit实现机制变更。
+	Project 有关添加移除文件的方法的更改。
 	大量的细微改动。

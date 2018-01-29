@@ -156,7 +156,8 @@ final class DeleteFocusFileTask extends ProjWizTask {
 
 		removeFlags.put(file, true);
 
-		File actualRemovedFile = focusProject.removeFileByDelete(ModelUtil.unmodifiableFile(file));
+		File actualRemovedFile = focusProject.removeFile(ModelUtil.unmodifiableFile(file),
+				Project.RemovingSituation.BY_DELETE);
 
 		if (Objects.nonNull(actualRemovedFile)) {
 			formatInfo(LoggerStringKey.TASK_DELETEFILE_1, file.getName());

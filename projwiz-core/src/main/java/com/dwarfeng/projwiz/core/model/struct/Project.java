@@ -56,46 +56,46 @@ import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWriteThreadSafe, Name {
 
 	/**
-	 * 通过粘贴的方式向工程中添加指定的文件（可选操作）。
-	 *
-	 * @param parent
-	 *            指定文件的父节点。
-	 * @param file
-	 *            指定的文件。
-	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalArgumentException
-	 *             参数异常。
-	 * @throws UnsupportedOperationException
-	 *             不支持的操作。
+	 * 添加文件的情形。
+	 * 
+	 * @author DwArFeng
+	 * @since 0.0.3-alpha
 	 */
-	public File addFileByCopy(File parent, File file);
+	public enum AddingSituation {
+		/** 通过复制的方式添加文件。 */
+		BY_COPY,
+		/** 通过移动的方式添加文件。 */
+		BY_MOVE,
+		/** 通过新建的方式添加文件。 */
+		BY_NEW,
+		/** 其它方式。 */
+		OTHER,
+	}
 
 	/**
-	 * 通过移动的方式向工程中添加指定的文件（可选操作）。
-	 *
-	 * @param parent
-	 *            指定文件的父节点。
-	 * @param file
-	 *            指定的文件。
-	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalArgumentException
-	 *             参数异常。
-	 * @throws UnsupportedOperationException
-	 *             不支持的操作。
+	 * 移除文件的情形。
+	 * 
+	 * @author DwArFeng
+	 * @since 0.0.3-alpha
 	 */
-	public File addFileByMove(File parent, File file);
+	public enum RemovingSituation {
+		/** 通过删除的方式移除文件。 */
+		BY_DELETE,
+		/** 通过移动的方式移除文件。 */
+		BY_MOVE,
+		/** 其它方式。 */
+		OTHER,
+	}
 
 	/**
-	 * 通过新建的方式向工程中添加指定的文件（可选操作）。
-	 *
+	 * 向工程中添加指定的文件（可选操作）。
+	 * 
 	 * @param parent
 	 *            指定文件的父节点。
 	 * @param file
 	 *            指定的文件。
+	 * @param situation
+	 *            添加文件时的情景。
 	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
@@ -104,7 +104,7 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	 * @throws UnsupportedOperationException
 	 *             不支持的操作。
 	 */
-	public File addFileByNew(File parent, File file);
+	public File addFile(File parent, File file, AddingSituation situation);
 
 	/**
 	 * 获取工程接口的文件树。
@@ -190,34 +190,13 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	public boolean isStopSuggest();
 
 	/**
-	 * 通过删除从工程中移除文件（可选操作）。
-	 *
+	 * 从工程中移除文件（可选操作）。
+	 * 
 	 * @param file
-	 *            指定的文件。
-	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalArgumentException
-	 *             参数异常。
-	 * @throws UnsupportedOperationException
-	 *             不支持的操作。
+	 * @param situation
+	 * @return
 	 */
-	public File removeFileByDelete(File file);
-
-	/**
-	 * 通过移动从工程中移除文件（可选操作）。
-	 *
-	 * @param file
-	 *            指定的文件。
-	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalArgumentException
-	 *             参数异常。
-	 * @throws UnsupportedOperationException
-	 *             不支持的操作。
-	 */
-	public File removeFileByMove(File file);
+	public File removeFile(File file, RemovingSituation situation);
 
 	/**
 	 * 重命名文件（可选操作）。

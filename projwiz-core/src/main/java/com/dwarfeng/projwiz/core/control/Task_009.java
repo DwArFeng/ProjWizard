@@ -120,8 +120,8 @@ final class NewFileTask extends ProjWizTask {
 
 		projWizard.getToolkit().getFileIndicateModel().put(newFile.getUniqueLabel(), newFile);
 
-		File actualAddedFile = focusProject.addFileByNew(ModelUtil.unmodifiableFile(parentFile),
-				ModelUtil.unmodifiableFile(newFile));
+		File actualAddedFile = focusProject.addFile(ModelUtil.unmodifiableFile(parentFile),
+				ModelUtil.unmodifiableFile(newFile), Project.AddingSituation.BY_NEW);
 
 		projWizard.getToolkit().getFileIndicateModel().remove(newFile.getUniqueLabel());
 
