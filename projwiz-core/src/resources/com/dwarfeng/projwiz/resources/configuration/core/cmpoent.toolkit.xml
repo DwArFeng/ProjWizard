@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+	<!--
+		使用如下格式
+		<info key="com.dwarfeng.projwiz.FOO">
+			<toolkit perm-level="110">
+				<privilege>INFO</privilege>
+				<privilege>WARN</privilege>
+				<privilege>ERROR</privilege>
+				<privilege>FATAL</privilege>
+			</toolkit>
+		</info>
+		<info key="com.dwarfeng.projwiz.BAR">
+			<toolkit perm-level="110">
+				<privilege>INFO</privilege>
+				<privilege>WARN</privilege>
+				<privilege>ERROR</privilege>
+				<privilege>FATAL</privilege>
+			</toolkit>
+		</info>
+		-->
+</root>

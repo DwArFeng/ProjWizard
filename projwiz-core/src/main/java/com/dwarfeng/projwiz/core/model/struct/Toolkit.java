@@ -89,6 +89,7 @@ public interface Toolkit {
 		GETBACKGROUNDREADONLY, //
 		GETCFGHANDLER, //
 		GETCFGHANDLERREADONLY, //
+		GETCMPOENTTOOLKITMODEL, //
 		GETCOMPONENTMODEL, //
 		GETCORECONFIGMODEL, //
 		GETCORECONFIGMODELREADONLY, //
@@ -377,6 +378,15 @@ public interface Toolkit {
 	 * @return 资源处理器。
 	 */
 	public ResourceHandler getCfgHandlerReadOnly() throws IllegalStateException;
+
+	/**
+	 * 获取程序中的组件-映射模型。
+	 * 
+	 * @return 程序中的组件-映射模型。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public SyncMapModel<String, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException;
 
 	/**
 	 * 获取组件模型。

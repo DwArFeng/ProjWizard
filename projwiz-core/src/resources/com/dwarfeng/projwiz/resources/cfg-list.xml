@@ -50,6 +50,10 @@
 		filename="toolkit.perm.xml"
 		default="/com/dwarfeng/projwiz/resources/configuration/core/toolkit.perm.xml" />
 
+	<info key="com.dwarfeng.projwiz.core.cmpoent.toolkit" classify="com.dwarfeng.projwiz.core"
+		filename="cmpoent.toolkit.xml"
+		default="/com/dwarfeng/projwiz/resources/configuration/core/cmpoent.toolkit.xml" />
+
 	<info key="com.dwarfeng.projwiz.i18n.label" classify="com.dwarfeng.projwiz.core"
 		filename="label.properties"
 		default="/com/dwarfeng/projwiz/resources/configuration/i18n/label.properties" />

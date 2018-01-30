@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
@@ -67,7 +68,7 @@ public final class LnpToolkit implements Toolkit {
 	/** 工具包权限模型。 */
 	protected final ToolkitPermModel toolkitPermModel;
 	/** 工具包当前的权限等级。 */
-	protected final int currentLevel;
+	protected final int permLevel;
 	/** 具有完整权限的标准工具包。 */
 	protected final Toolkit standardToolkit;
 	/** 该工具包的特权。 */
@@ -76,14 +77,14 @@ public final class LnpToolkit implements Toolkit {
 	private final Object stopFlagLock = new Object();
 	private boolean stopFlag = false;
 
-	public LnpToolkit(ToolkitPermModel toolkitPermModel, int currentLevel, Toolkit standardToolkit,
+	public LnpToolkit(ToolkitPermModel toolkitPermModel, int permLevel, Toolkit standardToolkit,
 			Collection<Method> privileges) {
 		Objects.requireNonNull(toolkitPermModel, "入口参数 toolkitPermModel 不能为 null。");
 		Objects.requireNonNull(standardToolkit, "入口参数 standardToolkit 不能为 null。");
 		Objects.requireNonNull(privileges, "入口参数 privileges 不能为 null。");
 
 		this.toolkitPermModel = toolkitPermModel;
-		this.currentLevel = currentLevel;
+		this.permLevel = permLevel;
 		this.standardToolkit = standardToolkit;
 		this.privileges = privileges;
 	}
@@ -264,6 +265,15 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public SyncMapModel<String, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException {
+		checkPermissionAndState(Method.WARN);
+		return standardToolkit.getCmpoentToolkitModel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public SyncComponentModel getComponentModel() throws IllegalStateException {
 		checkPermissionAndState(Method.GETCOMPONENTMODEL);
 		return standardToolkit.getComponentModel();
@@ -285,15 +295,6 @@ public final class LnpToolkit implements Toolkit {
 	public ExconfigModel getCoreConfigModelReadOnly() throws IllegalStateException {
 		checkPermissionAndState(Method.GETCORECONFIGMODELREADONLY);
 		return standardToolkit.getCoreConfigModelReadOnly();
-	}
-
-	/**
-	 * 获取当前的权限等级。
-	 * 
-	 * @return 当前的权限等级。
-	 */
-	public int getCurrentLevel() {
-		return currentLevel;
 	}
 
 	/**
@@ -531,12 +532,30 @@ public final class LnpToolkit implements Toolkit {
 	}
 
 	/**
+	 * 获取工具包的权限等级。
+	 * 
+	 * @return 工具包的权限等级。
+	 */
+	public int getPermLevel() {
+		return permLevel;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public PluginClassLoader getPluginClassLoader() throws IllegalStateException {
 		checkPermissionAndState(Method.GETPLUGINCLASSLOADER);
 		return standardToolkit.getPluginClassLoader();
+	}
+
+	/**
+	 * 获取该工具包的特权方法。
+	 * 
+	 * @return 该工具包的特权方法。
+	 */
+	public Collection<Method> getPrivileges() {
+		return Collections.unmodifiableCollection(privileges);
 	}
 
 	/**
@@ -653,7 +672,7 @@ public final class LnpToolkit implements Toolkit {
 	@Override
 	public boolean hasPermission(Method method) {
 		Objects.requireNonNull(method, "入口参数 method 不能为 null。");
-		return !toolkitPermModel.hasPerm(method, currentLevel) && !privileges.contains(method);
+		return !toolkitPermModel.hasPerm(method, permLevel) && !privileges.contains(method);
 	}
 
 	/**
@@ -923,7 +942,7 @@ public final class LnpToolkit implements Toolkit {
 	 */
 	@Override
 	public String toString() {
-		return "LeveledToolkit [standardToolkit=" + standardToolkit + ", currentLevel=" + currentLevel + ", stopFlag="
+		return "LeveledToolkit [standardToolkit=" + standardToolkit + ", permLevel=" + permLevel + ", stopFlag="
 				+ stopFlag + "]";
 	}
 
@@ -970,9 +989,9 @@ public final class LnpToolkit implements Toolkit {
 			if (stopFlag)
 				throw new IllegalStateException("这个工具包已经被停用。");
 		}
-		if (!toolkitPermModel.hasPerm(method, currentLevel) && !privileges.contains(method)) {
+		if (!toolkitPermModel.hasPerm(method, permLevel) && !privileges.contains(method)) {
 			throw new IllegalStateException(String.format("方法 %s 需要的最小权限为 %d，而当前的权限为 %d，且没有特权。",
-					toolkitPermModel.getPermLevel(method), currentLevel));
+					toolkitPermModel.getPermLevel(method), permLevel));
 		}
 	}
 

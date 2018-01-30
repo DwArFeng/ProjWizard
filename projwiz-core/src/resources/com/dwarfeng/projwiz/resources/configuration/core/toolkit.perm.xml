@@ -23,9 +23,10 @@
 		<perm method="GETANCHORFILEMODEL" pl="FULL" />
 		<perm method="GETANCHORFILEMODELREADONLY" pl="READ_ONLY" />
 		<perm method="GETBACKGROUND" pl="FULL" />
+		<perm method="GETBACKGROUNDREADONLY" pl="READ_ONLY" />
 		<perm method="GETCFGHANDLER" pl="FULL" />
 		<perm method="GETCFGHANDLERREADONLY" pl="READ_ONLY" />
-		<perm method="GETBACKGROUNDREADONLY" pl="READ_ONLY" />
+		<perm method="GETCMPOENTTOOLKITMODEL" pl="FULL" />
 		<perm method="GETCOMPONENTMODEL" pl="FULL" />
 		<perm method="GETCORECONFIGMODEL" pl="FULL" />
 		<perm method="GETCORECONFIGMODELREADONLY" pl="READ_ONLY" />

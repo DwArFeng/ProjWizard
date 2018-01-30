@@ -308,6 +308,12 @@ public final class Constants {
 		}
 
 		@Override
+		public SyncMapModel<String, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getCmpoentToolkitModel");
+
+		}
+
+		@Override
 		public SyncComponentModel getComponentModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getComponentModel");
 		}

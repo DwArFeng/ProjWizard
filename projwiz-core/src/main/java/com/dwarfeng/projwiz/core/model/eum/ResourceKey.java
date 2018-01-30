@@ -56,6 +56,9 @@ public enum ResourceKey implements Name {
 	/** 组件额外设置。 */
 	CMPOENT_EXTRA(Constants.RESOURCE_CLASSIFY_CORE, "cmpoent.extra"),
 
+	/** 组件工具包设置。 */
+	CMPOENT_TOOLKIT(Constants.RESOURCE_CLASSIFY_CORE, "cmpoent.toolkit"),
+
 	/** 标签国际化文本默认配置。 */
 	I18N_LABEL(Constants.RESOURCE_CLASSIFY_I18N, "label"),
 

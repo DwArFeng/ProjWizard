@@ -737,6 +737,14 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public SyncMapModel<String, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException {
+			return cmpoentToolkitModel;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public SyncComponentModel getComponentModel() throws IllegalStateException {
 			return componentModel;
 		}
@@ -1647,6 +1655,9 @@ public final class ProjWizard {
 	private final SyncComponentModel componentModel = ModelUtil.syncComponentModel(new DelegateComponentModel());
 	// 工具包权限模型
 	private final SyncToolkitPermModel toolkitPermModel = ModelUtil.syncToolkitPermModel(new DefaultToolkitPermModel());
+	// 组件-权限引用模型
+	private final SyncMapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
+			.syncMapModel(new DelegateMapModel<>());
 
 	// --------------------------------------------控制--------------------------------------------
 	/** 程序的侦听器集合 */
