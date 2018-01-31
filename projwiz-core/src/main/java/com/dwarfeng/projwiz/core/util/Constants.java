@@ -1,9 +1,6 @@
 package com.dwarfeng.projwiz.core.util;
 
 import java.awt.Image;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -24,7 +21,6 @@ import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.dutil.basic.gui.awt.CommonIconLib;
 import com.dwarfeng.dutil.basic.gui.awt.ImageSize;
 import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
-import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
 import com.dwarfeng.dutil.develop.backgr.Background;
@@ -50,10 +46,8 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
-import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
-import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
@@ -160,10 +154,6 @@ public final class Constants {
 		}
 
 		@Override
-		public void showIndicateMonitor(ExecType type) {
-		}
-
-		@Override
 		public void showProjectAndFileMonitor(ExecType type) {
 		}
 
@@ -214,17 +204,6 @@ public final class Constants {
 		@Override
 		public boolean addCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: addCoreConfigObverser");
-		}
-
-		@Override
-		public void addFile2ProjectAsNew(File src, Project project, File dest)
-				throws IllegalStateException, IllegalArgumentException, ProcessException {
-			throw new IllegalStateException("没有权限运行方法: addFile2ProjectAsNew");
-		}
-
-		@Override
-		public boolean addObverserToFile(File file, FileObverser obverser) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: addObverserToFile");
 		}
 
 		@Override
@@ -369,16 +348,6 @@ public final class Constants {
 		}
 
 		@Override
-		public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getFileIndicateModel");
-		}
-
-		@Override
-		public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getFileProcessors");
-		}
-
-		@Override
 		public SyncMapModel<Project, Editor> getFocusEditorModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getFocusEditorModel");
 		}
@@ -496,16 +465,6 @@ public final class Constants {
 		}
 
 		@Override
-		public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getProjectIndicateModel");
-		}
-
-		@Override
-		public KeySetModel<String, ProjectProcessor> getProjectProcessors() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getProjectProcessors");
-		}
-
-		@Override
 		public String getProperty(ProjWizProperty property) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getProperty");
 		}
@@ -561,25 +520,8 @@ public final class Constants {
 		}
 
 		@Override
-		public InputStream openFileInputStream(File file, String label)
-				throws IllegalStateException, IllegalArgumentException, IOException {
-			throw new IllegalStateException("没有权限运行方法: openFileInputStream");
-		}
-
-		@Override
-		public OutputStream openFileOutputStream(File file, String label)
-				throws IllegalStateException, IllegalArgumentException, IOException {
-			throw new IllegalStateException("没有权限运行方法: openFileOutputStream");
-		}
-
-		@Override
 		public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: removeCoreConfigObverser");
-		}
-
-		@Override
-		public boolean removeObverserFromFile(File file, FileObverser obverser) {
-			throw new IllegalStateException("没有权限运行方法: removeObverserFromFile");
 		}
 
 		@Override

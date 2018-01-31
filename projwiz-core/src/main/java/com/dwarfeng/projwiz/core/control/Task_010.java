@@ -109,19 +109,6 @@ final class SaveAsFocusProjectTask extends ProjWizTask {
 			return;
 		}
 
-		SyncMapModel<String, Project> projectIndicateModel = projWizard.getToolkit().getProjectIndicateModel();
-		SyncMapModel<String, File> fileIndicateModel = projWizard.getToolkit().getFileIndicateModel();
-
-		savedAsProject.getLock().readLock().lock();
-		try {
-			projectIndicateModel.put(savedAsProject.getUniqueLabel(), savedAsProject);
-			savedAsProject.getFileTree().forEach(file -> {
-				fileIndicateModel.put(file.getUniqueLabel(), file);
-			});
-		} finally {
-			savedAsProject.getLock().readLock().unlock();
-		}
-
 		// 将新的工程置为焦点工程。
 		anchorFileModel.getLock().writeLock().lock();
 		focusEditorModel.getLock().writeLock().lock();

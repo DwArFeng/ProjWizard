@@ -39,7 +39,6 @@ import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
@@ -542,7 +541,7 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 		if (Objects.nonNull(componentModel)) {
 			FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
 			if (Objects.nonNull(processor)) {
-				image = processor.getFileIcon(ModelUtil.unmodifiableFile(file));
+				image = processor.getFileIcon(file);
 			}
 		}
 		if (Objects.isNull(image)) {
@@ -567,7 +566,7 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 		if (Objects.nonNull(componentModel)) {
 			ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class).get(project.getRegisterKey());
 			if (Objects.nonNull(processor)) {
-				image = processor.getProjectIcon(ModelUtil.unmodifiableProject(project));
+				image = processor.getProjectIcon(project);
 			}
 		}
 		if (Objects.isNull(image)) {

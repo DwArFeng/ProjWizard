@@ -44,7 +44,6 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
@@ -92,7 +91,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 				ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class)
 						.get(project.getRegisterKey());
 				if (Objects.nonNull(processor)) {
-					image = processor.getProjectIcon(ModelUtil.unmodifiableProject(project));
+					image = processor.getProjectIcon(project);
 				}
 			}
 			if (Objects.isNull(image)) {
@@ -120,7 +119,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			if (Objects.nonNull(componentModel)) {
 				FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
 				if (Objects.nonNull(processor)) {
-					image = processor.getFileIcon(ModelUtil.unmodifiableFile(file));
+					image = processor.getFileIcon(file);
 				}
 			}
 			if (Objects.isNull(image)) {
@@ -157,8 +156,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 				} else {
 					FileProcessor processor = Objects.isNull(componentModel) ? null
 							: componentModel.getAll(FileProcessor.class).get(newValue.getRegisterKey());
-					Image image = Objects.isNull(processor) ? null
-							: processor.getFileIcon(ModelUtil.unmodifiableFile(newValue));
+					Image image = Objects.isNull(processor) ? null : processor.getFileIcon(newValue);
 					if (Objects.isNull(image)) {
 						label_6.setIcon(new ImageIcon(
 								ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
@@ -229,8 +227,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 				} else {
 					ProjectProcessor processor = Objects.isNull(componentModel) ? null
 							: componentModel.getAll(ProjectProcessor.class).get(newValue.getRegisterKey());
-					Image image = Objects.isNull(processor) ? null
-							: processor.getProjectIcon(ModelUtil.unmodifiableProject(newValue));
+					Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(newValue);
 					if (Objects.isNull(image)) {
 						label_5.setIcon(new ImageIcon(
 								ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
@@ -635,8 +632,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			if (Objects.nonNull(anchorFileModel.get())) {
 				FileProcessor processor = Objects.isNull(componentModel) ? null
 						: componentModel.getAll(FileProcessor.class).get(anchorFileModel.get().getRegisterKey());
-				Image image = Objects.isNull(processor) ? null
-						: processor.getFileIcon(ModelUtil.unmodifiableFile(anchorFileModel.get()));
+				Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFileModel.get());
 				if (Objects.isNull(image)) {
 					label_6.setIcon(new ImageIcon(
 							ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
@@ -679,8 +675,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 
 			FileProcessor processor = Objects.isNull(componentModel) ? null
 					: componentModel.getAll(FileProcessor.class).get(anchorFileModel.get().getRegisterKey());
-			Image image = Objects.isNull(processor) ? null
-					: processor.getFileIcon(ModelUtil.unmodifiableFile(anchorFileModel.get()));
+			Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFileModel.get());
 			if (Objects.isNull(image)) {
 				label_6.setIcon(
 						new ImageIcon(ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
@@ -728,8 +723,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			if (Objects.nonNull(focusProjectModel.get())) {
 				ProjectProcessor processor = Objects.isNull(componentModel) ? null
 						: componentModel.getAll(ProjectProcessor.class).get(focusProjectModel.get().getRegisterKey());
-				Image image = Objects.isNull(processor) ? null
-						: processor.getProjectIcon(ModelUtil.unmodifiableProject(focusProjectModel.get()));
+				Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(focusProjectModel.get());
 				if (Objects.isNull(image)) {
 					label_5.setIcon(new ImageIcon(
 							ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
@@ -795,8 +789,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			if (Objects.nonNull(focusProjectModel.get())) {
 				ProjectProcessor processor = Objects.isNull(componentModel) ? null
 						: componentModel.getAll(ProjectProcessor.class).get(focusProjectModel.get().getRegisterKey());
-				Image image = Objects.isNull(processor) ? null
-						: processor.getProjectIcon(ModelUtil.unmodifiableProject(focusProjectModel.get()));
+				Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(focusProjectModel.get());
 				if (Objects.isNull(image)) {
 					label_5.setIcon(new ImageIcon(
 							ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
@@ -809,8 +802,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			if (Objects.nonNull(anchorFileModel.get())) {
 				FileProcessor processor = Objects.isNull(componentModel) ? null
 						: componentModel.getAll(FileProcessor.class).get(anchorFileModel.get().getRegisterKey());
-				Image image = Objects.isNull(processor) ? null
-						: processor.getFileIcon(ModelUtil.unmodifiableFile(anchorFileModel.get()));
+				Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFileModel.get());
 				if (Objects.isNull(image)) {
 					label_6.setIcon(new ImageIcon(
 							ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
@@ -861,8 +853,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 
 			ProjectProcessor processor = Objects.isNull(componentModel) ? null
 					: componentModel.getAll(ProjectProcessor.class).get(focusProjectModel.get().getRegisterKey());
-			Image image = Objects.isNull(processor) ? null
-					: processor.getProjectIcon(ModelUtil.unmodifiableProject(focusProjectModel.get()));
+			Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(focusProjectModel.get());
 			if (Objects.isNull(image)) {
 				label_5.setIcon(
 						new ImageIcon(ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));

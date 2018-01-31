@@ -210,14 +210,6 @@ public interface GuiManager {
 	public void showFocusProjectPropertiesDialog(ExecType type);
 
 	/**
-	 * 显示指示器监视器界面。
-	 * 
-	 * @param type
-	 *            以何种方式执行。
-	 */
-	public void showIndicateMonitor(ExecType type);
-
-	/**
 	 * 显示工程与文件监视器界面。
 	 * 
 	 * @param type

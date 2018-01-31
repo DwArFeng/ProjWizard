@@ -55,7 +55,6 @@ public enum LabelStringKey implements Name {
 	MFMENU_6_3(new DefaultName("mfmenu.6.3")), //
 	MFMENU_6_4(new DefaultName("mfmenu.6.4")), //
 	MFMENU_6_5(new DefaultName("mfmenu.6.5")), //
-	MFMENU_6_6(new DefaultName("mfmenu.6.6")), //
 
 	MSGDIA_1(new DefaultName("msgdia.1")), //
 	MSGDIA_2(new DefaultName("msgdia.2")), //

@@ -1,9 +1,6 @@
 package com.dwarfeng.projwiz.core.model.struct;
 
 import java.awt.Image;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -21,7 +18,6 @@ import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
-import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
 import com.dwarfeng.dutil.develop.backgr.Background;
@@ -96,25 +92,6 @@ public final class LnpToolkit implements Toolkit {
 	public boolean addCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
 		checkPermissionAndState(Method.ADDCORECONFIGOBVERSER);
 		return standardToolkit.addCoreConfigObverser(coreConfigObverser);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addFile2ProjectAsNew(File src, Project project, File dest)
-			throws IllegalStateException, IllegalArgumentException, ProcessException {
-		checkPermissionAndState(Method.ADDFILE2PROJECTASNEW);
-		standardToolkit.addFile2ProjectAsNew(src, project, dest);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean addObverserToFile(File file, FileObverser obverser) throws IllegalStateException {
-		checkPermissionAndState(Method.ADDOBVERSERTOFILE);
-		return standardToolkit.addObverserToFile(file, obverser);
 	}
 
 	/**
@@ -373,24 +350,6 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException {
-		checkPermissionAndState(Method.GETFILEINDICATEMODEL);
-		return standardToolkit.getFileIndicateModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException {
-		checkPermissionAndState(Method.GETFILEPROCESSORS);
-		return standardToolkit.getFileProcessors();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public SyncMapModel<Project, Editor> getFocusEditorModel() throws IllegalStateException {
 		checkPermissionAndState(Method.GETFOCUSEDITORMODEL);
 		return standardToolkit.getFocusEditorModel();
@@ -598,24 +557,6 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException {
-		checkPermissionAndState(Method.GETPROJECTINDICATEMODEL);
-		return standardToolkit.getProjectIndicateModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public KeySetModel<String, ProjectProcessor> getProjectProcessors() throws IllegalStateException {
-		checkPermissionAndState(Method.GETPROJECTPROCESSORS);
-		return standardToolkit.getProjectProcessors();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public String getProperty(ProjWizProperty property) throws IllegalStateException {
 		checkPermissionAndState(Method.GETPROPERTY);
 		return standardToolkit.getProperty(property);
@@ -715,38 +656,9 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public InputStream openFileInputStream(File file, String label)
-			throws IllegalStateException, IllegalArgumentException, IOException {
-		checkPermissionAndState(Method.OPENFILEINPUTSTREAM);
-		return standardToolkit.openFileInputStream(file, label);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public OutputStream openFileOutputStream(File file, String label)
-			throws IllegalStateException, IllegalArgumentException, IOException {
-		checkPermissionAndState(Method.OPENFILEOUTPUTSTREAM);
-		return standardToolkit.openFileOutputStream(file, label);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
 		checkPermissionAndState(Method.REMOVECORECONFIGOBVERSER);
 		return standardToolkit.removeCoreConfigObverser(coreConfigObverser);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean removeObverserFromFile(File file, FileObverser obverser) {
-		checkPermissionAndState(Method.REMOVEOBVERSERFROMFILE);
-		return standardToolkit.removeObverserFromFile(file, obverser);
 	}
 
 	/**

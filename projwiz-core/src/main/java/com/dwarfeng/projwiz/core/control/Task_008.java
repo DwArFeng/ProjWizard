@@ -106,19 +106,6 @@ final class OpenProjectTask extends ProjWizTask {
 			return;
 		}
 
-		SyncMapModel<String, Project> projectIndicateModel = projWizard.getToolkit().getProjectIndicateModel();
-		SyncMapModel<String, File> fileIndicateModel = projWizard.getToolkit().getFileIndicateModel();
-
-		openedProject.getLock().readLock().lock();
-		try {
-			projectIndicateModel.put(openedProject.getUniqueLabel(), openedProject);
-			openedProject.getFileTree().forEach(file -> {
-				fileIndicateModel.put(file.getUniqueLabel(), file);
-			});
-		} finally {
-			openedProject.getLock().readLock().unlock();
-		}
-
 		info(LoggerStringKey.TASK_OPENPROJECT_0);
 		formatInfo(LoggerStringKey.TASK_OPENPROJECT_1, openedProject.getRegisterKey(), openedProject.getName(),
 				openedProject.getClass().toString());

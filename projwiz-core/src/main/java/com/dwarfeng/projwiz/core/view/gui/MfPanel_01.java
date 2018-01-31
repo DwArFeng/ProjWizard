@@ -31,7 +31,6 @@ import com.dwarfeng.dutil.develop.i18n.I18nHandler;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager.ExecType;
 
@@ -69,7 +68,7 @@ class MfPanel_01 extends ProjWizPanel {
 				ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class)
 						.get(project.getRegisterKey());
 				if (Objects.nonNull(processor)) {
-					image = processor.getProjectIcon(ModelUtil.unmodifiableProject(project));
+					image = processor.getProjectIcon(project);
 				}
 			}
 			if (Objects.isNull(image)) {

@@ -1,9 +1,6 @@
 package com.dwarfeng.projwiz.core.model.struct;
 
 import java.awt.Image;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -18,7 +15,6 @@ import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
-import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
 import com.dwarfeng.dutil.develop.backgr.Background;
@@ -71,8 +67,6 @@ public interface Toolkit {
 
 	public enum Method {
 		ADDCORECONFIGOBVERSER, //
-		ADDFILE2PROJECTASNEW, //
-		ADDOBVERSERTOFILE, //
 		ADDPROGRAMOBVERSER, //
 		CHOOSEPROJECTFILE, //
 		CHOOSESYSTEMFILE, //
@@ -101,8 +95,6 @@ public interface Toolkit {
 		GETFILEICONIMAGEMODEL, //
 		GETFILEICONIMAGEMODELREADONLY(), //
 		GETFILEICONOBVMODEL, //
-		GETFILEINDICATEMODEL, //
-		GETFILEPROCESSORS, //
 		GETFOCUSEDITORMODEL, //
 		GETFOCUSEDITORMODELREADONLY, //
 		GETFOCUSFILEMODEL, //
@@ -124,8 +116,6 @@ public interface Toolkit {
 		GETPROJECTICONIMAGEMODEL, //
 		GETPROJECTICONIMAGEMODELREADONLY(), //
 		GETPROJECTICONOBVMODEL, //
-		GETPROJECTINDICATEMODEL, //
-		GETPROJECTPROCESSORS, //
 		GETPROPERTY, //
 		GETRUNTIMESTATE, //
 		GETTOOLKITPERMMODEL, //
@@ -136,10 +126,7 @@ public interface Toolkit {
 		ISMAINFRAMEVISIBLE, //
 		NEWMAINFRAME, //
 		OPENFILE, //
-		OPENFILEINPUTSTREAM, //
-		OPENFILEOUTPUTSTREAM, //
 		REMOVECORECONFIGOBVERSER, //
-		REMOVEOBVERSERFROMFILE, //
 		REMOVEPROGRAMOBVERSER, //
 		SETEXITCODE, //
 		SETRUNTIMESTATE, //
@@ -168,40 +155,6 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public boolean addCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException;
-
-	/**
-	 * 将指定的文件当做新建的文件添加到指定的工程中。
-	 * 
-	 * @param src
-	 *            指定的文件，需要可读可写。
-	 * @param project
-	 *            指定的工程。
-	 * @param dest
-	 *            指定的目标文件，只能是文件夹。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 * @throws IllegalArgumentException
-	 *             文件不存在指定的标签，或者文件不可写，或者指示模型中不存在文件。
-	 * @throws ProcessException
-	 *             过程异常。
-	 */
-	public void addFile2ProjectAsNew(File src, Project project, File dest)
-			throws IllegalStateException, IllegalArgumentException, ProcessException;
-
-	/**
-	 * 向指定的文件中添加侦听器。
-	 * 
-	 * @param file
-	 *            指定的文件。
-	 * @param obverser
-	 *            指定的观察器。
-	 * @return 观察器是否添加成功。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public boolean addObverserToFile(File file, FileObverser obverser) throws IllegalStateException;
 
 	/**
 	 * 移除指定的程序观察器。
@@ -497,24 +450,6 @@ public interface Toolkit {
 	public SyncMapModel<File, FileObverser> getFileIconObvModel() throws IllegalStateException;
 
 	/**
-	 * 获取文件指示器。
-	 * 
-	 * @return 文件指示器。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException;
-
-	/**
-	 * 获取程序中所有注册的文件处理器。
-	 * 
-	 * @return 程序中所有注册的文件处理器。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException;
-
-	/**
 	 * 获取焦点编辑器模型。
 	 * <p>
 	 * 该模型是只读的。
@@ -727,24 +662,6 @@ public interface Toolkit {
 	public SyncMapModel<Project, ProjectObverser> getProjectIconObvModel() throws IllegalStateException;
 
 	/**
-	 * 获取工程指示器。
-	 * 
-	 * @return 工程指示器。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException;
-
-	/**
-	 * 获取程序中所有注册的工程处理器。
-	 * 
-	 * @return 程序中所有注册的工程处理器。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public KeySetModel<String, ProjectProcessor> getProjectProcessors() throws IllegalStateException;
-
-	/**
 	 * 获取程序属性。
 	 * 
 	 * @param property
@@ -868,42 +785,6 @@ public interface Toolkit {
 	public void openFile(Project project, File file) throws IllegalStateException;
 
 	/**
-	 * 打开文件的输入流。
-	 * 
-	 * @param file
-	 *            指定的文件。
-	 * @param label
-	 *            指定的标签。
-	 * @return 指定的输入流。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 * @throws IllegalArgumentException
-	 *             文件不存在指定的标签，或者文件不可读，或者指示模型中不存在文件。
-	 * @throws IOException
-	 *             IO异常。
-	 */
-	public InputStream openFileInputStream(File file, String label)
-			throws IllegalStateException, IllegalArgumentException, IOException;
-
-	/**
-	 * 打开文件的输出流。
-	 * 
-	 * @param file
-	 *            指定的文件。
-	 * @param label
-	 *            指定的标签。
-	 * @return 指定的输出流。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 * @throws IllegalArgumentException
-	 *             文件不存在指定的标签，或者文件不可读，或者指示模型中不存在文件。
-	 * @throws IOException
-	 *             IO异常。
-	 */
-	public OutputStream openFileOutputStream(File file, String label)
-			throws IllegalStateException, IllegalArgumentException, IOException;
-
-	/**
 	 * 向程序中移除一个核心配置观察器。
 	 * 
 	 * @param coreConfigObverser
@@ -913,21 +794,6 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException;
-
-	/**
-	 * 从指定的文件中移除观察器。
-	 * 
-	 * @param file
-	 *            指定的文件。
-	 * @param obverser
-	 *            指定的观察器。
-	 * @return 是否移除成功。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public boolean removeObverserFromFile(File file, FileObverser obverser) throws IllegalStateException;
 
 	/**
 	 * 移除指定的程序观察器。

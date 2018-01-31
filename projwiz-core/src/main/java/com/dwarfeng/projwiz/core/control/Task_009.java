@@ -13,7 +13,6 @@ import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
-import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
 
 final class NewFileTask extends ProjWizTask {
@@ -118,12 +117,7 @@ final class NewFileTask extends ProjWizTask {
 			parentFile.getLock().readLock().unlock();
 		}
 
-		projWizard.getToolkit().getFileIndicateModel().put(newFile.getUniqueLabel(), newFile);
-
-		File actualAddedFile = focusProject.addFile(ModelUtil.unmodifiableFile(parentFile),
-				ModelUtil.unmodifiableFile(newFile), Project.AddingSituation.BY_NEW);
-
-		projWizard.getToolkit().getFileIndicateModel().remove(newFile.getUniqueLabel());
+		File actualAddedFile = focusProject.addFile(parentFile, newFile, Project.AddingSituation.BY_NEW);
 
 		if (Objects.isNull(actualAddedFile)) {
 			warn(LoggerStringKey.TASK_NEWFILE_0);
@@ -138,8 +132,6 @@ final class NewFileTask extends ProjWizTask {
 		info(LoggerStringKey.TASK_NEWFILE_3);
 		formatInfo(LoggerStringKey.TASK_NEWFILE_2, newFile.getRegisterKey(), newFile.getName(),
 				newFile.getClass().toString());
-
-		projWizard.getToolkit().getFileIndicateModel().put(actualAddedFile.getUniqueLabel(), actualAddedFile);
 
 		focusProjectModel.getLock().writeLock().lock();
 		focusFileModel.getLock().writeLock().lock();

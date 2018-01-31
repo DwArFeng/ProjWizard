@@ -19,7 +19,6 @@ import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
-import com.dwarfeng.projwiz.core.util.ModelUtil;
 
 final class DeleteFocusFileTask extends ProjWizTask {
 
@@ -156,15 +155,13 @@ final class DeleteFocusFileTask extends ProjWizTask {
 
 		removeFlags.put(file, true);
 
-		File actualRemovedFile = focusProject.removeFile(ModelUtil.unmodifiableFile(file),
-				Project.RemovingSituation.BY_DELETE);
+		File removedFile = focusProject.removeFile(file, Project.RemovingSituation.BY_DELETE);
 
-		if (Objects.nonNull(actualRemovedFile)) {
+		if (Objects.nonNull(removedFile)) {
 			formatInfo(LoggerStringKey.TASK_DELETEFILE_1, file.getName());
-			projWizard.getToolkit().getFileIndicateModel().remove(file.getUniqueLabel());
 			return true;
 		} else {
-			formatInfo(LoggerStringKey.TASK_DELETEFILE_2, actualRemovedFile.getName());
+			formatInfo(LoggerStringKey.TASK_DELETEFILE_2, removedFile.getName());
 			failedCounter.set(failedCounter.get() + 1);
 			return false;
 		}

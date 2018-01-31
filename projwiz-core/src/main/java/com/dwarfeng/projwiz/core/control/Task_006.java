@@ -168,16 +168,6 @@ final class TryCloseCertainProjectTask extends ProjWizTask {
 
 		project.stop();
 
-		project.getLock().readLock().lock();
-		try {
-			projWizard.getToolkit().getProjectIndicateModel().remove(project.getUniqueLabel());
-			project.getFileTree().forEach(file -> {
-				projWizard.getToolkit().getFileIndicateModel().remove(file.getUniqueLabel());
-			});
-		} finally {
-			project.getLock().readLock().unlock();
-		}
-
 		anchorFileModel.getLock().writeLock().lock();
 		focusEditorModel.getLock().writeLock().lock();
 		focusFileModel.getLock().writeLock().lock();
@@ -340,16 +330,6 @@ final class TryCloseAllProjectTask extends ProjWizTask {
 
 		project.stop();
 
-		project.getLock().readLock().lock();
-		try {
-			projWizard.getToolkit().getProjectIndicateModel().remove(project.getUniqueLabel());
-			project.getFileTree().forEach(file -> {
-				projWizard.getToolkit().getFileIndicateModel().remove(file.getUniqueLabel());
-			});
-		} finally {
-			project.getLock().readLock().unlock();
-		}
-
 		anchorFileModel.getLock().writeLock().lock();
 		focusEditorModel.getLock().writeLock().lock();
 		focusFileModel.getLock().writeLock().lock();
@@ -476,16 +456,6 @@ final class TryCloseFocusProjectTask extends ProjWizTask {
 		}
 
 		focusProject.stop();
-
-		focusProject.getLock().readLock().lock();
-		try {
-			projWizard.getToolkit().getProjectIndicateModel().remove(focusProject.getUniqueLabel());
-			focusProject.getFileTree().forEach(file -> {
-				projWizard.getToolkit().getFileIndicateModel().remove(file.getUniqueLabel());
-			});
-		} finally {
-			focusProject.getLock().readLock().unlock();
-		}
 
 		anchorFileModel.getLock().writeLock().lock();
 		focusEditorModel.getLock().writeLock().lock();

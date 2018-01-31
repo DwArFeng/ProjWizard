@@ -17,7 +17,6 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
-import com.dwarfeng.projwiz.core.util.ModelUtil;
 
 final class OpenFocusFileTask extends ProjWizTask {
 
@@ -77,8 +76,7 @@ final class OpenFocusFileTask extends ProjWizTask {
 
 			Editor editor2Add;
 			try {
-				editor2Add = fileProcessor.newEditor(ModelUtil.unmodifiableProject(focusProject),
-						ModelUtil.unmodifiableFile(file));
+				editor2Add = fileProcessor.newEditor(focusProject, file);
 			} catch (ProcessException e) {
 				warn(LoggerStringKey.TASK_OPENFILE_0);
 				warn(LoggerStringKey.TASK_OPENFILE_1, e);
@@ -158,8 +156,7 @@ final class OpenAnchorFileTask extends ProjWizTask {
 
 		Editor editor = null;
 		try {
-			editor = fileProcessor.newEditor(ModelUtil.unmodifiableProject(focusProject),
-					ModelUtil.unmodifiableFile(anchorFile));
+			editor = fileProcessor.newEditor(focusProject, anchorFile);
 		} catch (ProcessException e) {
 			warn(LoggerStringKey.TASK_OPENFILE_0);
 			warn(LoggerStringKey.TASK_OPENFILE_1, e);
@@ -225,7 +222,7 @@ final class OpenCertainFileTask extends ProjWizTask {
 
 		Editor editor = null;
 		try {
-			editor = fileProcessor.newEditor(ModelUtil.unmodifiableProject(project), ModelUtil.unmodifiableFile(file));
+			editor = fileProcessor.newEditor(project, file);
 		} catch (ProcessException e) {
 			warn(LoggerStringKey.TASK_OPENFILE_0);
 			warn(LoggerStringKey.TASK_OPENFILE_1, e);

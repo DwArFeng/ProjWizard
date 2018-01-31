@@ -104,16 +104,6 @@ final class NewProjectTask extends ProjWizTask {
 		formatInfo(LoggerStringKey.TASK_NEWPROJECT_6, project.getRegisterKey(), project.getName(),
 				project.getClass().toString());
 
-		project.getLock().readLock().lock();
-		try {
-			projWizard.getToolkit().getProjectIndicateModel().put(project.getUniqueLabel(), project);
-			project.getFileTree().forEach(file -> {
-				projWizard.getToolkit().getFileIndicateModel().put(file.getUniqueLabel(), file);
-			});
-		} finally {
-			project.getLock().readLock().unlock();
-		}
-
 		anchorFileModel.getLock().writeLock().lock();
 		focusEditorModel.getLock().writeLock().lock();
 		focusFileModel.getLock().writeLock().lock();

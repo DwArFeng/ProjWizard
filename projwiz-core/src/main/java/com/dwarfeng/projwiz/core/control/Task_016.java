@@ -9,7 +9,6 @@ import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
-import com.dwarfeng.projwiz.core.util.ModelUtil;
 
 final class RenameAnchorFileTask extends ProjWizTask {
 
@@ -64,7 +63,7 @@ final class RenameAnchorFileTask extends ProjWizTask {
 			return;
 		}
 
-		if (Objects.isNull(focusProject.renameFile(ModelUtil.unmodifiableFile(anchorFile), newName))) {
+		if (Objects.isNull(focusProject.renameFile(anchorFile, newName))) {
 			warn(LoggerStringKey.TASK_RENAMEFILE_0);
 			warn(LoggerStringKey.TASK_RENAMEFILE_1);
 			formatWarn(LoggerStringKey.TASK_RENAMEFILE_2, anchorFile.getRegisterKey(), anchorFile.getName(),

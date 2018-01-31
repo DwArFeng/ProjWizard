@@ -32,7 +32,6 @@ public class MfMenu_06 extends ProjWizMenu {
 
 	private final JMenuItem mi_01;
 	private final JMenuItem mi_02;
-	private final JMenuItem mi_03;
 	private final JMenuItem mi_04;
 	private final JMenuItem mi_05;
 	private final JSeparator separator_01;
@@ -93,14 +92,8 @@ public class MfMenu_06 extends ProjWizMenu {
 				.listener(e -> {
 					MfMenu_06.this.guiManager.showProjectAndFileMonitor(ExecType.CONCURRENT);
 				}).build());
-		// 指示器监视器
-		mi_03 = add(new JMenuItemAction.Builder().name(label(LabelStringKey.MFMENU_6_4)).mnemonic('I')
-				.icon(new ImageIcon(ImageUtil.getInternalImage(ImageKey.INDICATOR, ImageSize.ICON_SMALL)))
-				.listener(e -> {
-					MfMenu_06.this.guiManager.showIndicateMonitor(ExecType.CONCURRENT);
-				}).build());
-		// 指示器监视器
-		mi_04 = add(new JMenuItemAction.Builder().name(label(LabelStringKey.MFMENU_6_5)).mnemonic('E')
+		// 编辑器监视器
+		mi_04 = add(new JMenuItemAction.Builder().name(label(LabelStringKey.MFMENU_6_4)).mnemonic('E')
 				.icon(new ImageIcon(ImageUtil.getInternalImage(ImageKey.EDITOR, ImageSize.ICON_SMALL))).listener(e -> {
 					MfMenu_06.this.guiManager.showEditorMonitor(ExecType.CONCURRENT);
 				}).build());
@@ -109,7 +102,7 @@ public class MfMenu_06 extends ProjWizMenu {
 		add(separator_01);
 
 		// 超级机密设置
-		mi_05 = add(new JMenuItemAction.Builder().name(label(LabelStringKey.MFMENU_6_6)).listener(e -> {
+		mi_05 = add(new JMenuItemAction.Builder().name(label(LabelStringKey.MFMENU_6_5)).listener(e -> {
 			MfMenu_06.this.guiManager.superSecretSettings(ExecType.CONCURRENT);
 		}).build());
 
@@ -169,8 +162,7 @@ public class MfMenu_06 extends ProjWizMenu {
 		setText(label(LabelStringKey.MFMENU_6_1));
 		mi_01.setText(label(LabelStringKey.MFMENU_6_2));
 		mi_02.setText(label(LabelStringKey.MFMENU_6_3));
-		mi_03.setText(label(LabelStringKey.MFMENU_6_4));
-		mi_04.setText(label(LabelStringKey.MFMENU_6_5));
+		mi_04.setText(label(LabelStringKey.MFMENU_6_4));
 	}
 
 	private void hideSuperSecretSettingsMenu() {

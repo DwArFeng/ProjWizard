@@ -2,9 +2,6 @@ package com.dwarfeng.projwiz.core.control;
 
 import java.awt.Image;
 import java.awt.Window;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -37,7 +34,6 @@ import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.prog.DefaultVersion;
-import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
 import com.dwarfeng.dutil.basic.prog.Version;
@@ -82,10 +78,8 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
-import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
-import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 import com.dwarfeng.projwiz.core.util.Constants;
@@ -282,14 +276,6 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void showIndicateMonitor(ExecType type) {
-			doTask(new ShowIndicateMonitorTask(ProjWizard.this), type);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public void showProjectAndFileMonitor(ExecType type) {
 			doTask(new ShowProjectAndFileMonitorTask(ProjWizard.this), type);
 		}
@@ -400,40 +386,6 @@ public final class ProjWizard {
 		@Override
 		public boolean addCoreConfigObverser(ExconfigObverser coreConfigObverser) {
 			return coreConfigModel.addObverser(coreConfigObverser);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void addFile2ProjectAsNew(File src, Project project, File dest)
-				throws IllegalStateException, IllegalArgumentException, ProcessException {
-			// TODO Auto-generated method stub
-			Project modifiableProject = projectIndicateModel.get(project.getUniqueLabel());
-			File modifiableDest = fileIndicateModel.get(dest.getUniqueLabel());
-
-			if (Objects.isNull(modifiableProject) || Objects.isNull(modifiableDest)) {
-				throw new ProcessException("未能在指示器模型中找到指定模型或目标文件");
-			}
-
-			if (!dest.isFolder()) {
-				throw new ProcessException("目标文件不是文件夹");
-			}
-
-			File actualAddedFile = project.addFile(src, dest, Project.AddingSituation.BY_NEW);
-
-			if (Objects.isNull(actualAddedFile)) {
-				throw new ProcessException("由于工程处理器的原因，文件没有成功添加");
-			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean addObverserToFile(File file, FileObverser obverser) throws IllegalStateException {
-			File modifiableFile = fileIndicateModel.get(file.getUniqueLabel());
-			return modifiableFile.addObverser(obverser);
 		}
 
 		/**
@@ -688,9 +640,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public ReferenceModel<File> getAnchorFileModelReadOnly() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.readOnlyReferenceModel(anchorFileModel, (file) -> {
-				return ModelUtil.unmodifiableFile(file);
-			});
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.unmodifiableReferenceModel(anchorFileModel);
 		}
 
 		/**
@@ -821,12 +771,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public MapModel<File, Image> getFileIconImageModelReadOnly() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.readOnlyMapModel(fileIconImageModel, file -> {
-				return ModelUtil.unmodifiableFile(file);
-			}, image -> {
-				// TODO image还没有实现只读。
-				return image;
-			});
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.unmodifiableMapModel(fileIconImageModel);
 		}
 
 		/**
@@ -835,25 +780,6 @@ public final class ProjWizard {
 		@Override
 		public SyncMapModel<File, FileObverser> getFileIconObvModel() throws IllegalStateException {
 			return fileIconObvModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncMapModel<String, File> getFileIndicateModel() throws IllegalStateException {
-			return fileIndicateModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public KeySetModel<String, FileProcessor> getFileProcessors() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil
-					.readOnlyKeySetModel(componentModel.getAll(FileProcessor.class), fileProcessor -> {
-						return ModelUtil.unmodifiableFileProcessor(fileProcessor);
-					});
 		}
 
 		/**
@@ -869,11 +795,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public MapModel<Project, Editor> getFocusEditorModelReadOnly() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.readOnlyMapModel(focusEditorModel, (project) -> {
-				return ModelUtil.unmodifiableProject(project);
-			}, (editor) -> {
-				return ModelUtil.unmodifiableEditor(editor);
-			});
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.unmodifiableMapModel(focusEditorModel);
 		}
 
 		/**
@@ -889,9 +811,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public SetModel<File> getFocusFileModelReadOnly() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.readOnlySetModel(focusFileModel, (file) -> {
-				return ModelUtil.unmodifiableFile(file);
-			});
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.unmodifiableSetModel(focusFileModel);
 		}
 
 		/**
@@ -907,9 +827,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public ReferenceModel<Project> getFocusProjectModelReadOnly() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.readOnlyReferenceModel(focusProjectModel, (project) -> {
-				return ModelUtil.unmodifiableProject(project);
-			});
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.unmodifiableReferenceModel(focusProjectModel);
 		}
 
 		/**
@@ -933,9 +851,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public ListModel<Project> getHoldProjectModelReadOnly() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.readOnlyListModel(holdProjectModel, (project) -> {
-				return ModelUtil.unmodifiableProject(project);
-			});
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.unmodifiableListModel(holdProjectModel);
 		}
 
 		/**
@@ -1025,12 +941,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public MapModel<Project, Image> getProjectIconImageModelReadOnly() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.readOnlyMapModel(projectIconImageModel, project -> {
-				return ModelUtil.unmodifiableProject(project);
-			}, image -> {
-				// TODO image还没有实现只读。
-				return image;
-			});
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.unmodifiableMapModel(projectIconImageModel);
 		}
 
 		/**
@@ -1039,25 +950,6 @@ public final class ProjWizard {
 		@Override
 		public SyncMapModel<Project, ProjectObverser> getProjectIconObvModel() throws IllegalStateException {
 			return projectIconObvModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncMapModel<String, Project> getProjectIndicateModel() throws IllegalStateException {
-			return projectIndicateModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public KeySetModel<String, ProjectProcessor> getProjectProcessors() throws IllegalStateException {
-			return com.dwarfeng.dutil.basic.cna.model.ModelUtil
-					.readOnlyKeySetModel(componentModel.getAll(ProjectProcessor.class), projectProcessor -> {
-						return ModelUtil.unmodifableProjectProcessor(projectProcessor);
-					});
 		}
 
 		/**
@@ -1179,66 +1071,8 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public InputStream openFileInputStream(File file, String label)
-				throws IllegalStateException, IllegalArgumentException, IOException {
-			Objects.requireNonNull(file, "入口参数 file 不能为 null。");
-			Objects.requireNonNull(label, "入口参数 label 不能为 null。");
-
-			File modifiableFile = fileIndicateModel.get(file.getUniqueLabel());
-
-			if (Objects.isNull(modifiableFile)) {
-				throw new IllegalArgumentException("没有在文件指示模型中找到指定的文件");
-			}
-			if (!modifiableFile.getLabels().contains(label)) {
-				throw new IllegalArgumentException("指定的文件不存在指定的标签: " + label);
-			}
-			if (!file.isReadSupported()) {
-				throw new IllegalArgumentException("指定的文件不支持读取操作");
-			}
-
-			return modifiableFile.openInputStream(label);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public OutputStream openFileOutputStream(File file, String label)
-				throws IllegalStateException, IllegalArgumentException, IOException {
-			Objects.requireNonNull(file, "入口参数 file 不能为 null。");
-			Objects.requireNonNull(label, "入口参数 label 不能为 null。");
-
-			File modifiableFile = fileIndicateModel.get(file.getUniqueLabel());
-
-			if (Objects.isNull(modifiableFile)) {
-				throw new IllegalArgumentException("没有在文件指示模型中找到指定的文件");
-			}
-			if (!modifiableFile.getLabels().contains(label)) {
-				throw new IllegalArgumentException("指定的文件不存在指定的标签: " + label);
-			}
-			if (!file.isWriteSupported()) {
-				throw new IllegalArgumentException("指定的文件不支持写入操作");
-			}
-
-			return modifiableFile.openOutputStream(label);
-
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
 		public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) {
 			return coreConfigModel.removeObverser(coreConfigObverser);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean removeObverserFromFile(File file, FileObverser obverser) throws IllegalStateException {
-			File modifiableFile = fileIndicateModel.get(file.getUniqueLabel());
-			return modifiableFile.removeObverser(obverser);
 		}
 
 		/**
@@ -1632,12 +1466,6 @@ public final class ProjWizard {
 			.syncKeySetModel(new ExternalWindowModel());
 	// 编辑器模型
 	private final SyncMapModel<ProjectFilePair, Editor> editorModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
-			.syncMapModel(new DelegateMapModel<>());
-	// 工程指示器模型
-	private final SyncMapModel<String, Project> projectIndicateModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
-			.syncMapModel(new DelegateMapModel<>());
-	// 文件指示器模型
-	private final SyncMapModel<String, File> fileIndicateModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
 	// 工程图标图片模型
 	private final SyncMapModel<Project, Image> projectIconImageModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
