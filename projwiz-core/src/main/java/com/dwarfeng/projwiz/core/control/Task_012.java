@@ -54,7 +54,7 @@ final class DeleteFocusFileTask extends ProjWizTask {
 		if (Objects.isNull(focusProject))
 			return;
 
-		if (!focusProject.isRemoveFileByDeleteSupported()) {
+		if (!focusProject.isRemoveFileSupported(Project.RemovingSituation.BY_DELETE)) {
 			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_14), label(LabelStringKey.MSGDIA_15),
 					DialogMessage.INFORMATION_MESSAGE);
 			return;

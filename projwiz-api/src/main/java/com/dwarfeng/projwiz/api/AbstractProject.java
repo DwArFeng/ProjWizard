@@ -214,7 +214,7 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isAddFileByCopySupported() {
+	public boolean isAddFileSupported(AddingSituation situation) {
 		return false;
 	}
 
@@ -222,31 +222,7 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isAddFileByMoveSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isAddFileByNewSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isRemoveFileByDeleteSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isRemoveFileByMoveSupported() {
+	public boolean isRemoveFileSupported(RemovingSituation situation) {
 		return false;
 	}
 

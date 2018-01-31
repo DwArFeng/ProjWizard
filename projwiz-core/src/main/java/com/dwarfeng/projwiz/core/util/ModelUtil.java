@@ -1479,40 +1479,16 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean isAddFileByCopySupported() {
-			return delegate.isAddFileByCopySupported();
+		public boolean isAddFileSupported(AddingSituation situation) {
+			return delegate.isAddFileSupported(situation);
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean isAddFileByMoveSupported() {
-			return delegate.isAddFileByMoveSupported();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean isAddFileByNewSupported() {
-			return delegate.isAddFileByNewSupported();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean isRemoveFileByDeleteSupported() {
-			return delegate.isRemoveFileByDeleteSupported();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean isRemoveFileByMoveSupported() {
-			return delegate.isRemoveFileByMoveSupported();
+		public boolean isRemoveFileSupported(RemovingSituation situation) {
+			return delegate.isRemoveFileSupported(situation);
 		}
 
 		/**

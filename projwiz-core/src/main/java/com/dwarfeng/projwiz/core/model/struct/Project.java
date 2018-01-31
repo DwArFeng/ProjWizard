@@ -130,39 +130,26 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	public String getUniqueLabel();
 
 	/**
-	 * 询问该工程是否支持通过粘贴添加文件。
+	 * 询问该工程是否支持添加文件。
 	 * 
-	 * @return 该工程是否支持通过粘贴添加文件。
+	 * @param situation
+	 *            添加文件时的情景。
+	 * @return 是否支持添加文件。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public boolean isAddFileByCopySupported();
+	public boolean isAddFileSupported(AddingSituation situation);
 
 	/**
-	 * 询问该工程是否支持通过移动添加文件。
+	 * 询问该工程是否支持移除文件。
 	 * 
-	 * @return 该工程是否支持通过移动添加文件。
+	 * @param situation
+	 *            移除文件时的情景。
+	 * @return 是否支持移除文件。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public boolean isAddFileByMoveSupported();
-
-	/**
-	 * 询问该工程是否支持通过新建添加文件。
-	 * 
-	 * @return 该工程是否支持通过新建添加文件。
-	 */
-	public boolean isAddFileByNewSupported();
-
-	/**
-	 * 询问该工程是否支持通过删除移除文件。
-	 * 
-	 * @return 是否支持通过删除移除文件。
-	 */
-	public boolean isRemoveFileByDeleteSupported();
-
-	/**
-	 * 询问该工程是否支持通过移动移除文件。
-	 * 
-	 * @return 是否支持通过移动移除文件。
-	 */
-	public boolean isRemoveFileByMoveSupported();
+	public boolean isRemoveFileSupported(RemovingSituation situation);
 
 	/**
 	 * 询问该工程是否支持重命名文件。
@@ -193,8 +180,12 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	 * 从工程中移除文件（可选操作）。
 	 * 
 	 * @param file
+	 *            指定的文件。
 	 * @param situation
-	 * @return
+	 *            移除文件时的情景。
+	 * @return 被移除的文件。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
 	 */
 	public File removeFile(File file, RemovingSituation situation);
 

@@ -47,7 +47,7 @@ final class NewFileTask extends ProjWizTask {
 		if (Objects.isNull(focusProject))
 			return;
 
-		if (!focusProject.isAddFileByNewSupported()) {
+		if (!focusProject.isAddFileSupported(Project.AddingSituation.BY_NEW)) {
 			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_12), label(LabelStringKey.MSGDIA_13),
 					DialogMessage.INFORMATION_MESSAGE);
 			return;
