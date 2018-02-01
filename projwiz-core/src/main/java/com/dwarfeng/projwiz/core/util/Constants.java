@@ -565,7 +565,7 @@ public final class Constants {
 		@Override
 		public void showMessageDialog(MessageDialogSetting setting) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: showMessageDialog");
-			}
+		}
 
 		@Override
 		public int showOptionDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
@@ -624,7 +624,7 @@ public final class Constants {
 	/** 默认记录器多语言文件所在的位置 */
 	public final static String RESOURCE_I18N_LOGGER_PATH = "/com/dwarfeng/projwiz/resources/configuration/i18n/logger.properties";
 	/** 图片根所在的位置 */
-	public final static String RESOURCE_IMAGE_ROOT_PATH = "/com/dwarfeng/projwiz/resources/image/";
+	public final static String RESOURCE_IMAGE_ROOT_PATH = "/com/dwarfeng/projwiz/resources/image/core/";
 
 	/** 主程序的核心配置的资源仓库类别。 */
 	public final static String RESOURCE_CLASSIFY_CORE = "com.dwarfeng.projwiz.core";

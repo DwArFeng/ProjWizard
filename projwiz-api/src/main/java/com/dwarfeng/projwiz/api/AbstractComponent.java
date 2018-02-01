@@ -6,8 +6,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
+import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
-import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
@@ -61,7 +61,7 @@ public abstract class AbstractComponent implements Component {
 	 */
 	@Override
 	public void dispose() {
-
+		return;
 	}
 
 	/**
@@ -85,7 +85,7 @@ public abstract class AbstractComponent implements Component {
 	 */
 	@Override
 	public Image getIcon() {
-		return ApiUtil.getInternalImage(ImageKey.COMPONENT);
+		return ImageUtil.getInternalImage(ImageKey.COMPONENT, Constants.IMAGE_LOAD_FAILED, null);
 	}
 
 	/**

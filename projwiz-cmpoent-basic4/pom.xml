@@ -25,12 +25,17 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.dwarfeng</groupId>
+			<artifactId>projwiz-api</artifactId>
+			<version>alpha-0.0.3.a-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<resources>
 			<resource>
-				<directory>src/resources</directory>
+				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
