@@ -88,8 +88,11 @@ import com.dwarfeng.projwiz.core.view.gui.MainFrame;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser.ReturnOption;
 import com.dwarfeng.projwiz.core.view.gui.SystemFileChooser;
+import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.DefaultMainFrameVisibleModel;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
+import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
@@ -1111,37 +1114,13 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public DialogOption showConfirmDialog(Object message) {
-			return int2DialogOption(JOptionPane.showConfirmDialog(getMainFrame(), message));
-		}
+		public DialogOption showConfirmDialog(ConfirmDialogSetting setting) throws IllegalStateException {
+			Objects.requireNonNull(setting, "入口参数 setting 不能为 null。");
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo) {
-			return int2DialogOption(
-					JOptionPane.showConfirmDialog(getMainFrame(), message, title, dialogOptionCombo.getValue()));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-				DialogMessage dialogMessage) {
-			return int2DialogOption(JOptionPane.showConfirmDialog(getMainFrame(), message, title,
-					dialogOptionCombo.getValue(), dialogMessage.getValue()));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-				DialogMessage dialogMessage, Icon icon) {
-			return int2DialogOption(JOptionPane.showConfirmDialog(getMainFrame(), message, title,
-					dialogOptionCombo.getValue(), dialogMessage.getValue(), icon));
+			int result = JOptionPane.showConfirmDialog(getMainFrame(), setting.getMessage(), setting.getTitle(),
+					setting.getDialogOptionCombo().getValue(), setting.getDialogMessage().getValue(),
+					setting.getIcon());
+			return int2DialogOption(result);
 		}
 
 		/**
@@ -1212,58 +1191,21 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String showInputDialog(Object message) {
-			return JOptionPane.showInputDialog(getMainFrame(), message);
+		public Object showInputDialog(InputDialogSetting setting) throws IllegalStateException {
+			Objects.requireNonNull(setting, "入口参数 setting 不能为 null。");
+
+			return JOptionPane.showInputDialog(getMainFrame(), setting.getMessage(), setting.getTitle(),
+					setting.getDialogMessage().getValue(), setting.getIcon(), setting.getSelectionValues(),
+					setting.getInitialSelectionValue());
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String showInputDialog(Object message, Object initialSelectionValue) {
-			return JOptionPane.showInputDialog(getMainFrame(), message, initialSelectionValue);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public String showInputDialog(Object message, String title, DialogMessage dialogMessage) {
-			return JOptionPane.showInputDialog(getMainFrame(), message, title, dialogMessage.getValue());
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Object showInputDialog(Object message, String title, DialogMessage dialogMessage, Icon icon,
-				Object[] selectionValues, Object initialSelectionValue) {
-			return JOptionPane.showInputDialog(getMainFrame(), message, title, dialogMessage.getValue(), icon,
-					selectionValues, initialSelectionValue);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void showMessageDialog(Object message) {
-			JOptionPane.showMessageDialog(getMainFrame(), message);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void showMessageDialog(Object message, String title, DialogMessage dialogMessage) {
-			JOptionPane.showMessageDialog(getMainFrame(), message, title, dialogMessage.getValue());
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void showMessageDialog(Object message, String title, DialogMessage dialogMessage, Icon icon) {
-			JOptionPane.showMessageDialog(getMainFrame(), message, title, dialogMessage.getValue(), icon);
+		public void showMessageDialog(MessageDialogSetting setting) throws IllegalStateException {
+			JOptionPane.showMessageDialog(getMainFrame(), setting.getMessage(), setting.getTitle(),
+					setting.getDialogMessage().getValue(), setting.getIcon());
 		}
 
 		/**

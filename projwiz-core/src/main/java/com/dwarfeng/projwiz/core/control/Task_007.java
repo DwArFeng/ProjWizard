@@ -8,6 +8,7 @@ import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class SaveFocusEditorTask extends ProjWizTask {
 
@@ -37,8 +38,10 @@ final class SaveFocusEditorTask extends ProjWizTask {
 		}
 
 		if (!focusEditor.isSaveSupported()) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_17), label(LabelStringKey.MSGDIA_19),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_17))
+							.setTitle(label(LabelStringKey.MSGDIA_19))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			return;
 		}
 
@@ -49,8 +52,10 @@ final class SaveFocusEditorTask extends ProjWizTask {
 			formatInfo(LoggerStringKey.TASK_SAVEEDITOR_3, focusEditor.getEditProject().getName(),
 					focusEditor.getEditFile().getName());
 		} catch (ProcessException e) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_20), label(LabelStringKey.MSGDIA_21),
-					DialogMessage.WARNING_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_20))
+							.setTitle(label(LabelStringKey.MSGDIA_21)).setDialogMessage(DialogMessage.WARNING_MESSAGE)
+							.build());
 			warn(LoggerStringKey.TASK_SAVEEDITOR_0, e);
 		}
 

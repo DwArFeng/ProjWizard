@@ -18,6 +18,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class NewProjectTask extends ProjWizTask {
 
@@ -46,8 +47,10 @@ final class NewProjectTask extends ProjWizTask {
 		}
 
 		if (emptyFlag) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_1), label(LabelStringKey.MSGDIA_2),
-					DialogMessage.INFORMATION_MESSAGE, null);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_1))
+							.setTitle(label(LabelStringKey.MSGDIA_2))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 		}
 
 		AtomicReference<ComponentSelectDialog> dialogRef = new AtomicReference<>();
@@ -93,8 +96,9 @@ final class NewProjectTask extends ProjWizTask {
 		// 判断project是否与已经打开的工程重名。
 		String projectName = project.getName();
 		if (isNameAlreadyExists(projectName)) {
-			projWizard.getToolkit().showMessageDialog(formatLabel(LabelStringKey.MSGDIA_32, projectName, projectName),
-					label(LabelStringKey.MSGDIA_33), DialogMessage.WARNING_MESSAGE);
+			projWizard.getToolkit().showMessageDialog(new MessageDialogSetting.Builder()
+					.setMessage(formatLabel(LabelStringKey.MSGDIA_32, projectName, projectName))
+					.setTitle(label(LabelStringKey.MSGDIA_33)).setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
 			return;
 		}
 

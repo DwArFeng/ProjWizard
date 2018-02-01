@@ -18,6 +18,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class SaveAsFocusProjectTask extends ProjWizTask {
 
@@ -47,8 +48,10 @@ final class SaveAsFocusProjectTask extends ProjWizTask {
 		}
 
 		if (emptyFlag) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_26), label(LabelStringKey.MSGDIA_27),
-					DialogMessage.INFORMATION_MESSAGE, null);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_26))
+							.setTitle(label(LabelStringKey.MSGDIA_27))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 		}
 
 		AtomicReference<ComponentSelectDialog> dialogRef = new AtomicReference<>();
@@ -87,8 +90,10 @@ final class SaveAsFocusProjectTask extends ProjWizTask {
 		try {
 			savedAsProject = processor.saveProject(focusProject);
 		} catch (ProcessException e) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_28), label(LabelStringKey.MSGDIA_29),
-					DialogMessage.WARNING_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_28))
+							.setTitle(label(LabelStringKey.MSGDIA_29)).setDialogMessage(DialogMessage.WARNING_MESSAGE)
+							.build());
 			warn(LoggerStringKey.TASK_SAVEASPROJECT_0);
 			formatWarn(LoggerStringKey.TASK_SAVEASPROJECT_1, focusProject.getRegisterKey(), focusProject.getName(),
 					focusProject.getClass().toString());
@@ -103,9 +108,9 @@ final class SaveAsFocusProjectTask extends ProjWizTask {
 		// 判断savedAsProject是否与已经打开的工程重名。
 		String savedAsProjectName = savedAsProject.getName();
 		if (isNameAlreadyExists(savedAsProjectName)) {
-			projWizard.getToolkit().showMessageDialog(
-					formatLabel(LabelStringKey.MSGDIA_34, savedAsProjectName, savedAsProjectName),
-					label(LabelStringKey.MSGDIA_35), DialogMessage.WARNING_MESSAGE);
+			projWizard.getToolkit().showMessageDialog(new MessageDialogSetting.Builder()
+					.setMessage(formatLabel(LabelStringKey.MSGDIA_34, savedAsProjectName, savedAsProjectName))
+					.setTitle(label(LabelStringKey.MSGDIA_35)).setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
 			return;
 		}
 

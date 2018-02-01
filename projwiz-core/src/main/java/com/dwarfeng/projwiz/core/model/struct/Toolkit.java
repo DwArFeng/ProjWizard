@@ -39,7 +39,10 @@ import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
+import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
+import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
@@ -823,69 +826,17 @@ public interface Toolkit {
 	public void setRuntimeState(RuntimeState runtimeState) throws IllegalStateException;
 
 	/**
-	 * 在前台显示一个确认对话框。
+	 * 显示一个确认对话框。
 	 * 
-	 * @param message
-	 *            指定的信息。
+	 * @param setting
+	 *            确认对话框的设置。
 	 * @return 用户选择的选项。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
 	 */
-	public DialogOption showConfirmDialog(Object message) throws IllegalStateException;
-
-	/**
-	 * 在前台显示一个确认对话框。
-	 * 
-	 * @param message
-	 *            指定的信息。
-	 * @param title
-	 *            指定的标题。
-	 * @param dialogOptionCombo
-	 *            指定的组合选项。
-	 * @return 用户选择的选项。
-	 * @throws IllegalStateException
-	 *             因为没有权限而抛出的异常。
-	 */
-	public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo)
-			throws IllegalStateException;
-
-	/**
-	 * 在前台显示一个确认对话框。
-	 * 
-	 * @param message
-	 *            指定的信息。
-	 * @param title
-	 *            指定的标题。
-	 * @param dialogOptionCobo
-	 *            指定的组合选项。
-	 * @param dialogMessage
-	 *            指定的信息类型。
-	 * @return 用户选择的选项。
-	 * @throws IllegalStateException
-	 *             因为没有权限而抛出的异常。
-	 */
-	public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-			DialogMessage dialogMessage) throws IllegalStateException;
-
-	/**
-	 * 在前台显示一个确认对话框。
-	 * 
-	 * @param message
-	 *            指定的信息。
-	 * @param title
-	 *            指定的标题。
-	 * @param dialogOptionCobo
-	 *            指定的组合选项。
-	 * @param dialogMessage
-	 *            指定的信息类型。
-	 * @param icon
-	 *            指定的图标。
-	 * @return 用户选择的选项。
-	 * @throws IllegalStateException
-	 *             因为没有权限而抛出的异常。
-	 */
-	public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-			DialogMessage dialogMessage, Icon icon) throws IllegalStateException;
+	public DialogOption showConfirmDialog(ConfirmDialogSetting setting) throws IllegalStateException;
 
 	/**
 	 * 展示一个外部窗口。
@@ -919,116 +870,30 @@ public interface Toolkit {
 	public void showExternalWindow(WindowSuppiler suppiler);
 
 	/**
-	 * 在前台显示一个输入对话框。
-	 * <p>
-	 * 该方法返回用户输入的文本，如果用户没有点击确定，而是关闭了对话框，则返回 <code>null</code>。
+	 * 显示一个输入对话框。
 	 * 
-	 * @param message
-	 *            指定的提示文本。
-	 * @return 用户的输入的信息。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public String showInputDialog(Object message) throws IllegalStateException;
-
-	/**
-	 * 在前台显示一个输入对话框。
-	 * <p>
-	 * 该方法返回用户输入的文本，如果用户没有点击确定，而是关闭了对话框，则返回 <code>null</code>。
-	 * 
-	 * @param message
-	 *            指定的提示文本。
-	 * @param initialSelectionValue
-	 *            初始的默认值。
-	 * @return 用户的输入的信息。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public String showInputDialog(Object message, Object initialSelectionValue) throws IllegalStateException;
-
-	/**
-	 * 在前台显示一个输入对话框。
-	 * <p>
-	 * 该方法返回用户输入的文本，如果用户没有点击确定，而是关闭了对话框，则返回 <code>null</code>。
-	 * 
-	 * @param message
-	 *            指定的提示文本。
-	 * @param title
-	 *            指定的标题。
-	 * @param dialogMessage
-	 *            对话框的信息类型。
-	 * @return 用户的输入的信息。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public String showInputDialog(Object message, String title, DialogMessage dialogMessage)
-			throws IllegalStateException;
-
-	/**
-	 * 在前台显示一个输入对话框。
-	 * <p>
-	 * 该方法返回用户输入的文本，如果用户没有点击确定，而是关闭了对话框，则返回 <code>null</code>。
-	 * 
-	 * @param message
-	 *            指定的提示文本。
-	 * @param title
-	 *            指定的标题。
-	 * @param dialogMessage
-	 *            对话框的信息类型。
-	 * @param icon
-	 *            指定的显示图标。
-	 * @param selectionValues
-	 *            有可能的值组成的数组。
-	 * @param initialSelectionValue
-	 *            初始的默认值。
-	 * @return 用户的输入的信息。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public Object showInputDialog(Object message, String title, DialogMessage dialogMessage, Icon icon,
-			Object[] selectionValues, Object initialSelectionValue) throws IllegalStateException;
-
-	/**
-	 * 在前台显示一个信息对话框。
-	 * 
-	 * @param message
-	 *            指定的信息。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public void showMessageDialog(Object message) throws IllegalStateException;
-
-	/**
-	 * 在前台显示一个信息对话框。
-	 * 
-	 * @param message
-	 *            指定的信息。
-	 * @param title
-	 *            指定的标题。
-	 * @param dialogMessage
-	 *            指定的信息类型。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public void showMessageDialog(Object message, String title, DialogMessage dialogMessage)
-			throws IllegalStateException;
-
-	/**
-	 * 在前台显示一个信息对话框。
-	 * 
-	 * @param message
-	 *            指定的信息。
-	 * @param title
-	 *            指定的标题。
-	 * @param dialogMessage
-	 *            指定的信息类型。
-	 * @param icon
-	 *            指定的图标。
+	 * @param setting
+	 *            确认对话框的设置。
+	 * @return 用户输入的对象。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
 	 */
-	public void showMessageDialog(Object message, String title, DialogMessage dialogMessage, Icon icon)
-			throws IllegalStateException;
+	public Object showInputDialog(InputDialogSetting setting) throws IllegalStateException;
+
+	/**
+	 * 显示一个信息对话框。
+	 * 
+	 * @param setting
+	 *            信息对话框的设置。
+	 * @return 用户选择的选项。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalStateException
+	 *             因为没有权限而抛出的异常。
+	 */
+	public void showMessageDialog(MessageDialogSetting setting) throws IllegalStateException;
 
 	/**
 	 * 在前台显示一个选项对话框。

@@ -5,6 +5,7 @@ import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class SaveFocusProjectTask extends ProjWizTask {
 
@@ -26,8 +27,10 @@ final class SaveFocusProjectTask extends ProjWizTask {
 		try {
 			focusProject.save();
 		} catch (ProcessException e) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_22), label(LabelStringKey.MSGDIA_23),
-					DialogMessage.WARNING_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_22))
+							.setTitle(label(LabelStringKey.MSGDIA_23)).setDialogMessage(DialogMessage.WARNING_MESSAGE)
+							.build());
 			warn(LoggerStringKey.TASK_SAVEPROJECT_0);
 			formatWarn(LoggerStringKey.TASK_SAVEPROJECT_1, focusProject.getRegisterKey(), focusProject.getName(),
 					focusProject.getClass().toString());

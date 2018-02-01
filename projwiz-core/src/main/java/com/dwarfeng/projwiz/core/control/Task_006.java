@@ -18,6 +18,7 @@ import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class TryCloseCertainProjectTask extends ProjWizTask {
 
@@ -151,8 +152,10 @@ final class TryCloseCertainProjectTask extends ProjWizTask {
 		}
 
 		if (Objects.nonNull(refuseEdior)) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_24), label(LabelStringKey.MSGDIA_25),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_24))
+							.setTitle(label(LabelStringKey.MSGDIA_25))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			warn(LoggerStringKey.TASK_TRYCLOSEPROJECT_2);
 			formatWarn(LoggerStringKey.TASK_TRYCLOSEPROJECT_3, refuseEdior.getTitle(),
 					refuseEdior.getEditProject().getName(), refuseEdior.getEditFile().getName());
@@ -313,8 +316,10 @@ final class TryCloseAllProjectTask extends ProjWizTask {
 		}
 
 		if (Objects.nonNull(refuseEdior)) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_24), label(LabelStringKey.MSGDIA_25),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_24))
+							.setTitle(label(LabelStringKey.MSGDIA_25))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			warn(LoggerStringKey.TASK_TRYCLOSEPROJECT_2);
 			formatWarn(LoggerStringKey.TASK_TRYCLOSEPROJECT_3, refuseEdior.getTitle(),
 					refuseEdior.getEditProject().getName(), refuseEdior.getEditFile().getName());
@@ -440,8 +445,10 @@ final class TryCloseFocusProjectTask extends ProjWizTask {
 		}
 
 		if (Objects.nonNull(refuseEdior)) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_24), label(LabelStringKey.MSGDIA_25),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_24))
+							.setTitle(label(LabelStringKey.MSGDIA_25))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			warn(LoggerStringKey.TASK_TRYCLOSEPROJECT_2);
 			formatWarn(LoggerStringKey.TASK_TRYCLOSEPROJECT_3, refuseEdior.getTitle(),
 					refuseEdior.getEditProject().getName(), refuseEdior.getEditFile().getName());

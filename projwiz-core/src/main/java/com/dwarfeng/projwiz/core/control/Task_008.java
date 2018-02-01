@@ -21,6 +21,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.util.FileUtil;
 import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class OpenProjectTask extends ProjWizTask {
 
@@ -49,8 +50,10 @@ final class OpenProjectTask extends ProjWizTask {
 		}
 
 		if (emptyFlag) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_8), label(LabelStringKey.MSGDIA_9),
-					DialogMessage.INFORMATION_MESSAGE, null);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_8))
+							.setTitle(label(LabelStringKey.MSGDIA_9))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 		}
 
 		AtomicReference<ComponentSelectDialog> dialogRef = new AtomicReference<>();
@@ -88,9 +91,11 @@ final class OpenProjectTask extends ProjWizTask {
 		try {
 			String openedProjectName = openedProject.getName();
 			if (isNameAlreadyExists(openedProjectName)) {
-				projWizard.getToolkit().showMessageDialog(
-						formatLabel(LabelStringKey.MSGDIA_30, openedProjectName, openedProjectName),
-						label(LabelStringKey.MSGDIA_31), DialogMessage.WARNING_MESSAGE);
+				projWizard.getToolkit()
+						.showMessageDialog(new MessageDialogSetting.Builder()
+								.setMessage(formatLabel(LabelStringKey.MSGDIA_30, openedProjectName, openedProjectName))
+								.setTitle(label(LabelStringKey.MSGDIA_31))
+								.setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
 				return;
 			}
 		} finally {
@@ -100,9 +105,10 @@ final class OpenProjectTask extends ProjWizTask {
 		// 判断openedProject中是否有重名文件。
 		File repeditionFile = checkNameRepetition(openedProject.getFileTree());
 		if (Objects.nonNull(repeditionFile)) {
-			projWizard.getToolkit().showMessageDialog(
-					formatLabel(LabelStringKey.MSGDIA_36, FileUtil.getStdPath(openedProject, repeditionFile)),
-					label(LabelStringKey.MSGDIA_31), DialogMessage.WARNING_MESSAGE);
+			projWizard.getToolkit().showMessageDialog(new MessageDialogSetting.Builder()
+					.setMessage(
+							formatLabel(LabelStringKey.MSGDIA_36, FileUtil.getStdPath(openedProject, repeditionFile)))
+					.setTitle(label(LabelStringKey.MSGDIA_31)).setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
 			return;
 		}
 

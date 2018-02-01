@@ -50,7 +50,10 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
+import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
+import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
@@ -540,25 +543,7 @@ public final class Constants {
 		}
 
 		@Override
-		public DialogOption showConfirmDialog(Object message) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: showConfirmDialog");
-		}
-
-		@Override
-		public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo)
-				throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: showConfirmDialog");
-		}
-
-		@Override
-		public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-				DialogMessage dialogMessage) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: showConfirmDialog");
-		}
-
-		@Override
-		public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-				DialogMessage dialogMessage, Icon icon) throws IllegalStateException {
+		public DialogOption showConfirmDialog(ConfirmDialogSetting setting) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: showConfirmDialog");
 		}
 
@@ -573,43 +558,14 @@ public final class Constants {
 		}
 
 		@Override
-		public String showInputDialog(Object message) throws IllegalStateException {
+		public DialogOption showInputDialog(InputDialogSetting setting) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: showInputDialog");
 		}
 
 		@Override
-		public String showInputDialog(Object message, Object initialSelectionValue) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: showInputDialog");
-		}
-
-		@Override
-		public String showInputDialog(Object message, String title, DialogMessage dialogMessage)
-				throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: showInputDialog");
-		}
-
-		@Override
-		public Object showInputDialog(Object message, String title, DialogMessage dialogMessage, Icon icon,
-				Object[] selectionValues, Object initialSelectionValue) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: addCoreConfigObverser");
-		}
-
-		@Override
-		public void showMessageDialog(Object message) throws IllegalStateException {
+		public void showMessageDialog(MessageDialogSetting setting) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: showMessageDialog");
-		}
-
-		@Override
-		public void showMessageDialog(Object message, String title, DialogMessage dialogMessage)
-				throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: showMessageDialog");
-		}
-
-		@Override
-		public void showMessageDialog(Object message, String title, DialogMessage dialogMessage, Icon icon)
-				throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: showMessageDialog");
-		}
+			}
 
 		@Override
 		public int showOptionDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,

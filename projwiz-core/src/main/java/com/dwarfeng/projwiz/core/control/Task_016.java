@@ -9,6 +9,8 @@ import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class RenameAnchorFileTask extends ProjWizTask {
 
@@ -39,20 +41,27 @@ final class RenameAnchorFileTask extends ProjWizTask {
 		}
 
 		if (!focusProject.isRenameFileSupported()) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_10), label(LabelStringKey.MSGDIA_11),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_10))
+							.setTitle(label(LabelStringKey.MSGDIA_11))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			return;
 		}
 
-		String newName = projWizard.getToolkit().showInputDialog(label(LabelStringKey.INPUTDIA_1),
-				label(LabelStringKey.INPUTDIA_2), DialogMessage.QUESTION_MESSAGE);
+		String newName = (String) projWizard.getToolkit()
+				.showInputDialog(new InputDialogSetting.Builder().setMessage(label(LabelStringKey.INPUTDIA_1))
+						.setTitle(label(LabelStringKey.INPUTDIA_2)).setDialogMessage(DialogMessage.QUESTION_MESSAGE)
+						.build());
 
 		// 确保该名称在相同的目录下没有被使用。
 		focusProject.getLock().readLock().lock();
 		try {
 			if (isFileNameRepetitionExists(focusProject, focusProject.getFileTree().getParent(anchorFile), newName)) {
-				projWizard.getToolkit().showMessageDialog(formatLabel(LabelStringKey.MSGDIA_38, newName),
-						label(LabelStringKey.MSGDIA_39), DialogMessage.WARNING_MESSAGE);
+				projWizard.getToolkit()
+						.showMessageDialog(new MessageDialogSetting.Builder()
+								.setMessage(formatLabel(LabelStringKey.MSGDIA_38, newName))
+								.setTitle(label(LabelStringKey.MSGDIA_39))
+								.setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
 				return;
 			}
 		} finally {

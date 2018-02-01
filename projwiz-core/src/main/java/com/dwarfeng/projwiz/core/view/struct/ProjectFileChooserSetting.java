@@ -21,7 +21,7 @@ import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser;
 public final class ProjectFileChooserSetting {
 
 	/**
-	 * 文件选择器构造器。
+	 * 文件选择设置构造器。
 	 * 
 	 * @author DwArFeng
 	 * @since 0.0.1-alpha
@@ -63,15 +63,6 @@ public final class ProjectFileChooserSetting {
 			Objects.requireNonNull(fileFilter, "入口参数 fileFilter 不能为 null。");
 			fileFilters.add(fileFilter);
 			return this;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public ProjectFileChooserSetting build() {
-			return new ProjectFileChooserSetting(acceptAllFileFilterUsed, controlButtonsAreShown, currentDirectory,
-					dialogType, dragEnabled, fileFilters, fileHidingEnabled, fileSelectionMode, multiSelectionEnabled);
 		}
 
 		/**
@@ -186,6 +177,15 @@ public final class ProjectFileChooserSetting {
 			return this;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ProjectFileChooserSetting build() {
+			return new ProjectFileChooserSetting(acceptAllFileFilterUsed, controlButtonsAreShown, currentDirectory,
+					dialogType, dragEnabled, fileFilters, fileHidingEnabled, fileSelectionMode, multiSelectionEnabled);
+		}
+
 	}
 
 	private final boolean acceptAllFileFilterUsed;
@@ -211,6 +211,87 @@ public final class ProjectFileChooserSetting {
 		this.fileHidingEnabled = fileHidingEnabled;
 		this.fileSelectionMode = fileSelectionMode;
 		this.multiSelectionEnabled = mutiSelectionEnabled;
+	}
+
+	/**
+	 * 获取当前的目录。
+	 * 
+	 * @return 当前的目录。
+	 */
+	public File getCurrentDirectory() {
+		return currentDirectory;
+	}
+
+	/**
+	 * 获取对话框的类型。
+	 * 
+	 * @return 对话框的类型。
+	 */
+	public FileChooserDialogType getDialogType() {
+		return dialogType;
+	}
+
+	/**
+	 * 获取文件选择器集合。
+	 * 
+	 * @return 文件选择器集合。
+	 */
+	public Set<ProjectFileChooser.FileFilter> getFileFilters() {
+		return fileFilters;
+	}
+
+	/**
+	 * 获取文件的选择模式。
+	 * 
+	 * @return 文件的选择模式。
+	 */
+	public FileSelectionMode getFileSelectionMode() {
+		return fileSelectionMode;
+	}
+
+	/**
+	 * 获取所有文件过滤器是否被启用。
+	 * 
+	 * @return 所有文件过滤器是否被启用。
+	 */
+	public boolean isAcceptAllFileFilterUsed() {
+		return acceptAllFileFilterUsed;
+	}
+
+	/**
+	 * 获取控制按钮是否被选用。
+	 * 
+	 * @return 控制按钮是否被选用。
+	 */
+	public boolean isControlButtonsAreShown() {
+		return controlButtonsAreShown;
+	}
+
+	/**
+	 * 获取拖拽是否被启用。
+	 * 
+	 * @return 拖拽是否被启用。
+	 */
+	public boolean isDragEnabled() {
+		return dragEnabled;
+	}
+
+	/**
+	 * 获取拖拽是否允许。
+	 * 
+	 * @return 拖拽是否允许。
+	 */
+	public boolean isFileHidingEnabled() {
+		return fileHidingEnabled;
+	}
+
+	/**
+	 * 获取多重选择是否允许。
+	 * 
+	 * @return 多重选择是否允许。
+	 */
+	public boolean isMultiSelectionEnabled() {
+		return multiSelectionEnabled;
 	}
 
 	/**
@@ -267,42 +348,6 @@ public final class ProjectFileChooserSetting {
 	}
 
 	/**
-	 * 获取当前的目录。
-	 * 
-	 * @return 当前的目录。
-	 */
-	public File getCurrentDirectory() {
-		return currentDirectory;
-	}
-
-	/**
-	 * 获取对话框的类型。
-	 * 
-	 * @return 对话框的类型。
-	 */
-	public FileChooserDialogType getDialogType() {
-		return dialogType;
-	}
-
-	/**
-	 * 获取文件选择器集合。
-	 * 
-	 * @return 文件选择器集合。
-	 */
-	public Set<ProjectFileChooser.FileFilter> getFileFilters() {
-		return fileFilters;
-	}
-
-	/**
-	 * 获取文件的选择模式。
-	 * 
-	 * @return 文件的选择模式。
-	 */
-	public FileSelectionMode getFileSelectionMode() {
-		return fileSelectionMode;
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -322,48 +367,15 @@ public final class ProjectFileChooserSetting {
 	}
 
 	/**
-	 * 获取所有文件过滤器是否被启用。
-	 * 
-	 * @return 所有文件过滤器是否被启用。
+	 * {@inheritDoc}
 	 */
-	public boolean isAcceptAllFileFilterUsed() {
-		return acceptAllFileFilterUsed;
-	}
-
-	/**
-	 * 获取控制按钮是否被选用。
-	 * 
-	 * @return 控制按钮是否被选用。
-	 */
-	public boolean isControlButtonsAreShown() {
-		return controlButtonsAreShown;
-	}
-
-	/**
-	 * 获取拖拽是否被启用。
-	 * 
-	 * @return 拖拽是否被启用。
-	 */
-	public boolean isDragEnabled() {
-		return dragEnabled;
-	}
-
-	/**
-	 * 获取拖拽是否允许。
-	 * 
-	 * @return 拖拽是否允许。
-	 */
-	public boolean isFileHidingEnabled() {
-		return fileHidingEnabled;
-	}
-
-	/**
-	 * 获取多重选择是否允许。
-	 * 
-	 * @return 多重选择是否允许。
-	 */
-	public boolean isMultiSelectionEnabled() {
-		return multiSelectionEnabled;
+	@Override
+	public String toString() {
+		return "ProjectFileChooserSetting [acceptAllFileFilterUsed=" + acceptAllFileFilterUsed
+				+ ", controlButtonsAreShown=" + controlButtonsAreShown + ", currentDirectory=" + currentDirectory
+				+ ", dialogType=" + dialogType + ", dragEnabled=" + dragEnabled + ", fileFilters=" + fileFilters
+				+ ", fileHidingEnabled=" + fileHidingEnabled + ", fileSelectionMode=" + fileSelectionMode
+				+ ", multiSelectionEnabled=" + multiSelectionEnabled + "]";
 	}
 
 }

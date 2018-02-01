@@ -19,6 +19,8 @@ import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
+import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class DeleteFocusFileTask extends ProjWizTask {
 
@@ -54,8 +56,10 @@ final class DeleteFocusFileTask extends ProjWizTask {
 			return;
 
 		if (!focusProject.isRemoveFileSupported(Project.RemovingSituation.BY_DELETE)) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_14), label(LabelStringKey.MSGDIA_15),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_14))
+							.setTitle(label(LabelStringKey.MSGDIA_15))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			return;
 		}
 
@@ -74,9 +78,10 @@ final class DeleteFocusFileTask extends ProjWizTask {
 			branchPut(focusProject, file, removeFlags);
 		}
 
-		DialogOption option = projWizard.getToolkit().showConfirmDialog(
-				formatLabel(LabelStringKey.CONFIRMDIA_1, removeFlags.size()), label(LabelStringKey.CONFIRMDIA_2),
-				DialogOptionCombo.YES_NO_OPTION, DialogMessage.QUESTION_MESSAGE);
+		DialogOption option = projWizard.getToolkit().showConfirmDialog(new ConfirmDialogSetting.Builder()
+				.setMessage(formatLabel(LabelStringKey.CONFIRMDIA_1, removeFlags.size()))
+				.setTitle(label(LabelStringKey.CONFIRMDIA_2)).setDialogOptionCombo(DialogOptionCombo.YES_NO_OPTION)
+				.setDialogMessage(DialogMessage.QUESTION_MESSAGE).build());
 
 		if (option != DialogOption.OK_YES) {
 			return;

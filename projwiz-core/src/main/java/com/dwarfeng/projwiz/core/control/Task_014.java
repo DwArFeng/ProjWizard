@@ -17,6 +17,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class OpenFocusFileTask extends ProjWizTask {
 
@@ -91,8 +92,10 @@ final class OpenFocusFileTask extends ProjWizTask {
 		}
 
 		if (Objects.isNull(lastEditor)) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_16), label(LabelStringKey.MSGDIA_17),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_16))
+							.setTitle(label(LabelStringKey.MSGDIA_17))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			return;
 		}
 
@@ -137,8 +140,10 @@ final class OpenAnchorFileTask extends ProjWizTask {
 		boolean alreadyContainsFlag = editorModel.containsKey(pair);
 
 		if (!fileProcessor.isNewEditorSupported() && !alreadyContainsFlag) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_16), label(LabelStringKey.MSGDIA_17),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_16))
+							.setTitle(label(LabelStringKey.MSGDIA_17))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			return;
 		}
 
@@ -203,8 +208,10 @@ final class OpenCertainFileTask extends ProjWizTask {
 		boolean alreadyContainsFlag = editorModel.containsKey(pair);
 
 		if (!fileProcessor.isNewEditorSupported() && !alreadyContainsFlag) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_16), label(LabelStringKey.MSGDIA_17),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_16))
+							.setTitle(label(LabelStringKey.MSGDIA_17))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			return;
 		}
 

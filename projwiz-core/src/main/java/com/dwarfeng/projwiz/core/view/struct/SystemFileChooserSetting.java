@@ -65,15 +65,6 @@ public final class SystemFileChooserSetting {
 		}
 
 		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SystemFileChooserSetting build() {
-			return new SystemFileChooserSetting(acceptAllFileFilterUsed, controlButtonsAreShown, currentDirectory,
-					dialogType, dragEnabled, fileFilters, fileHidingEnabled, fileSelectionMode, multiSelectionEnabled);
-		}
-
-		/**
 		 * 清除所有的文件过滤器。
 		 * 
 		 * @return 构造器自身。
@@ -185,6 +176,15 @@ public final class SystemFileChooserSetting {
 			return this;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SystemFileChooserSetting build() {
+			return new SystemFileChooserSetting(acceptAllFileFilterUsed, controlButtonsAreShown, currentDirectory,
+					dialogType, dragEnabled, fileFilters, fileHidingEnabled, fileSelectionMode, multiSelectionEnabled);
+		}
+
 	}
 
 	private final boolean acceptAllFileFilterUsed;
@@ -209,6 +209,87 @@ public final class SystemFileChooserSetting {
 		this.fileHidingEnabled = fileHidingEnabled;
 		this.fileSelectionMode = fileSelectionMode;
 		this.multiSelectionEnabled = mutiSelectionEnabled;
+	}
+
+	/**
+	 * 获取当前的目录。
+	 * 
+	 * @return 当前的目录。
+	 */
+	public File getCurrentDirectory() {
+		return currentDirectory;
+	}
+
+	/**
+	 * 获取对话框的类型。
+	 * 
+	 * @return 对话框的类型。
+	 */
+	public FileChooserDialogType getDialogType() {
+		return dialogType;
+	}
+
+	/**
+	 * 获取文件选择器集合。
+	 * 
+	 * @return 文件选择器集合。
+	 */
+	public Set<FileFilter> getFileFilters() {
+		return fileFilters;
+	}
+
+	/**
+	 * 获取文件的选择模式。
+	 * 
+	 * @return 文件的选择模式。
+	 */
+	public FileSelectionMode getFileSelectionMode() {
+		return fileSelectionMode;
+	}
+
+	/**
+	 * 获取所有文件过滤器是否被启用。
+	 * 
+	 * @return 所有文件过滤器是否被启用。
+	 */
+	public boolean isAcceptAllFileFilterUsed() {
+		return acceptAllFileFilterUsed;
+	}
+
+	/**
+	 * 获取控制按钮是否被选用。
+	 * 
+	 * @return 控制按钮是否被选用。
+	 */
+	public boolean isControlButtonsAreShown() {
+		return controlButtonsAreShown;
+	}
+
+	/**
+	 * 获取拖拽是否被启用。
+	 * 
+	 * @return 拖拽是否被启用。
+	 */
+	public boolean isDragEnabled() {
+		return dragEnabled;
+	}
+
+	/**
+	 * 获取拖拽是否允许。
+	 * 
+	 * @return 拖拽是否允许。
+	 */
+	public boolean isFileHidingEnabled() {
+		return fileHidingEnabled;
+	}
+
+	/**
+	 * 获取多重选择是否允许。
+	 * 
+	 * @return 多重选择是否允许。
+	 */
+	public boolean isMultiSelectionEnabled() {
+		return multiSelectionEnabled;
 	}
 
 	/**
@@ -265,42 +346,6 @@ public final class SystemFileChooserSetting {
 	}
 
 	/**
-	 * 获取当前的目录。
-	 * 
-	 * @return 当前的目录。
-	 */
-	public File getCurrentDirectory() {
-		return currentDirectory;
-	}
-
-	/**
-	 * 获取对话框的类型。
-	 * 
-	 * @return 对话框的类型。
-	 */
-	public FileChooserDialogType getDialogType() {
-		return dialogType;
-	}
-
-	/**
-	 * 获取文件选择器集合。
-	 * 
-	 * @return 文件选择器集合。
-	 */
-	public Set<FileFilter> getFileFilters() {
-		return fileFilters;
-	}
-
-	/**
-	 * 获取文件的选择模式。
-	 * 
-	 * @return 文件的选择模式。
-	 */
-	public FileSelectionMode getFileSelectionMode() {
-		return fileSelectionMode;
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -320,48 +365,15 @@ public final class SystemFileChooserSetting {
 	}
 
 	/**
-	 * 获取所有文件过滤器是否被启用。
-	 * 
-	 * @return 所有文件过滤器是否被启用。
+	 * {@inheritDoc}
 	 */
-	public boolean isAcceptAllFileFilterUsed() {
-		return acceptAllFileFilterUsed;
-	}
-
-	/**
-	 * 获取控制按钮是否被选用。
-	 * 
-	 * @return 控制按钮是否被选用。
-	 */
-	public boolean isControlButtonsAreShown() {
-		return controlButtonsAreShown;
-	}
-
-	/**
-	 * 获取拖拽是否被启用。
-	 * 
-	 * @return 拖拽是否被启用。
-	 */
-	public boolean isDragEnabled() {
-		return dragEnabled;
-	}
-
-	/**
-	 * 获取拖拽是否允许。
-	 * 
-	 * @return 拖拽是否允许。
-	 */
-	public boolean isFileHidingEnabled() {
-		return fileHidingEnabled;
-	}
-
-	/**
-	 * 获取多重选择是否允许。
-	 * 
-	 * @return 多重选择是否允许。
-	 */
-	public boolean isMultiSelectionEnabled() {
-		return multiSelectionEnabled;
+	@Override
+	public String toString() {
+		return "SystemFileChooserSetting [acceptAllFileFilterUsed=" + acceptAllFileFilterUsed
+				+ ", controlButtonsAreShown=" + controlButtonsAreShown + ", currentDirectory=" + currentDirectory
+				+ ", dialogType=" + dialogType + ", dragEnabled=" + dragEnabled + ", fileFilters=" + fileFilters
+				+ ", fileHidingEnabled=" + fileHidingEnabled + ", fileSelectionMode=" + fileSelectionMode
+				+ ", multiSelectionEnabled=" + multiSelectionEnabled + "]";
 	}
 
 }

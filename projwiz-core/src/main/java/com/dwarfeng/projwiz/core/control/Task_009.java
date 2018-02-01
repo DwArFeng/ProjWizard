@@ -14,6 +14,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class NewFileTask extends ProjWizTask {
 
@@ -47,8 +48,10 @@ final class NewFileTask extends ProjWizTask {
 			return;
 
 		if (!focusProject.isAddFileSupported(Project.AddingSituation.BY_NEW)) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_12), label(LabelStringKey.MSGDIA_13),
-					DialogMessage.INFORMATION_MESSAGE);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_12))
+							.setTitle(label(LabelStringKey.MSGDIA_13))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			return;
 		}
 
@@ -62,8 +65,10 @@ final class NewFileTask extends ProjWizTask {
 		}
 
 		if (emptyFlag) {
-			projWizard.getToolkit().showMessageDialog(label(LabelStringKey.MSGDIA_5), label(LabelStringKey.MSGDIA_6),
-					DialogMessage.INFORMATION_MESSAGE, null);
+			projWizard.getToolkit()
+					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_5))
+							.setTitle(label(LabelStringKey.MSGDIA_6))
+							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 		}
 
 		AtomicReference<ComponentSelectDialog> dialogRef = new AtomicReference<>();
@@ -109,8 +114,11 @@ final class NewFileTask extends ProjWizTask {
 		parentFile.getLock().readLock().lock();
 		try {
 			if (isFileNameRepetitionExists(focusProject, parentFile, newFile.getName())) {
-				projWizard.getToolkit().showMessageDialog(formatLabel(LabelStringKey.MSGDIA_37, newFile.getName()),
-						label(LabelStringKey.MSGDIA_13), DialogMessage.WARNING_MESSAGE);
+				projWizard.getToolkit()
+						.showMessageDialog(new MessageDialogSetting.Builder()
+								.setMessage(formatLabel(LabelStringKey.MSGDIA_37, newFile.getName()))
+								.setTitle(label(LabelStringKey.MSGDIA_13))
+								.setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
 				return;
 			}
 		} finally {

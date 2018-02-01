@@ -42,7 +42,10 @@ import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
+import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
+import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
@@ -692,39 +695,9 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public DialogOption showConfirmDialog(Object message) throws IllegalStateException {
+	public DialogOption showConfirmDialog(ConfirmDialogSetting setting) throws IllegalStateException {
 		checkPermissionAndState(Method.SHOWCONFIRMDIALOG);
-		return standardToolkit.showConfirmDialog(message);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo)
-			throws IllegalStateException {
-		checkPermissionAndState(Method.SHOWCONFIRMDIALOG);
-		return standardToolkit.showConfirmDialog(message, title, dialogOptionCombo);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-			DialogMessage dialogMessage) throws IllegalStateException {
-		checkPermissionAndState(Method.SHOWCONFIRMDIALOG);
-		return standardToolkit.showConfirmDialog(message, title, dialogOptionCombo, dialogMessage);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DialogOption showConfirmDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-			DialogMessage dialogMessage, Icon icon) throws IllegalStateException {
-		checkPermissionAndState(Method.SHOWCONFIRMDIALOG);
-		return standardToolkit.showConfirmDialog(message, title, dialogOptionCombo, dialogMessage, icon);
+		return standardToolkit.showConfirmDialog(setting);
 	}
 
 	/**
@@ -749,68 +722,18 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String showInputDialog(Object message) throws IllegalStateException {
+	public Object showInputDialog(InputDialogSetting setting) throws IllegalStateException {
 		checkPermissionAndState(Method.SHOWINPUTDIALOG);
-		return standardToolkit.showInputDialog(message);
+		return standardToolkit.showInputDialog(setting);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String showInputDialog(Object message, Object initialSelectionValue) throws IllegalStateException {
-		checkPermissionAndState(Method.SHOWINPUTDIALOG);
-		return standardToolkit.showInputDialog(message, initialSelectionValue);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String showInputDialog(Object message, String title, DialogMessage dialogMessage)
-			throws IllegalStateException {
-		checkPermissionAndState(Method.SHOWINPUTDIALOG);
-		return standardToolkit.showInputDialog(message, title, dialogMessage);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object showInputDialog(Object message, String title, DialogMessage dialogMessage, Icon icon,
-			Object[] selectionValues, Object initialSelectionValue) throws IllegalStateException {
-		checkPermissionAndState(Method.SHOWINPUTDIALOG);
-		return standardToolkit.showInputDialog(message, title, dialogMessage, icon, selectionValues,
-				initialSelectionValue);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void showMessageDialog(Object message) throws IllegalStateException {
+	public void showMessageDialog(MessageDialogSetting setting) throws IllegalStateException {
 		checkPermissionAndState(Method.SHOWMESSAGEDIALOG);
-		standardToolkit.showMessageDialog(message);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void showMessageDialog(Object message, String title, DialogMessage dialogMessage)
-			throws IllegalStateException {
-		checkPermissionAndState(Method.SHOWMESSAGEDIALOG);
-		standardToolkit.showMessageDialog(message, title, dialogMessage);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void showMessageDialog(Object message, String title, DialogMessage dialogMessage, Icon icon)
-			throws IllegalStateException {
-		checkPermissionAndState(Method.SHOWMESSAGEDIALOG);
-		standardToolkit.showMessageDialog(message, title, dialogMessage, icon);
+		standardToolkit.showMessageDialog(setting);
 	}
 
 	/**
