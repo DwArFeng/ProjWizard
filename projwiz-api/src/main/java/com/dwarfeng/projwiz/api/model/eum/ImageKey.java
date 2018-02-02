@@ -1,6 +1,7 @@
-package com.dwarfeng.projwiz.api;
+package com.dwarfeng.projwiz.api.model.eum;
 
 import com.dwarfeng.dutil.basic.str.Name;
+import com.dwarfeng.projwiz.api.util.Constants;
 
 /**
  * 程序中的图片键。

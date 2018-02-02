@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import com.dwarfeng.dutil.basic.gui.awt.ImageSize;
 import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.gui.swing.MuaListModel;
+import com.dwarfeng.projwiz.api.model.eum.ImageKey;
 
 public class Test_ImageKey extends JFrame {
 

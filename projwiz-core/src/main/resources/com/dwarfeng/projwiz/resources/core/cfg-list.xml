@@ -4,66 +4,66 @@
 
 	<info key="com.dwarfeng.projwiz.core.logger.setting" classify="com.dwarfeng.projwiz.core"
 		filename="logger.setting.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/logger.setting.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/logger.setting.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.cfg.core" classify="com.dwarfeng.projwiz.core"
 		filename="cfg.core.properties"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.core.properties" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cfg.core.properties" />
 
 	<info key="com.dwarfeng.projwiz.core.cfg.view" classify="com.dwarfeng.projwiz.core"
 		filename="cfg.view.properties"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.view.properties" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cfg.view.properties" />
 
 	<info key="com.dwarfeng.projwiz.core.i18n.logger.file.setting"
 		classify="com.dwarfeng.projwiz.core" filename="i18n.logger.file.setting.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/i18n.logger.file.setting.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/i18n.logger.file.setting.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.i18n.label.file.setting"
 		classify="com.dwarfeng.projwiz.core" filename="i18n.label.file.setting.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/i18n.label.file.setting.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/i18n.label.file.setting.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.i18n.logger.resource.setting"
 		classify="com.dwarfeng.projwiz.core" filename="i18n.logger.resource.setting.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/i18n.logger.resource.setting.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/i18n.logger.resource.setting.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.i18n.label.resource.setting"
 		classify="com.dwarfeng.projwiz.core" filename="i18n.label.resource.setting.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/i18n.label.resource.setting.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/i18n.label.resource.setting.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.cfg.ignore" classify="com.dwarfeng.projwiz.core"
 		filename="cfg.ignore.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.ignore.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cfg.ignore.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.cfg.extra" classify="com.dwarfeng.projwiz.core"
 		filename="cfg.extra.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/cfg.extra.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cfg.extra.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.cmpoent.ignore" classify="com.dwarfeng.projwiz.core"
 		filename="cmpoent.ignore.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/cmpoent.ignore.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cmpoent.ignore.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.cmpoent.extra" classify="com.dwarfeng.projwiz.core"
 		filename="cmpoent.extra.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/cmpoent.extra.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cmpoent.extra.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.toolkit.perm" classify="com.dwarfeng.projwiz.core"
 		filename="toolkit.perm.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/toolkit.perm.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/toolkit.perm.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.cmpoent.toolkit" classify="com.dwarfeng.projwiz.core"
 		filename="cmpoent.toolkit.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/core/cmpoent.toolkit.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cmpoent.toolkit.xml" />
 
 	<info key="com.dwarfeng.projwiz.i18n.label" classify="com.dwarfeng.projwiz.core"
 		filename="label.properties"
-		default="/com/dwarfeng/projwiz/resources/configuration/i18n/label.properties" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/i18n/label.properties" />
 
 	<info key="com.dwarfeng.projwiz.i18n.logger" classify="com.dwarfeng.projwiz.core"
 		filename="logger.properties"
-		default="/com/dwarfeng/projwiz/resources/configuration/i18n/logger.properties" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/i18n/logger.properties" />
 
 	<info key="com.dwarfeng.projwiz.testcase.logger.setting" classify="com.dwarfeng.projwiz.testcase"
 		filename="logger.setting.xml"
-		default="/com/dwarfeng/projwiz/resources/configuration/testcase/logger.setting.xml" />
+		default="/com/dwarfeng/projwiz/resources/core/configuration/testcase/logger.setting.xml" />
 
 </root>

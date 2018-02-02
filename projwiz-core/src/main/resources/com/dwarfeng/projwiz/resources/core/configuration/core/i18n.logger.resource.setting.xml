@@ -2,7 +2,7 @@
 <root>
 	<!--使用如下的格式进行默认项目配置：<info-default name="默认" resource="default.properties"/> -->
 	<!--使用如下的格式进行一般项目配置：<info locale="zh_CN" name="简体中文" resource="zh_CN.properties"/> -->
-	
+
 	<info-default name="默认（简体中文）"
-		resource="/com/dwarfeng/projwiz/resources/configuration/i18n/logger.properties" />
+		resource="/com/dwarfeng/projwiz/resources/core/configuration/i18n/logger.properties" />
 </root>
