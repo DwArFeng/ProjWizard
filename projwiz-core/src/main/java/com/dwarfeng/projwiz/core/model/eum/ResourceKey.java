@@ -62,14 +62,8 @@ public enum ResourceKey implements Name {
 	/** 标签国际化文本默认配置。 */
 	I18N_LABEL(Constants.RESOURCE_CLASSIFY_I18N, "label"),
 
-	/** 标签国际化文本简体中文配置。 */
-	I18N_LABEL_ZH_CN(Constants.RESOURCE_CLASSIFY_I18N, "label_zh_CN"),
-
 	/** 记录器国际化文本默认配置。 */
 	I18N_LOGGER(Constants.RESOURCE_CLASSIFY_I18N, "logger"),
-
-	/** 记录器国际化文本简体中文配置。 */
-	I18N_LOGGER_ZH_CN(Constants.RESOURCE_CLASSIFY_I18N, "logger_zh_CN.pr")
 
 	;
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root dir="null">
+
+	<info key="com.dwarfeng.projwiz.i18n.label" classify="com.dwarfeng.projwiz.core"
+		filename="label.properties"
+		default="/com/dwarfeng/projwiz/resources/configuration/i18n/label.properties" />
+
+	<info key="com.dwarfeng.projwiz.i18n.logger" classify="com.dwarfeng.projwiz.core"
+		filename="logger.properties"
+		default="/com/dwarfeng/projwiz/resources/configuration/i18n/logger.properties" />
+
+</root>
