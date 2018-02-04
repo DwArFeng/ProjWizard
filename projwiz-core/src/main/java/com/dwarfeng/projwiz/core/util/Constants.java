@@ -621,7 +621,7 @@ public final class Constants {
 
 	/** 默认的配置列表所在的位置。 */
 	public final static String CFG_DEFAULT_LIST_PATH = "/com/dwarfeng/projwiz/resources/core/cfg-list.xml";
-	/** 默认记录器多语言文件所在的位置 */
+	/** 默认记录器国际化文件所在的位置 */
 	public final static String RESOURCE_I18N_LOGGER_PATH = "/com/dwarfeng/projwiz/resources/core/configuration/i18n/logger.properties";
 	/** 图片根所在的位置 */
 	public final static String RESOURCE_IMAGE_ROOT_PATH = "/com/dwarfeng/projwiz/resources/core/image/";

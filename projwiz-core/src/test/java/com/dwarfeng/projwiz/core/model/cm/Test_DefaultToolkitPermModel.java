@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -87,6 +88,12 @@ public class Test_DefaultToolkitPermModel {
 		model.put(Method.INFO, 20);
 		model.put(Method.WARN, 25);
 		model.addObverser(obv);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		model = null;
+		obv = null;
 	}
 
 	@Test

@@ -110,8 +110,10 @@ public final class ComponentToolkitLoader extends StreamLoader<MapModel<String, 
 				 */
 				@SuppressWarnings("unchecked")
 				List<Element> privilegeElements = (List<Element>) root.elements("privilege");
+
 				for (Element privilegeElement : privilegeElements) {
-					String methodString = privilegeElement.getStringValue().toUpperCase();
+					String methodString = privilegeElement.getStringValue();
+					methodString = Objects.isNull(methodString) ? null : methodString.toUpperCase();
 					if (Objects.isNull(methodString)) {
 						throw new LoadFailedException("属性缺失。");
 					}
@@ -185,7 +187,8 @@ public final class ComponentToolkitLoader extends StreamLoader<MapModel<String, 
 					List<Element> privilegeElements = (List<Element>) root.elements("privilege");
 					for (Element privilegeElement : privilegeElements) {
 						try {
-							String methodString = privilegeElement.getStringValue().toUpperCase();
+							String methodString = privilegeElement.getStringValue();
+							methodString = Objects.isNull(methodString) ? null : methodString.toUpperCase();
 							if (Objects.isNull(methodString)) {
 								throw new LoadFailedException("属性缺失。");
 							}

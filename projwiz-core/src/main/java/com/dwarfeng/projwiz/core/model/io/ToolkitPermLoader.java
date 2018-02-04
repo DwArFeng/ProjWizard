@@ -81,7 +81,8 @@ public final class ToolkitPermLoader extends StreamLoader<ToolkitPermModel> {
 			List<Element> defineList = (List<Element>) definesElement.elements("define");
 
 			for (Element define : defineList) {
-				String key = define.attributeValue("key").toUpperCase();
+				String key = define.attributeValue("key");
+				key = Objects.isNull(key) ? null : key.toUpperCase();
 				String valueString = define.attributeValue("value");
 
 				if (Objects.isNull(key) || Objects.isNull(valueString)) {
@@ -101,14 +102,17 @@ public final class ToolkitPermLoader extends StreamLoader<ToolkitPermModel> {
 			List<Element> permList = (List<Element>) permsElement.elements("perm");
 
 			for (Element perm : permList) {
-				String methodString = perm.attributeValue("method").toUpperCase();
-				String plString = perm.attributeValue("pl").toUpperCase();
+				String methodString = perm.attributeValue("method");
+				methodString = Objects.isNull(methodString) ? null : methodString.toUpperCase();
+				String plString = perm.attributeValue("pl");
+				plString = Objects.isNull(plString) ? null : plString.toUpperCase();
 
 				if (Objects.isNull(methodString) || Objects.isNull(plString)) {
 					throw new LoadFailedException("XML中部分perm元素属性缺失");
 				}
 
 				Toolkit.Method method = Toolkit.Method.valueOf(methodString);
+
 				if (Objects.isNull(method)) {
 					throw new LoadFailedException(String.format("不存在的方法名: %s", methodString));
 				}
@@ -173,7 +177,8 @@ public final class ToolkitPermLoader extends StreamLoader<ToolkitPermModel> {
 
 			for (Element define : defineList) {
 				try {
-					String key = define.attributeValue("key").toUpperCase();
+					String key = define.attributeValue("key");
+					key = Objects.isNull(key) ? null : key.toUpperCase();
 					String valueString = define.attributeValue("value");
 
 					if (Objects.isNull(key) || Objects.isNull(valueString)) {
@@ -197,14 +202,17 @@ public final class ToolkitPermLoader extends StreamLoader<ToolkitPermModel> {
 
 			for (Element perm : permList) {
 				try {
-					String methodString = perm.attributeValue("method").toUpperCase();
-					String plString = perm.attributeValue("pl").toUpperCase();
+					String methodString = perm.attributeValue("method");
+					methodString = Objects.isNull(methodString) ? null : methodString.toUpperCase();
+					String plString = perm.attributeValue("pl");
+					plString = Objects.isNull(plString) ? null : plString.toUpperCase();
 
 					if (Objects.isNull(methodString) || Objects.isNull(plString)) {
 						throw new LoadFailedException("XML中部分perm元素属性缺失");
 					}
 
 					Toolkit.Method method = Toolkit.Method.valueOf(methodString);
+
 					if (Objects.isNull(method)) {
 						throw new LoadFailedException(String.format("不存在的方法名: %s", methodString));
 					}
