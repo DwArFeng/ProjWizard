@@ -33,8 +33,6 @@ public abstract class AbstractProject implements Project {
 	/** 工程的观察器集合。 */
 	protected final Set<ProjectObverser> obversers = Collections.newSetFromMap(new WeakHashMap<>());
 
-	/** 工程的独立标签 */
-	protected final String uniqueLabel;
 	/** 工程的注册键。 */
 	protected final String registerKey;
 	/** 工程的名称。 */
@@ -54,8 +52,8 @@ public abstract class AbstractProject implements Project {
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public AbstractProject(String uniqueLabel, String registerKey, String name) {
-		this(uniqueLabel, registerKey, name, new MapTree<>());
+	public AbstractProject(String registerKey, String name) {
+		this(registerKey, name, new MapTree<>());
 	}
 
 	/**
@@ -72,24 +70,14 @@ public abstract class AbstractProject implements Project {
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public AbstractProject(String uniqueLabel, String registerKey, String name, Tree<File> fileTree) {
-		Objects.requireNonNull(uniqueLabel, "入口参数 uniqueLabel 不能为 null。");
+	public AbstractProject(String registerKey, String name, Tree<File> fileTree) {
 		Objects.requireNonNull(registerKey, "入口参数 registerKey 不能为 null。");
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 		Objects.requireNonNull(fileTree, "入口参数 fileTree 不能为 null。");
 
-		this.uniqueLabel = uniqueLabel;
 		this.registerKey = registerKey;
 		this.name = name;
 		this.fileTree = fileTree;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File addFile(File parent, File file, AddingSituation situation) {
-		throw new UnsupportedOperationException("addFile");
 	}
 
 	/**
@@ -105,10 +93,34 @@ public abstract class AbstractProject implements Project {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.dwarfeng.dutil.basic.prog.ObverserSet#clearObverser()
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean removeObverser(ProjectObverser obverser) {
+		lock.writeLock().lock();
+		try {
+			return obversers.remove(obverser);
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<ProjectObverser> getObversers() {
+		lock.readLock().lock();
+		try {
+			return Collections.unmodifiableSet(obversers);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void clearObverser() {
@@ -124,30 +136,9 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Project))
-			return false;
-		Project other = (Project) obj;
-		if (uniqueLabel == null) {
-			if (other.getUniqueLabel() != null)
-				return false;
-		} else if (!uniqueLabel.equals(other.getUniqueLabel()))
-			return false;
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Tree<? extends File> getFileTree() {
 		lock.readLock().lock();
 		try {
-			// TODO 以后使用只读树。
 			return ModelUtil.unmodifiableTree(fileTree);
 		} finally {
 			lock.readLock().unlock();
@@ -174,40 +165,8 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<ProjectObverser> getObversers() {
-		lock.readLock().lock();
-		try {
-			return Collections.unmodifiableSet(obversers);
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public String getRegisterKey() {
 		return registerKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getUniqueLabel() {
-		return uniqueLabel;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((uniqueLabel == null) ? 0 : uniqueLabel.hashCode());
-		return result;
 	}
 
 	/**
@@ -222,32 +181,16 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public File addFile(File parent, File file, AddingSituation situation) {
+		throw new UnsupportedOperationException("addFile");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean isRemoveFileSupported(RemovingSituation situation) {
 		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isRenameFileSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isSaveSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isStopSuggest() {
-		return true;
 	}
 
 	/**
@@ -262,13 +205,8 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean removeObverser(ProjectObverser obverser) {
-		lock.writeLock().lock();
-		try {
-			return obversers.remove(obverser);
-		} finally {
-			lock.writeLock().unlock();
-		}
+	public boolean isRenameFileSupported() {
+		return false;
 	}
 
 	/**
@@ -283,8 +221,24 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public boolean isSaveSupported() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void save() throws ProcessException {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("save");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isStopSuggest() {
+		return true;
 	}
 
 	/**

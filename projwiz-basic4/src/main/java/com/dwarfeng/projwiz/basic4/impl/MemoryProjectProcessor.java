@@ -3,7 +3,7 @@ package com.dwarfeng.projwiz.basic4.impl;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
-import com.dwarfeng.projwiz.raefrm.impl.RaeProjectProcessor;
+import com.dwarfeng.projwiz.raefrm.RaeProjectProcessor;
 
 /**
  * 

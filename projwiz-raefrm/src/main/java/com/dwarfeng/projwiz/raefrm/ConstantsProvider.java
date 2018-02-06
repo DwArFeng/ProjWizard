@@ -1,4 +1,9 @@
-package com.dwarfeng.projwiz.raefrm.model.struct;
+package com.dwarfeng.projwiz.raefrm;
+
+import java.util.Collection;
+
+import com.dwarfeng.dutil.basic.str.Name;
+import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
 
 /**
  * 常量提供接口。
@@ -26,6 +31,9 @@ public interface ConstantsProvider {
 		/** 权限需求模型的配置。 */
 		DEMAND_MODEL_SETTING,
 
+		/** 组件图片所对应的键。 */
+		IMAGE_CMPOENT,
+
 	}
 
 	/**
@@ -36,13 +44,20 @@ public interface ConstantsProvider {
 	public String getDefaultLoggerI18nPath();
 
 	/**
-	 * 获取指定资源键类型对应的资源键。
+	 * 获取指定资源键类型对应的资源键的名称接口。
 	 * 
 	 * @param type
 	 *            指定的资源键类型。
-	 * @return 资源键类型对应的资源键。
+	 * @return 资源键类型对应的资源键的名称接口。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public String getResourceKey(ResourceKeyType type);
+	public Name getResourceKey(ResourceKeyType type);
+
+	/**
+	 * 获取该组件的自定义配置入口。
+	 * 
+	 * @return 该组件的自定义配置入口。
+	 */
+	public Collection<ExconfigEntry> getConfigEntries();
 }

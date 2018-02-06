@@ -15,7 +15,7 @@ import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
 import com.dwarfeng.dutil.develop.cfg.obv.ExconfigAdapter;
 import com.dwarfeng.dutil.develop.cfg.obv.ExconfigObverser;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.eum.CoreConfiguration;
+import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
@@ -46,8 +46,8 @@ public class MfMenu_06 extends ProjWizMenu {
 		@Override
 		public void fireCurrentValueChanged(ConfigKey configKey, String oldValue, String newValue, String validValue) {
 			SwingUtil.invokeInEventQueue(() -> {
-				if (Objects.equals(configKey, CoreConfiguration.SUPER_SECRET_SETTINGS_ENABLED.getConfigKey())) {
-					if ((boolean) CoreConfiguration.SUPER_SECRET_SETTINGS_ENABLED.getValueParser()
+				if (Objects.equals(configKey, CoreConfigEntry.SUPER_SECRET_SETTINGS_ENABLED.getConfigKey())) {
+					if ((boolean) CoreConfigEntry.SUPER_SECRET_SETTINGS_ENABLED.getValueParser()
 							.parseValue(newValue)) {
 						showSuperSecretSettingsMenu();
 					} else {
@@ -185,7 +185,7 @@ public class MfMenu_06 extends ProjWizMenu {
 		coreConfigModel.getLock().readLock().lock();
 		try {
 			if ((boolean) coreConfigModel
-					.getParsedValue(CoreConfiguration.SUPER_SECRET_SETTINGS_ENABLED.getConfigKey())) {
+					.getParsedValue(CoreConfigEntry.SUPER_SECRET_SETTINGS_ENABLED.getConfigKey())) {
 				showSuperSecretSettingsMenu();
 			}
 		} finally {

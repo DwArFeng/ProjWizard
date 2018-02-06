@@ -66,12 +66,12 @@ import com.dwarfeng.projwiz.core.model.cm.ExternalWindowModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
-import com.dwarfeng.projwiz.core.model.eum.CoreConfiguration;
+import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
-import com.dwarfeng.projwiz.core.model.eum.ViewConfiguration;
+import com.dwarfeng.projwiz.core.model.eum.ViewConfigEntry;
 import com.dwarfeng.projwiz.core.model.io.DefaultPluginClassLoader;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
@@ -1375,7 +1375,7 @@ public final class ProjWizard {
 			Collections.newSetFromMap(new WeakHashMap<>()));
 	// 核心配置模型
 	private final SyncExconfigModel coreConfigModel = ConfigUtil
-			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(CoreConfiguration.values())));
+			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(CoreConfigEntry.values())));
 	// 标签国际化处理器
 	private final SyncI18nHandler labelI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	// 记录器接口
@@ -1384,7 +1384,7 @@ public final class ProjWizard {
 	private final SyncI18nHandler loggerI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	// 视图配置模型
 	private final SyncExconfigModel viewConfigModel = ConfigUtil
-			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(ViewConfiguration.values())));
+			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(ViewConfigEntry.values())));
 	// 配置处理器
 	private final SyncResourceHandler configurationHandler = ResourceUtil
 			.syncResourceHandler(new DelegateResourceHandler());

@@ -1,9 +1,11 @@
-package com.dwarfeng.projwiz.api;
+package com.dwarfeng.projwiz.raefrm;
 
 import java.awt.Image;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
+import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
+import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
@@ -11,37 +13,86 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
+import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
+import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
- * 抽象工程处理器。
- * 
- * <p>
- * 工程处理器的抽象实现。
- * 
- * <p>
- * 虽然该抽象工程处理器没有无参数的公共构造器，但是其子类必须要有一个无参数的公共构造器。
+ * Rae框架工程处理器。
  * 
  * @author DwArFeng
- * @since 0.0.1-alpha
+ * @since 0.0.3-alpha
  */
-public abstract class AbstractProjectProcessor extends AbstractComponent implements ProjectProcessor {
+public abstract class RaeProjectProcessor extends RaeComponent implements ProjectProcessor {
 
 	/**
-	 * 新实例。
+	 * 工程处理器工具包的内部实现。
 	 * 
-	 * @param key
-	 *            指定的键值。
-	 * @param toolkitRef
-	 *            指定的工具包引用。
-	 * @param metaDataStorage
-	 *            指定的元数据仓库。
-	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
+	 * @author DwArFeng
+	 * @since 0.0.3-alpha
 	 */
-	public AbstractProjectProcessor(String key, ReferenceModel<? extends Toolkit> toolkitRef,
-			MetaDataStorage metaDataStorage) {
-		super(key, toolkitRef, metaDataStorage);
-		// TODO Auto-generated constructor stub
+	protected final class ProjProcToolkitImpl implements ProjProcToolkit {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String getKey() {
+			return key;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Toolkit getToolkit() {
+			return toolkitRef.get();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ConstantsProvider getConstantsProvider() {
+			return constantsProvider;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncI18nHandler getLoggerI18nHandler() {
+			return loggerI18nHandler;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncI18nHandler getLabelI18nHandler() {
+			return labelI18nHandler;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncExconfigModel getConfigModel() {
+			return configModel;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncPermDemandModel getPermDemandModel() {
+			return permDemandModel;
+		}
+
+	}
+
+	protected RaeProjectProcessor(String key, ReferenceModel<? extends Toolkit> toolkitRef,
+			MetaDataStorage metaDataStorage, ConstantsProvider constantsProvider) throws ProcessException {
+		super(key, toolkitRef, metaDataStorage, constantsProvider);
 	}
 
 	/**
@@ -49,14 +100,6 @@ public abstract class AbstractProjectProcessor extends AbstractComponent impleme
 	 */
 	@Override
 	public PropSuppiler getFilePropSuppiler(File file) {
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Image getIcon() {
 		return null;
 	}
 

@@ -35,6 +35,9 @@ public enum LoggerStringKey implements Name {
 	RAE_CMPOENT_INIT_10(new DefaultName("rae.cmpoent.init.10")),
 	/** 初始化所需要的文本字段。 */
 	RAE_CMPOENT_INIT_11(new DefaultName("rae.cmpoent.init.11")),
+	/** 初始化所需要的文本字段。 */
+	RAE_CMPOENT_INIT_12(new DefaultName("rae.cmpoent.init.12")),
+	
 	;
 
 	private Name name;

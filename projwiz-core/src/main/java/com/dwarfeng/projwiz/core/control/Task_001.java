@@ -30,7 +30,7 @@ import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
-import com.dwarfeng.projwiz.core.model.eum.ViewConfiguration;
+import com.dwarfeng.projwiz.core.model.eum.ViewConfigEntry;
 import com.dwarfeng.projwiz.core.model.io.ComponentLoader;
 import com.dwarfeng.projwiz.core.model.io.ConfigurationLoader;
 import com.dwarfeng.projwiz.core.model.io.IgnoredComponentLoader;
@@ -211,31 +211,31 @@ final class PoseTask extends ProjWizTask {
 				final ExconfigModel c = projWizard.getToolkit().getViewConfigModel();
 
 				final boolean westPanelVisible = c
-						.getParsedValue(ViewConfiguration.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), Boolean.class);
+						.getParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), Boolean.class);
 				final boolean eastPanelVisible = c
-						.getParsedValue(ViewConfiguration.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), Boolean.class);
+						.getParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), Boolean.class);
 				final boolean northPanelVisible = c
-						.getParsedValue(ViewConfiguration.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), Boolean.class);
+						.getParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), Boolean.class);
 				final boolean southPanelVisible = c
-						.getParsedValue(ViewConfiguration.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), Boolean.class);
+						.getParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), Boolean.class);
 
-				final boolean maximum = c.getParsedValue(ViewConfiguration.GUI_MAXIMUM_MAINFRAME.getConfigKey(),
+				final boolean maximum = c.getParsedValue(ViewConfigEntry.GUI_MAXIMUM_MAINFRAME.getConfigKey(),
 						Boolean.class);
 
-				final int westPanelSize = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_WEST.getConfigKey(),
+				final int westPanelSize = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_WEST.getConfigKey(),
 						Integer.class);
-				final int eastPanelSize = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_EAST.getConfigKey(),
+				final int eastPanelSize = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_EAST.getConfigKey(),
 						Integer.class);
-				final int southPanelSize = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(),
+				final int southPanelSize = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(),
 						Integer.class);
 
-				final int frameWidth = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(),
+				final int frameWidth = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(),
 						Integer.class);
-				final int frameHeight = c.getParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(),
+				final int frameHeight = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(),
 						Integer.class);
 
 				final int extendedState = c
-						.getParsedValue(ViewConfiguration.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), Integer.class);
+						.getParsedValue(ViewConfigEntry.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), Integer.class);
 
 				projWizard.getToolkit().newMainFrame();
 

@@ -123,13 +123,6 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	public String getRegisterKey();
 
 	/**
-	 * 获取工程的独立标签。
-	 * 
-	 * @return 工程的独立标签。
-	 */
-	public String getUniqueLabel();
-
-	/**
 	 * 询问该工程是否支持添加文件。
 	 * 
 	 * @param situation

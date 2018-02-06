@@ -12,12 +12,12 @@ import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
 import com.dwarfeng.dutil.develop.cfg.struct.ValueParser;
 
 /**
- * 核心配置模型。
+ * 核心配置入口。
  * 
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public enum CoreConfiguration implements ExconfigEntry {
+public enum CoreConfigEntry implements ExconfigEntry {
 
 	/** 记录器的国际化配置 */
 	I18N_LOGGER("i18n.logger", "zh_CN", new LocaleConfigChecker(), new LocaleValueParser()),
@@ -33,7 +33,7 @@ public enum CoreConfiguration implements ExconfigEntry {
 	private final ConfigChecker configChecker;
 	private final ValueParser valueParser;
 
-	private CoreConfiguration(String name, String defaultValue, ConfigChecker configChecker, ValueParser valueParser) {
+	private CoreConfigEntry(String name, String defaultValue, ConfigChecker configChecker, ValueParser valueParser) {
 		this.name = name;
 		this.defaultValue = defaultValue;
 		this.configChecker = configChecker;

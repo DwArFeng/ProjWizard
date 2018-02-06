@@ -17,7 +17,7 @@ import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
-import com.dwarfeng.projwiz.core.model.eum.ViewConfiguration;
+import com.dwarfeng.projwiz.core.model.eum.ViewConfigEntry;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
@@ -123,31 +123,31 @@ final class DisposeTask extends ProjWizTask {
 			// 中断也要按照基本法。
 		}
 		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfiguration.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelVisible);
+				ViewConfigEntry.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelVisible);
 		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfiguration.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelVisible);
+				ViewConfigEntry.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelVisible);
 		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfiguration.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), viewGetter.northPanelVisible);
+				ViewConfigEntry.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), viewGetter.northPanelVisible);
 		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfiguration.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), viewGetter.southPanelVisible);
+				ViewConfigEntry.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), viewGetter.southPanelVisible);
 
 		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfiguration.GUI_MAXIMUM_MAINFRAME.getConfigKey(), viewGetter.maximum);
+				.setParsedValue(ViewConfigEntry.GUI_MAXIMUM_MAINFRAME.getConfigKey(), viewGetter.maximum);
 
 		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelSize);
+				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelSize);
 		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelSize);
+				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelSize);
 		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(), viewGetter.southPanelSize);
+				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(), viewGetter.southPanelSize);
 
 		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(), viewGetter.frameWidth);
+				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(), viewGetter.frameWidth);
 		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfiguration.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(), viewGetter.frameHeight);
+				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(), viewGetter.frameHeight);
 
 		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfiguration.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), viewGetter.extendedState);
+				ViewConfigEntry.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), viewGetter.extendedState);
 
 		info(LoggerStringKey.TASK_DISPOSE_3);
 		PropConfigSaver viewConfigSaver = null;

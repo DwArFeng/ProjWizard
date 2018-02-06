@@ -110,7 +110,7 @@ public abstract class AbstractFileProcessor extends AbstractComponent implements
 	 */
 	@Override
 	public File newFile() throws ProcessException {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("newFile");
 	}
 
 	/**
@@ -134,7 +134,7 @@ public abstract class AbstractFileProcessor extends AbstractComponent implements
 	 */
 	@Override
 	public Editor newEditor(Project editProject, File editFile) throws ProcessException {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("newEditor");
 	}
 
 }

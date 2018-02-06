@@ -384,7 +384,7 @@ public abstract class AbstractFile implements File {
 	 */
 	@Override
 	public void discardLabel(String label) throws IOException {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("discardLabel");
 	}
 
 	/**
