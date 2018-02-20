@@ -130,7 +130,7 @@ final class NewFileTask extends ProjWizTask {
 		if (Objects.isNull(actualAddedFile)) {
 			warn(LoggerStringKey.TASK_NEWFILE_0);
 			warn(LoggerStringKey.TASK_NEWFILE_1);
-			formatWarn(LoggerStringKey.TASK_NEWFILE_2, newFile.getRegisterKey(), newFile.getName(),
+			formatWarn(LoggerStringKey.TASK_NEWFILE_2, newFile.getComponentKey(), newFile.getName(),
 					newFile.getClass().toString());
 			return;
 		}
@@ -138,7 +138,7 @@ final class NewFileTask extends ProjWizTask {
 		info(LoggerStringKey.TASK_NEWFILE_5);
 		formatInfo(LoggerStringKey.TASK_NEWFILE_4, processor.getKey(), processor.getClass().toString());
 		info(LoggerStringKey.TASK_NEWFILE_3);
-		formatInfo(LoggerStringKey.TASK_NEWFILE_2, newFile.getRegisterKey(), newFile.getName(),
+		formatInfo(LoggerStringKey.TASK_NEWFILE_2, newFile.getComponentKey(), newFile.getName(),
 				newFile.getClass().toString());
 
 		focusProjectModel.getLock().writeLock().lock();

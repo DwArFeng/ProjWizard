@@ -10,7 +10,6 @@ import java.util.Set;
 
 import com.dwarfeng.dutil.basic.io.ByteBufferInputStream;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
-import com.dwarfeng.projwiz.core.model.struct.PrefixUniqueLabelGenerator;
 
 /**
  * 被创造的文件。
@@ -21,9 +20,6 @@ import com.dwarfeng.projwiz.core.model.struct.PrefixUniqueLabelGenerator;
  * @since 0.0.1-alpha
  */
 public class CreatedFile extends AbstractFile {
-
-	private static final PrefixUniqueLabelGenerator UNIQUE_LABEL_GENERATOR = new PrefixUniqueLabelGenerator(
-			CreatedFile.class.toString());
 
 	private final Map<String, ByteBuffer> buffers;
 
@@ -69,8 +65,7 @@ public class CreatedFile extends AbstractFile {
 	 */
 	public CreatedFile(String registerKey, boolean isFolder, String name, Map<String, ByteBuffer> buffers,
 			long accessTime, long createTime, long modifyTime) {
-		super(UNIQUE_LABEL_GENERATOR.nextUniqueLabel(), registerKey, isFolder, name, accessTime, createTime,
-				modifyTime);
+		super(registerKey, isFolder, name, accessTime, createTime, modifyTime);
 
 		Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
 		this.buffers = buffers;

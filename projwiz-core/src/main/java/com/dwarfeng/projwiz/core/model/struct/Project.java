@@ -116,11 +116,11 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	public Tree<? extends File> getFileTree();
 
 	/**
-	 * 获得该文档的注册键。
+	 * 获得管理该工程的组件名称。
 	 * 
-	 * @return 该文档的注册键。
+	 * @return 管理该工程的组件名称。
 	 */
-	public String getRegisterKey();
+	public String getComponentKey();
 
 	/**
 	 * 询问该工程是否支持添加文件。

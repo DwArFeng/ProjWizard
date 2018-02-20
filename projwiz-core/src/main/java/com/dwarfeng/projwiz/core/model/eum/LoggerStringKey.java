@@ -55,6 +55,10 @@ public enum LoggerStringKey implements Name {
 	TASK_POSE_41(new DefaultName("task.pose.41")), //
 	TASK_POSE_42(new DefaultName("task.pose.42")), //
 	TASK_POSE_43(new DefaultName("task.pose.43")), //
+	TASK_POSE_44(new DefaultName("task.pose.44")), //
+	TASK_POSE_45(new DefaultName("task.pose.45")), //
+	TASK_POSE_46(new DefaultName("task.pose.46")), //
+	TASK_POSE_47(new DefaultName("task.pose.47")), //
 
 	TASK_DISPOSE_0(new DefaultName("task.dispose.0")), //
 	TASK_DISPOSE_1(new DefaultName("task.dispose.1")), //

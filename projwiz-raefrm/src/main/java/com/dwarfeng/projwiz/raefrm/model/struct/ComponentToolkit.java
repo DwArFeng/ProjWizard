@@ -15,13 +15,6 @@ import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 public interface ComponentToolkit {
 
 	/**
-	 * 获取组件中的键值。
-	 * 
-	 * @return 组件中的键值。
-	 */
-	public String getKey();
-
-	/**
 	 * 获取组件中的工具包。
 	 * 
 	 * @return 组件中的工具包。

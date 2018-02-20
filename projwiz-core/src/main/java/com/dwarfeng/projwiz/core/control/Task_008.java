@@ -113,7 +113,7 @@ final class OpenProjectTask extends ProjWizTask {
 		}
 
 		info(LoggerStringKey.TASK_OPENPROJECT_0);
-		formatInfo(LoggerStringKey.TASK_OPENPROJECT_1, openedProject.getRegisterKey(), openedProject.getName(),
+		formatInfo(LoggerStringKey.TASK_OPENPROJECT_1, openedProject.getComponentKey(), openedProject.getName(),
 				openedProject.getClass().toString());
 
 		anchorFileModel.getLock().writeLock().lock();

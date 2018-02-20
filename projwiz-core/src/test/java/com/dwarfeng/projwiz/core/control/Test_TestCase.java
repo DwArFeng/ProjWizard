@@ -1,4 +1,4 @@
-package com.dwarfeng.projwiz.testcase;
+package com.dwarfeng.projwiz.core.control;
 
 import static org.junit.Assert.assertEquals;
 

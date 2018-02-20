@@ -270,10 +270,8 @@ public abstract class AbstractFile implements File {
 	/** 同步读写锁。 */
 	protected final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-	/** 文件的独立标签 */
-	protected final String uniqueLabel;
 	/** 文件的注册键。 */
-	protected final String registerKey;
+	protected final String componentKey;
 	/** 文件是否为文件夹。 */
 	protected final boolean isFolder;
 
@@ -300,15 +298,13 @@ public abstract class AbstractFile implements File {
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public AbstractFile(String uniqueLabel, String registerKey, boolean isFolder, String name) {
-		this(uniqueLabel, registerKey, isFolder, name, -1, -1, -1);
+	public AbstractFile(String registerKey, boolean isFolder, String name) {
+		this(registerKey, isFolder, name, -1, -1, -1);
 	}
 
 	/**
 	 * 新实例。
 	 * 
-	 * @param uniqueLabel
-	 *            文件的独立标签。
 	 * @param registerKey
 	 *            指定的注册键。
 	 * @param isFolder
@@ -324,33 +320,18 @@ public abstract class AbstractFile implements File {
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public AbstractFile(String uniqueLabel, String registerKey, boolean isFolder, String name, long accessTime,
-			long createTime, long modifyTime) {
-		Objects.requireNonNull(uniqueLabel);
+	public AbstractFile(String registerKey, boolean isFolder, String name, long accessTime, long createTime,
+			long modifyTime) {
 		Objects.requireNonNull(obversers, "入口参数 obversers 不能为 null。");
 		Objects.requireNonNull(registerKey, "入口参数 registerKey 不能为 null。");
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		this.uniqueLabel = uniqueLabel;
-		this.registerKey = registerKey;
+		this.componentKey = registerKey;
 		this.isFolder = isFolder;
 		this.name = name;
 		this.accessTime = accessTime;
 		this.createTime = createTime;
 		this.modifyTime = modifyTime;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean acceptIn(String key) {
-		lock.readLock().lock();
-		try {
-			return isFolder;
-		} finally {
-			lock.readLock().unlock();
-		}
 	}
 
 	/**
@@ -363,6 +344,32 @@ public abstract class AbstractFile implements File {
 			return obversers.add(obverser);
 		} finally {
 			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean removeObverser(FileObverser obverser) {
+		lock.writeLock().lock();
+		try {
+			return obversers.remove(obverser);
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<FileObverser> getObversers() {
+		lock.readLock().lock();
+		try {
+			return Collections.unmodifiableSet(obversers);
+		} finally {
+			lock.readLock().unlock();
 		}
 	}
 
@@ -383,28 +390,13 @@ public abstract class AbstractFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void discardLabel(String label) throws IOException {
-		throw new UnsupportedOperationException("discardLabel");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof File))
-			return false;
-		File other = (File) obj;
-		if (uniqueLabel == null) {
-			if (other.getUniqueLabel() != null)
-				return false;
-		} else if (!uniqueLabel.equals(other.getUniqueLabel()))
-			return false;
-		return true;
+	public boolean acceptIn(String key) {
+		lock.readLock().lock();
+		try {
+			return isFolder;
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -437,8 +429,13 @@ public abstract class AbstractFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<String> getLabels() {
-		throw new UnsupportedOperationException("getLabels");
+	public long getModifyTime() {
+		lock.readLock().lock();
+		try {
+			return modifyTime;
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -448,11 +445,14 @@ public abstract class AbstractFile implements File {
 	public long getLength() {
 		lock.readLock().lock();
 		try {
-			long length = 0;
+			long totleLength = 0;
 			for (String label : getLabels()) {
-				length += getLength(label);
+				long length = getLength(label);
+				if (length < 0)
+					return -1;
+				totleLength += length;
 			}
-			return length;
+			return totleLength;
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -478,36 +478,10 @@ public abstract class AbstractFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public long getModifyTime() {
-		lock.readLock().lock();
-		try {
-			return modifyTime;
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public String getName() {
 		lock.readLock().lock();
 		try {
 			return name;
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Set<FileObverser> getObversers() {
-		lock.readLock().lock();
-		try {
-			return Collections.unmodifiableSet(obversers);
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -525,27 +499,8 @@ public abstract class AbstractFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getRegisterKey() {
-		return registerKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getUniqueLabel() {
-		return uniqueLabel;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((uniqueLabel == null) ? 0 : uniqueLabel.hashCode());
-		return result;
+	public String getComponentKey() {
+		return componentKey;
 	}
 
 	/**
@@ -568,24 +523,24 @@ public abstract class AbstractFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isWriteSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void newLabel(String label) throws IOException {
-		throw new UnsupportedOperationException("newLabel");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public InputStream openInputStream(String label) throws IOException {
 		throw new UnsupportedOperationException("openInputStream");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<String> getLabels() {
+		throw new UnsupportedOperationException("getLabels");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWriteSupported() {
+		return false;
 	}
 
 	/**
@@ -600,23 +555,16 @@ public abstract class AbstractFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean removeObverser(FileObverser obverser) {
-		lock.writeLock().lock();
-		try {
-			return obversers.remove(obverser);
-		} finally {
-			lock.writeLock().unlock();
-		}
+	public void newLabel(String label) throws IOException {
+		throw new UnsupportedOperationException("newLabel");
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String toString() {
-		return this.getClass().toString() + " [getRegisterKey()=" + getRegisterKey() + ", getName()=" + getName()
-				+ ", isFolder()=" + isFolder() + ", getAccessTime()=" + getAccessTime() + ", getCreateTime()="
-				+ getCreateTime() + ", getModifyTime()=" + getModifyTime() + "]";
+	public void discardLabel(String label) throws IOException {
+		throw new UnsupportedOperationException("discardLabel");
 	}
 
 	/**

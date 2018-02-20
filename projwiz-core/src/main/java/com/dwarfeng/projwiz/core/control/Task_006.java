@@ -164,7 +164,7 @@ final class TryCloseCertainProjectTask extends ProjWizTask {
 
 		if (!project.isStopSuggest()) {
 			info(LoggerStringKey.TASK_TRYCLOSEPROJECT_0);
-			formatInfo(LoggerStringKey.TASK_TRYCLOSEPROJECT_1, project.getRegisterKey(), project.getName(),
+			formatInfo(LoggerStringKey.TASK_TRYCLOSEPROJECT_1, project.getComponentKey(), project.getName(),
 					project.getClass().toString());
 			return;
 		}
@@ -328,7 +328,7 @@ final class TryCloseAllProjectTask extends ProjWizTask {
 
 		if (!project.isStopSuggest()) {
 			info(LoggerStringKey.TASK_TRYCLOSEPROJECT_0);
-			formatInfo(LoggerStringKey.TASK_TRYCLOSEPROJECT_1, project.getRegisterKey(), project.getName(),
+			formatInfo(LoggerStringKey.TASK_TRYCLOSEPROJECT_1, project.getComponentKey(), project.getName(),
 					project.getClass().toString());
 			return;
 		}
@@ -457,7 +457,7 @@ final class TryCloseFocusProjectTask extends ProjWizTask {
 
 		if (!focusProject.isStopSuggest()) {
 			info(LoggerStringKey.TASK_TRYCLOSEPROJECT_0);
-			formatInfo(LoggerStringKey.TASK_TRYCLOSEPROJECT_1, focusProject.getRegisterKey(), focusProject.getName(),
+			formatInfo(LoggerStringKey.TASK_TRYCLOSEPROJECT_1, focusProject.getComponentKey(), focusProject.getName(),
 					focusProject.getClass().toString());
 			return;
 		}

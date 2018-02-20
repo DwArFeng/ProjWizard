@@ -32,7 +32,7 @@ final class SaveFocusProjectTask extends ProjWizTask {
 							.setTitle(label(LabelStringKey.MSGDIA_23)).setDialogMessage(DialogMessage.WARNING_MESSAGE)
 							.build());
 			warn(LoggerStringKey.TASK_SAVEPROJECT_0);
-			formatWarn(LoggerStringKey.TASK_SAVEPROJECT_1, focusProject.getRegisterKey(), focusProject.getName(),
+			formatWarn(LoggerStringKey.TASK_SAVEPROJECT_1, focusProject.getComponentKey(), focusProject.getName(),
 					focusProject.getClass().toString());
 			warn(LoggerStringKey.TASK_SAVEPROJECT_2, e);
 			return;

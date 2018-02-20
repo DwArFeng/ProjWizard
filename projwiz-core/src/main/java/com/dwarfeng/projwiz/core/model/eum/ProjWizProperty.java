@@ -22,5 +22,11 @@ public enum ProjWizProperty {
 	METADATA_PATH,
 	/** 测试情形。 */
 	TEST_CASE,
+	/** 配置列表的代替文件。 */
+	CFG_LIST_PATH,
+	/** 配置列表路径类型。 */
+	CFG_LIST_PATH_TYPE,
+	/** 是否强制重置配置文件。 */
+	CFG_FORCE_RESET,
 
 }

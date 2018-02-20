@@ -7,20 +7,17 @@ import java.util.Objects;
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
-import com.dwarfeng.projwiz.api.AbstractProject;
-import com.dwarfeng.projwiz.core.model.cm.MapTree;
-import com.dwarfeng.projwiz.core.model.cm.Tree;
-import com.dwarfeng.projwiz.core.model.struct.File;
+import com.dwarfeng.projwiz.api.AbstractFile;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
- * Rae框架文件工程。
+ * Rae框架文件。
  * 
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public abstract class RaeProject extends AbstractProject {
+public abstract class RaeFile extends AbstractFile {
 
 	/** 对应的工程处理器的工具包。 */
 	protected final ProjProcToolkit projprocToolkit;
@@ -30,15 +27,17 @@ public abstract class RaeProject extends AbstractProject {
 	 * 
 	 * @param registerKey
 	 *            指定的注册键。
+	 * @param isFolder
+	 *            是否为文件夹。
 	 * @param name
-	 *            工程的名称。
+	 *            文件的名称。
 	 * @param projprocToolkit
 	 *            对应的工程处理器的工具包。
 	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
+	 *             指定的入口参数为 <code> null </code>。
 	 */
-	protected RaeProject(String registerKey, String name, ProjProcToolkit projprocToolkit) {
-		this(registerKey, name, new MapTree<>(), projprocToolkit);
+	protected RaeFile(String registerKey, boolean isFolder, String name, ProjProcToolkit projprocToolkit) {
+		this(registerKey, isFolder, name, -1, -1, -1, projprocToolkit);
 	}
 
 	/**
@@ -46,15 +45,24 @@ public abstract class RaeProject extends AbstractProject {
 	 * 
 	 * @param registerKey
 	 *            指定的注册键。
+	 * @param isFolder
+	 *            是否为文件夹。
 	 * @param name
-	 *            工程的名称。
+	 *            文件的名称。
+	 * @param accessTime
+	 *            文件的接触时间。
+	 * @param createTime
+	 *            文件的创建时间。
+	 * @param modifyTime
+	 *            文件的编辑时间。
 	 * @param projprocToolkit
 	 *            对应的工程处理器的工具包。
 	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
+	 *             指定的入口参数为 <code> null </code>。
 	 */
-	protected RaeProject(String registerKey, String name, Tree<File> fileTree, ProjProcToolkit projprocToolkit) {
-		super(registerKey, name, fileTree);
+	protected RaeFile(String registerKey, boolean isFolder, String name, long accessTime, long createTime,
+			long modifyTime, ProjProcToolkit projprocToolkit) {
+		super(registerKey, isFolder, name, accessTime, createTime, modifyTime);
 
 		Objects.requireNonNull(projprocToolkit, "入口参数 projprocToolkit 不能为 null。");
 		this.projprocToolkit = projprocToolkit;

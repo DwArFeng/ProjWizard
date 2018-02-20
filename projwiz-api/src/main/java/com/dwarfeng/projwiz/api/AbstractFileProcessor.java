@@ -52,7 +52,7 @@ public abstract class AbstractFileProcessor extends AbstractComponent implements
 	public boolean canOpenFile(File file) {
 		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
 
-		if (file.getRegisterKey().equals(getKey()))
+		if (file.getComponentKey().equals(getKey()))
 			return true;
 		return false;
 	}

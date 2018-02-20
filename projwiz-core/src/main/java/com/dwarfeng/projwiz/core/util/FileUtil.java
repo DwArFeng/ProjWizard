@@ -44,7 +44,7 @@ public class FileUtil {
 
 			int result = 0;
 
-			if ((result = o1.getRegisterKey().compareTo(o2.getRegisterKey())) != 0) {
+			if ((result = o1.getComponentKey().compareTo(o2.getComponentKey())) != 0) {
 				return result;
 			}
 

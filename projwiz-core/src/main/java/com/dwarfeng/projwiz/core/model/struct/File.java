@@ -59,13 +59,6 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 public interface File extends Name, ExternalReadWriteThreadSafe, ObverserSet<FileObverser> {
 
 	/**
-	 * 获取工程的独立标签。
-	 * 
-	 * @return 工程的独立标签。
-	 */
-	public String getUniqueLabel();
-
-	/**
 	 * 返回该注册类下指定文件是否允许指定键对应的注册类在其中。
 	 * <p>
 	 * 该方法仅针对于文件夹有效。
@@ -170,11 +163,11 @@ public interface File extends Name, ExternalReadWriteThreadSafe, ObverserSet<Fil
 	public long getOccupiedSize();
 
 	/**
-	 * 获得该文档的注册键。
+	 * 获得管理该文档的组件名称。
 	 * 
-	 * @return 该文档的注册键。
+	 * @return 管理该文档的组件名称。
 	 */
-	public String getRegisterKey();
+	public String getComponentKey();
 
 	/**
 	 * 返回该文件是否为一个文件夹。

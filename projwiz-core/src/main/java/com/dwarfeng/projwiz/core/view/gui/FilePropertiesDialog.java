@@ -786,7 +786,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 
 		componentModel.getLock().readLock().lock();
 		try {
-			ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class).get(project.getRegisterKey());
+			ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class).get(project.getComponentKey());
 			if (Objects.nonNull(processor)
 					&& Objects.nonNull((propSuppilerFromProject = processor.getFilePropSuppiler(file)))) {
 				Component component = null;
@@ -803,7 +803,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 
 		componentModel.getLock().readLock().lock();
 		try {
-			FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
+			FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getComponentKey());
 			if (Objects.nonNull(processor)
 					&& Objects.nonNull((propSuppilerFromFile = processor.getPropSuppiler(file)))) {
 				Component component = null;

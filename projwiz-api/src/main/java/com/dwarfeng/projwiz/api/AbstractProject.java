@@ -34,7 +34,7 @@ public abstract class AbstractProject implements Project {
 	protected final Set<ProjectObverser> obversers = Collections.newSetFromMap(new WeakHashMap<>());
 
 	/** 工程的注册键。 */
-	protected final String registerKey;
+	protected final String componentKey;
 	/** 工程的名称。 */
 	protected final String name;
 	/** 抽象工程的工程树。 */
@@ -75,7 +75,7 @@ public abstract class AbstractProject implements Project {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 		Objects.requireNonNull(fileTree, "入口参数 fileTree 不能为 null。");
 
-		this.registerKey = registerKey;
+		this.componentKey = registerKey;
 		this.name = name;
 		this.fileTree = fileTree;
 	}
@@ -165,8 +165,8 @@ public abstract class AbstractProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getRegisterKey() {
-		return registerKey;
+	public String getComponentKey() {
+		return componentKey;
 	}
 
 	/**

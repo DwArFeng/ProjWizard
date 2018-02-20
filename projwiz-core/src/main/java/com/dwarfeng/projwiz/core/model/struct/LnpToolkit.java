@@ -76,6 +76,16 @@ public final class LnpToolkit implements Toolkit {
 	private final Object stopFlagLock = new Object();
 	private boolean stopFlag = false;
 
+	/**
+	 * 新实例。
+	 * 
+	 * @param toolkitPermModel
+	 * @param permLevel
+	 * @param standardToolkit
+	 * @param privileges
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 */
 	public LnpToolkit(ToolkitPermModel toolkitPermModel, int permLevel, Toolkit standardToolkit,
 			Collection<Method> privileges) {
 		Objects.requireNonNull(toolkitPermModel, "入口参数 toolkitPermModel 不能为 null。");
@@ -616,7 +626,7 @@ public final class LnpToolkit implements Toolkit {
 	@Override
 	public boolean hasPermission(Method method) {
 		Objects.requireNonNull(method, "入口参数 method 不能为 null。");
-		return !toolkitPermModel.hasPerm(method, permLevel) && !privileges.contains(method);
+		return toolkitPermModel.hasPerm(method, permLevel) || privileges.contains(method);
 	}
 
 	/**

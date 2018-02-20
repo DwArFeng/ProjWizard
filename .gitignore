@@ -48,8 +48,13 @@ buildNumber.properties
 #################
 ## ProjWizard
 #################
-/projwiz-testcase/configuration/
-/projwiz-testcase/components/
-/projwiz-testcase/plugins/
-/projwiz-testcase/logs/
-
+/projwiz-core/configuration/
+/projwiz-core/components/
+/projwiz-core/plugins/
+/projwiz-core/logs/
+/projwiz-core/metadata/
+/projwiz-launch/configuration/
+/projwiz-launch/components/
+/projwiz-launch/plugins/
+/projwiz-launch/logs/
+/projwiz-launch/metadata/

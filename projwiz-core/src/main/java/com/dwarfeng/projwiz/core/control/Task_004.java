@@ -105,7 +105,7 @@ final class NewProjectTask extends ProjWizTask {
 		info(LoggerStringKey.TASK_NEWPROJECT_3);
 		formatInfo(LoggerStringKey.TASK_NEWPROJECT_1, processor.getKey(), processor.getClass().toString());
 		info(LoggerStringKey.TASK_NEWPROJECT_5);
-		formatInfo(LoggerStringKey.TASK_NEWPROJECT_6, project.getRegisterKey(), project.getName(),
+		formatInfo(LoggerStringKey.TASK_NEWPROJECT_6, project.getComponentKey(), project.getName(),
 				project.getClass().toString());
 
 		anchorFileModel.getLock().writeLock().lock();

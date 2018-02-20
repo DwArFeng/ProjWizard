@@ -1425,7 +1425,7 @@ public final class ProjWizard {
 	private final SyncComponentModel componentModel = ModelUtil.syncComponentModel(new DelegateComponentModel());
 	// 工具包权限模型
 	private final SyncToolkitPermModel toolkitPermModel = ModelUtil.syncToolkitPermModel(new DefaultToolkitPermModel());
-	// 组件-权限引用模型
+	// 组件-工具包引用模型
 	private final SyncMapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
 

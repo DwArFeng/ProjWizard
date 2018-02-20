@@ -619,8 +619,6 @@ public final class Constants {
 	/** Jar包内组件列表文件路径。 */
 	public final static String CMPOENT_LIST_PATH = "cmpoent-list.xml";
 
-	/** 默认的配置列表所在的位置。 */
-	public final static String CFG_DEFAULT_LIST_PATH = "/com/dwarfeng/projwiz/resources/core/cfg-list.xml";
 	/** 默认记录器国际化文件所在的位置 */
 	public final static String RESOURCE_I18N_LOGGER_PATH = "/com/dwarfeng/projwiz/resources/core/configuration/i18n/logger.properties";
 	/** 图片根所在的位置 */
@@ -649,6 +647,9 @@ public final class Constants {
 		init0.put(ProjWizProperty.COMPONENT_PATH, "components");
 		init0.put(ProjWizProperty.METADATA_PATH, "metadata");
 		init0.put(ProjWizProperty.TEST_CASE, "false");
+		init0.put(ProjWizProperty.CFG_LIST_PATH, "/com/dwarfeng/projwiz/resources/core/cfg-list.xml");
+		init0.put(ProjWizProperty.CFG_LIST_PATH_TYPE, "INJAR");
+		init0.put(ProjWizProperty.CFG_FORCE_RESET, "false");
 		DEFAULT_PROJWIZ_PROPERTIES = Collections.unmodifiableMap(init0);
 	}
 

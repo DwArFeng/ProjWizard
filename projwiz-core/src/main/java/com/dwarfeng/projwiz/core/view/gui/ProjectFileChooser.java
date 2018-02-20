@@ -251,7 +251,7 @@ public final class ProjectFileChooser extends ProjWizPanel {
 			Image image = null;
 			if (Objects.nonNull(componentModel)) {
 				ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class)
-						.get(project.getRegisterKey());
+						.get(project.getComponentKey());
 				if (Objects.nonNull(processor)) {
 					image = processor.getProjectIcon(project);
 				}
@@ -282,7 +282,7 @@ public final class ProjectFileChooser extends ProjWizPanel {
 			setText(fileNameMap.get(file));
 			Image image = null;
 			if (Objects.nonNull(componentModel)) {
-				FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getRegisterKey());
+				FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getComponentKey());
 				if (Objects.nonNull(processor)) {
 					image = processor.getFileIcon(file);
 				}

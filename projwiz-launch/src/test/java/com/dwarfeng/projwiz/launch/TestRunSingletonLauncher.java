@@ -1,4 +1,4 @@
-package com.dwarfeng.projwiz.testcase;
+package com.dwarfeng.projwiz.launch;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;

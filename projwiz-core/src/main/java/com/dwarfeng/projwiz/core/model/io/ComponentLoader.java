@@ -1,7 +1,7 @@
 package com.dwarfeng.projwiz.core.model.io;
 
+import java.io.File;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,14 +12,18 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.dwarfeng.dutil.basic.cna.model.DefaultReferenceModel;
+import com.dwarfeng.dutil.basic.cna.model.MapModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.basic.io.StreamLoader;
 import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.struct.Component;
-import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
-import com.dwarfeng.projwiz.core.model.struct.TempMetaDataStorage;
+import com.dwarfeng.projwiz.core.model.struct.CotoPair;
+import com.dwarfeng.projwiz.core.model.struct.DefaultMetaDataStorage;
+import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.util.Constants;
+import com.dwarfeng.projwiz.core.util.IOUtil;
 
 /**
  * 组件读取器。
@@ -27,12 +31,18 @@ import com.dwarfeng.projwiz.core.util.Constants;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public final class ComponentLoader extends StreamLoader<ComponentModel> {
+public final class ComponentLoader extends StreamLoader<CotoPair> {
 
 	/** 忽略的键值集合。 */
 	protected final Collection<String> ignoreCmpoentKeys;
 	/** 插件的类加载器。 */
-	protected final PluginClassLoader classLoader;
+	protected final PluginClassLoader pluginClassLoader;
+	/** 工具包权限模型。 */
+	protected final ToolkitPermModel toolkitPermModel;
+	/** 标准工具包。 */
+	protected final Toolkit standardToolkit;
+	/** 元数据的根目录。 */
+	protected final File metaDataRootDir;
 
 	private boolean readFlag = false;
 
@@ -40,25 +50,40 @@ public final class ComponentLoader extends StreamLoader<ComponentModel> {
 	 * 
 	 * @param in
 	 * @param ignoreCmpoentKeys
-	 * @param classLoader
+	 * @param pluginClassLoader
+	 * @param toolkitPermModel
+	 * @param standardToolkit
+	 * @param metaDataRootDir
 	 */
-	public ComponentLoader(InputStream in, Collection<String> ignoreCmpoentKeys, PluginClassLoader classLoader) {
+	public ComponentLoader(InputStream in, Collection<String> ignoreCmpoentKeys, PluginClassLoader pluginClassLoader,
+			ToolkitPermModel toolkitPermModel, Toolkit standardToolkit, File metaDataRootDir) {
 		super(in);
+
 		Objects.requireNonNull(ignoreCmpoentKeys, "入口参数 ignoreCmpoentKeys 不能为 null。");
-		Objects.requireNonNull(classLoader, "入口参数 classLoader 不能为 null。");
+		Objects.requireNonNull(pluginClassLoader, "入口参数 pluginClassLoader 不能为 null。");
+		Objects.requireNonNull(toolkitPermModel, "入口参数 toolkitPermModel 不能为 null。");
+		Objects.requireNonNull(standardToolkit, "入口参数 standardToolkit 不能为 null。");
+		Objects.requireNonNull(metaDataRootDir, "入口参数 metaDataRootDir 不能为 null。");
+
 		this.ignoreCmpoentKeys = ignoreCmpoentKeys;
-		this.classLoader = classLoader;
+		this.pluginClassLoader = pluginClassLoader;
+		this.toolkitPermModel = toolkitPermModel;
+		this.standardToolkit = standardToolkit;
+		this.metaDataRootDir = metaDataRootDir;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void load(ComponentModel componentModel) throws LoadFailedException, IllegalStateException {
+	public void load(CotoPair cotoPair) throws LoadFailedException, IllegalStateException {
 		if (readFlag)
 			throw new IllegalStateException("读取器已经使用过了。");
 
-		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
+		Objects.requireNonNull(cotoPair, "入口参数 cotoPair 不能为 null。");
+
+		final ComponentModel componentModel = cotoPair.getComponentModel();
+		final MapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel = cotoPair.getCmpoentToolkitModel();
 
 		try {
 			readFlag = true;
@@ -74,23 +99,30 @@ public final class ComponentLoader extends StreamLoader<ComponentModel> {
 
 			for (Element info : infos) {
 				String key = info.attributeValue("key");
-				String classString = info.attributeValue("class");
 
-				if (Objects.isNull(Objects.isNull(key)) || Objects.isNull(classString)) {
+				if (Objects.isNull(Objects.isNull(key))) {
 					throw new LoadFailedException("属性缺失。");
 				}
 
-				if (ignoreCmpoentKeys.contains(classString)) {
+				if (ignoreCmpoentKeys.contains(key)) {
 					continue;
 				}
 
-				Method method = classLoader.loadClass(classString).getMethod("newInstance", String.class,
-						ReferenceModel.class, MetaDataStorage.class);
+				Toolkit toolkit = null;
+				if (cmpoentToolkitModel.containsKey(key)) {
+					toolkit = cmpoentToolkitModel.get(key).get();
+				} else {
+					Element toolkitElement = info.element("toolkit");
+					if (Objects.isNull(toolkitElement)) {
+						toolkit = Constants.NON_PERMISSION_TOOLKIT;
+					} else {
+						toolkit = IOUtil.parseToolkit(toolkitElement, toolkitPermModel, standardToolkit);
+					}
+					cmpoentToolkitModel.put(key, new DefaultReferenceModel<>(toolkit));
+				}
 
-				// 此处类型转换是否安全需要靠配置文件保证。
-				Component cmpoent = (Component) method.invoke(null, key,
-						new DefaultReferenceModel<>(Constants.NON_PERMISSION_TOOLKIT), new TempMetaDataStorage());
-
+				Component cmpoent = IOUtil.parseComponent(info, pluginClassLoader, toolkit,
+						new DefaultMetaDataStorage(metaDataRootDir, key));
 				componentModel.add(cmpoent);
 			}
 
@@ -104,11 +136,14 @@ public final class ComponentLoader extends StreamLoader<ComponentModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<LoadFailedException> countinuousLoad(ComponentModel componentModel) throws IllegalStateException {
+	public Set<LoadFailedException> countinuousLoad(CotoPair cotoPair) throws IllegalStateException {
 		if (readFlag)
 			throw new IllegalStateException("读取器已经使用过了。");
 
-		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
+		Objects.requireNonNull(cotoPair, "入口参数 cotoPair 不能为 null。");
+
+		final ComponentModel componentModel = cotoPair.getComponentModel();
+		final MapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel = cotoPair.getCmpoentToolkitModel();
 
 		final Set<LoadFailedException> exceptions = new LinkedHashSet<>();
 		try {
@@ -126,23 +161,30 @@ public final class ComponentLoader extends StreamLoader<ComponentModel> {
 			for (Element info : infos) {
 				try {
 					String key = info.attributeValue("key");
-					String classString = info.attributeValue("class");
 
-					if (Objects.isNull(Objects.isNull(key)) || Objects.isNull(classString)) {
+					if (Objects.isNull(Objects.isNull(key))) {
 						throw new LoadFailedException("属性缺失。");
 					}
 
-					if (ignoreCmpoentKeys.contains(classString)) {
+					if (ignoreCmpoentKeys.contains(key)) {
 						continue;
 					}
 
-					Method method = classLoader.loadClass(classString).getMethod("newInstance", String.class,
-							ReferenceModel.class, MetaDataStorage.class);
+					Toolkit toolkit = null;
+					if (cmpoentToolkitModel.containsKey(key)) {
+						toolkit = cmpoentToolkitModel.get(key).get();
+					} else {
+						Element toolkitElement = info.element("toolkit");
+						if (Objects.isNull(toolkitElement)) {
+							toolkit = Constants.NON_PERMISSION_TOOLKIT;
+						} else {
+							toolkit = IOUtil.parseToolkit(toolkitElement, toolkitPermModel, standardToolkit);
+						}
+						cmpoentToolkitModel.put(key, new DefaultReferenceModel<>(toolkit));
+					}
 
-					// 此处类型转换是否安全需要靠配置文件保证。
-					Component cmpoent = (Component) method.invoke(null, key,
-							new DefaultReferenceModel<>(Constants.NON_PERMISSION_TOOLKIT), new TempMetaDataStorage());
-
+					Component cmpoent = IOUtil.parseComponent(info, pluginClassLoader, toolkit,
+							new DefaultMetaDataStorage(metaDataRootDir, key));
 					componentModel.add(cmpoent);
 				} catch (Exception e) {
 					exceptions.add(new LoadFailedException("无法读取指定组件数据。", e));
