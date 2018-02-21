@@ -835,7 +835,7 @@ public final class LnpToolkit implements Toolkit {
 				throw new IllegalStateException("这个工具包已经被停用。");
 		}
 		if (!toolkitPermModel.hasPerm(method, permLevel) && !privileges.contains(method)) {
-			throw new IllegalStateException(String.format("方法 %s 需要的最小权限为 %d，而当前的权限为 %d，且没有特权。",
+			throw new IllegalStateException(String.format("方法 %s 需要的最小权限为 %d，而当前的权限为 %d，且没有特权。", method,
 					toolkitPermModel.getPermLevel(method), permLevel));
 		}
 	}

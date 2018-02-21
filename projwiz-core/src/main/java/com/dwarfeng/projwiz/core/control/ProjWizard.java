@@ -667,7 +667,7 @@ public final class ProjWizard {
 		@Override
 		public Background getBackgroundReadOnly(BackgroundType type) {
 			Objects.requireNonNull(type, "入口参数 type 不能为 null。");
-			return BackgroundUtil.readOnlyBackground(getBackground(type));
+			return BackgroundUtil.unmodifiableBackground(getBackground(type));
 		}
 
 		/**
@@ -683,7 +683,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public ResourceHandler getCfgHandlerReadOnly() {
-			return ResourceUtil.readOnlyResourceHandler(configurationHandler);
+			return ResourceUtil.unmodifiableResourceHandler(configurationHandler);
 		}
 
 		/**
@@ -870,7 +870,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public I18nHandler getLabelI18nHandlerReadOnly() {
-			return I18nUtil.readOnlyI18nHandler(labelI18nHandler);
+			return I18nUtil.unmodifiableI18nHandler(labelI18nHandler);
 		}
 
 		/**
@@ -886,7 +886,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public LoggerHandler getLoggerHandlerReadOnly() {
-			return LoggerUtil.readOnlyLoggerHandler(loggerHandler);
+			return LoggerUtil.unmodifiableLoggerHandler(loggerHandler);
 		}
 
 		/**
@@ -902,7 +902,7 @@ public final class ProjWizard {
 		 */
 		@Override
 		public I18nHandler getLoggerI18nHandlerReadOnly() {
-			return I18nUtil.readOnlyI18nHandler(loggerI18nHandler);
+			return I18nUtil.unmodifiableI18nHandler(loggerI18nHandler);
 		}
 
 		/**

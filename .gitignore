@@ -58,3 +58,9 @@ buildNumber.properties
 /projwiz-launch/plugins/
 /projwiz-launch/logs/
 /projwiz-launch/metadata/
+/projwiz-basic4/configuration/
+/projwiz-basic4/components/
+/projwiz-basic4/plugins/
+/projwiz-basic4/logs/
+/projwiz-basic4/metadata/
+

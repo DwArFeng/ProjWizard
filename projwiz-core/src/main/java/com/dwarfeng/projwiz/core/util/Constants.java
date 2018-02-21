@@ -625,11 +625,11 @@ public final class Constants {
 	public final static String RESOURCE_IMAGE_ROOT_PATH = "/com/dwarfeng/projwiz/resources/core/image/";
 
 	/** 主程序的核心配置的资源仓库类别。 */
-	public final static String RESOURCE_CLASSIFY_CORE = "com.dwarfeng.projwiz.core";
+	public final static String CONFIGURATION_CLASSIFY_CORE = "com.dwarfeng.projwiz.core";
 	/** 主程序的国际化配置的资源仓库类别。 */
-	public final static String RESOURCE_CLASSIFY_I18N = "com.dwarfeng.projwiz.i18n";
+	public final static String CONFIGURATION_CLASSIFY_I18N = "com.dwarfeng.projwiz.i18n";
 	/** 主程序的测试情形配置的资源仓库类别。 */
-	public final static String RESOURCE_CLASSIFY_TESTCASE = "com.dwarfeng.projwiz.testcase";
+	public final static String CONFIGURATION_CLASSIFY_TESTCASE = "com.dwarfeng.projwiz.testcase";
 
 	/** 默认的程序属性表。 */
 	public final static Map<ProjWizProperty, String> DEFAULT_PROJWIZ_PROPERTIES;

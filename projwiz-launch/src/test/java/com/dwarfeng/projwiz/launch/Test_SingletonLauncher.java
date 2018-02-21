@@ -12,7 +12,7 @@ import com.dwarfeng.projwiz.launch.SingletonLauncher;
  * @author DwArFeng
  * @since 1.8
  */
-public class TestRunSingletonLauncher {
+public class Test_SingletonLauncher {
 
 	public static void main(String[] args) {
 		try {

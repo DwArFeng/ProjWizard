@@ -1,4 +1,4 @@
-package com.dwarfeng.projwiz.raefrm;
+package com.dwarfeng.projwiz.raefrm.model.struct;
 
 import java.util.Collection;
 
@@ -19,6 +19,8 @@ import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
 public interface ConstantsProvider {
 
 	public enum ResourceKeyType {
+		/** 组件的核心配置。 */
+		CONFIGURATION_CORE,
 
 		/** 标签国际化处理器文件设置的资源键。 */
 		I18N_LABEL_FILE_SETTING,
@@ -28,18 +30,20 @@ public interface ConstantsProvider {
 		I18N_LOGGER_FILE_SETTING,
 		/** 记录器国际化处理器资源设置的资源键。 */
 		I18N_LOGGER_RESOURCE_SETTING,
+		
 		/** 权限需求模型的配置。 */
-		DEMAND_MODEL_SETTING,
+		PERM_DEMAND_SETTING,
 
 		/** 组件图片所对应的键。 */
 		IMAGE_CMPOENT,
 
+		;
 	}
 
 	/**
-	 * 获取默认的记录器国际化接口所在的路径。
+	 * 获取默认的记录器国际化接口所在的路径（包内路径）。
 	 * 
-	 * @return 默认的记录器国际化接口所在的路径。
+	 * @return 默认的记录器国际化接口所在的路径（包内路径）。
 	 */
 	public String getDefaultLoggerI18nPath();
 

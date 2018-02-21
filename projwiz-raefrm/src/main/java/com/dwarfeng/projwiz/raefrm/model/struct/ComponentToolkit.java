@@ -3,7 +3,6 @@ package com.dwarfeng.projwiz.raefrm.model.struct;
 import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
 import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
-import com.dwarfeng.projwiz.raefrm.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 
 /**

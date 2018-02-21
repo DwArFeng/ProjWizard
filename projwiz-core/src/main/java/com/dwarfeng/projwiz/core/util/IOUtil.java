@@ -70,8 +70,10 @@ public final class IOUtil {
 			cmpoent = (Component) method.invoke(null, key, new DefaultReferenceModel<>(toolkit), metaDataStorage);// TODO
 																													// 参数待完善。
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
+				| IllegalArgumentException e) {
 			throw new LoadFailedException("组件初始化失败", e);
+		} catch (InvocationTargetException e) {
+			throw new LoadFailedException("组件初始化失败", e.getCause());
 		}
 
 		if (Objects.isNull(cmpoent)) {

@@ -4,13 +4,13 @@ import java.awt.Image;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
+import com.dwarfeng.projwiz.basic4.model.struct.MeppConstantsProvider;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
-import com.dwarfeng.projwiz.raefrm.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.RaeProjectProcessor;
 
 /**
@@ -30,7 +30,7 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 	 */
 	public static MemoryProjectProcessor newInstance(String key, ReferenceModel<Toolkit> toolkitRef,
 			MetaDataStorage metaDataStorage) throws ProcessException {
-		return new MemoryProjectProcessor(key, toolkitRef, metaDataStorage, constantsProvider);
+		return new MemoryProjectProcessor(key, toolkitRef, metaDataStorage);
 	}
 
 	/**
@@ -38,12 +38,11 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 	 * @param key
 	 * @param toolkitRef
 	 * @param metaDataStorage
-	 * @param constantsProvider
 	 * @throws ProcessException
 	 */
 	protected MemoryProjectProcessor(String key, ReferenceModel<? extends Toolkit> toolkitRef,
-			MetaDataStorage metaDataStorage, ConstantsProvider constantsProvider) throws ProcessException {
-		super(key, toolkitRef, metaDataStorage, constantsProvider);
+			MetaDataStorage metaDataStorage) throws ProcessException {
+		super(key, toolkitRef, metaDataStorage, new MeppConstantsProvider());
 	}
 
 	/**
@@ -87,8 +86,7 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 	 */
 	@Override
 	public boolean isNewProjectSupported() {
-		// TODO Auto-generated method stub
-		return super.isNewProjectSupported();
+		return true;
 	}
 
 	/**
@@ -105,17 +103,7 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 	 */
 	@Override
 	public boolean isOpenProjectSupported() {
-		// TODO Auto-generated method stub
-		return super.isOpenProjectSupported();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Project openProject() throws ProcessException {
-		// TODO Auto-generated method stub
-		return super.openProject();
+		return false;
 	}
 
 }

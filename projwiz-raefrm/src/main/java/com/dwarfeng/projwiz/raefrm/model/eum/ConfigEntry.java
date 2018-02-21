@@ -14,18 +14,6 @@ import com.dwarfeng.dutil.develop.cfg.struct.ValueParser;
  * @since 0.0.3-alpha
  */
 public enum ConfigEntry implements ExconfigEntry {
-	// /*
-	// * 以下配置适用于工程处理器，其它组件可以不实现。
-	// */
-	// /** 该工程处理器是否允许新建工程。 */
-	// PROJPROC_SUPPORTED_NEWPROJECT("projproc.supported.newproject", "false",
-	// new BooleanConfigChecker(), new BooleanValueParser()),
-	// /** 该工程处理器是否允许打开工程。 */
-	// PROJPROC_SUPPORTED_OPENPROJECT("projproc.supported.openproject", "false",
-	// new BooleanConfigChecker(), new BooleanValueParser()),
-	// /** 该工程处理器是否允许保存工程。 */
-	// PROJPROC_SUPPORTED_SAVEPROJECT("projproc.supported.saveproject", "false",
-	// new BooleanConfigChecker(), new BooleanValueParser()),
 
 	;
 

@@ -12,58 +12,58 @@ import com.dwarfeng.projwiz.core.util.Constants;
 public enum ResourceKey implements Name {
 
 	/** 核心下的记录器设置。 */
-	CORE_LOGGER_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "logger.setting"),
+	CORE_LOGGER_SETTING(Constants.CONFIGURATION_CLASSIFY_CORE, "logger.setting"),
 
 	/** 测试下的记录器设置。 */
-	TEST_LOGGER_SETTING(Constants.RESOURCE_CLASSIFY_TESTCASE, "logger.setting"),
+	TEST_LOGGER_SETTING(Constants.CONFIGURATION_CLASSIFY_TESTCASE, "logger.setting"),
 
 	/** 主程序的配置。 */
-	CFG_CORE(Constants.RESOURCE_CLASSIFY_CORE, "cfg.core"),
+	CFG_CORE(Constants.CONFIGURATION_CLASSIFY_CORE, "cfg.core"),
 
 	/** 视图配置。 */
-	CFG_VIEW(Constants.RESOURCE_CLASSIFY_CORE, "cfg.view"),
+	CFG_VIEW(Constants.CONFIGURATION_CLASSIFY_CORE, "cfg.view"),
 
 	/** 记录器国际化文件的设置。 */
-	I18N_LOGGER_FILE_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "i18n.logger.file.setting"),
+	I18N_LOGGER_FILE_SETTING(Constants.CONFIGURATION_CLASSIFY_CORE, "i18n.logger.file.setting"),
 
 	/** 标签国际化资源的设置。 */
-	I18N_LABEL_FILE_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "i18n.label.file.setting"),
+	I18N_LABEL_FILE_SETTING(Constants.CONFIGURATION_CLASSIFY_CORE, "i18n.label.file.setting"),
 
 	/** 记录器国际化文件的设置。 */
-	I18N_LOGGER_RESOURCE_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "i18n.logger.resource.setting"),
+	I18N_LOGGER_RESOURCE_SETTING(Constants.CONFIGURATION_CLASSIFY_CORE, "i18n.logger.resource.setting"),
 
 	/** 标签国际化资源的设置。 */
-	I18N_LABEL_RESOURCE_SETTING(Constants.RESOURCE_CLASSIFY_CORE, "i18n.label.resource.setting"),
+	I18N_LABEL_RESOURCE_SETTING(Constants.CONFIGURATION_CLASSIFY_CORE, "i18n.label.resource.setting"),
 
 	/** 工程处理器的反射设置。 */
-	REFLECT_PROJECT(Constants.RESOURCE_CLASSIFY_CORE, "reflect.projproc"),
+	REFLECT_PROJECT(Constants.CONFIGURATION_CLASSIFY_CORE, "reflect.projproc"),
 
 	/** 文件处理器的反射设置。 */
-	REFLECT_FILE(Constants.RESOURCE_CLASSIFY_CORE, "reflect.fileproc"),
+	REFLECT_FILE(Constants.CONFIGURATION_CLASSIFY_CORE, "reflect.fileproc"),
 
 	/** 配置忽略设置。 */
-	CFG_IGNORE(Constants.RESOURCE_CLASSIFY_CORE, "cfg.ignore"),
+	CFG_IGNORE(Constants.CONFIGURATION_CLASSIFY_CORE, "cfg.ignore"),
 
 	/** 配置额外设置。 */
-	CFG_EXTRA(Constants.RESOURCE_CLASSIFY_CORE, "cfg.extra"),
+	CFG_EXTRA(Constants.CONFIGURATION_CLASSIFY_CORE, "cfg.extra"),
 
 	/** 工具包权限配置。 */
-	TOOLKIT_PERM(Constants.RESOURCE_CLASSIFY_CORE, "toolkit.perm"),
+	TOOLKIT_PERM(Constants.CONFIGURATION_CLASSIFY_CORE, "toolkit.perm"),
 
 	/** 组件忽略设置。 */
-	CMPOENT_IGNORE(Constants.RESOURCE_CLASSIFY_CORE, "cmpoent.ignore"),
+	CMPOENT_IGNORE(Constants.CONFIGURATION_CLASSIFY_CORE, "cmpoent.ignore"),
 
 	/** 组件额外设置。 */
-	CMPOENT_EXTRA(Constants.RESOURCE_CLASSIFY_CORE, "cmpoent.extra"),
+	CMPOENT_EXTRA(Constants.CONFIGURATION_CLASSIFY_CORE, "cmpoent.extra"),
 
 	/** 组件工具包设置。 */
-	CMPOENT_TOOLKIT(Constants.RESOURCE_CLASSIFY_CORE, "cmpoent.toolkit"),
+	CMPOENT_TOOLKIT(Constants.CONFIGURATION_CLASSIFY_CORE, "cmpoent.toolkit"),
 
 	/** 标签国际化文本默认配置。 */
-	I18N_LABEL(Constants.RESOURCE_CLASSIFY_I18N, "label"),
+	I18N_LABEL(Constants.CONFIGURATION_CLASSIFY_I18N, "label"),
 
 	/** 记录器国际化文本默认配置。 */
-	I18N_LOGGER(Constants.RESOURCE_CLASSIFY_I18N, "logger"),
+	I18N_LOGGER(Constants.CONFIGURATION_CLASSIFY_I18N, "logger"),
 
 	;
 

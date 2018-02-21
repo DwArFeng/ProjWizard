@@ -35,16 +35,16 @@ import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.projwiz.api.AbstractComponent;
 import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
-import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
-import com.dwarfeng.projwiz.raefrm.ConstantsProvider.ResourceKeyType;
 import com.dwarfeng.projwiz.raefrm.model.cm.DelegatePermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.eum.ConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.raefrm.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.raefrm.model.io.XmlPermDemandLoader;
+import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
+import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider.ResourceKeyType;
 import com.dwarfeng.projwiz.raefrm.util.Constants;
 import com.dwarfeng.projwiz.raefrm.util.ModelUtil;
 
@@ -316,7 +316,7 @@ public abstract class RaeComponent extends AbstractComponent {
 		Objects.requireNonNull(resourceKey, "入口参数 resourceKey 不能为 null。");
 
 		ResourceHandler cfgHandlerReadOnly = getToolkit().getCfgHandlerReadOnly();
-		if (!cfgHandlerReadOnly.containsKey(resourceKey)) {
+		if (!cfgHandlerReadOnly.containsKey(resourceKey.getName())) {
 			throw new IOException(String.format("不存在指定的资源: %s", resourceKey.getName()));
 		}
 
@@ -459,7 +459,8 @@ public abstract class RaeComponent extends AbstractComponent {
 		PropConfigLoader loader = null;
 
 		try {
-			loader = new PropConfigLoader(openResource(ResourceKey.CFG_CORE));
+			loader = new PropConfigLoader(
+					openResource(constantsProvider.getResourceKey(ResourceKeyType.CONFIGURATION_CORE)));
 			eptSet.addAll(loader.countinuousLoad(configModel));
 		} finally {
 			if (Objects.nonNull(loader)) {
@@ -532,6 +533,7 @@ public abstract class RaeComponent extends AbstractComponent {
 		eptSet1 = null;
 		loader1 = null;
 
+		labelI18nHandler.setCurrentLocale(null);
 		labelI18nHandler.setCurrentLocale(getToolkit().getCoreConfigModelReadOnly()
 				.getParsedValue(CoreConfigEntry.I18N_LABEL.getConfigKey(), Locale.class));
 	}
@@ -593,7 +595,8 @@ public abstract class RaeComponent extends AbstractComponent {
 		eptSet = null;
 		loader = null;
 
-		loggerI18nHandler.setCurrentLocale(getToolkit().getCoreConfigModel()
+		loggerI18nHandler.setCurrentLocale(null);
+		loggerI18nHandler.setCurrentLocale(getToolkit().getCoreConfigModelReadOnly()
 				.getParsedValue(CoreConfigEntry.I18N_LOGGER.getConfigKey(), Locale.class));
 	}
 
@@ -610,7 +613,7 @@ public abstract class RaeComponent extends AbstractComponent {
 		XmlPermDemandLoader loader = null;
 		try {
 			loader = new XmlPermDemandLoader(
-					openResource(constantsProvider.getResourceKey(ResourceKeyType.DEMAND_MODEL_SETTING)));
+					openResource(constantsProvider.getResourceKey(ResourceKeyType.PERM_DEMAND_SETTING)));
 			eptSet.addAll(loader.countinuousLoad(permDemandModel));
 		} finally {
 			if (Objects.nonNull(loader)) {
@@ -624,7 +627,7 @@ public abstract class RaeComponent extends AbstractComponent {
 		eptSet = null;
 		loader = null;
 
-		loggerI18nHandler.setCurrentLocale(getToolkit().getCoreConfigModel()
+		loggerI18nHandler.setCurrentLocale(getToolkit().getCoreConfigModelReadOnly()
 				.getParsedValue(CoreConfigEntry.I18N_LOGGER.getConfigKey(), Locale.class));
 	}
 
