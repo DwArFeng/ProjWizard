@@ -9,6 +9,8 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.imageio.ImageIO;
 
@@ -32,9 +34,9 @@ import com.dwarfeng.dutil.develop.i18n.io.XmlPropFileI18nLoader;
 import com.dwarfeng.dutil.develop.i18n.io.XmlPropResourceI18nLoader;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
-import com.dwarfeng.projwiz.api.AbstractComponent;
 import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
+import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.cm.DelegatePermDemandModel;
@@ -54,7 +56,17 @@ import com.dwarfeng.projwiz.raefrm.util.ModelUtil;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public abstract class RaeComponent extends AbstractComponent {
+public abstract class RaeComponent implements Component {
+
+	/** 该组件的键值。 */
+	protected final String key;
+	/** 该组件使用的工具包引用。 */
+	protected final ReferenceModel<? extends Toolkit> toolkitRef;
+	/** 该组件使用的元数据仓库。 */
+	protected final MetaDataStorage metaDataStorage;
+
+	/** 该组件的同步读写锁。 */
+	protected final ReadWriteLock lock = new ReentrantReadWriteLock();
 
 	/** 常量提供器 */
 	protected final ConstantsProvider constantsProvider;
@@ -95,9 +107,14 @@ public abstract class RaeComponent extends AbstractComponent {
 
 	protected RaeComponent(String key, ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
 			ConstantsProvider constantsProvider) throws ProcessException {
-		super(key, toolkitRef, metaDataStorage);
-
+		Objects.requireNonNull(key, "入口参数 key 不能为 null。");
+		Objects.requireNonNull(toolkitRef, "入口参数 toolkitRef 不能为 null。");
+		Objects.requireNonNull(metaDataStorage, "入口参数 metaDataStorage 不能为 null。");
 		Objects.requireNonNull(constantsProvider, "入口参数 constantsProvider 不能为 null。");
+
+		this.key = key;
+		this.toolkitRef = toolkitRef;
+		this.metaDataStorage = metaDataStorage;
 		this.constantsProvider = constantsProvider;
 
 		try {
@@ -113,8 +130,6 @@ public abstract class RaeComponent extends AbstractComponent {
 	 */
 	@Override
 	public void dispose() {
-		super.dispose();
-
 		// TODO 保存配置文件。
 		saveConfigModel();
 
@@ -159,6 +174,22 @@ public abstract class RaeComponent extends AbstractComponent {
 	@Override
 	public IconVariability getIconVarialibity() {
 		return IconVariability.FIX;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getKey() {
+		return key;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ReadWriteLock getLock() {
+		return lock;
 	}
 
 	/**

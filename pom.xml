@@ -48,8 +48,6 @@
 	<modules>
 		<module>projwiz-core</module>
 		<module>projwiz-launch</module>
-		<module>projwiz-api</module>
-		
 		<module>projwiz-raefrm</module>
 		<module>projwiz-basic4</module>
 	</modules>
@@ -60,6 +58,21 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.12</version>
+			</dependency>
+			<dependency>
+				<groupId>com.dwarfeng</groupId>
+				<artifactId>projwiz-core</artifactId>
+				<version>alpha-0.0.3.a-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.dwarfeng</groupId>
+				<artifactId>projwiz-launch</artifactId>
+				<version>alpha-0.0.3.a-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.dwarfeng</groupId>
+				<artifactId>projwiz-raefrm</artifactId>
+				<version>alpha-0.0.3.a-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

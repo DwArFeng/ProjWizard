@@ -1,4 +1,4 @@
-package com.dwarfeng.projwiz.api;
+package com.dwarfeng.projwiz.raefrm;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.dwarfeng.dutil.basic.io.ByteBufferInputStream;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
+import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
  * 被创造的文件。
@@ -19,29 +20,12 @@ import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public class CreatedFile extends AbstractFile {
+public class RaeCreatedFile extends RaeFile {
 
-	private final Map<String, ByteBuffer> buffers;
+	/** 标签-数据映射。 */
+	protected final Map<String, ByteBuffer> buffers;
 
 	private long length = -1;
-
-	/**
-	 * 新实例。
-	 * 
-	 * @param registerKey
-	 *            指定的注册键。
-	 * @param isFolder
-	 *            是否是文件夹。
-	 * @param name
-	 *            文件的名称
-	 * @param buffers
-	 *            指定的缓冲映射。
-	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
-	 */
-	public CreatedFile(String registerKey, boolean isFolder, String name, Map<String, ByteBuffer> buffers) {
-		this(registerKey, isFolder, name, buffers, -1, System.currentTimeMillis(), -1);
-	}
 
 	/**
 	 * 新实例。
@@ -60,15 +44,38 @@ public class CreatedFile extends AbstractFile {
 	 *            文件的创建时间。
 	 * @param modifyTime
 	 *            文件的编辑时间。
+	 * @param projprocToolkit
+	 *            对应的工程处理器的工具包。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public CreatedFile(String registerKey, boolean isFolder, String name, Map<String, ByteBuffer> buffers,
-			long accessTime, long createTime, long modifyTime) {
-		super(registerKey, isFolder, name, accessTime, createTime, modifyTime);
+	public RaeCreatedFile(String registerKey, boolean isFolder, String name, Map<String, ByteBuffer> buffers,
+			long accessTime, long createTime, long modifyTime, ProjProcToolkit projprocToolkit) {
+		super(registerKey, isFolder, name, accessTime, createTime, modifyTime, projprocToolkit);
 
 		Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
 		this.buffers = buffers;
+	}
+
+	/**
+	 * 新实例。
+	 * 
+	 * @param registerKey
+	 *            指定的注册键。
+	 * @param isFolder
+	 *            是否是文件夹。
+	 * @param name
+	 *            文件的名称
+	 * @param buffers
+	 *            指定的缓冲映射。
+	 * @param projprocToolkit
+	 *            对应的工程处理器的工具包。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 */
+	public RaeCreatedFile(String registerKey, boolean isFolder, String name, Map<String, ByteBuffer> buffers,
+			ProjProcToolkit projprocToolkit) {
+		this(registerKey, isFolder, name, buffers, -1, System.currentTimeMillis(), -1, projprocToolkit);
 	}
 
 	/**
@@ -90,35 +97,6 @@ public class CreatedFile extends AbstractFile {
 		} finally {
 			lock.readLock().unlock();
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public long getLength(String label) {
-		lock.readLock().lock();
-		try {
-			return buffers.get(label).limit();
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isReadSupported() {
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public InputStream openInputStream(String label) throws IOException {
-		return new ObversableInputStream(label, new ByteBufferInputStream(buffers.get(label)));
 	}
 
 	/**
@@ -148,6 +126,19 @@ public class CreatedFile extends AbstractFile {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public long getLength(String label) {
+		lock.readLock().lock();
+		try {
+			return buffers.get(label).limit();
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public long getOccupiedSize() {
 		lock.readLock().lock();
 		try {
@@ -165,6 +156,22 @@ public class CreatedFile extends AbstractFile {
 		} finally {
 			lock.readLock().unlock();
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isReadSupported() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public InputStream openInputStream(String label) throws IOException {
+		return new ObversableInputStream(label, new ByteBufferInputStream(buffers.get(label)));
 	}
 
 }

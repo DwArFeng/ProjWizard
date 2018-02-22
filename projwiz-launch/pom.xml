@@ -27,7 +27,6 @@
 		<dependency>
 			<groupId>com.dwarfeng</groupId>
 			<artifactId>projwiz-core</artifactId>
-			<version>alpha-0.0.3.a-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

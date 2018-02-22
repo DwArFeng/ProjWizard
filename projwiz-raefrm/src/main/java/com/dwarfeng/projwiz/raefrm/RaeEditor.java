@@ -1,4 +1,4 @@
-package com.dwarfeng.projwiz.api;
+package com.dwarfeng.projwiz.raefrm;
 
 import java.awt.Component;
 import java.util.Collections;
@@ -13,21 +13,17 @@ import com.dwarfeng.projwiz.core.model.obv.EditorObverser;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.raefrm.model.struct.FileProcToolkit;
 
 /**
- * 抽象编辑器。
- * 
- * <p>
- * 编辑器的抽象实现。
  * 
  * @author DwArFeng
- * @since 0.0.1-alpha
+ * @since 0.0.3-alpha
  */
-public abstract class AbstractEditor implements Editor {
+public abstract class RaeEditor implements Editor {
 
 	/** 侦听器集合。 */
 	protected final Set<EditorObverser> obversers;
-
 	/** 同步读写锁。 */
 	protected final ReadWriteLock lock = new ReentrantReadWriteLock();
 	/** 正在编辑的工程。 */
@@ -35,11 +31,23 @@ public abstract class AbstractEditor implements Editor {
 	/** 正在编辑的文件。 */
 	protected final File editFile;
 
+	/** 对应的文件处理器的工具包。 */
+	protected final FileProcToolkit fileProcToolkit;
+
 	/**
 	 * 新实例。
+	 * 
+	 * @param editProject
+	 *            正在编辑的工程。
+	 * @param editFile
+	 *            正在编辑的文件。
+	 * @param fileProcToolkit
+	 *            对应的工程文件处理器的工具包。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public AbstractEditor(Project editProject, File editFile) {
-		this(Collections.newSetFromMap(new WeakHashMap<>()), editProject, editFile);
+	public RaeEditor(Project editProject, File editFile, FileProcToolkit fileProcToolkit) {
+		this(Collections.newSetFromMap(new WeakHashMap<>()), editProject, editFile, fileProcToolkit);
 	}
 
 	/**
@@ -51,17 +59,22 @@ public abstract class AbstractEditor implements Editor {
 	 *            正在编辑的工程。
 	 * @param editFile
 	 *            正在编辑的文件。
+	 * @param fileProcToolkit
+	 *            对应的工程文件处理器的工具包。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public AbstractEditor(Set<EditorObverser> obversers, Project editProject, File editFile) {
+	protected RaeEditor(Set<EditorObverser> obversers, Project editProject, File editFile,
+			FileProcToolkit fileProcToolkit) {
 		Objects.requireNonNull(obversers, "入口参数 obversers 不能为 null。");
 		Objects.requireNonNull(editProject, "入口参数 editProject 不能为 null。");
 		Objects.requireNonNull(editFile, "入口参数 editFile 不能为 null。");
+		Objects.requireNonNull(fileProcToolkit, "入口参数 fileProcToolkit 不能为 null。");
 
 		this.obversers = obversers;
 		this.editFile = editFile;
 		this.editProject = editProject;
+		this.fileProcToolkit = fileProcToolkit;
 	}
 
 	/**
@@ -171,7 +184,7 @@ public abstract class AbstractEditor implements Editor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void save()throws ProcessException {
+	public void save() throws ProcessException {
 		throw new UnsupportedOperationException();
 	}
 
