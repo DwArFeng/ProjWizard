@@ -53,7 +53,7 @@ final class OpenFocusFileTask extends ProjWizTask {
 		Editor lastEditor = null;
 
 		bk: for (File file : focusFiles) {
-			FileProcessor fileProcessor = componentModel.getAll(FileProcessor.class).get(file.getComponentKey());
+			FileProcessor fileProcessor = componentModel.get(file.getProcessorClass());
 			ProjectFilePair pair = new ProjectFilePair(focusProject, file);
 			boolean alreadyContainsFlag = editorModel.containsKey(pair);
 
@@ -134,7 +134,7 @@ final class OpenAnchorFileTask extends ProjWizTask {
 		SyncMapModel<ProjectFilePair, Editor> editorModel = projWizard.getToolkit().getEditorModel();
 		SyncComponentModel componentModel = projWizard.getToolkit().getComponentModel();
 
-		FileProcessor fileProcessor = componentModel.getAll(FileProcessor.class).get(anchorFile.getComponentKey());
+		FileProcessor fileProcessor = componentModel.get(anchorFile.getProcessorClass());
 
 		ProjectFilePair pair = new ProjectFilePair(focusProject, anchorFile);
 		boolean alreadyContainsFlag = editorModel.containsKey(pair);
@@ -202,7 +202,7 @@ final class OpenCertainFileTask extends ProjWizTask {
 		SyncMapModel<ProjectFilePair, Editor> editorModel = projWizard.getToolkit().getEditorModel();
 		SyncComponentModel componentModel = projWizard.getToolkit().getComponentModel();
 
-		FileProcessor fileProcessor = componentModel.getAll(FileProcessor.class).get(file.getComponentKey());
+		FileProcessor fileProcessor = componentModel.get(file.getProcessorClass());
 
 		ProjectFilePair pair = new ProjectFilePair(project, file);
 		boolean alreadyContainsFlag = editorModel.containsKey(pair);

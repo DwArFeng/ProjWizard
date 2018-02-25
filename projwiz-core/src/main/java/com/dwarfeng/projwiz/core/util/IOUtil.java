@@ -33,6 +33,45 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 public final class IOUtil {
 
 	/**
+	 * 根据指定的XML节点解析类。
+	 * 
+	 * @param classElement
+	 *            指定的节点
+	 * @return 根据指定的节点解析得到的类。
+	 * @throws LoadFailedException
+	 *             读取失败
+	 * @throws NullPointerException。
+	 *             入口参数为 <code>null</code>。
+	 */
+	public static Class<? extends Component> parseClass(Element classElement) throws LoadFailedException {
+		Objects.requireNonNull(classElement, "入口参数 classElement 不能为 null。");
+
+		String clazzString = classElement.attributeValue("class");
+
+		if (Objects.isNull(clazzString)) {
+			throw new LoadFailedException("属性缺失。");
+		}
+
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(clazzString);
+		} catch (ClassNotFoundException e) {
+			throw new LoadFailedException("解析类时发生异常。", e);
+		}
+
+		if (!Component.class.isAssignableFrom(clazz)) {
+			throw new LoadFailedException("类 " + clazz.toString() + " 不是 Component 的子类");
+		}
+
+		/**
+		 * 由于之前已经验证过 clazz 是 Component 的子类，因此此处转换类型安全。
+		 */
+		@SuppressWarnings("unchecked")
+		Class<? extends Component> clazz2 = (Class<? extends Component>) clazz;
+		return clazz2;
+	}
+
+	/**
 	 * 根据指定的XML节点解析组件。
 	 * 
 	 * @param componentElement
@@ -56,19 +95,18 @@ public final class IOUtil {
 		Objects.requireNonNull(toolkit, "入口参数 toolkit 不能为 null。");
 		Objects.requireNonNull(metaDataStorage, "入口参数 metaDataStorage 不能为 null。");
 
-		String key = componentElement.attributeValue("key");
 		String classString = componentElement.attributeValue("class");
 
-		if (Objects.isNull(Objects.isNull(key)) || Objects.isNull(classString)) {
+		if (Objects.isNull(classString)) {
 			throw new LoadFailedException("属性缺失。");
 		}
 
 		Component cmpoent = null;
 		try {
-			Method method = pluginClassLoader.loadClass(classString).getMethod("newInstance", String.class,
-					ReferenceModel.class, MetaDataStorage.class);
-			cmpoent = (Component) method.invoke(null, key, new DefaultReferenceModel<>(toolkit), metaDataStorage);// TODO
-																													// 参数待完善。
+			Method method = pluginClassLoader.loadClass(classString).getMethod("newInstance", ReferenceModel.class,
+					MetaDataStorage.class);
+			cmpoent = (Component) method.invoke(null, new DefaultReferenceModel<>(toolkit), metaDataStorage);// TODO
+																												// 参数待完善。
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
 				| IllegalArgumentException e) {
 			throw new LoadFailedException("组件初始化失败", e);

@@ -64,8 +64,8 @@ final class PoseTask extends ProjWizTask {
 		File[] cmpoent_jars;
 		File plugin_dir;
 		File[] plugin_jars;
-		Collection<String> ignoreCfgKeys;
-		Collection<String> ignoreCmpoentKeys;
+		Collection<String> ignoredCfgKeys;
+		Collection<Class<?>> ignoredCmpoentClazzes;
 		File metaDataFileDir;
 		boolean isTestCase;
 		boolean isForceRestCfg;
@@ -119,12 +119,12 @@ final class PoseTask extends ProjWizTask {
 		loadCmpoentToolkit();
 
 		// 加载配置忽略清单。
-		ignoreCfgKeys = new HashSet<>();
-		loadCfgIgnore(ignoreCfgKeys);
+		ignoredCfgKeys = new HashSet<>();
+		loadCfgIgnore(ignoredCfgKeys);
 
 		// 加载组件忽略清单。
-		ignoreCmpoentKeys = new HashSet<>();
-		loadCmpoentIgnore(ignoreCmpoentKeys);
+		ignoredCmpoentClazzes = new HashSet<>();
+		loadCmpoentIgnore(ignoredCmpoentClazzes);
 
 		// 获取元数据目录。
 		metaDataFileDir = new File(projWizard.getToolkit().getProperty(ProjWizProperty.METADATA_PATH));
@@ -157,22 +157,22 @@ final class PoseTask extends ProjWizTask {
 		loadJars(plugin_jars);
 
 		// 解析组件文件夹下的jar包中的配置。
-		loadJarsCfg(cmpoent_jars, ignoreCfgKeys, isForceRestCfg);
+		loadJarsCfg(cmpoent_jars, ignoredCfgKeys, isForceRestCfg);
 
 		// 解析插件文件夹下的jar包中的配置。
-		loadJarsCfg(plugin_jars, ignoreCfgKeys, isForceRestCfg);
+		loadJarsCfg(plugin_jars, ignoredCfgKeys, isForceRestCfg);
 
 		// 解析额外的配置文件中的配置。
-		loadExtraCfg(ignoreCfgKeys, isForceRestCfg);
+		loadExtraCfg(ignoredCfgKeys, isForceRestCfg);
 
 		// 解析并实例化组件文件夹下的jar包中的组件。
-		loadJarsCmpoent(cmpoent_jars, ignoreCmpoentKeys, metaDataFileDir);
+		loadJarsCmpoent(cmpoent_jars, ignoredCmpoentClazzes, metaDataFileDir);
 
 		// 解析并实例化插件文件夹下的jar包中的组件。
-		loadJarsCmpoent(plugin_jars, ignoreCmpoentKeys, metaDataFileDir);
+		loadJarsCmpoent(plugin_jars, ignoredCmpoentClazzes, metaDataFileDir);
 
 		// 解析并实例化额外组件文件中的组件。
-		loadExtraCmpoent(ignoreCmpoentKeys, metaDataFileDir);
+		loadExtraCmpoent(ignoredCmpoentClazzes, metaDataFileDir);
 
 		// 测试情形下并不加载界面，因此没必要加载界面
 		if (!isTestCase) {
@@ -306,21 +306,22 @@ final class PoseTask extends ProjWizTask {
 	 * 
 	 * @param in
 	 *            指定的输入流。
-	 * @param ignoreCfgKeys
+	 * @param ignoredCfgKeys
 	 *            指定的忽略配置字段。
 	 * @param isForceRestCfg
 	 *            是否强行重置配置文件。
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadCfg0(InputStream in, Collection<String> ignoreCfgKeys, boolean isForceRestCfg) throws IOException {
+	private void loadCfg0(InputStream in, Collection<String> ignoredCfgKeys, boolean isForceRestCfg)
+			throws IOException {
 		String repoRootString = projWizard.getToolkit().getProperty(ProjWizProperty.CFGREPO_PATH);
 		File reopRoot = new File(repoRootString);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
 		ConfigurationLoader loader = null;
 		try {
-			loader = new ConfigurationLoader(in, reopRoot, ignoreCfgKeys, isForceRestCfg);
+			loader = new ConfigurationLoader(in, reopRoot, ignoredCfgKeys, isForceRestCfg);
 			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getCfgHandler()));
 		} finally {
 			if (Objects.nonNull(loader)) {
@@ -335,7 +336,7 @@ final class PoseTask extends ProjWizTask {
 		loader = null;
 	}
 
-	private void loadCfgIgnore(Collection<String> ignoreCfgKeys) throws IOException {
+	private void loadCfgIgnore(Collection<String> ignoredCfgKeys) throws IOException {
 		info(LoggerStringKey.TASK_POSE_36);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
@@ -343,7 +344,7 @@ final class PoseTask extends ProjWizTask {
 
 		try {
 			loader = new IgnoredConfigurationLoader(openResource(ResourceKey.CFG_IGNORE, LoggerStringKey.TASK_POSE_0));
-			eptSet.addAll(loader.countinuousLoad(ignoreCfgKeys));
+			eptSet.addAll(loader.countinuousLoad(ignoredCfgKeys));
 		} finally {
 			if (Objects.nonNull(loader)) {
 				loader.close();
@@ -358,11 +359,11 @@ final class PoseTask extends ProjWizTask {
 	}
 
 	private void loadCmpoent0(InputStream inputStream, PluginClassLoader pluginClassLoader,
-			Collection<String> ignoreCmpoentKeys, File metaDataFileDir) throws IOException {
+			Collection<Class<?>> ignoredCmpoentClazzes, File metaDataFileDir) throws IOException {
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
 		ComponentLoader loader = null;
 		try {
-			loader = new ComponentLoader(inputStream, ignoreCmpoentKeys, pluginClassLoader,
+			loader = new ComponentLoader(inputStream, ignoredCmpoentClazzes, pluginClassLoader,
 					projWizard.getToolkit().getToolkitPermModel(), projWizard.getToolkit(), metaDataFileDir);
 			eptSet.addAll(loader.countinuousLoad(new CotoPair(projWizard.getToolkit().getComponentModel(),
 					projWizard.getToolkit().getCmpoentToolkitModel())));
@@ -379,7 +380,7 @@ final class PoseTask extends ProjWizTask {
 		loader = null;
 	}
 
-	private void loadCmpoentIgnore(Collection<String> ignoreCmpoentKeys) throws IOException {
+	private void loadCmpoentIgnore(Collection<Class<?>> ignoredCmpoentClazzes) throws IOException {
 		info(LoggerStringKey.TASK_POSE_38);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
@@ -387,7 +388,7 @@ final class PoseTask extends ProjWizTask {
 
 		try {
 			loader = new IgnoredComponentLoader(openResource(ResourceKey.CMPOENT_IGNORE, LoggerStringKey.TASK_POSE_0));
-			eptSet.addAll(loader.countinuousLoad(ignoreCmpoentKeys));
+			eptSet.addAll(loader.countinuousLoad(ignoredCmpoentClazzes));
 		} finally {
 			if (Objects.nonNull(loader)) {
 				loader.close();
@@ -461,35 +462,35 @@ final class PoseTask extends ProjWizTask {
 	/**
 	 * 解析额外的配置文件中的配置。
 	 * 
-	 * @param ignoreCfgKeys
+	 * @param ignoredCfgKeys
 	 *            配置的忽略清单。
 	 * @param isForceRestCfg
 	 *            是否强行重置配置文件。
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadExtraCfg(Collection<String> ignoreCfgKeys, boolean isForceRestCfg) throws IOException {
+	private void loadExtraCfg(Collection<String> ignoredCfgKeys, boolean isForceRestCfg) throws IOException {
 		info(LoggerStringKey.TASK_POSE_46);
 
-		loadCfg0(openResource(ResourceKey.CFG_EXTRA, LoggerStringKey.TASK_POSE_0), ignoreCfgKeys, isForceRestCfg);
+		loadCfg0(openResource(ResourceKey.CFG_EXTRA, LoggerStringKey.TASK_POSE_0), ignoredCfgKeys, isForceRestCfg);
 	}
 
 	/**
 	 * 解析并实例化额外组件文件中的组件。
 	 * 
-	 * @param ignoreCmpoentKeys
+	 * @param ignoredCmpoentClazzes
 	 *            组件的忽略清单。
 	 * @param metaDataFileDir
 	 *            元数据的根目录。
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadExtraCmpoent(Collection<String> ignoreCmpoentKeys, File metaDataFileDir)
+	private void loadExtraCmpoent(Collection<Class<?>> ignoredCmpoentClazzes, File metaDataFileDir)
 			throws IllegalStateException, IOException {
 		info(LoggerStringKey.TASK_POSE_47);
 
 		loadCmpoent0(openResource(ResourceKey.CMPOENT_EXTRA, LoggerStringKey.TASK_POSE_0),
-				projWizard.getToolkit().getPluginClassLoader(), ignoreCmpoentKeys, metaDataFileDir);
+				projWizard.getToolkit().getPluginClassLoader(), ignoredCmpoentClazzes, metaDataFileDir);
 	}
 
 	/**
@@ -517,14 +518,15 @@ final class PoseTask extends ProjWizTask {
 	 * 
 	 * @param jars
 	 *            指定的数组。
-	 * @param ignoreCfgKeys
+	 * @param ignoredCfgKeys
 	 *            配置的忽略清单。
 	 * @param isForceRestCfg
 	 *            是否强行重置配置文件。
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadJarsCfg(File[] jars, Collection<String> ignoreCfgKeys, boolean isForceRestCfg) throws IOException {
+	private void loadJarsCfg(File[] jars, Collection<String> ignoredCfgKeys, boolean isForceRestCfg)
+			throws IOException {
 		info(LoggerStringKey.TASK_POSE_34);
 
 		for (File jar : jars) {
@@ -535,7 +537,7 @@ final class PoseTask extends ProjWizTask {
 				jarFile = new JarFile(jar);
 				ZipEntry entry = jarFile.getEntry(Constants.CFG_LIST_PATH);
 				if (Objects.nonNull(entry)) {
-					loadCfg0(jarFile.getInputStream(entry), ignoreCfgKeys, isForceRestCfg);
+					loadCfg0(jarFile.getInputStream(entry), ignoredCfgKeys, isForceRestCfg);
 				}
 			} catch (IllegalStateException | MalformedURLException e) {
 				warn(LoggerStringKey.TASK_POSE_24, e);
@@ -553,14 +555,14 @@ final class PoseTask extends ProjWizTask {
 	 * 
 	 * @param jars
 	 *            指定的jar包组成的数组。
-	 * @param ignoreCmpoentKeys
+	 * @param ignoredCmpoentClazzes
 	 *            组件的忽略清单。
 	 * @param metaDataFileDir
 	 *            元数据的根目录。
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadJarsCmpoent(File[] jars, Collection<String> ignoreCmpoentKeys, File metaDataFileDir)
+	private void loadJarsCmpoent(File[] jars, Collection<Class<?>> ignoredCmpoentClazzes, File metaDataFileDir)
 			throws IOException {
 		info(LoggerStringKey.TASK_POSE_40);
 
@@ -573,7 +575,7 @@ final class PoseTask extends ProjWizTask {
 				ZipEntry entry = jarFile.getEntry(Constants.CMPOENT_LIST_PATH);
 				if (Objects.nonNull(entry)) {
 					loadCmpoent0(jarFile.getInputStream(entry), projWizard.getToolkit().getPluginClassLoader(),
-							ignoreCmpoentKeys, metaDataFileDir);
+							ignoredCmpoentClazzes, metaDataFileDir);
 				}
 			} catch (IllegalStateException | MalformedURLException e) {
 				warn(LoggerStringKey.TASK_POSE_24, e);

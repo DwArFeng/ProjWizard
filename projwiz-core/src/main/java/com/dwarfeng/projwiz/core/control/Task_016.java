@@ -75,8 +75,8 @@ final class RenameAnchorFileTask extends ProjWizTask {
 		if (Objects.isNull(focusProject.renameFile(anchorFile, newName))) {
 			warn(LoggerStringKey.TASK_RENAMEFILE_0);
 			warn(LoggerStringKey.TASK_RENAMEFILE_1);
-			formatWarn(LoggerStringKey.TASK_RENAMEFILE_2, anchorFile.getComponentKey(), anchorFile.getName(),
-					anchorFile.getClass().toString());
+			formatWarn(LoggerStringKey.TASK_RENAMEFILE_2, anchorFile.getProcessorClass().getName(),
+					anchorFile.getName(), anchorFile.getClass().toString());
 		}
 
 		anchorFileModel.getLock().writeLock().lock();

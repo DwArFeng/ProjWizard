@@ -3,6 +3,7 @@ package com.dwarfeng.projwiz.core.model.io;
 import java.io.InputStream;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.basic.io.StreamLoader;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
+import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.util.IOUtil;
 
@@ -25,7 +27,8 @@ import com.dwarfeng.projwiz.core.util.IOUtil;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public final class ComponentToolkitLoader extends StreamLoader<MapModel<String, ReferenceModel<Toolkit>>> {
+public final class ComponentToolkitLoader
+		extends StreamLoader<MapModel<Class<? extends Component>, ReferenceModel<Toolkit>>> {
 
 	/** 工具包权限模型。 */
 	protected final ToolkitPermModel toolkitPermModel;
@@ -59,52 +62,8 @@ public final class ComponentToolkitLoader extends StreamLoader<MapModel<String, 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void load(MapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel)
-			throws LoadFailedException, IllegalStateException {
-
-		if (readFlag)
-			throw new IllegalStateException("读取器已经使用过了。");
-
-		Objects.requireNonNull(cmpoentToolkitModel, "入口参数 cmpoentToolkitModel 不能为 null。");
-
-		try {
-			readFlag = true;
-
-			SAXReader reader = new SAXReader();
-			Element root = reader.read(in).getRootElement();
-
-			/*
-			 * 根据 dom4j 的相关说明，此处转换是安全的。
-			 */
-			@SuppressWarnings("unchecked")
-			List<Element> infos = (List<Element>) root.elements("info");
-			for (Element info : infos) {
-				String key = info.attributeValue("key");
-
-				if (Objects.isNull(Objects.isNull(key))) {
-					throw new LoadFailedException("属性缺失。");
-				}
-
-				Element toolkitElement = info.element("toolkit");
-				if (Objects.isNull(toolkitElement)) {
-					throw new LoadFailedException("属性缺失。");
-				}
-
-				Toolkit toolkit = IOUtil.parseToolkit(toolkitElement, toolkitPermModel, standardToolkit);
-				cmpoentToolkitModel.put(key, ModelUtil.syncReferenceModel(new DefaultReferenceModel<>(toolkit)));
-			}
-
-		} catch (Exception e) {
-			throw new LoadFailedException("无法读取指定组件数据。", e);
-		}
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Set<LoadFailedException> countinuousLoad(MapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel)
+	public Set<LoadFailedException> countinuousLoad(
+			MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel)
 			throws IllegalStateException {
 		if (readFlag)
 			throw new IllegalStateException("读取器已经使用过了。");
@@ -125,19 +84,7 @@ public final class ComponentToolkitLoader extends StreamLoader<MapModel<String, 
 			List<Element> infos = (List<Element>) root.elements("info");
 			for (Element info : infos) {
 				try {
-					String key = info.attributeValue("key");
-
-					if (Objects.isNull(Objects.isNull(key))) {
-						throw new LoadFailedException("属性缺失。");
-					}
-
-					Element toolkitElement = info.element("toolkit");
-					if (Objects.isNull(toolkitElement)) {
-						throw new LoadFailedException("属性缺失。");
-					}
-
-					Toolkit toolkit = IOUtil.parseToolkit(toolkitElement, toolkitPermModel, standardToolkit);
-					cmpoentToolkitModel.put(key, ModelUtil.syncReferenceModel(new DefaultReferenceModel<>(toolkit)));
+					load0(cmpoentToolkitModel, info);
 				} catch (Exception e) {
 					exceptions.add(new LoadFailedException("无法读取指定组件数据。", e));
 				}
@@ -149,6 +96,57 @@ public final class ComponentToolkitLoader extends StreamLoader<MapModel<String, 
 
 		return exceptions;
 
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void load(MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel)
+			throws LoadFailedException, IllegalStateException {
+
+		if (readFlag)
+			throw new IllegalStateException("读取器已经使用过了。");
+
+		Objects.requireNonNull(cmpoentToolkitModel, "入口参数 cmpoentToolkitModel 不能为 null。");
+
+		try {
+			readFlag = true;
+
+			SAXReader reader = new SAXReader();
+			Element root = reader.read(in).getRootElement();
+
+			/*
+			 * 根据 dom4j 的相关说明，此处转换是安全的。
+			 */
+			@SuppressWarnings("unchecked")
+			List<Element> infos = (List<Element>) root.elements("info");
+			for (Element info : infos) {
+				load0(cmpoentToolkitModel, info);
+			}
+
+		} catch (Exception e) {
+			throw new LoadFailedException("无法读取指定组件数据。", e);
+		}
+
+	}
+
+	private void load0(Map<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel, Element info)
+			throws LoadFailedException {
+		Class<? extends Component> clazz = IOUtil.parseClass(info);
+
+		if (!Component.class.isAssignableFrom(clazz)) {
+			throw new LoadFailedException("类 " + clazz.toString() + " 不是 Component 的子类");
+		}
+
+		Element toolkitElement = info.element("toolkit");
+		if (Objects.isNull(toolkitElement)) {
+			throw new LoadFailedException("属性缺失。");
+		}
+
+		Toolkit toolkit = IOUtil.parseToolkit(toolkitElement, toolkitPermModel, standardToolkit);
+
+		cmpoentToolkitModel.put(clazz, ModelUtil.syncReferenceModel(new DefaultReferenceModel<>(toolkit)));
 	}
 
 }

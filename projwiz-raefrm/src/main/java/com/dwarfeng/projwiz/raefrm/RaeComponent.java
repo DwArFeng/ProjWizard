@@ -58,8 +58,6 @@ import com.dwarfeng.projwiz.raefrm.util.ModelUtil;
  */
 public abstract class RaeComponent implements Component {
 
-	/** 该组件的键值。 */
-	protected final String key;
 	/** 该组件使用的工具包引用。 */
 	protected final ReferenceModel<? extends Toolkit> toolkitRef;
 	/** 该组件使用的元数据仓库。 */
@@ -105,14 +103,12 @@ public abstract class RaeComponent implements Component {
 
 	};
 
-	protected RaeComponent(String key, ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
+	protected RaeComponent(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
 			ConstantsProvider constantsProvider) throws ProcessException {
-		Objects.requireNonNull(key, "入口参数 key 不能为 null。");
 		Objects.requireNonNull(toolkitRef, "入口参数 toolkitRef 不能为 null。");
 		Objects.requireNonNull(metaDataStorage, "入口参数 metaDataStorage 不能为 null。");
 		Objects.requireNonNull(constantsProvider, "入口参数 constantsProvider 不能为 null。");
 
-		this.key = key;
 		this.toolkitRef = toolkitRef;
 		this.metaDataStorage = metaDataStorage;
 		this.constantsProvider = constantsProvider;
@@ -174,14 +170,6 @@ public abstract class RaeComponent implements Component {
 	@Override
 	public IconVariability getIconVarialibity() {
 		return IconVariability.FIX;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getKey() {
-		return key;
 	}
 
 	/**

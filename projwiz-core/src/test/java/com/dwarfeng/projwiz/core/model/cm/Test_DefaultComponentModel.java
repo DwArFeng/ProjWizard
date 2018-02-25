@@ -24,9 +24,8 @@ import org.junit.Test;
 import com.dwarfeng.dutil.basic.cna.model.obv.SetObverser;
 import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.TestSimpleComponent;
-import com.dwarfeng.projwiz.core.util.ModelUtil;
 
-public class Test_SyncDelegateComponentModel {
+public class Test_DefaultComponentModel {
 
 	private static final class TestSetObverser implements SetObverser<Component> {
 
@@ -57,13 +56,13 @@ public class Test_SyncDelegateComponentModel {
 	private static final Component COMPONENT_4 = new TestSimpleComponent_Sub4();
 	private static final Component COMPONENT_5 = new TestSimpleComponent_Sub5();
 	private static final Component COMPONENT_6 = new TestSimpleComponent_Sub6();
-	private static SyncComponentModel model;
+
+	private static DefaultComponentModel model;
 	private static TestSetObverser obv;
 
 	@Before
 	public void setUp() throws Exception {
-		model = ModelUtil.syncComponentModel(
-				new DefaultComponentModel(new LinkedHashMap<>(), Collections.newSetFromMap(new WeakHashMap<>())));
+		model = new DefaultComponentModel(new LinkedHashMap<>(), Collections.newSetFromMap(new WeakHashMap<>()));
 		obv = new TestSetObverser();
 
 		model.add(COMPONENT_1);

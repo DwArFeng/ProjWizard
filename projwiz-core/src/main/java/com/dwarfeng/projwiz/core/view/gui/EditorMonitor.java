@@ -539,7 +539,7 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 		label.setToolTipText(file.getName());
 		Image image = null;
 		if (Objects.nonNull(componentModel)) {
-			FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getComponentKey());
+			FileProcessor processor = componentModel.get(file.getProcessorClass());
 			if (Objects.nonNull(processor)) {
 				image = processor.getFileIcon(file);
 			}
@@ -564,7 +564,7 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 		label.setToolTipText(project.getName());
 		Image image = null;
 		if (Objects.nonNull(componentModel)) {
-			ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class).get(project.getComponentKey());
+			ProjectProcessor processor = componentModel.get(project.getProcessorClass());
 			if (Objects.nonNull(processor)) {
 				image = processor.getProjectIcon(project);
 			}

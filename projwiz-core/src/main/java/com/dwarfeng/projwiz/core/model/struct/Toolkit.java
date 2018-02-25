@@ -28,6 +28,7 @@ import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
+import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
@@ -88,6 +89,7 @@ public interface Toolkit {
 		GETCFGHANDLERREADONLY, //
 		GETCMPOENTTOOLKITMODEL, //
 		GETCOMPONENTMODEL, //
+		GETCOMPONENTMODELREADONLY, //
 		GETCORECONFIGMODEL, //
 		GETCORECONFIGMODELREADONLY, //
 		GETEDITORMODEL, //
@@ -342,7 +344,8 @@ public interface Toolkit {
 	 * @throws IllegalStateException
 	 *             因为没有执行权限而抛出的异常。
 	 */
-	public SyncMapModel<String, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException;
+	public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel()
+			throws IllegalStateException;
 
 	/**
 	 * 获取组件模型。
@@ -352,6 +355,18 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public SyncComponentModel getComponentModel() throws IllegalStateException;
+
+	/**
+	 * 获取组件模型。
+	 * 
+	 * <p>
+	 * 组件模型是只读的。
+	 * 
+	 * @return 组件模型。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public ComponentModel getComponentModelReadOnly() throws IllegalStateException;
 
 	/**
 	 * 获取程序中的核心配置模型。

@@ -29,7 +29,7 @@ public final class ConfigurationLoader extends StreamLoader<ResourceHandler> {
 	/** 仓库的根目录。 */
 	protected final File repoDir;
 	/** 忽略的键值集合。 */
-	protected final Collection<String> ignoreCfgKeys;
+	protected final Collection<String> ignoredCfgKeys;
 	/** 是否强制重置配置文件。 */
 	protected final boolean isForceRestCfg;
 
@@ -59,11 +59,12 @@ public final class ConfigurationLoader extends StreamLoader<ResourceHandler> {
 	 * @throws NullPointerException
 	 *             入口参数 <code>in</code> 为 <code>null</code>。
 	 */
-	public ConfigurationLoader(InputStream in, File repoDir, Collection<String> ignoreCfgKeys, boolean isForceRestCfg) {
+	public ConfigurationLoader(InputStream in, File repoDir, Collection<String> ignoredCfgKeys,
+			boolean isForceRestCfg) {
 		super(in);
-		Objects.requireNonNull(ignoreCfgKeys, "入口参数 keySet 不能为 null。");
+		Objects.requireNonNull(ignoredCfgKeys, "入口参数 ignoredCfgKeys 不能为 null。");
 		this.repoDir = repoDir;
-		this.ignoreCfgKeys = ignoreCfgKeys;
+		this.ignoredCfgKeys = ignoredCfgKeys;
 		this.isForceRestCfg = isForceRestCfg;
 	}
 
@@ -104,7 +105,7 @@ public final class ConfigurationLoader extends StreamLoader<ResourceHandler> {
 					throw new LoadFailedException("属性缺失。");
 				}
 
-				if (ignoreCfgKeys.contains(key)) {
+				if (ignoredCfgKeys.contains(key)) {
 					continue;
 				}
 
@@ -161,7 +162,7 @@ public final class ConfigurationLoader extends StreamLoader<ResourceHandler> {
 						throw new LoadFailedException("属性缺失。");
 					}
 
-					if (ignoreCfgKeys.contains(key)) {
+					if (ignoredCfgKeys.contains(key)) {
 						continue;
 					}
 

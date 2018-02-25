@@ -163,11 +163,18 @@ public interface File extends Name, ExternalReadWriteThreadSafe, ObverserSet<Fil
 	public long getOccupiedSize();
 
 	/**
-	 * 获得管理该文档的组件名称。
+	 * 获取文件的类型。
 	 * 
-	 * @return 管理该文档的组件名称。
+	 * @return 文件的类型。
 	 */
-	public String getComponentKey();
+	public Name getFileType();
+
+	/**
+	 * 获取管理该文档的文档处理器的类。
+	 * 
+	 * @return 管理该文档的文档处理器的类。
+	 */
+	public Class<? extends FileProcessor> getProcessorClass();
 
 	/**
 	 * 返回该文件是否为一个文件夹。
@@ -253,5 +260,13 @@ public interface File extends Name, ExternalReadWriteThreadSafe, ObverserSet<Fil
 			discardLabel(label);
 		}
 	}
+
+	/**
+	 * 设置管理该文档的文档处理器的类。
+	 * 
+	 * @param clazz
+	 *            指定的文档处理器的子类。
+	 */
+	public void setProcessorClass(Class<? extends FileProcessor> clazz);
 
 }

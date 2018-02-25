@@ -15,6 +15,7 @@ import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
+import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
@@ -267,19 +268,19 @@ public abstract class RaeFile implements File {
 	}
 
 	/** 观察器集合。 */
-	protected final Set<FileObverser> obversers = Collections.newSetFromMap(new WeakHashMap<>());;
+	protected final Set<FileObverser> obversers;
 
 	/** 同步读写锁。 */
 	protected final ReadWriteLock lock = new ReentrantReadWriteLock();
-
-	/** 文件的注册键。 */
-	protected final String componentKey;
 	/** 文件是否为文件夹。 */
 	protected final boolean isFolder;
-
 	/** 对应的工程处理器的工具包。 */
 	protected final ProjProcToolkit projprocToolkit;
+	/** 文件的类型。 */
+	protected final Name fileType;
 
+	/** 文件的处理器类。 */
+	protected Class<? extends FileProcessor> processorClass;
 	/** 文件的名称。 */
 	protected String name;
 	/** 文件的访问时间。 */
@@ -292,10 +293,14 @@ public abstract class RaeFile implements File {
 	/**
 	 * 新实例。
 	 * 
-	 * @param registerKey
-	 *            指定的注册键。
 	 * @param isFolder
 	 *            是否为文件夹。
+	 * @param projprocToolkit
+	 *            对应的工程处理器的工具包。
+	 * @param fileType
+	 *            文件的类型。
+	 * @param processorClass
+	 *            文件的处理器类。
 	 * @param name
 	 *            文件的名称。
 	 * @param accessTime
@@ -304,43 +309,28 @@ public abstract class RaeFile implements File {
 	 *            文件的创建时间。
 	 * @param modifyTime
 	 *            文件的编辑时间。
-	 * @param projprocToolkit
-	 *            对应的工程处理器的工具包。
+	 * @param obversers
+	 *            文件的观察器集合。
 	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
+	 *             入口参数为 <code>null</code>。
 	 */
-	protected RaeFile(String registerKey, boolean isFolder, String name, long accessTime, long createTime,
-			long modifyTime, ProjProcToolkit projprocToolkit) {
-		Objects.requireNonNull(obversers, "入口参数 obversers 不能为 null。");
-		Objects.requireNonNull(registerKey, "入口参数 registerKey 不能为 null。");
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+	protected RaeFile(boolean isFolder, ProjProcToolkit projprocToolkit, Name fileType,
+			Class<? extends FileProcessor> processorClass, String name, long accessTime, long createTime,
+			long modifyTime, Set<FileObverser> obversers) {
 		Objects.requireNonNull(projprocToolkit, "入口参数 projprocToolkit 不能为 null。");
+		Objects.requireNonNull(fileType, "入口参数 fileType 不能为 null。");
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(obversers, "入口参数 obversers 不能为 null。");
 
-		this.componentKey = registerKey;
 		this.isFolder = isFolder;
+		this.projprocToolkit = projprocToolkit;
+		this.fileType = fileType;
+		this.processorClass = processorClass;
 		this.name = name;
 		this.accessTime = accessTime;
 		this.createTime = createTime;
 		this.modifyTime = modifyTime;
-		this.projprocToolkit = projprocToolkit;
-	}
-
-	/**
-	 * 新实例。
-	 * 
-	 * @param registerKey
-	 *            指定的注册键。
-	 * @param isFolder
-	 *            是否为文件夹。
-	 * @param name
-	 *            文件的名称。
-	 * @param projprocToolkit
-	 *            对应的工程处理器的工具包。
-	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
-	 */
-	protected RaeFile(String registerKey, boolean isFolder, String name, ProjProcToolkit projprocToolkit) {
-		this(registerKey, isFolder, name, -1, -1, -1, projprocToolkit);
+		this.obversers = obversers;
 	}
 
 	/**
@@ -407,14 +397,6 @@ public abstract class RaeFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getComponentKey() {
-		return componentKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public long getCreateTime() {
 		lock.readLock().lock();
 		try {
@@ -422,6 +404,14 @@ public abstract class RaeFile implements File {
 		} finally {
 			lock.readLock().unlock();
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Name getFileType() {
+		return fileType;
 	}
 
 	/**
@@ -519,6 +509,19 @@ public abstract class RaeFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Class<? extends FileProcessor> getProcessorClass() {
+		lock.readLock().lock();
+		try {
+			return getProcessorClass();
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean isFolder() {
 		return isFolder;
 	}
@@ -577,6 +580,26 @@ public abstract class RaeFile implements File {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setProcessorClass(Class<? extends FileProcessor> clazz) {
+		lock.writeLock().lock();
+		try {
+			if (Objects.equals(processorClass, clazz)) {
+				return;
+			}
+
+			Class<? extends FileProcessor> oldValue = this.processorClass;
+			this.processorClass = clazz;
+
+			fireProcessorClassChanged(oldValue, clazz);
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	/**
 	 * 通知访问时间发生改变。
 	 * 
 	 * @param oldValue
@@ -586,7 +609,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireAccessTimeChanged(long oldValue, long newValue) {
 		obversers.forEach(obverser -> {
-			obverser.fireAccessTimeChanged(oldValue, newValue);
+			try {
+				obverser.fireAccessTimeChanged(oldValue, newValue);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -600,7 +627,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireCreateTimeChanged(long oldValue, long newValue) {
 		obversers.forEach(obverser -> {
-			obverser.fireCreateTimeChanged(oldValue, newValue);
+			try {
+				obverser.fireCreateTimeChanged(oldValue, newValue);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -612,7 +643,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireInputClosed(String label) {
 		obversers.forEach(obverser -> {
-			obverser.fireInputClosed(label);
+			try {
+				obverser.fireInputClosed(label);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -624,7 +659,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireInputOpened(String label) {
 		obversers.forEach(obverser -> {
-			obverser.fireInputOpened(label);
+			try {
+				obverser.fireInputOpened(label);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -636,7 +675,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireLabelAdded(String label) {
 		obversers.forEach(obverser -> {
-			obverser.fireLabelAdded(label);
+			try {
+				obverser.fireLabelAdded(label);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -648,7 +691,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireLabelRemoved(String label) {
 		obversers.forEach(obverser -> {
-			obverser.fireLabelRemoved(label);
+			try {
+				obverser.fireLabelRemoved(label);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -662,7 +709,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireLengthChanged(long oldValue, long newValue) {
 		obversers.forEach(obverser -> {
-			obverser.fireLengthChanged(oldValue, newValue);
+			try {
+				obverser.fireLengthChanged(oldValue, newValue);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -676,7 +727,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireModifyTimeChanged(long oldValue, long newValue) {
 		obversers.forEach(obverser -> {
-			obverser.fireModifyTimeChanged(oldValue, newValue);
+			try {
+				obverser.fireModifyTimeChanged(oldValue, newValue);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -690,7 +745,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireOccupiedSizeChanged(long oldValue, long newValue) {
 		obversers.forEach(obverser -> {
-			obverser.fireOccupiedSizeChanged(oldValue, newValue);
+			try {
+				obverser.fireOccupiedSizeChanged(oldValue, newValue);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -702,7 +761,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireOutputClosed(String label) {
 		obversers.forEach(obverser -> {
-			obverser.fireOutputClosed(label);
+			try {
+				obverser.fireOutputClosed(label);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -716,7 +779,26 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireOutputOpened(String label) {
 		obversers.forEach(obverser -> {
-			obverser.fireOutputOpened(label);
+			try {
+				obverser.fireOutputOpened(label);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	/**
+	 * 通知文件的处理器类发生了改变。
+	 * 
+	 * @param oldValue
+	 *            旧的处理器类。
+	 * @param newValue
+	 *            新的处理器类。
+	 */
+	protected void fireProcessorClassChanged(Class<? extends FileProcessor> oldValue,
+			Class<? extends FileProcessor> newValue) {
+		obversers.forEach(obverser -> {
+			obverser.fireProcessorClassChanged(oldValue, newValue);
 		});
 	}
 
@@ -728,7 +810,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireReadSupportedChanged(boolean newValue) {
 		obversers.forEach(obverser -> {
-			obverser.fireReadSupportedChanged(newValue);
+			try {
+				obverser.fireReadSupportedChanged(newValue);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -740,7 +826,11 @@ public abstract class RaeFile implements File {
 	 */
 	protected void fireWriteSupportedChanged(boolean newValue) {
 		obversers.forEach(obverser -> {
-			obverser.fireWriteSupportedChanged(newValue);
+			try {
+				obverser.fireWriteSupportedChanged(newValue);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 

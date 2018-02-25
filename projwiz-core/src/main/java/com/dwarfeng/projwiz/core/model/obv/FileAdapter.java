@@ -1,5 +1,7 @@
 package com.dwarfeng.projwiz.core.model.obv;
 
+import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
+
 /**
  * 文件观察器适配器。
  * 
@@ -9,19 +11,19 @@ package com.dwarfeng.projwiz.core.model.obv;
 public abstract class FileAdapter implements FileObverser {
 
 	@Override
+	public void fireAccessTimeChanged(long oldValue, long newValue) {
+	}
+
+	@Override
+	public void fireCreateTimeChanged(long oldValue, long newValue) {
+	}
+
+	@Override
 	public void fireInputClosed(String label) {
 	}
 
 	@Override
 	public void fireInputOpened(String label) {
-	}
-
-	@Override
-	public void fireOutputClosed(String label) {
-	}
-
-	@Override
-	public void fireOutputOpened(String label) {
 	}
 
 	@Override
@@ -33,15 +35,28 @@ public abstract class FileAdapter implements FileObverser {
 	}
 
 	@Override
+	public void fireLengthChanged(long oldValue, long newValue) {
+	}
+
+	@Override
 	public void fireModifyTimeChanged(long oldValue, long newValue) {
 	}
 
 	@Override
-	public void fireCreateTimeChanged(long oldValue, long newValue) {
+	public void fireOccupiedSizeChanged(long oldValue, long newValue) {
 	}
 
 	@Override
-	public void fireAccessTimeChanged(long oldValue, long newValue) {
+	public void fireOutputClosed(String label) {
+	}
+
+	@Override
+	public void fireOutputOpened(String label) {
+	}
+
+	@Override
+	public void fireProcessorClassChanged(Class<? extends FileProcessor> oldValue,
+			Class<? extends FileProcessor> newValue) {
 	}
 
 	@Override
@@ -50,14 +65,6 @@ public abstract class FileAdapter implements FileObverser {
 
 	@Override
 	public void fireWriteSupportedChanged(boolean newValue) {
-	}
-
-	@Override
-	public void fireLengthChanged(long oldValue, long newValue) {
-	}
-
-	@Override
-	public void fireOccupiedSizeChanged(long oldValue, long newValue) {
 	}
 
 }

@@ -12,6 +12,8 @@ import org.dom4j.io.SAXReader;
 
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.basic.io.StreamLoader;
+import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.util.IOUtil;
 
 /**
  * 忽略组件清单读取器。
@@ -19,7 +21,7 @@ import com.dwarfeng.dutil.basic.io.StreamLoader;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public final class IgnoredComponentLoader extends StreamLoader<Collection<String>> {
+public final class IgnoredComponentLoader extends StreamLoader<Collection<Class<?>>> {
 
 	private boolean readFlag = false;
 
@@ -39,7 +41,7 @@ public final class IgnoredComponentLoader extends StreamLoader<Collection<String
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void load(Collection<String> collection) throws LoadFailedException, IllegalStateException {
+	public void load(Collection<Class<?>> collection) throws LoadFailedException, IllegalStateException {
 		if (readFlag)
 			throw new IllegalStateException("读取器已经使用过了。");
 
@@ -58,13 +60,7 @@ public final class IgnoredComponentLoader extends StreamLoader<Collection<String
 			List<Element> infos = (List<Element>) root.elements("info");
 
 			for (Element info : infos) {
-				String key = info.attributeValue("key");
-
-				if (Objects.isNull(key)) {
-					throw new LoadFailedException("属性缺失。");
-				}
-
-				collection.add(key);
+				load0(collection, info);
 			}
 
 		} catch (Exception e) {
@@ -77,7 +73,7 @@ public final class IgnoredComponentLoader extends StreamLoader<Collection<String
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<LoadFailedException> countinuousLoad(Collection<String> collection) throws IllegalStateException {
+	public Set<LoadFailedException> countinuousLoad(Collection<Class<?>> collection) throws IllegalStateException {
 		if (readFlag)
 			throw new IllegalStateException("读取器已经使用过了。");
 
@@ -97,15 +93,8 @@ public final class IgnoredComponentLoader extends StreamLoader<Collection<String
 			List<Element> infos = (List<Element>) root.elements("info");
 
 			for (Element info : infos) {
-
 				try {
-					String key = info.attributeValue("key");
-
-					if (Objects.isNull(key)) {
-						throw new LoadFailedException("属性缺失。");
-					}
-
-					collection.add(key);
+					load0(collection, info);
 				} catch (Exception e) {
 					exceptions.add(new LoadFailedException("无法从资源管理器中读取指定数据。", e));
 				}
@@ -117,6 +106,11 @@ public final class IgnoredComponentLoader extends StreamLoader<Collection<String
 
 		return exceptions;
 
+	}
+
+	private void load0(Collection<Class<?>> collection, Element info) throws LoadFailedException {
+		Class<? extends Component> clazz = IOUtil.parseClass(info);
+		collection.add(clazz);
 	}
 
 }

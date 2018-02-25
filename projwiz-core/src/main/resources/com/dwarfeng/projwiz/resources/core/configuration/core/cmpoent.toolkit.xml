@@ -3,7 +3,7 @@
 <root>
 	<!--
 		使用如下格式
-		<info key="com.dwarfeng.projwiz.FOO">
+		<info class="com.dwarfeng.projwiz.FOO">
 			<toolkit perm-level="110">
 				<privilege>INFO</privilege>
 				<privilege>WARN</privilege>
@@ -11,7 +11,7 @@
 				<privilege>FATAL</privilege>
 			</toolkit>
 		</info>
-		<info key="com.dwarfeng.projwiz.BAR">
+		<info class="com.dwarfeng.projwiz.BAR">
 			<toolkit perm-level="110">
 				<privilege>INFO</privilege>
 				<privilege>WARN</privilege>

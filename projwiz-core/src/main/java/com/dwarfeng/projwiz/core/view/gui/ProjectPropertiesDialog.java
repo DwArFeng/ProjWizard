@@ -510,7 +510,7 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 
 		componentModel.getLock().readLock().lock();
 		try {
-			ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class).get(project.getComponentKey());
+			ProjectProcessor processor = componentModel.get(project.getProcessorClass());
 			if (Objects.nonNull(processor)
 					&& Objects.nonNull((propSuppiler = processor.getProjectPropSuppiler(project)))) {
 				Component component = null;

@@ -14,10 +14,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.dwarfeng.dutil.basic.cna.CollectionUtil;
-import com.dwarfeng.dutil.basic.cna.model.KeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.obv.MapObverser;
 import com.dwarfeng.dutil.basic.cna.model.obv.SetObverser;
-import com.dwarfeng.dutil.basic.prog.ReadOnlyGenerator;
 import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
@@ -25,7 +23,6 @@ import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.struct.Component;
-import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
 
 /**
@@ -35,6 +32,237 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
  * @since 0.0.1-alpha
  */
 public final class ModelUtil {
+
+	private static final class UnmodifiableComponentModel implements ComponentModel {
+
+		private final ComponentModel delegate;
+
+		public UnmodifiableComponentModel(ComponentModel delegate) {
+			this.delegate = delegate;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int size() {
+			return delegate.size();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isEmpty() {
+			return delegate.isEmpty();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean contains(Object o) {
+			return delegate.contains(o);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Iterator<Component> iterator() {
+			return CollectionUtil.unmodifiableIterator(delegate.iterator());
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Object[] toArray() {
+			return delegate.toArray();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public <T> T[] toArray(T[] a) {
+			return delegate.toArray(a);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean add(Component e) {
+			throw new UnsupportedOperationException("add");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean remove(Object o) {
+			throw new UnsupportedOperationException("remove");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsAll(Collection<?> c) {
+			return delegate.containsAll(c);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean addAll(Collection<? extends Component> c) {
+			throw new UnsupportedOperationException("addAll");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean retainAll(Collection<?> c) {
+			throw new UnsupportedOperationException("retainAll");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			throw new UnsupportedOperationException("removeAll");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException("clear");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<SetObverser<Component>> getObversers() {
+			return delegate.getObversers();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean addObverser(SetObverser<Component> obverser) {
+			throw new UnsupportedOperationException("addObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeObverser(SetObverser<Component> obverser) {
+			throw new UnsupportedOperationException("removeObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clearObverser() {
+			throw new UnsupportedOperationException("clearObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public <T extends Component> T get(Class<T> clazz) {
+			return delegate.get(clazz);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public <T extends Component> Collection<T> getSubs(Class<T> clazz) {
+			return delegate.getSubs(clazz);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsClass(Class<?> clazz) {
+			return delegate.contains(clazz);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsAllClass(Collection<Class<?>> c) {
+			return delegate.containsAllClass(c);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeClass(Class<?> clazz) {
+			throw new UnsupportedOperationException("removeClass");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeAllClass(Collection<Class<?>> c) {
+			throw new UnsupportedOperationException("removeAllClass");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean retainAllClass(Collection<Class<?>> c) {
+			throw new UnsupportedOperationException("retainAllClass");
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			}
+
+			if (obj == delegate) {
+				return true;
+			}
+
+			return delegate.equals(obj);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int hashCode() {
+			return delegate.hashCode();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String toString() {
+			return delegate.toString();
+		}
+
+	}
 
 	private static final class SyncComponentModelImpl implements SyncComponentModel {
 
@@ -141,10 +369,10 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean containsAllKey(Collection<?> c) {
+		public boolean containsAllClass(Collection<Class<?>> c) {
 			lock.readLock().lock();
 			try {
-				return delegate.containsAllKey(c);
+				return delegate.containsAllClass(c);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -154,10 +382,10 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean containsKey(Object key) {
+		public boolean containsClass(Class<?> clazz) {
 			lock.readLock().lock();
 			try {
-				return delegate.containsKey(key);
+				return delegate.containsClass(clazz);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -185,36 +413,10 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Component get(String key) {
+		public <T extends Component> T get(Class<T> clazz) {
 			lock.readLock().lock();
 			try {
-				return delegate.get(key);
-			} finally {
-				lock.readLock().unlock();
-			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public <T extends Component> T get(String key, Class<T> clas) throws ClassCastException, NullPointerException {
-			lock.readLock().lock();
-			try {
-				return delegate.get(key, clas);
-			} finally {
-				lock.readLock().unlock();
-			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public <T extends Component> KeySetModel<String, T> getAll(Class<T> clas) throws NullPointerException {
-			lock.readLock().lock();
-			try {
-				return delegate.getAll(clas);
+				return delegate.get(clazz);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -245,8 +447,27 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public <T extends Component> Collection<T> getSubs(Class<T> clazz) {
+			lock.readLock().lock();
+			try {
+				return delegate.getSubs(clazz);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public int hashCode() {
-			return delegate.hashCode();
+			lock.readLock().lock();
+			try {
+				return delegate.hashCode();
+
+			} finally {
+				lock.readLock().unlock();
+			}
 		}
 
 		/**
@@ -305,10 +526,10 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean removeAllKey(Collection<?> c) {
+		public boolean removeAllClass(Collection<Class<?>> c) {
 			lock.writeLock().lock();
 			try {
-				return delegate.removeAllKey(c);
+				return delegate.removeAllClass(c);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -318,10 +539,10 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean removeKey(Object key) {
+		public boolean removeClass(Class<?> clazz) {
 			lock.writeLock().lock();
 			try {
-				return delegate.removeKey(key);
+				return delegate.removeClass(clazz);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -357,10 +578,10 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean retainAllKey(Collection<?> c) {
+		public boolean retainAllClass(Collection<Class<?>> c) {
 			lock.writeLock().lock();
 			try {
-				return delegate.retainAllKey(c);
+				return delegate.retainAllClass(c);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -1273,25 +1494,6 @@ public final class ModelUtil {
 	}
 
 	/**
-	 * 根据指定的工程处理器和指定的只读生成器生成一个只读的工程处理器。
-	 * 
-	 * @param projectProcessorModel
-	 *            指定的工程处理器。
-	 * @param generator
-	 *            指定的只读生成器。
-	 * @return 根据指定的工程处理器和指定的只读生成器生成的只读工程处理器。
-	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
-	 */
-	public static KeySetModel<String, ProjectProcessor> readOnlyProjectProcessorModel(
-			KeySetModel<String, ProjectProcessor> projectProcessorModel,
-			ReadOnlyGenerator<ProjectProcessor> generator) {
-		Objects.requireNonNull(projectProcessorModel, "入口参数 projectProcessorModel 不能为 null。");
-
-		return com.dwarfeng.dutil.basic.cna.model.ModelUtil.readOnlyKeySetModel(projectProcessorModel, generator);
-	}
-
-	/**
 	 * 根据指定的组件模型生成一个线程安全的组件模型。
 	 * 
 	 * @param componentModel
@@ -1303,6 +1505,20 @@ public final class ModelUtil {
 	public static SyncComponentModel syncComponentModel(ComponentModel componentModel) {
 		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
 		return new SyncComponentModelImpl(componentModel);
+	}
+
+	/**
+	 * 根据指定的组件模型生成一个不可编辑的组件模型。
+	 * 
+	 * @param componentModel
+	 *            指定的组件模型。
+	 * @return 由指定的组件模型生成的不可编辑的组件模型。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	public static ComponentModel unmodifiableComponentModel(ComponentModel componentModel) {
+		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
+		return new UnmodifiableComponentModel(componentModel);
 	}
 
 	/**

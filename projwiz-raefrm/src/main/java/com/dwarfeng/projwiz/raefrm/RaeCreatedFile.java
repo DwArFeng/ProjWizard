@@ -9,6 +9,9 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.dwarfeng.dutil.basic.io.ByteBufferInputStream;
+import com.dwarfeng.dutil.basic.prog.Buildable;
+import com.dwarfeng.dutil.basic.str.Name;
+import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
@@ -22,6 +25,27 @@ import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
  */
 public class RaeCreatedFile extends RaeFile {
 
+	/**
+	 * 被创造文件的构造器。
+	 * 
+	 * @author DwArFeng
+	 * @since 0.0.3-alpha
+	 */
+	public static class Builder implements Buildable<RaeCreatedFile> {
+		
+		
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public RaeCreatedFile build() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
+
 	/** 标签-数据映射。 */
 	protected final Map<String, ByteBuffer> buffers;
 
@@ -30,52 +54,36 @@ public class RaeCreatedFile extends RaeFile {
 	/**
 	 * 新实例。
 	 * 
-	 * @param registerKey
-	 *            指定的注册键。
-	 * @param isFolder
-	 *            是否是文件夹。
-	 * @param name
-	 *            文件的名称。
 	 * @param buffers
 	 *            指定的缓冲映射。
+	 * @param isFolder
+	 *            是否为文件夹。
+	 * @param projprocToolkit
+	 *            对应的工程处理器的工具包。
+	 * @param fileType
+	 *            文件的类型。
+	 * @param processorClass
+	 *            文件的处理器类。
+	 * @param name
+	 *            文件的名称。
 	 * @param accessTime
-	 *            文件的访问时间。
+	 *            文件的接触时间。
 	 * @param createTime
 	 *            文件的创建时间。
 	 * @param modifyTime
 	 *            文件的编辑时间。
-	 * @param projprocToolkit
-	 *            对应的工程处理器的工具包。
+	 * @param obversers
+	 *            文件的观察器集合。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public RaeCreatedFile(String registerKey, boolean isFolder, String name, Map<String, ByteBuffer> buffers,
-			long accessTime, long createTime, long modifyTime, ProjProcToolkit projprocToolkit) {
-		super(registerKey, isFolder, name, accessTime, createTime, modifyTime, projprocToolkit);
+	protected RaeCreatedFile(Map<String, ByteBuffer> buffers, boolean isFolder, ProjProcToolkit projprocToolkit,
+			Name fileType, Class<? extends FileProcessor> processorClass, String name, long accessTime, long createTime,
+			long modifyTime, Set<FileObverser> obversers) {
+		super(isFolder, projprocToolkit, fileType, processorClass, name, accessTime, createTime, modifyTime, obversers);
 
 		Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
 		this.buffers = buffers;
-	}
-
-	/**
-	 * 新实例。
-	 * 
-	 * @param registerKey
-	 *            指定的注册键。
-	 * @param isFolder
-	 *            是否是文件夹。
-	 * @param name
-	 *            文件的名称
-	 * @param buffers
-	 *            指定的缓冲映射。
-	 * @param projprocToolkit
-	 *            对应的工程处理器的工具包。
-	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
-	 */
-	public RaeCreatedFile(String registerKey, boolean isFolder, String name, Map<String, ByteBuffer> buffers,
-			ProjProcToolkit projprocToolkit) {
-		this(registerKey, isFolder, name, buffers, -1, System.currentTimeMillis(), -1, projprocToolkit);
 	}
 
 	/**

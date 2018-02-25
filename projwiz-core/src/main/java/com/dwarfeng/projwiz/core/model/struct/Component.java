@@ -2,7 +2,6 @@ package com.dwarfeng.projwiz.core.model.struct;
 
 import java.awt.Image;
 
-import com.dwarfeng.dutil.basic.prog.WithKey;
 import com.dwarfeng.dutil.basic.str.Tag;
 import com.dwarfeng.dutil.basic.threads.ExternalReadWriteThreadSafe;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
@@ -22,7 +21,7 @@ import com.dwarfeng.projwiz.core.model.eum.IconVariability;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public interface Component extends WithKey<String>, ExternalReadWriteThreadSafe, Tag {
+public interface Component extends ExternalReadWriteThreadSafe, Tag {
 
 	/**
 	 * 当结束组件时进行的调度。

@@ -44,6 +44,7 @@ import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
+import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
@@ -290,7 +291,8 @@ public final class Constants {
 		}
 
 		@Override
-		public SyncMapModel<String, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException {
+		public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel()
+				throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getCmpoentToolkitModel");
 
 		}
@@ -298,6 +300,11 @@ public final class Constants {
 		@Override
 		public SyncComponentModel getComponentModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getComponentModel");
+		}
+
+		@Override
+		public SyncComponentModel getComponentModelReadOnly() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getComponentModelReadOnly");
 		}
 
 		@Override
@@ -606,6 +613,7 @@ public final class Constants {
 
 	}
 
+	/***/
 	/** 默认的，不执行任何动作的 GUI 管理器 */
 	public final static GuiManager DEFAULT_GUIMANAGER = new NonActionGuiManager();
 	/** 处理器默认的，没有权限的工具包。 */

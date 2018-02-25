@@ -57,7 +57,7 @@ final class NewFileTask extends ProjWizTask {
 
 		boolean emptyFlag = true;
 
-		for (FileProcessor processor : projWizard.getToolkit().getComponentModel().getAll(FileProcessor.class)) {
+		for (FileProcessor processor : projWizard.getToolkit().getComponentModel().getSubs(FileProcessor.class)) {
 			if (processor.isNewFileSupported()) {
 				emptyFlag = false;
 				break;
@@ -130,15 +130,15 @@ final class NewFileTask extends ProjWizTask {
 		if (Objects.isNull(actualAddedFile)) {
 			warn(LoggerStringKey.TASK_NEWFILE_0);
 			warn(LoggerStringKey.TASK_NEWFILE_1);
-			formatWarn(LoggerStringKey.TASK_NEWFILE_2, newFile.getComponentKey(), newFile.getName(),
+			formatWarn(LoggerStringKey.TASK_NEWFILE_2, newFile.getProcessorClass().getName(), newFile.getName(),
 					newFile.getClass().toString());
 			return;
 		}
 
 		info(LoggerStringKey.TASK_NEWFILE_5);
-		formatInfo(LoggerStringKey.TASK_NEWFILE_4, processor.getKey(), processor.getClass().toString());
+		formatInfo(LoggerStringKey.TASK_NEWFILE_4, processor.getClass().getName(), processor.getClass().toString());
 		info(LoggerStringKey.TASK_NEWFILE_3);
-		formatInfo(LoggerStringKey.TASK_NEWFILE_2, newFile.getComponentKey(), newFile.getName(),
+		formatInfo(LoggerStringKey.TASK_NEWFILE_2, newFile.getProcessorClass().getName(), newFile.getName(),
 				newFile.getClass().toString());
 
 		focusProjectModel.getLock().writeLock().lock();

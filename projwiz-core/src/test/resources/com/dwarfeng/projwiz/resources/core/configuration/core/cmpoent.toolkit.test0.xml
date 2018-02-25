@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <root>
-	<info key="com.dwarfeng.projwiz.test.Test2">
+	<info class="com.dwarfeng.projwiz.core.control.TestComonent3">
 		<toolkit perm-level="0">
 			<privilege>INFO</privilege>
 			<privilege>WARN</privilege>

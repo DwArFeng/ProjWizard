@@ -17,6 +17,7 @@ import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.io.CT;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
 
@@ -48,28 +49,28 @@ public class Test_LoadComponent {
 	public final void test() {
 		SyncComponentModel componentModel = projWizard.getToolkit().getComponentModel();
 		assertEquals(2, componentModel.size());
-		assertFalse(componentModel.containsKey("com.dwarfeng.projwiz.test.Test0"));
-		assertFalse(componentModel.containsKey(null));
-		assertTrue(componentModel.containsKey("com.dwarfeng.projwiz.test.Test1"));
-		assertTrue(componentModel.containsKey("com.dwarfeng.projwiz.test.Test2"));
+		assertFalse(componentModel.containsClass(TestComonent1.class));
+		assertFalse(componentModel.containsClass(null));
+		assertTrue(componentModel.containsClass(TestComonent2.class));
+		assertTrue(componentModel.containsClass(TestComonent3.class));
 
-		SyncMapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel = projWizard.getToolkit()
+		SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel = projWizard.getToolkit()
 				.getCmpoentToolkitModel();
 		CT.trace(Arrays.toString(cmpoentToolkitModel.keySet().toArray()));
 		assertEquals(2, cmpoentToolkitModel.size());
-		assertFalse(cmpoentToolkitModel.containsKey("com.dwarfeng.projwiz.test.Test0"));
-		assertTrue(cmpoentToolkitModel.containsKey("com.dwarfeng.projwiz.test.Test1"));
-		assertTrue(cmpoentToolkitModel.containsKey("com.dwarfeng.projwiz.test.Test2"));
-		assertNotNull(cmpoentToolkitModel.get("com.dwarfeng.projwiz.test.Test1").get());
-		assertNotNull(cmpoentToolkitModel.get("com.dwarfeng.projwiz.test.Test2").get());
+		assertFalse(cmpoentToolkitModel.containsKey(TestComonent1.class));
+		assertTrue(cmpoentToolkitModel.containsKey(TestComonent2.class));
+		assertTrue(cmpoentToolkitModel.containsKey(TestComonent3.class));
+		assertNotNull(cmpoentToolkitModel.get(TestComonent2.class).get());
+		assertNotNull(cmpoentToolkitModel.get(TestComonent3.class).get());
 
-		Toolkit toolkit1 = cmpoentToolkitModel.get("com.dwarfeng.projwiz.test.Test1").get();
+		Toolkit toolkit1 = cmpoentToolkitModel.get(TestComonent2.class).get();
 		assertTrue(toolkit1.hasPermission(Method.INFO));
 		assertTrue(toolkit1.hasPermission(Method.WARN));
 		assertFalse(toolkit1.hasPermission(Method.ERROR));
 		assertFalse(toolkit1.hasPermission(Method.FATAL));
-		
-		Toolkit toolkit2 = cmpoentToolkitModel.get("com.dwarfeng.projwiz.test.Test2").get();
+
+		Toolkit toolkit2 = cmpoentToolkitModel.get(TestComonent3.class).get();
 		assertTrue(toolkit2.hasPermission(Method.INFO));
 		assertTrue(toolkit2.hasPermission(Method.WARN));
 		assertTrue(toolkit2.hasPermission(Method.ERROR));

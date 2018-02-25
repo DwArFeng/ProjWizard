@@ -40,7 +40,7 @@ final class SaveAsFocusProjectTask extends ProjWizTask {
 		// 选择指定的工程处理器。
 		boolean emptyFlag = true;
 
-		for (ProjectProcessor processor : projWizard.getToolkit().getComponentModel().getAll(ProjectProcessor.class)) {
+		for (ProjectProcessor processor : projWizard.getToolkit().getComponentModel().getSubs(ProjectProcessor.class)) {
 			if (processor.isSaveProjectSupported()) {
 				emptyFlag = false;
 				break;
@@ -95,8 +95,8 @@ final class SaveAsFocusProjectTask extends ProjWizTask {
 							.setTitle(label(LabelStringKey.MSGDIA_29)).setDialogMessage(DialogMessage.WARNING_MESSAGE)
 							.build());
 			warn(LoggerStringKey.TASK_SAVEASPROJECT_0);
-			formatWarn(LoggerStringKey.TASK_SAVEASPROJECT_1, focusProject.getComponentKey(), focusProject.getName(),
-					focusProject.getClass().toString());
+			formatWarn(LoggerStringKey.TASK_SAVEASPROJECT_1, focusProject.getProcessorClass().getName(),
+					focusProject.getName(), focusProject.getClass().toString());
 			warn(LoggerStringKey.TASK_SAVEASPROJECT_2, e);
 			return;
 		}

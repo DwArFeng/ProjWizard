@@ -109,7 +109,7 @@ final class MfPanel_02 extends ProjWizPanel {
 			setText(fileNameMap.get(file));
 			Image image = null;
 			if (Objects.nonNull(componentModel)) {
-				FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getComponentKey());
+				FileProcessor processor = componentModel.get(file.getProcessorClass());
 				if (Objects.nonNull(processor)) {
 					image = processor.getFileIcon(file);
 				}

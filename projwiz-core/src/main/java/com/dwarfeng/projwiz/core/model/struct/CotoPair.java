@@ -15,7 +15,7 @@ import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
 public final class CotoPair {
 
 	private final ComponentModel componentModel;
-	private final MapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel;
+	private final MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel;
 
 	/**
 	 * 新实例。
@@ -27,7 +27,8 @@ public final class CotoPair {
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public CotoPair(ComponentModel componentModel, MapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel) {
+	public CotoPair(ComponentModel componentModel,
+			MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel) {
 		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
 		Objects.requireNonNull(cmpoentToolkitModel, "入口参数 cmpoentToolkitModel 不能为 null。");
 
@@ -45,7 +46,7 @@ public final class CotoPair {
 	/**
 	 * @return the cmpoentToolkitModel.
 	 */
-	public MapModel<String, ReferenceModel<Toolkit>> getCmpoentToolkitModel() {
+	public MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel() {
 		return cmpoentToolkitModel;
 	}
 

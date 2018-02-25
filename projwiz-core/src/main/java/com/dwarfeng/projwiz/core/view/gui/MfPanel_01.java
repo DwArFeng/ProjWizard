@@ -65,8 +65,7 @@ class MfPanel_01 extends ProjWizPanel {
 			setText(project.getName());
 			Image image = null;
 			if (Objects.nonNull(componentModel)) {
-				ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class)
-						.get(project.getComponentKey());
+				ProjectProcessor processor = componentModel.get(project.getProcessorClass());
 				if (Objects.nonNull(processor)) {
 					image = processor.getProjectIcon(project);
 				}

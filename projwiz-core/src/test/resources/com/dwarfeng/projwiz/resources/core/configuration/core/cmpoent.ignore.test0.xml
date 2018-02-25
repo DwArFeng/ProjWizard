@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <root>
-	<info key="com.dwarfeng.projwiz.test.Test0" />
+	<info class="com.dwarfeng.projwiz.core.control.TestComonent1" />
 </root>

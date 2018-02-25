@@ -23,6 +23,8 @@ public class FileUtil {
 	/**
 	 * 文件名称比较器。
 	 * 
+	 * TODO 更合理的实现方式。
+	 * 
 	 * @author DwArFeng
 	 * @since 0.0.1-alpha
 	 */
@@ -44,7 +46,7 @@ public class FileUtil {
 
 			int result = 0;
 
-			if ((result = o1.getComponentKey().compareTo(o2.getComponentKey())) != 0) {
+			if ((result = (o1.getProcessorClass().getName()).compareTo(o2.getProcessorClass().getName())) != 0) {
 				return result;
 			}
 

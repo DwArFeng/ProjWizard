@@ -31,6 +31,7 @@ import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
+import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
@@ -255,7 +256,8 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncMapModel<String, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException {
+	public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel()
+			throws IllegalStateException {
 		checkPermissionAndState(Method.WARN);
 		return standardToolkit.getCmpoentToolkitModel();
 	}
@@ -267,6 +269,15 @@ public final class LnpToolkit implements Toolkit {
 	public SyncComponentModel getComponentModel() throws IllegalStateException {
 		checkPermissionAndState(Method.GETCOMPONENTMODEL);
 		return standardToolkit.getComponentModel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ComponentModel getComponentModelReadOnly() throws IllegalStateException {
+		checkPermissionAndState(Method.GETCOMPONENTMODELREADONLY);
+		return standardToolkit.getComponentModelReadOnly();
 	}
 
 	/**

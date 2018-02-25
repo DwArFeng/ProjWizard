@@ -49,7 +49,7 @@ import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Component;
-import com.dwarfeng.projwiz.core.model.struct.ComponentKeyComparator;
+import com.dwarfeng.projwiz.core.model.struct.ComponentComparator;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.JListMouseListener4Selection;
 import com.dwarfeng.projwiz.core.view.struct.JListMouseMotionListener4Selection;
@@ -109,7 +109,7 @@ public final class ComponentSelectDialog extends ProjWizDialog implements Window
 		public void fireAdded(Component element) {
 			SwingUtil.invokeInEventQueue(() -> {
 				if (Objects.isNull(filter) || filter.accept(element)) {
-					CollectionUtil.insertByOrder(listModel, element, new ComponentKeyComparator());
+					CollectionUtil.insertByOrder(listModel, element, new ComponentComparator());
 				}
 			});
 		}
@@ -444,7 +444,7 @@ public final class ComponentSelectDialog extends ProjWizDialog implements Window
 			return;
 		}
 
-		Comparator<Component> c = new ComponentKeyComparator();
+		Comparator<Component> c = new ComponentComparator();
 
 		this.componentModel.getLock().readLock().lock();
 		try {
@@ -473,7 +473,7 @@ public final class ComponentSelectDialog extends ProjWizDialog implements Window
 			return;
 		}
 
-		Comparator<Component> c = new ComponentKeyComparator();
+		Comparator<Component> c = new ComponentComparator();
 
 		this.componentModel.getLock().readLock().lock();
 		try {
@@ -502,7 +502,7 @@ public final class ComponentSelectDialog extends ProjWizDialog implements Window
 			return;
 		}
 
-		Comparator<Component> c = new ComponentKeyComparator();
+		Comparator<Component> c = new ComponentComparator();
 
 		this.componentModel.getLock().readLock().lock();
 		try {

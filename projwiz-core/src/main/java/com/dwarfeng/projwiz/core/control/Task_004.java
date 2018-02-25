@@ -39,7 +39,7 @@ final class NewProjectTask extends ProjWizTask {
 
 		boolean emptyFlag = true;
 
-		for (ProjectProcessor processor : projWizard.getToolkit().getComponentModel().getAll(ProjectProcessor.class)) {
+		for (ProjectProcessor processor : projWizard.getToolkit().getComponentModel().getSubs(ProjectProcessor.class)) {
 			if (processor.isNewProjectSupported()) {
 				emptyFlag = false;
 				break;
@@ -84,7 +84,8 @@ final class NewProjectTask extends ProjWizTask {
 			project = processor.newProject();
 		} catch (ProcessException e) {
 			warn(LoggerStringKey.TASK_NEWPROJECT_0);
-			formatWarn(LoggerStringKey.TASK_NEWPROJECT_1, processor.getKey(), processor.getClass().toString());
+			formatWarn(LoggerStringKey.TASK_NEWPROJECT_1, processor.getClass().getName(),
+					processor.getClass().toString());
 			warn(LoggerStringKey.TASK_NEWPROJECT_2, e);
 			return;
 		}
@@ -103,9 +104,9 @@ final class NewProjectTask extends ProjWizTask {
 		}
 
 		info(LoggerStringKey.TASK_NEWPROJECT_3);
-		formatInfo(LoggerStringKey.TASK_NEWPROJECT_1, processor.getKey(), processor.getClass().toString());
+		formatInfo(LoggerStringKey.TASK_NEWPROJECT_1, processor.getClass().getName(), processor.getClass().toString());
 		info(LoggerStringKey.TASK_NEWPROJECT_5);
-		formatInfo(LoggerStringKey.TASK_NEWPROJECT_6, project.getComponentKey(), project.getName(),
+		formatInfo(LoggerStringKey.TASK_NEWPROJECT_6, project.getProcessorClass().getName(), project.getName(),
 				project.getClass().toString());
 
 		anchorFileModel.getLock().writeLock().lock();

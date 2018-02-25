@@ -60,8 +60,9 @@ import com.dwarfeng.dutil.develop.resource.DelegateResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceUtil;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
+import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.DefaultComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.DefaultToolkitPermModel;
-import com.dwarfeng.projwiz.core.model.cm.DelegateComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.ExternalWindowModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
@@ -76,6 +77,7 @@ import com.dwarfeng.projwiz.core.model.io.DefaultPluginClassLoader;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
+import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
@@ -690,7 +692,7 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncMapModel<String, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException {
+		public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException {
 			return cmpoentToolkitModel;
 		}
 
@@ -700,6 +702,14 @@ public final class ProjWizard {
 		@Override
 		public SyncComponentModel getComponentModel() throws IllegalStateException {
 			return componentModel;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ComponentModel getComponentModelReadOnly() throws IllegalStateException {
+			return ModelUtil.unmodifiableComponentModel(componentModel);
 		}
 
 		/**
@@ -1422,11 +1432,11 @@ public final class ProjWizard {
 	private final SyncMapModel<File, FileObverser> fileIconObvModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
 	// 组件模型
-	private final SyncComponentModel componentModel = ModelUtil.syncComponentModel(new DelegateComponentModel());
+	private final SyncComponentModel componentModel = ModelUtil.syncComponentModel(new DefaultComponentModel());
 	// 工具包权限模型
 	private final SyncToolkitPermModel toolkitPermModel = ModelUtil.syncToolkitPermModel(new DefaultToolkitPermModel());
 	// 组件-工具包引用模型
-	private final SyncMapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
+	private final SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
 
 	// --------------------------------------------控制--------------------------------------------

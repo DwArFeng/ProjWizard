@@ -42,7 +42,7 @@ final class OpenProjectTask extends ProjWizTask {
 
 		boolean emptyFlag = true;
 
-		for (ProjectProcessor processor : projWizard.getToolkit().getComponentModel().getAll(ProjectProcessor.class)) {
+		for (ProjectProcessor processor : projWizard.getToolkit().getComponentModel().getSubs(ProjectProcessor.class)) {
 			if (processor.isOpenProjectSupported()) {
 				emptyFlag = false;
 				break;
@@ -113,8 +113,8 @@ final class OpenProjectTask extends ProjWizTask {
 		}
 
 		info(LoggerStringKey.TASK_OPENPROJECT_0);
-		formatInfo(LoggerStringKey.TASK_OPENPROJECT_1, openedProject.getComponentKey(), openedProject.getName(),
-				openedProject.getClass().toString());
+		formatInfo(LoggerStringKey.TASK_OPENPROJECT_1, openedProject.getProcessorClass().getName(),
+				openedProject.getName(), openedProject.getClass().toString());
 
 		anchorFileModel.getLock().writeLock().lock();
 		focusEditorModel.getLock().writeLock().lock();

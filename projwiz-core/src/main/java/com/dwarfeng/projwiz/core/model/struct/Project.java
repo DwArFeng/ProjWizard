@@ -116,11 +116,11 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	public Tree<? extends File> getFileTree();
 
 	/**
-	 * 获得管理该工程的组件名称。
+	 * 获取管理该工程的工程处理器的类。
 	 * 
-	 * @return 管理该工程的组件名称。
+	 * @return 管理该工程的处理器的类。
 	 */
-	public String getComponentKey();
+	public Class<? extends ProjectProcessor> getProcessorClass();
 
 	/**
 	 * 询问该工程是否支持添加文件。

@@ -53,7 +53,7 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppiler {
 
 	private static final long serialVersionUID = -777552149357910518L;
-	
+
 	private final JButton cancelButton;
 	private final JButton applyButton;
 	private final JButton confirmButton;
@@ -786,7 +786,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 
 		componentModel.getLock().readLock().lock();
 		try {
-			ProjectProcessor processor = componentModel.getAll(ProjectProcessor.class).get(project.getComponentKey());
+			ProjectProcessor processor = componentModel.get(project.getProcessorClass());
 			if (Objects.nonNull(processor)
 					&& Objects.nonNull((propSuppilerFromProject = processor.getFilePropSuppiler(file)))) {
 				Component component = null;
@@ -803,7 +803,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 
 		componentModel.getLock().readLock().lock();
 		try {
-			FileProcessor processor = componentModel.getAll(FileProcessor.class).get(file.getComponentKey());
+			FileProcessor processor = componentModel.get(file.getProcessorClass());
 			if (Objects.nonNull(processor)
 					&& Objects.nonNull((propSuppilerFromFile = processor.getPropSuppiler(file)))) {
 				Component component = null;

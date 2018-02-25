@@ -3,7 +3,7 @@
 <root>
 	<!-- 
 	使用如下格式：
-		<info key="com.dwarfeng.projwiz.Foo.0" class="com.dwarfeng.projwiz.Foo">
+		<info class="com.dwarfeng.projwiz.Foo">
 			<toolkit perm-level="110">
 				<privilege>INFO</privilege>
 				<privilege>WARN</privilege>

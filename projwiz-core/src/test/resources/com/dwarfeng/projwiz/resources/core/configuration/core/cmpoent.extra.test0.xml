@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <root>
-	<info key="com.dwarfeng.projwiz.test.Test0" class="com.dwarfeng.projwiz.core.control.TestComponent">
+	<info class="com.dwarfeng.projwiz.core.control.TestComonent1">
 		<toolkit perm-level="0">
 		</toolkit>
 	</info>
-	<info key="com.dwarfeng.projwiz.test.Test1" class="com.dwarfeng.projwiz.core.control.TestComponent">
+	<info class="com.dwarfeng.projwiz.core.control.TestComonent2">
 		<toolkit perm-level="0">
 			<privilege>INFO</privilege>
 			<privilege>WARN</privilege>
 		</toolkit>
 	</info>
-	<info key="com.dwarfeng.projwiz.test.Test2" class="com.dwarfeng.projwiz.core.control.TestComponent">
+	<info class="com.dwarfeng.projwiz.core.control.TestComonent3">
 		<toolkit perm-level="0">
 			<privilege>INFO</privilege>
 			<privilege>WARN</privilege>
