@@ -3,9 +3,9 @@ package com.dwarfeng.projwiz.raefrm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -13,12 +13,12 @@ import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.MapTree;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
@@ -35,14 +35,16 @@ public abstract class RaeProject implements Project {
 	protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	/** 工程的观察器集合。 */
-	protected final Set<ProjectObverser> obversers = Collections.newSetFromMap(new WeakHashMap<>());
+	protected final Set<ProjectObverser> obversers;
 
-	/** 工程的注册键。 */
-	protected final String componentKey;
+	/** 该工程的处理器类。 */
+	protected final Class<? extends ProjectProcessor> processorClass;
 	/** 工程的名称。 */
 	protected final String name;
 	/** 抽象工程的工程树。 */
 	protected final Tree<File> fileTree;
+	/** Rae工程的文件名称映射。 */
+	protected final Map<File, String> fileNameMap;
 
 	/** 对应的工程处理器的工具包。 */
 	protected final ProjProcToolkit projprocToolkit;
@@ -50,41 +52,36 @@ public abstract class RaeProject implements Project {
 	/**
 	 * 新实例。
 	 * 
-	 * @param registerKey
-	 *            指定的注册键。
+	 * @param processorClass
+	 *            该工程的控制器类。
 	 * @param name
-	 *            工程的名称。
+	 *            该工程的名称。
+	 * @param fileTree
+	 *            该工程的文件树。
+	 * @param fileNameMap
+	 *            该工程的文件名称映射。
 	 * @param projprocToolkit
-	 *            对应的工程处理器的工具包。
+	 *            该工程的工程处理器工具包。
+	 * @param obversers
+	 *            该工程的观察器集合。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	protected RaeProject(String registerKey, String name, ProjProcToolkit projprocToolkit) {
-		this(registerKey, name, new MapTree<>(), projprocToolkit);
-	}
-
-	/**
-	 * 新实例。
-	 * 
-	 * @param registerKey
-	 *            指定的注册键。
-	 * @param name
-	 *            工程的名称。
-	 * @param projprocToolkit
-	 *            对应的工程处理器的工具包。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected RaeProject(String registerKey, String name, Tree<File> fileTree, ProjProcToolkit projprocToolkit) {
-		Objects.requireNonNull(registerKey, "入口参数 registerKey 不能为 null。");
+	protected RaeProject(Class<? extends ProjectProcessor> processorClass, String name, Tree<File> fileTree,
+			Map<File, String> fileNameMap, ProjProcToolkit projprocToolkit, Set<ProjectObverser> obversers) {
+		Objects.requireNonNull(processorClass, "入口参数 processorClass 不能为 null。");
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 		Objects.requireNonNull(fileTree, "入口参数 fileTree 不能为 null。");
+		Objects.requireNonNull(fileNameMap, "入口参数 fileNameMap 不能为 null。");
 		Objects.requireNonNull(projprocToolkit, "入口参数 projprocToolkit 不能为 null。");
+		Objects.requireNonNull(obversers);
 
-		this.componentKey = registerKey;
+		this.processorClass = processorClass;
 		this.name = name;
 		this.fileTree = fileTree;
+		this.fileNameMap = fileNameMap;
 		this.projprocToolkit = projprocToolkit;
+		this.obversers = obversers;
 	}
 
 	/**
@@ -125,8 +122,13 @@ public abstract class RaeProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getComponentKey() {
-		return componentKey;
+	public String getFileName(File file) {
+		lock.readLock().lock();
+		try {
+			return fileNameMap.getOrDefault(file, null);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -169,6 +171,14 @@ public abstract class RaeProject implements Project {
 		} finally {
 			lock.readLock().unlock();
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Class<? extends ProjectProcessor> getProcessorClass() {
+		return processorClass;
 	}
 
 	/**
@@ -262,7 +272,7 @@ public abstract class RaeProject implements Project {
 	}
 
 	/**
-	 * 通知指定的文件以复制的方式被添加。
+	 * 通知文件被添加。
 	 * 
 	 * @param path
 	 *            指定的文件所在的路径。
@@ -270,42 +280,16 @@ public abstract class RaeProject implements Project {
 	 *            指定文件的父节点。
 	 * @param file
 	 *            指定的文件。
+	 * @param situation
+	 *            文件的添加情形。
 	 */
-	protected void fireFileAddedByCopy(Tree.Path<File> path, File parent, File file) {
+	protected void fireFileAdded(Tree.Path<File> path, File parent, File file, Project.AddingSituation situation) {
 		obversers.forEach(obverser -> {
-			obverser.fireFileAddedByCopy(path, parent, file);
-		});
-	}
-
-	/**
-	 * 通知指定的文件以移动的方式被添加。
-	 * 
-	 * @param path
-	 *            指定的文件所在的路径。
-	 * @param parent
-	 *            指定文件的父节点。
-	 * @param file
-	 *            指定的文件。
-	 */
-	protected void fireFileAddedByMove(Tree.Path<File> path, File parent, File file) {
-		obversers.forEach(obverser -> {
-			obverser.fireFileAddedByMove(path, parent, file);
-		});
-	}
-
-	/**
-	 * 通知指定的文件以新建的方式被添加。
-	 * 
-	 * @param path
-	 *            指定的文件所在的路径。
-	 * @param parent
-	 *            指定文件的父节点。
-	 * @param file
-	 *            指定的文件。
-	 */
-	protected void fireFileAddedByNew(Tree.Path<File> path, File parent, File file) {
-		obversers.forEach(obverser -> {
-			obverser.fireFileAddedByNew(path, parent, file);
+			try {
+				obverser.fireFileAdded(path, parent, file, situation);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -318,26 +302,16 @@ public abstract class RaeProject implements Project {
 	 *            指定的文件的父节点。
 	 * @param file
 	 *            指定的文件。
+	 * @param situation
+	 *            文件的移除情形。
 	 */
-	protected void fireFileRemovedByDelete(Tree.Path<File> path, File parent, File file) {
+	protected void fireFileRemoved(Tree.Path<File> path, File parent, File file, Project.RemovingSituation situation) {
 		obversers.forEach(obverser -> {
-			obverser.fireFileRemovedByDelete(path, parent, file);
-		});
-	}
-
-	/**
-	 * 通知指定的文件以删除的方式被移除。
-	 * 
-	 * @param path
-	 *            指定的文件所在的路径。
-	 * @param parent
-	 *            指定的文件的父节点。
-	 * @param file
-	 *            指定的文件。
-	 */
-	protected void fireFileRemovedByMove(Tree.Path<File> path, File parent, File file) {
-		obversers.forEach(obverser -> {
-			obverser.fireFileRemovedByMove(path, parent, file);
+			try {
+				obverser.fireFileRemoved(path, parent, file, situation);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -355,7 +329,11 @@ public abstract class RaeProject implements Project {
 	 */
 	protected void fireFileRenamed(Path<File> path, File file, String oldName, String newName) {
 		obversers.forEach(obverser -> {
-			obverser.fireFileRenamed(path, file, oldName, newName);
+			try {
+				obverser.fireFileRenamed(path, file, oldName, newName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -364,7 +342,11 @@ public abstract class RaeProject implements Project {
 	 */
 	protected void fireSaved() {
 		obversers.forEach(obverser -> {
-			obverser.fireSaved();
+			try {
+				obverser.fireSaved();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 
@@ -373,7 +355,11 @@ public abstract class RaeProject implements Project {
 	 */
 	protected void fireStopped() {
 		obversers.forEach(obverser -> {
-			obverser.fireStopped();
+			try {
+				obverser.fireStopped();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 

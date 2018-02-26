@@ -49,7 +49,7 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
  */
 public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 
-	private static final long serialVersionUID = -641048304185280209L;
+	private static final long serialVersionUID = -251047540510364086L;
 
 	private final JTable focusTable;
 	private final JTable mapTable;
@@ -144,7 +144,7 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 				renderProject(this, (Project) value);
 				break;
 			case 1:
-				renderFile(this, (File) value);
+				renderFile(this, (Project) mapTableModel.getValueAt(row, 0), (File) value);
 				break;
 			case 2:
 				renderEditor(this, (Editor) value);
@@ -526,7 +526,7 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 
 	}
 
-	private void renderFile(JLabel label, File file) {
+	private void renderFile(JLabel label, Project project, File file) {
 		label.setText(null);
 		label.setIcon(null);
 		label.setToolTipText(null);
@@ -535,8 +535,8 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 			return;
 		}
 
-		label.setText(file.getName());
-		label.setToolTipText(file.getName());
+		label.setText(project.getFileName(file));
+		label.setToolTipText(project.getFileName(file));
 		Image image = null;
 		if (Objects.nonNull(componentModel)) {
 			FileProcessor processor = componentModel.get(file.getProcessorClass());

@@ -76,7 +76,7 @@ final class RenameAnchorFileTask extends ProjWizTask {
 			warn(LoggerStringKey.TASK_RENAMEFILE_0);
 			warn(LoggerStringKey.TASK_RENAMEFILE_1);
 			formatWarn(LoggerStringKey.TASK_RENAMEFILE_2, anchorFile.getProcessorClass().getName(),
-					anchorFile.getName(), anchorFile.getClass().toString());
+					focusProject.getFileName(anchorFile), anchorFile.getClass().toString());
 		}
 
 		anchorFileModel.getLock().writeLock().lock();
@@ -93,7 +93,7 @@ final class RenameAnchorFileTask extends ProjWizTask {
 
 	private boolean isFileNameRepetitionExists(Project project, File parentFile, String name) {
 		for (File file : project.getFileTree().getChilds(parentFile)) {
-			if (Objects.equals(name, file.getName())) {
+			if (Objects.equals(name, project.getFileName(file))) {
 				return true;
 			}
 		}

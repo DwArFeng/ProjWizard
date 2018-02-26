@@ -32,8 +32,6 @@ public class RaeCreatedFile extends RaeFile {
 	 * @since 0.0.3-alpha
 	 */
 	public static class Builder implements Buildable<RaeCreatedFile> {
-		
-		
 
 		/**
 		 * {@inheritDoc}
@@ -78,9 +76,9 @@ public class RaeCreatedFile extends RaeFile {
 	 *             入口参数为 <code>null</code>。
 	 */
 	protected RaeCreatedFile(Map<String, ByteBuffer> buffers, boolean isFolder, ProjProcToolkit projprocToolkit,
-			Name fileType, Class<? extends FileProcessor> processorClass, String name, long accessTime, long createTime,
+			Name fileType, Class<? extends FileProcessor> processorClass, long accessTime, long createTime,
 			long modifyTime, Set<FileObverser> obversers) {
-		super(isFolder, projprocToolkit, fileType, processorClass, name, accessTime, createTime, modifyTime, obversers);
+		super(isFolder, projprocToolkit, fileType, processorClass, accessTime, createTime, modifyTime, obversers);
 
 		Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
 		this.buffers = buffers;

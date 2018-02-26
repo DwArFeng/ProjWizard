@@ -101,9 +101,9 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
-	protected RaeFileProcessor(String key, ReferenceModel<? extends Toolkit> toolkitRef,
-			MetaDataStorage metaDataStorage, ConstantsProvider constantsProvider) throws ProcessException {
-		super(key, toolkitRef, metaDataStorage, constantsProvider);
+	protected RaeFileProcessor(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
+			ConstantsProvider constantsProvider) throws ProcessException {
+		super(toolkitRef, metaDataStorage, constantsProvider);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	public boolean canOpenFile(File file) {
 		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
 
-		if (file.getComponentKey().equals(getKey()))
+		if (file.getProcessorClass().equals(this.getClass()))
 			return true;
 		return false;
 	}

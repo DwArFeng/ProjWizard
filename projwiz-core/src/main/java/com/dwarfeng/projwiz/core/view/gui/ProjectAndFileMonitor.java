@@ -9,6 +9,10 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -54,7 +58,7 @@ import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
  */
 public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppiler {
 
-	private static final long serialVersionUID = -1595187740965306253L;
+	private static final long serialVersionUID = -8130855624060062411L;
 
 	private final JLabel label_1;
 	private final JLabel label_2;
@@ -71,6 +75,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	private SyncListModel<Project> holdProjectModel;
 	private SyncComponentModel componentModel;
 
+	// 将文件与名称存放在映射中，以向渲染器提供文件的名称。
+	private final Map<File, Project> fileProjectMap = new HashMap<>();
 	private final MuaListModel<Project> holdProjects = new MuaListModel<>();
 	private final MuaListModel<File> focusFiles = new MuaListModel<>();
 
@@ -113,7 +119,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			File file = (File) value;
 			if (Objects.isNull(file))
 				return this;
-			setText(file.getName());
+			setText(fileProjectMap.get(file).getFileName(file));
 			Image image = null;
 			if (Objects.nonNull(componentModel)) {
 				FileProcessor processor = componentModel.get(file.getProcessorClass());
@@ -162,7 +168,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 					} else {
 						label_6.setIcon(new ImageIcon(ImageUtil.scaleImage(image, ImageSize.ICON_SMALL)));
 					}
-					label_6.setText(newValue.getName());
+					label_6.setText(fileProjectMap.get(newValue).getFileName(newValue));
 				}
 			});
 		}
@@ -248,6 +254,9 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		public void fireAdded(int index, Project element) {
 			SwingUtil.invokeInEventQueue(() -> {
 				holdProjects.add(index, element);
+				for (File file : element.getFileTree()) {
+					fileProjectMap.put(file, element);
+				}
 			});
 		}
 
@@ -258,6 +267,18 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		public void fireChanged(int index, Project oldElement, Project newElement) {
 			SwingUtil.invokeInEventQueue(() -> {
 				holdProjects.set(index, newElement);
+
+				Collection<File> file2Remove = new HashSet<>();
+				for (Map.Entry<File, Project> entry : fileProjectMap.entrySet()) {
+					if (Objects.equals(oldElement, entry.getValue())) {
+						file2Remove.add(entry.getKey());
+					}
+				}
+				fileProjectMap.keySet().removeAll(file2Remove);
+
+				for (File file : newElement.getFileTree()) {
+					fileProjectMap.put(file, newElement);
+				}
 			});
 		}
 
@@ -268,6 +289,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		public void fireCleared() {
 			SwingUtil.invokeInEventQueue(() -> {
 				holdProjects.clear();
+				fileProjectMap.clear();
 			});
 		}
 
@@ -278,6 +300,14 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		public void fireRemoved(int index, Project element) {
 			SwingUtil.invokeInEventQueue(() -> {
 				holdProjects.remove(index);
+
+				Collection<File> file2Remove = new HashSet<>();
+				for (Map.Entry<File, Project> entry : fileProjectMap.entrySet()) {
+					if (Objects.equals(element, entry.getValue())) {
+						file2Remove.add(entry.getKey());
+					}
+				}
+				fileProjectMap.keySet().removeAll(file2Remove);
 			});
 		}
 
@@ -628,17 +658,18 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		// TODO 此处对于fileProcessorModel的处理不是太好。
 		anchorFileModel.getLock().readLock().lock();
 		try {
-			if (Objects.nonNull(anchorFileModel.get())) {
+			File anchorFile = anchorFileModel.get();
+			if (Objects.nonNull(anchorFile)) {
 				FileProcessor processor = Objects.isNull(componentModel) ? null
-						: componentModel.get(anchorFileModel.get().getProcessorClass());
-				Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFileModel.get());
+						: componentModel.get(anchorFile.getProcessorClass());
+				Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFile);
 				if (Objects.isNull(image)) {
 					label_6.setIcon(new ImageIcon(
 							ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
 				} else {
 					label_6.setIcon(new ImageIcon(ImageUtil.scaleImage(image, ImageSize.ICON_SMALL)));
 				}
-				label_6.setText(anchorFileModel.get().getName());
+				label_6.setText(fileProjectMap.get(anchorFile).getFileName(anchorFile));
 			}
 		} finally {
 			anchorFileModel.getLock().readLock().unlock();
@@ -659,7 +690,9 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			return;
 		}
 
-		if (Objects.isNull(anchorFileModel.get())) {
+		File anchorFile = anchorFileModel.get();
+
+		if (Objects.isNull(anchorFile)) {
 			return;
 		}
 
@@ -673,15 +706,15 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			projectList.repaint();
 
 			FileProcessor processor = Objects.isNull(componentModel) ? null
-					: componentModel.get(anchorFileModel.get().getProcessorClass());
-			Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFileModel.get());
+					: componentModel.get(anchorFile.getProcessorClass());
+			Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFile);
 			if (Objects.isNull(image)) {
 				label_6.setIcon(
 						new ImageIcon(ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
 			} else {
 				label_6.setIcon(new ImageIcon(ImageUtil.scaleImage(image, ImageSize.ICON_SMALL)));
 			}
-			label_6.setText(anchorFileModel.get().getName());
+			label_6.setText(fileProjectMap.get(anchorFile).getFileName(anchorFile));
 		} finally {
 			componentModel.getLock().readLock().unlock();
 		}
@@ -739,6 +772,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 
 	private void syncHoldProjectModel() {
 		holdProjects.clear();
+		fileProjectMap.clear();
 
 		if (Objects.isNull(holdProjectModel)) {
 			return;
@@ -748,6 +782,9 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		try {
 			for (Project project : holdProjectModel) {
 				holdProjects.add(project);
+				for (File file : project.getFileTree()) {
+					fileProjectMap.put(file, project);
+				}
 			}
 		} finally {
 			holdProjectModel.getLock().readLock().unlock();
@@ -761,6 +798,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		label_5.setText("null");
 		label_6.setIcon(null);
 		label_6.setText("null");
+		fileProjectMap.clear();
 
 		if (Objects.isNull(anchorFileModel)) {
 			return;
@@ -785,34 +823,40 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 		componentModel.getLock().readLock().lock();
 		try {
 
-			if (Objects.nonNull(focusProjectModel.get())) {
+			Project focusProject = focusProjectModel.get();
+			if (Objects.nonNull(focusProject)) {
 				ProjectProcessor processor = Objects.isNull(componentModel) ? null
-						: componentModel.get(focusProjectModel.get().getProcessorClass());
-				Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(focusProjectModel.get());
+						: componentModel.get(focusProject.getProcessorClass());
+				Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(focusProject);
 				if (Objects.isNull(image)) {
 					label_5.setIcon(new ImageIcon(
 							ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
 				} else {
 					label_5.setIcon(new ImageIcon(ImageUtil.scaleImage(image, ImageSize.ICON_SMALL)));
 				}
-				label_5.setText(focusProjectModel.get().getName());
+				label_5.setText(focusProject.getName());
 			}
 
-			if (Objects.nonNull(anchorFileModel.get())) {
+			File anchorFile = anchorFileModel.get();
+			if (Objects.nonNull(anchorFile)) {
 				FileProcessor processor = Objects.isNull(componentModel) ? null
-						: componentModel.get(anchorFileModel.get().getProcessorClass());
-				Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFileModel.get());
+						: componentModel.get(anchorFile.getProcessorClass());
+				Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFile);
 				if (Objects.isNull(image)) {
 					label_6.setIcon(new ImageIcon(
 							ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_SMALL)));
 				} else {
 					label_6.setIcon(new ImageIcon(ImageUtil.scaleImage(image, ImageSize.ICON_SMALL)));
 				}
-				label_6.setText(anchorFileModel.get().getName());
+
+				label_6.setText(fileProjectMap.get(anchorFile).getFileName(anchorFile));
 			}
 
 			for (Project project : holdProjectModel) {
 				holdProjects.add(project);
+				for (File file : project.getFileTree()) {
+					fileProjectMap.put(file, project);
+				}
 			}
 
 			for (File file : focusFileModel) {

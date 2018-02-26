@@ -55,6 +55,8 @@ import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.model.struct.Project.AddingSituation;
+import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.util.SwingTreeUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager.ExecType;
@@ -357,7 +359,7 @@ final class MfPanel_02 extends ProjWizPanel {
 							try {
 								project.addObverser(projectObverser);
 								project.getFileTree().forEach(file -> {
-									fileNameMap.put(file, file.getName());
+									fileNameMap.put(file, project.getFileName(file));
 								});
 								rootRef.set(SwingTreeUtil.newTreeNodeFromTree(project.getFileTree()));
 							} finally {
@@ -411,40 +413,53 @@ final class MfPanel_02 extends ProjWizPanel {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void fireFileAddedByCopy(Path<File> path, File parent, File file) {
-			fireAdded(path, parent, file);
+		public void fireFileAdded(Path<File> path, File parent, File file, AddingSituation situation) {
+			SwingUtil.invokeInEventQueue(() -> {
+				adjustFlag = true;
+				try {
+					fileNameMap.put(file, project.getFileName(file));
+
+					TreePath parentTreePath = SwingTreeUtil.findTreePath(project.getFileTree().getPath(parent),
+							(DefaultMutableTreeNode) treeModel.getRoot());
+
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) parentTreePath.getLastPathComponent();
+					SwingTreeUtil.insertTreeNodeByOrder(node, new DefaultMutableTreeNode(file));
+
+					treeModel.reload(node);
+				} finally {
+					adjustFlag = false;
+				}
+
+			});
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void fireFileAddedByMove(Path<File> path, File parent, File file) {
-			fireAdded(path, parent, file);
-		}
+		public void fireFileRemoved(Path<File> path, File parent, File file, RemovingSituation situation) {
+			SwingUtil.invokeInEventQueue(() -> {
+				adjustFlag = true;
+				try {
+					fileNameMap.remove(file);
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileAddedByNew(Path<File> path, File parent, File file) {
-			fireAdded(path, parent, file);
-		}
+					TreePath parentTreePath = SwingTreeUtil.findTreePath(project.getFileTree().getPath(parent),
+							(DefaultMutableTreeNode) treeModel.getRoot());
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileRemovedByDelete(Path<File> path, File parent, File file) {
-			fireRemoved(path, parent, file);
-		}
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) parentTreePath.getLastPathComponent();
+					for (int i = 0; i < node.getChildCount(); i++) {
+						if (Objects.equals(((DefaultMutableTreeNode) node.getChildAt(i)).getUserObject(), file)) {
+							node.remove(i);
+							break;
+						}
+					}
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileRemovedByMove(Path<File> path, File parent, File file) {
-			fireRemoved(path, parent, file);
+					treeModel.reload(node);
+				} finally {
+					adjustFlag = false;
+				}
+
+			});
 		}
 
 		/**
@@ -473,51 +488,6 @@ final class MfPanel_02 extends ProjWizPanel {
 
 					tree.getSelectionModel().setSelectionPaths(selectedPaths);
 					tree.setAnchorSelectionPath(anchorPath);
-				} finally {
-					adjustFlag = false;
-				}
-
-			});
-		}
-
-		private void fireAdded(Path<File> path, File parent, File file) {
-			SwingUtil.invokeInEventQueue(() -> {
-				adjustFlag = true;
-				try {
-					fileNameMap.put(file, file.getName());
-
-					TreePath parentTreePath = SwingTreeUtil.findTreePath(project.getFileTree().getPath(parent),
-							(DefaultMutableTreeNode) treeModel.getRoot());
-
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) parentTreePath.getLastPathComponent();
-					SwingTreeUtil.insertTreeNodeByOrder(node, new DefaultMutableTreeNode(file));
-
-					treeModel.reload(node);
-				} finally {
-					adjustFlag = false;
-				}
-
-			});
-		}
-
-		private void fireRemoved(Path<File> path, File parent, File file) {
-			SwingUtil.invokeInEventQueue(() -> {
-				adjustFlag = true;
-				try {
-					fileNameMap.remove(file);
-
-					TreePath parentTreePath = SwingTreeUtil.findTreePath(project.getFileTree().getPath(parent),
-							(DefaultMutableTreeNode) treeModel.getRoot());
-
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) parentTreePath.getLastPathComponent();
-					for (int i = 0; i < node.getChildCount(); i++) {
-						if (Objects.equals(((DefaultMutableTreeNode) node.getChildAt(i)).getUserObject(), file)) {
-							node.remove(i);
-							break;
-						}
-					}
-
-					treeModel.reload(node);
 				} finally {
 					adjustFlag = false;
 				}
@@ -994,7 +964,7 @@ final class MfPanel_02 extends ProjWizPanel {
 
 				try {
 					project.getFileTree().forEach(file -> {
-						fileNameMap.put(file, file.getName());
+						fileNameMap.put(file, project.getFileName(file));
 					});
 					treeModel.setRoot(SwingTreeUtil.newTreeNodeFromTree(this.project.getFileTree()));
 				} finally {

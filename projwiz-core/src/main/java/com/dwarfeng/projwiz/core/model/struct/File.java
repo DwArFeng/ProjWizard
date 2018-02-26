@@ -56,7 +56,7 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public interface File extends Name, ExternalReadWriteThreadSafe, ObverserSet<FileObverser> {
+public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObverser> {
 
 	/**
 	 * 返回该注册类下指定文件是否允许指定键对应的注册类在其中。

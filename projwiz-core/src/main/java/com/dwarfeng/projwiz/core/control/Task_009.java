@@ -110,27 +110,12 @@ final class NewFileTask extends ProjWizTask {
 			parentFile = focusProject.getFileTree().getParent(anchorFile);
 		}
 
-		// 检查 parentFile 中是否已经存在与 newFile 名称相同的文件。
-		parentFile.getLock().readLock().lock();
-		try {
-			if (isFileNameRepetitionExists(focusProject, parentFile, newFile.getName())) {
-				projWizard.getToolkit()
-						.showMessageDialog(new MessageDialogSetting.Builder()
-								.setMessage(formatLabel(LabelStringKey.MSGDIA_37, newFile.getName()))
-								.setTitle(label(LabelStringKey.MSGDIA_13))
-								.setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
-				return;
-			}
-		} finally {
-			parentFile.getLock().readLock().unlock();
-		}
-
 		File actualAddedFile = focusProject.addFile(parentFile, newFile, Project.AddingSituation.BY_NEW);
 
 		if (Objects.isNull(actualAddedFile)) {
 			warn(LoggerStringKey.TASK_NEWFILE_0);
 			warn(LoggerStringKey.TASK_NEWFILE_1);
-			formatWarn(LoggerStringKey.TASK_NEWFILE_2, newFile.getProcessorClass().getName(), newFile.getName(),
+			formatWarn(LoggerStringKey.TASK_NEWFILE_2, newFile.getProcessorClass().getName(),
 					newFile.getClass().toString());
 			return;
 		}
@@ -138,7 +123,7 @@ final class NewFileTask extends ProjWizTask {
 		info(LoggerStringKey.TASK_NEWFILE_5);
 		formatInfo(LoggerStringKey.TASK_NEWFILE_4, processor.getClass().getName(), processor.getClass().toString());
 		info(LoggerStringKey.TASK_NEWFILE_3);
-		formatInfo(LoggerStringKey.TASK_NEWFILE_2, newFile.getProcessorClass().getName(), newFile.getName(),
+		formatInfo(LoggerStringKey.TASK_NEWFILE_2, newFile.getProcessorClass().getName(),
 				newFile.getClass().toString());
 
 		focusProjectModel.getLock().writeLock().lock();
@@ -153,12 +138,4 @@ final class NewFileTask extends ProjWizTask {
 		}
 	}
 
-	private boolean isFileNameRepetitionExists(Project project, File parentFile, String name) {
-		for (File file : project.getFileTree().getChilds(parentFile)) {
-			if (Objects.equals(name, file.getName())) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

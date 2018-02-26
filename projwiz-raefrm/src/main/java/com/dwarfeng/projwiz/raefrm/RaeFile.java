@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -281,8 +280,6 @@ public abstract class RaeFile implements File {
 
 	/** 文件的处理器类。 */
 	protected Class<? extends FileProcessor> processorClass;
-	/** 文件的名称。 */
-	protected String name;
 	/** 文件的访问时间。 */
 	protected long accessTime;
 	/** 文件的创建时间。 */
@@ -315,18 +312,16 @@ public abstract class RaeFile implements File {
 	 *             入口参数为 <code>null</code>。
 	 */
 	protected RaeFile(boolean isFolder, ProjProcToolkit projprocToolkit, Name fileType,
-			Class<? extends FileProcessor> processorClass, String name, long accessTime, long createTime,
-			long modifyTime, Set<FileObverser> obversers) {
+			Class<? extends FileProcessor> processorClass, long accessTime, long createTime, long modifyTime,
+			Set<FileObverser> obversers) {
 		Objects.requireNonNull(projprocToolkit, "入口参数 projprocToolkit 不能为 null。");
 		Objects.requireNonNull(fileType, "入口参数 fileType 不能为 null。");
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 		Objects.requireNonNull(obversers, "入口参数 obversers 不能为 null。");
 
 		this.isFolder = isFolder;
 		this.projprocToolkit = projprocToolkit;
 		this.fileType = fileType;
 		this.processorClass = processorClass;
-		this.name = name;
 		this.accessTime = accessTime;
 		this.createTime = createTime;
 		this.modifyTime = modifyTime;
@@ -466,19 +461,6 @@ public abstract class RaeFile implements File {
 		lock.readLock().lock();
 		try {
 			return modifyTime;
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		lock.readLock().lock();
-		try {
-			return name;
 		} finally {
 			lock.readLock().unlock();
 		}

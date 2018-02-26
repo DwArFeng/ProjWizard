@@ -12,6 +12,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.RaeProjectProcessor;
+import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 
 /**
  * 
@@ -28,21 +29,22 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 	 * @return
 	 * @throws ProcessException
 	 */
-	public static MemoryProjectProcessor newInstance(String key, ReferenceModel<Toolkit> toolkitRef,
+	public static MemoryProjectProcessor newInstance(ReferenceModel<Toolkit> toolkitRef,
 			MetaDataStorage metaDataStorage) throws ProcessException {
-		return new MemoryProjectProcessor(key, toolkitRef, metaDataStorage);
+		return new MemoryProjectProcessor(toolkitRef, metaDataStorage, new MeppConstantsProvider());
 	}
 
 	/**
 	 * 
-	 * @param key
 	 * @param toolkitRef
 	 * @param metaDataStorage
+	 * @param constantsProvider
 	 * @throws ProcessException
 	 */
-	protected MemoryProjectProcessor(String key, ReferenceModel<? extends Toolkit> toolkitRef,
-			MetaDataStorage metaDataStorage) throws ProcessException {
-		super(key, toolkitRef, metaDataStorage, new MeppConstantsProvider());
+	public MemoryProjectProcessor(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
+			ConstantsProvider constantsProvider) throws ProcessException {
+		super(toolkitRef, metaDataStorage, constantsProvider);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**

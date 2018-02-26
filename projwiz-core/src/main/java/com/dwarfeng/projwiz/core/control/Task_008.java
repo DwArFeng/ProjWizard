@@ -103,7 +103,7 @@ final class OpenProjectTask extends ProjWizTask {
 		}
 
 		// 判断openedProject中是否有重名文件。
-		File repeditionFile = checkNameRepetition(openedProject.getFileTree());
+		File repeditionFile = checkNameRepetition(openedProject, openedProject.getFileTree());
 		if (Objects.nonNull(repeditionFile)) {
 			projWizard.getToolkit().showMessageDialog(new MessageDialogSetting.Builder()
 					.setMessage(
@@ -154,7 +154,7 @@ final class OpenProjectTask extends ProjWizTask {
 		return false;
 	}
 
-	private File checkNameRepetition(Tree<? extends File> fileTree) {
+	private File checkNameRepetition(Project project, Tree<? extends File> fileTree) {
 		// 如果 fileTree 是 null 的话，直接返回 null。
 		if (Objects.isNull(fileTree)) {
 			return null;
@@ -168,10 +168,10 @@ final class OpenProjectTask extends ProjWizTask {
 		// 如果fileTree的根元素中含有子元素，判断子元素是否有重名，有的话，返回 fileTree 的根元素。
 		Set<String> nameSet = new HashSet<>();
 		for (File file : fileTree.getChilds(fileTree.getRoot())) {
-			if (nameSet.contains(file.getName())) {
+			if (nameSet.contains(project.getFileName(file))) {
 				return fileTree.getRoot();
 			} else {
-				nameSet.add(file.getName());
+				nameSet.add(project.getFileName(file));
 			}
 		}
 
@@ -179,7 +179,7 @@ final class OpenProjectTask extends ProjWizTask {
 		for (File file : fileTree.getChilds(fileTree.getRoot())) {
 			Tree<? extends File> subTree = fileTree.subTree(file);
 			File repetition = null;
-			if (Objects.nonNull(repetition = checkNameRepetition(subTree))) {
+			if (Objects.nonNull(repetition = checkNameRepetition(project, subTree))) {
 				return repetition;
 			}
 		}

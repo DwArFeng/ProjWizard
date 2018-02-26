@@ -158,7 +158,8 @@ final class TryCloseCertainProjectTask extends ProjWizTask {
 							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			warn(LoggerStringKey.TASK_TRYCLOSEPROJECT_2);
 			formatWarn(LoggerStringKey.TASK_TRYCLOSEPROJECT_3, refuseEdior.getTitle(),
-					refuseEdior.getEditProject().getName(), refuseEdior.getEditFile().getName());
+					refuseEdior.getEditProject().getName(),
+					refuseEdior.getEditProject().getFileName(refuseEdior.getEditFile()));
 			return;
 		}
 
@@ -322,7 +323,8 @@ final class TryCloseAllProjectTask extends ProjWizTask {
 							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			warn(LoggerStringKey.TASK_TRYCLOSEPROJECT_2);
 			formatWarn(LoggerStringKey.TASK_TRYCLOSEPROJECT_3, refuseEdior.getTitle(),
-					refuseEdior.getEditProject().getName(), refuseEdior.getEditFile().getName());
+					refuseEdior.getEditProject().getName(),
+					refuseEdior.getEditProject().getFileName(refuseEdior.getEditFile()));
 			return;
 		}
 
@@ -451,7 +453,8 @@ final class TryCloseFocusProjectTask extends ProjWizTask {
 							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 			warn(LoggerStringKey.TASK_TRYCLOSEPROJECT_2);
 			formatWarn(LoggerStringKey.TASK_TRYCLOSEPROJECT_3, refuseEdior.getTitle(),
-					refuseEdior.getEditProject().getName(), refuseEdior.getEditFile().getName());
+					refuseEdior.getEditProject().getName(),
+					refuseEdior.getEditProject().getFileName(refuseEdior.getEditFile()));
 			return;
 		}
 

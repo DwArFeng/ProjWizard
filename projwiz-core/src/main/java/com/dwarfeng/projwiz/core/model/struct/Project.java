@@ -107,6 +107,20 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	public File addFile(File parent, File file, AddingSituation situation);
 
 	/**
+	 * 获取工程中指定文件的名称。
+	 * 
+	 * <p>
+	 * 如果工程中不存在指定的文件，则返回 <code>null</code>.
+	 * 
+	 * @param file
+	 *            指定的文件。
+	 * @return 指定的文件对应的名称。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	public String getFileName(File file);
+
+	/**
 	 * 获取工程接口的文件树。
 	 * <p>
 	 * 返回的树是不可编辑的。

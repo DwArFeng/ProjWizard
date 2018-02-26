@@ -148,7 +148,7 @@ public abstract class RaeEditor implements Editor {
 	 */
 	@Override
 	public String getTitle() {
-		return String.format("%s_%s", editProject.getName(), editFile.getName());
+		return String.format("%s_%s", editProject.getName(), editProject.getFileName(editFile));
 	}
 
 	/**

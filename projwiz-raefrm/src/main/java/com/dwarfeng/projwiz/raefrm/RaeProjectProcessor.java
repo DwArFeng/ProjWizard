@@ -99,9 +99,9 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
-	protected RaeProjectProcessor(String key, ReferenceModel<? extends Toolkit> toolkitRef,
-			MetaDataStorage metaDataStorage, ConstantsProvider constantsProvider) throws ProcessException {
-		super(key, toolkitRef, metaDataStorage, constantsProvider);
+	protected RaeProjectProcessor(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
+			ConstantsProvider constantsProvider) throws ProcessException {
+		super(toolkitRef, metaDataStorage, constantsProvider);
 	}
 
 	/**

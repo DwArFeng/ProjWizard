@@ -92,7 +92,6 @@ public enum LabelStringKey implements Name {
 	MSGDIA_34(new DefaultName("msgdia.34")), //
 	MSGDIA_35(new DefaultName("msgdia.35")), //
 	MSGDIA_36(new DefaultName("msgdia.36")), //
-	MSGDIA_37(new DefaultName("msgdia.37")), //
 	MSGDIA_38(new DefaultName("msgdia.38")), //
 	MSGDIA_39(new DefaultName("msgdia.39")), //
 

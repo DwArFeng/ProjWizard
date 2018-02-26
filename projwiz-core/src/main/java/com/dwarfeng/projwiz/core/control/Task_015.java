@@ -30,7 +30,7 @@ final class TryStopCertainEditorTask extends ProjWizTask {
 		if (!editor.isStopSuggest()) {
 			info(LoggerStringKey.TASK_TRYSTOPEDITOR_0);
 			formatInfo(LoggerStringKey.TASK_TRYSTOPEDITOR_1, editor.getTitle(), editor.getEditProject().getName(),
-					editor.getEditFile().getName());
+					editor.getEditProject().getFileName(editor.getEditFile()));
 			return;
 		}
 
@@ -97,7 +97,8 @@ final class TryStopFocusProjectEditorTask extends ProjWizTask {
 				if (!editor.isStopSuggest()) {
 					info(LoggerStringKey.TASK_TRYSTOPEDITOR_0);
 					formatInfo(LoggerStringKey.TASK_TRYSTOPEDITOR_1, editor.getTitle(),
-							editor.getEditProject().getName(), editor.getEditFile().getName());
+							editor.getEditProject().getName(),
+							editor.getEditProject().getFileName(editor.getEditFile()));
 					return;
 				}
 
@@ -159,7 +160,8 @@ final class TryStopFocusEditorTask extends ProjWizTask {
 		if (!focusEditor.isStopSuggest()) {
 			info(LoggerStringKey.TASK_TRYSTOPEDITOR_0);
 			formatInfo(LoggerStringKey.TASK_TRYSTOPEDITOR_1, focusEditor.getTitle(),
-					focusEditor.getEditProject().getName(), focusEditor.getEditFile().getName());
+					focusEditor.getEditProject().getName(),
+					focusEditor.getEditProject().getFileName(focusEditor.getEditFile()));
 			return;
 		}
 

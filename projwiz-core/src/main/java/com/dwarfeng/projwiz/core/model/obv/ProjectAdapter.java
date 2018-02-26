@@ -2,6 +2,8 @@ package com.dwarfeng.projwiz.core.model.obv;
 
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.struct.File;
+import com.dwarfeng.projwiz.core.model.struct.Project.AddingSituation;
+import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 
 /**
  * 工程观察器适配器。
@@ -12,23 +14,11 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 public abstract class ProjectAdapter implements ProjectObverser {
 
 	@Override
-	public void fireFileAddedByCopy(Path<File> path, File parent, File file) {
+	public void fireFileAdded(Path<File> path, File parent, File file, AddingSituation situation) {
 	}
 
 	@Override
-	public void fireFileAddedByMove(Path<File> path, File parent, File file) {
-	}
-
-	@Override
-	public void fireFileAddedByNew(Path<File> path, File parent, File file) {
-	}
-
-	@Override
-	public void fireFileRemovedByDelete(Path<File> path, File parent, File file) {
-	}
-
-	@Override
-	public void fireFileRemovedByMove(Path<File> path, File parent, File file) {
+	public void fireFileRemoved(Path<File> path, File parent, File file, RemovingSituation situation) {
 	}
 
 	@Override

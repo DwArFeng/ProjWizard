@@ -153,20 +153,21 @@ final class DeleteFocusFileTask extends ProjWizTask {
 		}
 
 		if (!removeAllFlag) {
-			formatInfo(LoggerStringKey.TASK_DELETEFILE_0, file.getName());
+			formatInfo(LoggerStringKey.TASK_DELETEFILE_0, focusProject.getFileName(file));
 			failedCounter.set(failedCounter.get() + 1);
 			return false;
 		}
 
 		removeFlags.put(file, true);
 
+		String fileName = focusProject.getFileName(file);
 		File removedFile = focusProject.removeFile(file, Project.RemovingSituation.BY_DELETE);
 
 		if (Objects.nonNull(removedFile)) {
-			formatInfo(LoggerStringKey.TASK_DELETEFILE_1, file.getName());
+			formatInfo(LoggerStringKey.TASK_DELETEFILE_1, fileName);
 			return true;
 		} else {
-			formatInfo(LoggerStringKey.TASK_DELETEFILE_2, removedFile.getName());
+			formatInfo(LoggerStringKey.TASK_DELETEFILE_2, focusProject.getFileName(file));
 			failedCounter.set(failedCounter.get() + 1);
 			return false;
 		}

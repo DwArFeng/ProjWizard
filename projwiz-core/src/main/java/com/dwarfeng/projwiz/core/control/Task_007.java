@@ -50,7 +50,7 @@ final class SaveFocusEditorTask extends ProjWizTask {
 			info(LoggerStringKey.TASK_SAVEEDITOR_1);
 			info(LoggerStringKey.TASK_SAVEEDITOR_2);
 			formatInfo(LoggerStringKey.TASK_SAVEEDITOR_3, focusEditor.getEditProject().getName(),
-					focusEditor.getEditFile().getName());
+					focusEditor.getEditProject().getFileName(focusEditor.getEditFile()));
 		} catch (ProcessException e) {
 			projWizard.getToolkit()
 					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_20))

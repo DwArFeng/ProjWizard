@@ -50,7 +50,7 @@ public class FileUtil {
 				return result;
 			}
 
-			return o1.getName().compareTo(o2.getName());
+			return o1.getClass().getName().compareTo(o2.getClass().getName());
 		}
 
 	}
@@ -90,7 +90,7 @@ public class FileUtil {
 			if (!parent.isFolder())
 				return false;
 			for (File file : project.getFileTree().getChilds(parent)) {
-				if (file.getName().equals(name))
+				if (project.getFileName(file).equals(name))
 					return true;
 			}
 			return false;
@@ -219,7 +219,7 @@ public class FileUtil {
 		cti: while (fileSt.hasMoreTokens()) {
 			String fileName = fileSt.nextToken();
 			for (File file : avaFiles) {
-				if (Objects.equals(fileName, file.getName())) {
+				if (Objects.equals(fileName, project.getFileName(file))) {
 					avaFiles = project.getFileTree().getChilds(file);
 					aimFile = file;
 					continue cti;
@@ -351,7 +351,7 @@ public class FileUtil {
 		sb.append(STD_PATH_PROJECT_DIM);
 
 		for (File pathFile : filePath) {
-			sb.append(pathFile.getName());
+			sb.append(project.getFileName(pathFile));
 			if (!Objects.equals(pathFile, filePath.get(filePath.depth() - 1))) {
 				sb.append(STD_PATH_FOLDER_DIM);
 			}

@@ -44,6 +44,7 @@ import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
 import com.dwarfeng.projwiz.core.util.FileUtil;
@@ -86,23 +87,13 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 
 	private final ProjectObverser projectObverser = new ProjectAdapter() {
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
-		public void fireFileRemovedByDelete(Path<File> path, File parent, File file) {
+		public void fireFileRemoved(Path<File> path, File parent, File file, RemovingSituation situation) {
 			SwingUtil.invokeInEventQueue(() -> {
-				fireRemoved(path, parent, file);
-			});
-		}
+				if (!Objects.equals(file, FilePropertiesDialog.this.file))
+					return;
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileRemovedByMove(Path<File> path, File parent, File file) {
-			SwingUtil.invokeInEventQueue(() -> {
-				fireRemoved(path, parent, file);
+				setFile(null);
 			});
 		}
 
@@ -153,13 +144,6 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 				}
 				setProject(null);
 			});
-		}
-
-		private void fireRemoved(Path<File> path, File parent, File file) {
-			if (!Objects.equals(file, FilePropertiesDialog.this.file))
-				return;
-
-			setFile(null);
 		}
 
 	};
@@ -746,7 +730,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 		file.getLock().readLock().lock();
 		try {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			textField1.setText(file.getName());
+			textField1.setText(project.getFileName(file));
 			textField3.setText(dateFormat.format(new Date(file.getModifyTime())));
 			textField4.setText(dateFormat.format(new Date(file.getCreateTime())));
 			textField5.setText(dateFormat.format(new Date(file.getAccessTime())));

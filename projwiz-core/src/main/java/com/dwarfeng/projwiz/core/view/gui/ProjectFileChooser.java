@@ -78,6 +78,8 @@ import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.model.struct.Project.AddingSituation;
+import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.util.FileUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
@@ -342,36 +344,21 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	};
 	private final ProjectObverser currentProjectObverser = new ProjectAdapter() {
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
-		public void fireFileAddedByCopy(Path<File> path, File parent, File file) {
+		public void fireFileAdded(Path<File> path, File parent, File file, AddingSituation situation) {
 			SwingUtil.invokeInEventQueue(() -> {
 				// TODO Auto-generated method stub
 			});
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
-		public void fireFileAddedByMove(Path<File> path, File parent, File file) {
-			SwingUtil.invokeInEventQueue(() -> {
-				// TODO Auto-generated method stub
-			});
-		}
-
-		@Override
-		public void fireFileAddedByNew(Path<File> path, File parent, File file) {
-			SwingUtil.invokeInEventQueue(() -> {
-				// TODO Auto-generated method stub
-			});
-		}
-
-		@Override
-		public void fireFileRemovedByDelete(Path<File> path, File parent, File file) {
-			SwingUtil.invokeInEventQueue(() -> {
-				// TODO Auto-generated method stub
-			});
-		}
-
-		@Override
-		public void fireFileRemovedByMove(Path<File> path, File parent, File file) {
+		public void fireFileRemoved(Path<File> path, File parent, File file, RemovingSituation situation) {
 			SwingUtil.invokeInEventQueue(() -> {
 				// TODO Auto-generated method stub
 			});
@@ -1149,7 +1136,7 @@ public final class ProjectFileChooser extends ProjWizPanel {
 			try {
 				currentProject.getFileTree().getChilds(currentRootFile).forEach(file -> {
 					CollectionUtil.insertByOrder(fileListModel, file, FileUtil.defaultFileComparator());
-					fileNameMap.put(file, file.getName());
+					fileNameMap.put(file, currentProject.getFileName(file));
 				});
 			} finally {
 				currentProject.getLock().readLock().unlock();

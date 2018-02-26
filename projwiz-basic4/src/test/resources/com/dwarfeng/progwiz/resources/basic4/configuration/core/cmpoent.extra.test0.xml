@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <root>
-	<info key="basic4.mepp"
-		class="com.dwarfeng.projwiz.basic4.impl.MemoryProjectProcessor">
+	<info class="com.dwarfeng.projwiz.basic4.impl.MemoryProjectProcessor">
 		<toolkit perm-level="667">
 		</toolkit>
 	</info>

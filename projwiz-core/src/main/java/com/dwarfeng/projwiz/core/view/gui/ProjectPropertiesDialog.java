@@ -38,6 +38,8 @@ import com.dwarfeng.projwiz.core.model.obv.ProjectAdapter;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.model.struct.Project.AddingSituation;
+import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
@@ -73,49 +75,18 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void fireFileAddedByCopy(Path<File> path, File parent, File file) {
+		public void fireFileAdded(Path<File> path, File parent, File file, AddingSituation situation) {
 			SwingUtil.invokeInEventQueue(() -> {
-				fireAdded(path, parent, file);
+				fileSize += 1;
+				textField5.setText(Integer.toString(fileSize));
 			});
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
-		public void fireFileAddedByMove(Path<File> path, File parent, File file) {
+		public void fireFileRemoved(Path<File> path, File parent, File file, RemovingSituation situation) {
 			SwingUtil.invokeInEventQueue(() -> {
-				fireAdded(path, parent, file);
-			});
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileAddedByNew(Path<File> path, File parent, File file) {
-			SwingUtil.invokeInEventQueue(() -> {
-				fireAdded(path, parent, file);
-			});
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileRemovedByDelete(Path<File> path, File parent, File file) {
-			SwingUtil.invokeInEventQueue(() -> {
-				fireRemoved(path, parent, file);
-			});
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireFileRemovedByMove(Path<File> path, File parent, File file) {
-			SwingUtil.invokeInEventQueue(() -> {
-				fireRemoved(path, parent, file);
+				fileSize -= 1;
+				textField5.setText(Integer.toString(fileSize));
 			});
 		}
 
@@ -127,17 +98,6 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 			SwingUtil.invokeInEventQueue(() -> {
 				setProject(null);
 			});
-		}
-
-		private void fireAdded(Path<File> path, File parent, File file) {
-			fileSize += 1;
-			textField5.setText(Integer.toString(fileSize));
-		}
-
-		private void fireRemoved(Path<File> path, File parent, File file) {
-			fileSize -= 1;
-			textField5.setText(Integer.toString(fileSize));
-
 		}
 
 	};
@@ -498,7 +458,7 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 		project.getLock().readLock().lock();
 		try {
 			textField1.setText(project.getName());
-			textField2.setText(project.getFileTree().getRoot().getName());
+			textField2.setText(project.getFileName(project.getFileTree().getRoot()));
 			fileSize = project.getFileTree().size();
 			textField5.setText(Integer.toString(fileSize));
 		} finally {
