@@ -3,7 +3,10 @@ package com.dwarfeng.projwiz.basic4.impl;
 import java.awt.Image;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
+import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
+import com.dwarfeng.projwiz.basic4.model.eum.ImageKey;
+import com.dwarfeng.projwiz.basic4.model.eum.PermDemandKey;
 import com.dwarfeng.projwiz.basic4.model.struct.MeppConstantsProvider;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.struct.File;

@@ -18,9 +18,6 @@ public interface PermDemandModel extends MapModel<String, Collection<Method>> {
 	/**
 	 * 返回模型中的指定权限键是否需要指定的方法。
 	 * 
-	 * <p>
-	 * 如果模型不包含指定的权限键，则直接返回 <code>false</code>。
-	 * 
 	 * @param permKey
 	 *            指定的权限键。
 	 * @param method
@@ -28,14 +25,13 @@ public interface PermDemandModel extends MapModel<String, Collection<Method>> {
 	 * @return 模型中指定的权限键是否需要指定的方法。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             模型中不含有指定的权限键。
 	 */
-	public boolean isPermDemand(String permKey, Method method);
+	public boolean isPermDemand(String permKey, Method method) throws NullPointerException, IllegalArgumentException;
 
 	/**
 	 * 返回模型中的指定权限键是否需要指定的方法。
-	 * 
-	 * <p>
-	 * 如果模型不包含指定的权限键，则直接返回 <code>false</code>。
 	 * 
 	 * @param permKey
 	 *            含有指定的权限键的名称对象。
@@ -44,17 +40,17 @@ public interface PermDemandModel extends MapModel<String, Collection<Method>> {
 	 * @return 模型中指定的权限键是否需要指定的方法。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             模型中不含有指定的权限键。
 	 */
-	public default boolean isPermDemand(Name permKey, Method method) {
+	public default boolean isPermDemand(Name permKey, Method method)
+			throws NullPointerException, IllegalArgumentException {
 		return isPermDemand(permKey.getName(), method);
 	}
 
 	/**
 	 * 返回模型中的指定权限键是否不需要指定的方法。
 	 * 
-	 * <p>
-	 * 如果模型不包含指定的权限键，则直接返回 <code>true</code>。
-	 * 
 	 * @param permKey
 	 *            指定的权限键。
 	 * @param method
@@ -62,17 +58,17 @@ public interface PermDemandModel extends MapModel<String, Collection<Method>> {
 	 * @return 模型中指定的权限键是否不需要指定的方法。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             模型中不含有指定的权限键。
 	 */
-	public default boolean isNotPermDemand(String permKey, Method method) {
+	public default boolean isNotPermDemand(String permKey, Method method)
+			throws NullPointerException, IllegalArgumentException {
 		return !isPermDemand(permKey, method);
 	}
 
 	/**
 	 * 返回模型中的指定权限键是否不需要指定的方法。
 	 * 
-	 * <p>
-	 * 如果模型不包含指定的权限键，则直接返回 <code>true</code>。
-	 * 
 	 * @param permKey
 	 *            含有指定的权限键的名称对象。
 	 * @param method
@@ -80,75 +76,118 @@ public interface PermDemandModel extends MapModel<String, Collection<Method>> {
 	 * @return 模型中指定的权限键是否不需要指定的方法。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             模型中不含有指定的权限键。
 	 */
-	public default boolean isNotPermDemand(Name permKey, Method method) {
+	public default boolean isNotPermDemand(Name permKey, Method method)
+			throws NullPointerException, IllegalArgumentException {
 		return isNotPermDemand(permKey.getName(), method);
 	}
 
 	/**
 	 * 返回指定的工具包是否能满足指定的权限键对应的所有需求。
 	 * 
-	 * <p>
-	 * 如果 <code>toolkit</code> 为 <code>null</code>，直接返回 <code>false</code>;
-	 * 否则，如果模型中不包含指定的 <code>permKey</code>，则返回 <code>true</code>。
-	 * 
 	 * @param permKey
 	 *            指定的权限键。
 	 * @param toolkit
 	 *            指定的工具包。
 	 * @return 指定的工具包是否能满足指定的权限键对应的所有需求。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             该模型中不含有指定的权限键。
 	 */
-	public boolean isPermKeyAvailable(String permKey, Toolkit toolkit);
+	public boolean isPermKeyAvailable(String permKey, Toolkit toolkit)
+			throws NullPointerException, IllegalArgumentException;
 
 	/**
 	 * 返回指定的工具包是否能满足指定的权限键对应的所有需求。
-	 * 
-	 * <p>
-	 * 如果 <code>toolkit</code> 为 <code>null</code>，直接返回 <code>false</code>;
-	 * 否则，如果模型中不包含指定的 <code>permKey</code>，则返回 <code>true</code>。
 	 * 
 	 * @param permKey
 	 *            含有指定的权限键的名称对象。
 	 * @param toolkit
 	 *            指定的工具包。
 	 * @return 指定的工具包是否能满足指定的权限键对应的所有需求。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             该模型中不含有指定的权限键。
 	 */
-	public default boolean isPermKeyAvailable(Name permKey, Toolkit toolkit) {
+	public default boolean isPermKeyAvailable(Name permKey, Toolkit toolkit)
+			throws NullPointerException, IllegalArgumentException {
 		return isPermKeyAvailable(permKey.getName(), toolkit);
 	}
 
 	/**
 	 * 返回指定的工具包是否不满足指定的权限键对应的所有需求。
 	 * 
-	 * <p>
-	 * 如果 <code>toolkit</code> 为 <code>null</code>，直接返回 <code>true</code>;
-	 * 否则，如果模型中不包含指定的 <code>permKey</code>，则返回 <code>false</code>。
-	 * 
 	 * @param permKey
 	 *            指定的权限键。
 	 * @param toolkit
 	 *            指定的工具包。
 	 * @return 指定的工具包是否不满足指定的权限键对应的所有需求。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             该模型中不含有指定的权限键。
 	 */
-	public default boolean isNotPermKeyAvaliable(String permKey, Toolkit toolkit) {
+	public default boolean isNotPermKeyAvaliable(String permKey, Toolkit toolkit)
+			throws NullPointerException, IllegalArgumentException {
 		return !isPermKeyAvailable(permKey, toolkit);
 	}
 
 	/**
 	 * 返回指定的工具包是否不满足指定的权限键对应的所有需求。
 	 * 
-	 * <p>
-	 * 如果 <code>toolkit</code> 为 <code>null</code>，直接返回 <code>true</code>;
-	 * 否则，如果模型中不包含指定的 <code>permKey</code>，则返回 <code>false</code>。
-	 * 
 	 * @param permKey
 	 *            含有指定的权限键的名称对象。
 	 * @param toolkit
 	 *            指定的工具包。
 	 * @return 指定的工具包是否不满足指定的权限键对应的所有需求。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             该模型中不含有指定的权限键。
 	 */
-	public default boolean isNotPermKeyAvaliable(Name permKey, Toolkit toolkit) {
+	public default boolean isNotPermKeyAvaliable(Name permKey, Toolkit toolkit)
+			throws NullPointerException, IllegalArgumentException {
 		return !isNotPermKeyAvaliable(permKey.getName(), toolkit);
+	}
+
+	/**
+	 * 要求指定的工具包是否能满足指定的权限键对应的所有需求，否则抛出异常。
+	 * 
+	 * @param permKey
+	 *            指定的权限键。
+	 * @param toolkit
+	 *            指定的工具包。
+	 * @throws IllegalStateException
+	 *             指定的工具包不能满足指定的权健键对应的所有需求。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             该模型中不含有指定的权限键。
+	 */
+	public void requirePermKeyAvailable(String permKey, Toolkit toolkit)
+			throws IllegalStateException, NullPointerException, IllegalArgumentException;
+
+	/**
+	 * 要求指定的工具包是否能满足指定的权限键对应的所有需求，否则抛出异常。
+	 * 
+	 * @param permKey
+	 *            指定的权限键。
+	 * @param toolkit
+	 *            指定的工具包。
+	 * @throws IllegalStateException
+	 *             指定的工具包不能满足指定的权健键对应的所有需求。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalArgumentException
+	 *             该模型中不含有指定的权限键。
+	 */
+	public default void requirePermKeyAvailable(Name permKey, Toolkit toolkit)
+			throws IllegalStateException, NullPointerException, IllegalArgumentException {
+		requirePermKeyAvailable(permKey.getName(), toolkit);
 	}
 
 }

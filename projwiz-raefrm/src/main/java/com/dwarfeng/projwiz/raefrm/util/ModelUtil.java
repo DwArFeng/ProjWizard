@@ -250,6 +250,20 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public void requirePermKeyAvailable(String permKey, Toolkit toolkit)
+				throws IllegalStateException, NullPointerException, IllegalArgumentException {
+			lock.readLock().lock();
+			try {
+				delegate.requirePermKeyAvailable(permKey, toolkit);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public int size() {
 			lock.readLock().lock();
 			try {

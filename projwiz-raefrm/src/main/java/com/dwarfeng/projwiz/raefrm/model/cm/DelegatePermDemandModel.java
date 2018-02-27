@@ -175,8 +175,10 @@ public final class DelegatePermDemandModel implements PermDemandModel {
 	 */
 	@Override
 	public boolean isPermDemand(String permKey, Method method) {
+		Objects.requireNonNull(method, "入口参数 method 不能为 null。");
+
 		if (!delegate.containsKey(permKey)) {
-			return false;
+			throw new IllegalArgumentException("权限需求模型中不包含指定的键" + permKey);
 		}
 
 		Collection<Method> methods = delegate.get(permKey);
@@ -188,12 +190,10 @@ public final class DelegatePermDemandModel implements PermDemandModel {
 	 */
 	@Override
 	public boolean isPermKeyAvailable(String permKey, Toolkit toolkit) {
-		if (Objects.isNull(toolkit)) {
-			return false;
-		}
+		Objects.requireNonNull(toolkit, "入口参数 toolkit 不能为 null。");
 
 		if (!delegate.containsKey(permKey)) {
-			return true;
+			throw new IllegalArgumentException("权限需求模型中不包含指定的键" + permKey);
 		}
 
 		Collection<Toolkit.Method> demandMethods = delegate.get(permKey);
@@ -203,6 +203,26 @@ public final class DelegatePermDemandModel implements PermDemandModel {
 				return false;
 		}
 		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void requirePermKeyAvailable(String permKey, Toolkit toolkit)
+			throws IllegalStateException, NullPointerException, IllegalArgumentException {
+		Objects.requireNonNull(toolkit, "入口参数 toolkit 不能为 null。");
+
+		if (!delegate.containsKey(permKey)) {
+			throw new IllegalArgumentException("权限需求模型中不包含指定的键" + permKey);
+		}
+
+		Collection<Toolkit.Method> demandMethods = delegate.get(permKey);
+
+		for (Toolkit.Method demandMethod : demandMethods) {
+			if (toolkit.notHasPermission(demandMethod))
+				throw new IllegalStateException("组件工具包没有权限执行指定方法: " + demandMethod);
+		}
 	}
 
 	/**

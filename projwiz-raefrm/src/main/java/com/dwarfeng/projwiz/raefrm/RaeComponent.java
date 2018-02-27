@@ -302,6 +302,20 @@ public abstract class RaeComponent implements Component {
 	}
 
 	/**
+	 * 要求此组件的工具包满足指定的权限键对应的所有需求。
+	 * 
+	 * @param permKey
+	 *            指定的权限键。
+	 * @return 此组件的工具包是否不满足指定的权限键对应的所有需求。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void requirePermKeyAvailable(Name permKey) throws IllegalStateException {
+		Objects.requireNonNull(permKey, "入口参数 permKey 不能为 null。");
+		permDemandModel.requirePermKeyAvailable(permKey, getToolkit());
+	}
+
+	/**
 	 * 打开指定资源键对应的资源。
 	 * 
 	 * <p>

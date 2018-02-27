@@ -14,6 +14,9 @@ public final class Constants {
 	/** 内存文件管理器的资源仓库类别。 */
 	public final static String CONFIGURATION_MEPP_CLASSIFY = "com.dwarfeng.projwiz.basic4.mepp";
 
+	/** 图片根所在的位置 */
+	public final static String RESOURCE_MEPP_IMAGE_ROOT_PATH = "/com/dwarfeng/progwiz/resources/basic4/mepp/image/";
+
 	// 禁止外部实例化。
 	private Constants() {
 	}
