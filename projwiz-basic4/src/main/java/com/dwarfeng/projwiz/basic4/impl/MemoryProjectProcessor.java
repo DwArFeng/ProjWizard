@@ -12,7 +12,6 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.RaeProjectProcessor;
-import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 
 /**
  * 
@@ -31,20 +30,24 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 	 */
 	public static MemoryProjectProcessor newInstance(ReferenceModel<Toolkit> toolkitRef,
 			MetaDataStorage metaDataStorage) throws ProcessException {
-		return new MemoryProjectProcessor(toolkitRef, metaDataStorage, new MeppConstantsProvider());
+		return new MemoryProjectProcessor(toolkitRef, metaDataStorage);
 	}
 
 	/**
+	 * 新实例。
 	 * 
 	 * @param toolkitRef
+	 *            指定的工具包引用模型。
 	 * @param metaDataStorage
-	 * @param constantsProvider
+	 *            指定的元数据仓库。
 	 * @throws ProcessException
+	 *             初始化过程异常。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
 	 */
-	public MemoryProjectProcessor(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
-			ConstantsProvider constantsProvider) throws ProcessException {
-		super(toolkitRef, metaDataStorage, constantsProvider);
-		// TODO Auto-generated constructor stub
+	protected MemoryProjectProcessor(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage)
+			throws ProcessException {
+		super(toolkitRef, metaDataStorage, new MeppConstantsProvider());
 	}
 
 	/**

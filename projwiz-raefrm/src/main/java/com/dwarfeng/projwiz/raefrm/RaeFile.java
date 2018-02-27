@@ -6,9 +6,11 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.dwarfeng.dutil.basic.prog.Buildable;
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
@@ -262,6 +264,198 @@ public abstract class RaeFile implements File {
 		@Override
 		public void write(int b) throws IOException {
 			delegate.write(b);
+		}
+
+	}
+
+	/**
+	 * Rae框架文件的构造器。
+	 * 
+	 * <p>
+	 * Rae框架文件的子类可以继承该构造器，以快速构造自己的构造器。
+	 * 
+	 * @author DwArFeng
+	 * @since 0.0.3-alpha
+	 */
+	protected abstract static class RaeFileBuilder implements Buildable<RaeFile> {
+
+		/** 文件是否为文件夹。 */
+		protected final boolean isFolder;
+		/** 对应的工程处理器的工具包。 */
+		protected final ProjProcToolkit projprocToolkit;
+		/** 文件的类型。 */
+		protected final Name fileType;
+
+		/** 文件的处理器类。 */
+		protected Class<? extends FileProcessor> processorClass = null;
+		/** 文件的访问时间。 */
+		protected long accessTime = -1;
+		/** 文件的创建时间。 */
+		protected long createTime = -1;
+		/** 文件的编辑时间。 */
+		protected long modifyTime = -1;
+
+		/** 观察器集合。 */
+		protected Set<FileObverser> obversers = Collections.newSetFromMap(new WeakHashMap<>());
+
+		/**
+		 * 新实例。
+		 * 
+		 * @param isFolder
+		 *            是否为文件夹。
+		 * @param projprocToolkit
+		 *            指定的工程文件处理器工具包。
+		 * @param fileType
+		 *            指定的文件名称。
+		 * @throws NullPointerException
+		 *             入口参数为 <code>null</code>。
+		 */
+		protected RaeFileBuilder(boolean isFolder, ProjProcToolkit projprocToolkit, Name fileType) {
+			Objects.requireNonNull(isFolder, "入口参数 isFolder 不能为 null。");
+			Objects.requireNonNull(projprocToolkit, "入口参数 projprocToolkit 不能为 null。");
+			Objects.requireNonNull(fileType, "入口参数 fileType 不能为 null。");
+
+			this.isFolder = isFolder;
+			this.projprocToolkit = projprocToolkit;
+			this.fileType = fileType;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public abstract RaeFile build();
+
+		/**
+		 * 获取文件的访问时间。
+		 * 
+		 * @return 文件的访问时间。
+		 */
+		public long getAccessTime() {
+			return accessTime;
+		}
+
+		/**
+		 * 获取文件的创建时间。
+		 * 
+		 * @return 文件的创建时间。
+		 */
+		public long getCreateTime() {
+			return createTime;
+		}
+
+		/**
+		 * 获取文件的类型。
+		 * 
+		 * @return 文件的类型。
+		 */
+		public Name getFileType() {
+			return fileType;
+		}
+
+		/**
+		 * 获取文件的编辑时间。
+		 * 
+		 * @return 文件的编辑时间。
+		 */
+		public long getModifyTime() {
+			return modifyTime;
+		}
+
+		/**
+		 * 获取文件的观察器集合。
+		 * 
+		 * @return 文件的观察器集合。
+		 */
+		public Set<FileObverser> getObversers() {
+			return obversers;
+		}
+
+		/**
+		 * 获取文件的处理器类。
+		 * 
+		 * @return 文件的处理器类。
+		 */
+		public Class<? extends FileProcessor> getProcessorClass() {
+			return processorClass;
+		}
+
+		/**
+		 * 获取文件的工程处理器工具箱。
+		 * 
+		 * @return 文件的工程处理器工具箱。
+		 */
+		public ProjProcToolkit getProjprocToolkit() {
+			return projprocToolkit;
+		}
+
+		/**
+		 * 获取该文件是否是文件夹。
+		 * 
+		 * @return 该文件是否是文件夹。
+		 */
+		public boolean isFolder() {
+			return isFolder;
+		}
+
+		/**
+		 * 设置文件的访问时间。
+		 * 
+		 * @param accessTime
+		 *            指定的访问时间。
+		 * @return 构造器自身。
+		 */
+		public RaeFileBuilder setAccessTime(long accessTime) {
+			this.accessTime = accessTime;
+			return this;
+		}
+
+		/**
+		 * 设置文件的创建时间。
+		 * 
+		 * @param createTime
+		 *            指定的创建时间。
+		 * @return 构造器自身。
+		 */
+		public RaeFileBuilder setCreateTime(long createTime) {
+			this.createTime = createTime;
+			return this;
+		}
+
+		/**
+		 * 设置文件的编辑时间。
+		 * 
+		 * @param modifyTime
+		 *            指定的编辑时间。
+		 * @return 构造器自身。
+		 */
+		public RaeFileBuilder setModifyTime(long modifyTime) {
+			this.modifyTime = modifyTime;
+			return this;
+		}
+
+		/**
+		 * 设置文件的观察器集合。
+		 * 
+		 * @param obversers
+		 *            指定的观察器集合。
+		 * @return 构造器自身。
+		 */
+		public RaeFileBuilder setObversers(Set<FileObverser> obversers) {
+			this.obversers = Objects.isNull(obversers) ? Collections.newSetFromMap(new WeakHashMap<>()) : obversers;
+			return this;
+		}
+
+		/**
+		 * 设置文件的处理器类。
+		 * 
+		 * @param processorClass
+		 *            指定的处理器类。
+		 * @return 构造器自身。
+		 */
+		public RaeFileBuilder setProcessorClass(Class<? extends FileProcessor> processorClass) {
+			this.processorClass = processorClass;
+			return this;
 		}
 
 	}

@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import com.dwarfeng.dutil.basic.io.ByteBufferInputStream;
-import com.dwarfeng.dutil.basic.prog.Buildable;
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
@@ -31,15 +31,88 @@ public class RaeCreatedFile extends RaeFile {
 	 * @author DwArFeng
 	 * @since 0.0.3-alpha
 	 */
-	public static class Builder implements Buildable<RaeCreatedFile> {
+	public static class Builder extends RaeFileBuilder {
+
+		/** 标签-数据映射。 */
+		protected Map<String, ByteBuffer> buffers = new HashMap<>();
+
+		public Builder(boolean isFolder, ProjProcToolkit projprocToolkit, Name fileType) {
+			super(isFolder, projprocToolkit, fileType);
+		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
 		public RaeCreatedFile build() {
-			// TODO Auto-generated method stub
-			return null;
+			return new RaeCreatedFile(buffers, isFolder, projprocToolkit, fileType, processorClass, accessTime,
+					createTime, modifyTime, obversers);
+		}
+
+		/**
+		 * 获取文件的标签-数据映射。
+		 * 
+		 * @return 标签-数据映射。
+		 */
+		public Map<String, ByteBuffer> getBuffers() {
+			return buffers;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Builder setAccessTime(long accessTime) {
+			super.setAccessTime(accessTime);
+			return this;
+		}
+
+		/**
+		 * 设置文件的标签-数据映射。
+		 * 
+		 * @param buffers
+		 *            指定的标签-数据映射。
+		 * @return 构造器自身。
+		 */
+		public Builder setBuffers(Map<String, ByteBuffer> buffers) {
+			this.buffers = Objects.isNull(buffers) ? new HashMap<>() : buffers;
+			return this;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Builder setCreateTime(long createTime) {
+			super.setCreateTime(createTime);
+			return this;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Builder setModifyTime(long modifyTime) {
+			super.setModifyTime(modifyTime);
+			return this;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Builder setObversers(Set<FileObverser> obversers) {
+			super.setObversers(obversers);
+			return this;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Builder setProcessorClass(Class<? extends FileProcessor> processorClass) {
+			super.setProcessorClass(processorClass);
+			return this;
 		}
 
 	}

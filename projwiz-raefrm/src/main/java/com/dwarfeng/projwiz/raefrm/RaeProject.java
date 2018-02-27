@@ -3,16 +3,20 @@ package com.dwarfeng.projwiz.raefrm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.dwarfeng.dutil.basic.prog.Buildable;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
+import com.dwarfeng.projwiz.core.model.cm.MapTree;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
@@ -24,12 +28,156 @@ import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
- * Rae框架文件工程。
+ * Rae框架工程。
  * 
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
 public abstract class RaeProject implements Project {
+
+	/**
+	 * Rae框架工程的构造器。
+	 * 
+	 * @author DwArFeng
+	 * @since 0.0.3-alpha
+	 */
+	protected abstract static class RaeProjectBuilder implements Buildable<RaeProject> {
+
+		/** 该工程的处理器类。 */
+		protected final Class<? extends ProjectProcessor> processorClass;
+		/** 工程的名称。 */
+		protected final String name;
+		/** 对应的工程处理器的工具包。 */
+		protected final ProjProcToolkit projprocToolkit;
+
+		/** 抽象工程的工程树。 */
+		protected Tree<File> fileTree = new MapTree<>();
+		/** Rae工程的文件名称映射。 */
+		protected Map<File, String> fileNameMap = new HashMap<>();
+
+		/** 工程的观察器集合。 */
+		protected Set<ProjectObverser> obversers = Collections.newSetFromMap(new WeakHashMap<>());
+
+		/**
+		 * 新实例。
+		 * 
+		 * @param processorClass
+		 *            指定的处理器类。
+		 * @param name
+		 *            指定的名称。
+		 * @param projprocToolkit
+		 *            指定的工程文件处理器工具包。
+		 * @throws NullPointerException
+		 *             入口参数为 <code>null</code>。
+		 */
+		protected RaeProjectBuilder(Class<? extends ProjectProcessor> processorClass, String name,
+				ProjProcToolkit projprocToolkit) {
+			Objects.requireNonNull(processorClass, "入口参数 processorClass 不能为 null。");
+			Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+			Objects.requireNonNull(projprocToolkit, "入口参数 projprocToolkit 不能为 null。");
+
+			this.processorClass = processorClass;
+			this.name = name;
+			this.projprocToolkit = projprocToolkit;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public abstract RaeProject build();
+
+		/**
+		 * 获取工程的文件-名称映射。
+		 * 
+		 * @return 工程的文件-名称映射。
+		 */
+		public Map<File, String> getFileNameMap() {
+			return fileNameMap;
+		}
+
+		/**
+		 * 获取工程的文件树。
+		 * 
+		 * @return 工程的文件树。
+		 */
+		public Tree<File> getFileTree() {
+			return fileTree;
+		}
+
+		/**
+		 * 获取工程的名称。
+		 * 
+		 * @return 工程的名称。
+		 */
+		public String getName() {
+			return name;
+		}
+
+		/**
+		 * 获取工程的观察器集合。
+		 * 
+		 * @return 工程的观察器集合。
+		 */
+		public Set<ProjectObverser> getObversers() {
+			return obversers;
+		}
+
+		/**
+		 * 获取工程的处理器类。
+		 * 
+		 * @return 工程的处理器类。
+		 */
+		public Class<? extends ProjectProcessor> getProcessorClass() {
+			return processorClass;
+		}
+
+		/**
+		 * 获取工程的工程文件处理器工具包。
+		 * 
+		 * @return 工程的工程文件处理器工具包。
+		 */
+		public ProjProcToolkit getProjprocToolkit() {
+			return projprocToolkit;
+		}
+
+		/**
+		 * 设置工程中的文件-名称映射。
+		 * 
+		 * @param fileNameMap
+		 *            指定的文件-名称映射。
+		 * @return 构造器自身。
+		 */
+		public RaeProjectBuilder setFileNameMap(Map<File, String> fileNameMap) {
+			this.fileNameMap = Objects.isNull(fileNameMap) ? new HashMap<>() : fileNameMap;
+			return this;
+		}
+
+		/**
+		 * 设置工程中的文件树。
+		 * 
+		 * @param fileTree
+		 *            指定的文件树。
+		 * @return 构造器自身。
+		 */
+		public RaeProjectBuilder setFileTree(Tree<File> fileTree) {
+			this.fileTree = Objects.isNull(fileTree) ? new MapTree<>() : fileTree;
+			return this;
+		}
+
+		/**
+		 * 设置工程中的观察器集合。
+		 * 
+		 * @param obversers
+		 *            工程中的观察器集合。
+		 * @return 构造器自身。
+		 */
+		public RaeProjectBuilder setObversers(Set<ProjectObverser> obversers) {
+			this.obversers = Objects.isNull(obversers) ? Collections.newSetFromMap(new WeakHashMap<>()) : obversers;
+			return this;
+		}
+
+	}
 
 	/** 工程的同步读写锁。 */
 	protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
