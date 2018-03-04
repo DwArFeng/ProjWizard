@@ -13,7 +13,9 @@ import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
+import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class NewFileTask extends ProjWizTask {
@@ -101,6 +103,24 @@ final class NewFileTask extends ProjWizTask {
 			return;
 		}
 
+		// 询问该文件的名称。
+		String exceptName = null;
+		exceptName = (String) projWizard.getToolkit()
+				.showInputDialog(new InputDialogSetting.Builder().setTitle(label(LabelStringKey.INPUTDIA_3))
+						.setMessage(label(LabelStringKey.INPUTDIA_4)).setDialogMessage(DialogMessage.QUESTION_MESSAGE)
+						.build());
+
+		while (!isValidName(exceptName)) {
+			if (Objects.isNull(exceptName)) {
+				return;
+			}
+
+			exceptName = (String) projWizard.getToolkit()
+					.showInputDialog(new InputDialogSetting.Builder().setTitle(label(LabelStringKey.INPUTDIA_3))
+							.setMessage(label(LabelStringKey.INPUTDIA_5))
+							.setDialogMessage(DialogMessage.QUESTION_MESSAGE).build());
+		}
+
 		File parentFile;
 		if (Objects.isNull(anchorFile)) {
 			parentFile = focusProject.getFileTree().getRoot();
@@ -110,7 +130,7 @@ final class NewFileTask extends ProjWizTask {
 			parentFile = focusProject.getFileTree().getParent(anchorFile);
 		}
 
-		File actualAddedFile = focusProject.addFile(parentFile, newFile, Project.AddingSituation.BY_NEW);
+		File actualAddedFile = focusProject.addFile(parentFile, newFile, exceptName, Project.AddingSituation.BY_NEW);
 
 		if (Objects.isNull(actualAddedFile)) {
 			warn(LoggerStringKey.TASK_NEWFILE_0);
@@ -136,6 +156,10 @@ final class NewFileTask extends ProjWizTask {
 			focusFileModel.getLock().writeLock().unlock();
 			focusProjectModel.getLock().writeLock().unlock();
 		}
+	}
+
+	private boolean isValidName(String name) {
+		return ProjectFileUtil.isValidFileName(name);
 	}
 
 }

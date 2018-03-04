@@ -1,7 +1,7 @@
 package com.dwarfeng.projwiz.core.control;
 
 import com.dwarfeng.projwiz.core.model.struct.File;
-import com.dwarfeng.projwiz.core.util.FileUtil;
+import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser.ReturnOption;
 
@@ -29,7 +29,7 @@ final class SuperSecretSettingsTask extends ProjWizTask {
 		projWizard.getToolkit().info("选择的文件是 : ");
 		File[] files = projectFileChooser.getSelectedFiles();
 		for (File file : files) {
-			projWizard.getToolkit().info(FileUtil.getStdPath(projWizard.getToolkit().getHoldProjectModel(), file));
+			projWizard.getToolkit().info(ProjectFileUtil.getStdPath(projWizard.getToolkit().getHoldProjectModel(), file));
 		}
 	}
 }

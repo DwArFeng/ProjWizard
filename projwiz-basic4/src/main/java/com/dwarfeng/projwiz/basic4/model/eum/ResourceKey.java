@@ -10,20 +10,35 @@ import com.dwarfeng.projwiz.basic4.util.Constants;
  * @since 0.0.3-alpha
  */
 public enum ResourceKey implements Name {
-	/** 组件的核心配置。 */
+	/** 内存工程管理器的组件的核心配置。 */
 	MEPP_CONFIGURATION_CORE(Constants.CONFIGURATION_MEPP_CLASSIFY, "configuration.core"),
-	/** 权限需求模型的配置。 */
+	/** 内存工程管理器的权限需求模型的配置。 */
 	MEPP_PERM_DEMAND_SETTING(Constants.CONFIGURATION_MEPP_CLASSIFY, "perm.demand.setting"),
-	/** 标签国际化处理器文件设置的资源键。 */
+	/** 内存工程管理器的标签国际化处理器文件设置的资源键。 */
 	MEPP_I18N_LABEL_FILE_SETTING(Constants.CONFIGURATION_MEPP_CLASSIFY, "i18n.label.file.setting"),
-	/** 标签国际化处理器资源设置的资源键。 */
+	/** 内存工程管理器的标签国际化处理器资源设置的资源键。 */
 	MEPP_I18N_LABEL_RESOURCE_SETTING(Constants.CONFIGURATION_MEPP_CLASSIFY, "i18n.label.resource.setting"),
-	/** 记录器国际化处理器文件设置的资源键。 */
+	/** 内存工程管理器的记录器国际化处理器文件设置的资源键。 */
 	MEPP_I18N_LOGGER_FILE_SETTING(Constants.CONFIGURATION_MEPP_CLASSIFY, "i18n.logger.file.setting"),
-	/** 记录器国际化处理器资源设置的资源键。 */
+	/** 内存工程管理器的记录器国际化处理器资源设置的资源键。 */
 	MEPP_I18N_LOGGER_RESOURCE_SETTING(Constants.CONFIGURATION_MEPP_CLASSIFY, "i18n.logger.resource.setting"),
-	/** 组件图片所对应的键。 */
+	/** 内存工程管理器的组件图片所对应的键。 */
 	MEPP_IMAGE_CMPOENT(Constants.CONFIGURATION_MEPP_CLASSIFY, "image.cmpoent"),
+
+	/** 文件夹文件管理器的组件的核心配置。 */
+	FOFP_CONFIGURATION_CORE(Constants.CONFIGURATION_FOFP_CLASSIFY, "configuration.core"),
+	/** 文件夹文件管理器的权限需求模型的配置。 */
+	FOFP_PERM_DEMAND_SETTING(Constants.CONFIGURATION_FOFP_CLASSIFY, "perm.demand.setting"),
+	/** 文件夹文件管理器的标签国际化处理器文件设置的资源键。 */
+	FOFP_I18N_LABEL_FILE_SETTING(Constants.CONFIGURATION_FOFP_CLASSIFY, "i18n.label.file.setting"),
+	/** 文件夹文件管理器的标签国际化处理器资源设置的资源键。 */
+	FOFP_I18N_LABEL_RESOURCE_SETTING(Constants.CONFIGURATION_FOFP_CLASSIFY, "i18n.label.resource.setting"),
+	/** 文件夹文件管理器的记录器国际化处理器文件设置的资源键。 */
+	FOFP_I18N_LOGGER_FILE_SETTING(Constants.CONFIGURATION_FOFP_CLASSIFY, "i18n.logger.file.setting"),
+	/** 文件夹文件管理器的记录器国际化处理器资源设置的资源键。 */
+	FOFP_I18N_LOGGER_RESOURCE_SETTING(Constants.CONFIGURATION_FOFP_CLASSIFY, "i18n.logger.resource.setting"),
+	/** 文件夹文件管理器的组件图片所对应的键。 */
+	FOFP_IMAGE_CMPOENT(Constants.CONFIGURATION_FOFP_CLASSIFY, "image.cmpoent"),
 
 	;
 

@@ -3,6 +3,7 @@ package com.dwarfeng.projwiz.raefrm;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -16,6 +17,7 @@ import javax.imageio.ImageIO;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
+import com.dwarfeng.dutil.basic.io.SaveFailedException;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.develop.cfg.ConfigKey;
@@ -23,6 +25,7 @@ import com.dwarfeng.dutil.develop.cfg.ConfigUtil;
 import com.dwarfeng.dutil.develop.cfg.DefaultExconfigModel;
 import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
 import com.dwarfeng.dutil.develop.cfg.io.PropConfigLoader;
+import com.dwarfeng.dutil.develop.cfg.io.PropConfigSaver;
 import com.dwarfeng.dutil.develop.cfg.obv.ExconfigAdapter;
 import com.dwarfeng.dutil.develop.cfg.obv.ExconfigObverser;
 import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
@@ -73,13 +76,16 @@ public abstract class RaeComponent implements Component {
 	protected final SyncI18nHandler loggerI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	/** 标签国际化处理器。 */
 	protected final SyncI18nHandler labelI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
-	/** 配置处理器。 */
-	protected final SyncExconfigModel configModel = ConfigUtil.syncExconfigModel(new DefaultExconfigModel());
+	/** 核心配置处模型。 */
+	protected final SyncExconfigModel coreConfigModel = ConfigUtil.syncExconfigModel(new DefaultExconfigModel());
 	/** 权限需求模型。 */
 	protected final SyncPermDemandModel permDemandModel = ModelUtil.syncPermDemandModel(new DelegatePermDemandModel());
 
 	private final ExconfigObverser coreConfigObverser = new ExconfigAdapter() {
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void fireCurrentValueChanged(ConfigKey configKey, String oldValue, String newValue, String validValue) {
 			if (Objects.equals(configKey, CoreConfigEntry.I18N_LOGGER.getConfigKey())) {
@@ -126,14 +132,19 @@ public abstract class RaeComponent implements Component {
 	 */
 	@Override
 	public void dispose() {
-		// TODO 保存配置文件。
-		saveConfigModel();
+		lock.writeLock().lock();
+		try {
+			// TODO 保存配置文件。
+			saveCoreConfigModel();
 
-		getToolkit().removeCoreConfigObverser(coreConfigObverser);
-		loggerI18nHandler.clear();
-		labelI18nHandler.clear();
-		configModel.clear();
-		permDemandModel.clear();
+			getToolkit().removeCoreConfigObverser(coreConfigObverser);
+			loggerI18nHandler.clear();
+			labelI18nHandler.clear();
+			coreConfigModel.clear();
+			permDemandModel.clear();
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
@@ -190,6 +201,118 @@ public abstract class RaeComponent implements Component {
 	}
 
 	/**
+	 * 向记录器中输出一条调试。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void debug(Name name) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().debug(
+				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
+	}
+
+	/**
+	 * 向记录器中输出一条错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void error(Name name, Throwable e) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().error(
+				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
+	}
+
+	/**
+	 * 向记录器中输出一条致命错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void fatal(Name name, Throwable e) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().fatal(
+				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
+	}
+
+	/**
+	 * 向记录器中格式化输出一条调试。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatDebug(Name name, Object... args) {
+		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().debug(String.format(
+				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL),
+				args));
+	}
+
+	/**
+	 * 向记录器中格式化输出一条错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatError(Name name, Throwable e, Object... args) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().error(String.format(
+				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL),
+				args), e);
+	}
+
+	/**
+	 * 向记录器中格式化输出一条致命错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatFatal(Name name, Throwable e, Object... args) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().fatal(String.format(
+				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL),
+				args), e);
+	}
+
+	/**
 	 * 向记录器中格式化输出一条信息。
 	 * 
 	 * @param name
@@ -204,6 +327,45 @@ public abstract class RaeComponent implements Component {
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
 		getToolkit().info(String.format(
+				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL),
+				args));
+	}
+
+	/**
+	 * 返回指定标签键对应的标签格式化文本。
+	 * 
+	 * @param name
+	 *            指定的标签键。
+	 * @param args
+	 *            参数。
+	 * @return 指定标签键对应的格式化标签文本。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 */
+	protected String formatLabel(Name name, Object... args) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		return String.format(
+				labelI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL),
+				args);
+	}
+
+	/**
+	 * 向记录器中格式化输出一条显示。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatTrace(Name name, Object... args) {
+		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().trace(String.format(
 				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL),
 				args));
 	}
@@ -302,17 +464,18 @@ public abstract class RaeComponent implements Component {
 	}
 
 	/**
-	 * 要求此组件的工具包满足指定的权限键对应的所有需求。
+	 * 返回指定标签键对应的标签文本。
 	 * 
-	 * @param permKey
-	 *            指定的权限键。
-	 * @return 此组件的工具包是否不满足指定的权限键对应的所有需求。
+	 * @param name
+	 *            指定的标签键。
+	 * @return 指定的标签键对应的标签文本。
 	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
+	 *             指定的入口参数为 <code> null </code>。
 	 */
-	protected void requirePermKeyAvailable(Name permKey) throws IllegalStateException {
-		Objects.requireNonNull(permKey, "入口参数 permKey 不能为 null。");
-		permDemandModel.requirePermKeyAvailable(permKey, getToolkit());
+	protected String label(Name name) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		return labelI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL);
 	}
 
 	/**
@@ -323,7 +486,7 @@ public abstract class RaeComponent implements Component {
 	 * 
 	 * @param resourceKey
 	 *            指定的资源键对应的名称接口。
-	 * @return 指定资源对应的资源键。
+	 * @return 指定资源键对应的资源的输入流。
 	 * @throws IOException
 	 *             IO异常。
 	 */
@@ -335,13 +498,13 @@ public abstract class RaeComponent implements Component {
 	 * 打开指定资源键对应的资源。
 	 * 
 	 * <p>
-	 * 该方法通过 Toolkit 获取只读配置处理器，随后获取指定资源键对应的资源，打开输入流。
+	 * 该方法通过 Toolkit 获取只读配置处理器，随后获取指定资源键对应的资源，在资源自动重置之后，打开输出流。
 	 * 
 	 * @param resourceKey
 	 *            指定的资源键对应的名称接口。
 	 * @param autoReset
 	 *            是否自动重置。
-	 * @return 指定资源对应的资源键。
+	 * @return 指定资源键对应的资源的输入流。
 	 * @throws IOException
 	 *             IO异常。
 	 */
@@ -358,6 +521,35 @@ public abstract class RaeComponent implements Component {
 			resource.autoReset();
 		}
 		return resource.openInputStream();
+	}
+
+	/**
+	 * 要求此组件的工具包满足指定的权限键对应的所有需求。
+	 * 
+	 * @param permKey
+	 *            指定的权限键。
+	 * @return 此组件的工具包是否不满足指定的权限键对应的所有需求。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void requirePermKeyAvailable(Name permKey) throws IllegalStateException {
+		Objects.requireNonNull(permKey, "入口参数 permKey 不能为 null。");
+		permDemandModel.requirePermKeyAvailable(permKey, getToolkit());
+	}
+
+	/**
+	 * 向记录器中输出一条显示。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void trace(Name name) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().trace(
+				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
 	/**
@@ -390,6 +582,51 @@ public abstract class RaeComponent implements Component {
 
 		getToolkit().warn(
 				loggerI18nHandler.getStringOrDefault(name, com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
+	}
+
+	/**
+	 * 写入指定资源键对应的资源。
+	 * 
+	 * <p>
+	 * 该方法通过 Toolkit 获取只读配置处理器，随后获取指定资源键对应的资源，在资源自动重置之后，打开输出流。
+	 * 
+	 * @param resourceKey
+	 *            指定的资源键对应的名称接口。
+	 * @return 指定资源键对应的资源的输出流。
+	 * @throws IOException
+	 *             IO异常。
+	 */
+	protected OutputStream writeResource(Name resourceKey) throws IOException {
+		return writeResource(resourceKey, true);
+	}
+
+	/**
+	 * 写入指定资源键对应的资源。
+	 * 
+	 * <p>
+	 * 该方法通过 Toolkit 获取只读配置处理器，随后获取指定资源键对应的资源，打开输出流。
+	 * 
+	 * @param resourceKey
+	 *            指定的资源键对应的名称接口。
+	 * @param autoReset
+	 *            是否自动重置。
+	 * @return 指定资源键对应的资源的输出流。
+	 * @throws IOException
+	 *             IO异常。
+	 */
+	protected OutputStream writeResource(Name resourceKey, boolean autoReset) throws IOException {
+		Objects.requireNonNull(resourceKey, "入口参数 resourceKey 不能为 null。");
+
+		ResourceHandler cfgHandlerReadOnly = getToolkit().getCfgHandlerReadOnly();
+		if (!cfgHandlerReadOnly.containsKey(resourceKey.getName())) {
+			throw new IOException(String.format("不存在指定的资源: %s", resourceKey.getName()));
+		}
+
+		Resource resource = cfgHandlerReadOnly.get(resourceKey.getName());
+		if (autoReset) {
+			resource.autoReset();
+		}
+		return resource.openOutputStream();
 	}
 
 	/**
@@ -443,8 +680,8 @@ public abstract class RaeComponent implements Component {
 		// 初始化配置模型入口。
 		initConfigEntry();
 
-		// 加载配置模型。
-		loadConfigModel();
+		// 加载核心配置模型。
+		loadCoreConfigModel();
 
 		// 读取权限需求表。
 		loadPermDemandModel();
@@ -461,10 +698,10 @@ public abstract class RaeComponent implements Component {
 	 * 初始化配置模型入口。
 	 */
 	private void initConfigEntry() {
-		configModel.addAll(Arrays.asList(ConfigEntry.values()));
+		coreConfigModel.addAll(Arrays.asList(ConfigEntry.values()));
 		Collection<ExconfigEntry> configEntries = constantsProvider.getConfigEntries();
 		if (Objects.nonNull(configEntries)) {
-			configModel.addAll(configEntries);
+			coreConfigModel.addAll(configEntries);
 		}
 	}
 
@@ -485,7 +722,7 @@ public abstract class RaeComponent implements Component {
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadConfigModel() throws IOException {
+	private void loadCoreConfigModel() throws IOException {
 		info(LoggerStringKey.RAE_CMPOENT_INIT_1);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
@@ -494,7 +731,7 @@ public abstract class RaeComponent implements Component {
 		try {
 			loader = new PropConfigLoader(
 					openResource(constantsProvider.getResourceKey(ResourceKeyType.CONFIGURATION_CORE)));
-			eptSet.addAll(loader.countinuousLoad(configModel));
+			eptSet.addAll(loader.countinuousLoad(coreConfigModel));
 		} finally {
 			if (Objects.nonNull(loader)) {
 				loader.close();
@@ -666,10 +903,29 @@ public abstract class RaeComponent implements Component {
 
 	/**
 	 * 保存配置文件。
+	 * 
+	 * @throws IOException
+	 *             IO异常。
 	 */
-	private void saveConfigModel() {
-		// TODO Auto-generated method stub
-
+	private void saveCoreConfigModel() {
+		try {
+			info(LoggerStringKey.RAE_CMPOENT_INIT_13);
+			PropConfigSaver viewConfigSaver = null;
+			try {
+				viewConfigSaver = new PropConfigSaver(
+						writeResource(constantsProvider.getResourceKey(ResourceKeyType.CONFIGURATION_CORE)));
+				Set<SaveFailedException> saveFailedExceptions = viewConfigSaver.countinuousSave(coreConfigModel);
+				for (SaveFailedException e : saveFailedExceptions) {
+					warn(LoggerStringKey.RAE_CMPOENT_INIT_14, e);
+				}
+			} finally {
+				if (Objects.nonNull(viewConfigSaver)) {
+					viewConfigSaver.close();
+				}
+			}
+		} catch (IOException e) {
+			warn(LoggerStringKey.RAE_CMPOENT_INIT_15, e);
+		}
 	}
 
 }

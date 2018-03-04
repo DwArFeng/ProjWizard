@@ -9,7 +9,7 @@ import com.dwarfeng.dutil.basic.str.Name;
  * @since 0.0.3-alpha
  */
 public enum PermDemandKey implements Name {
-	MEPP_CMPOENT_NEWPROJECT("cmpoent.newproject");
+	MEPP_PROCESSOR_NEWPROJECT("processor.newproject");
 
 	;
 

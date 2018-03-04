@@ -71,8 +71,8 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncExconfigModel getConfigModel() {
-			return configModel;
+		public SyncExconfigModel getCoreConfigModel() {
+			return coreConfigModel;
 		}
 
 		/**
@@ -88,8 +88,6 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	/**
 	 * 新实例。
 	 * 
-	 * @param key
-	 *            指定的键值。
 	 * @param toolkitRef
 	 *            指定的工具包引用。
 	 * @param metaDataStorage

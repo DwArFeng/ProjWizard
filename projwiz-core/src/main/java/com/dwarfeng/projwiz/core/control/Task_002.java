@@ -98,6 +98,9 @@ final class DisposeTask extends ProjWizTask {
 		// 试图停止后台。
 		stopBackground();
 
+		// TODO 保存组件权限模型。
+		// TODO 对所有组件运行 dispose方法。
+
 		// 测试情形下并不加载界面，因此没必要释放界面
 		if (!isTestCase) {
 			// 释放图形交互界面。
@@ -122,10 +125,10 @@ final class DisposeTask extends ProjWizTask {
 		} catch (InterruptedException | InvocationTargetException ignore) {
 			// 中断也要按照基本法。
 		}
-		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfigEntry.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelVisible);
-		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfigEntry.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelVisible);
+		projWizard.getToolkit().getViewConfigModel()
+				.setParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelVisible);
+		projWizard.getToolkit().getViewConfigModel()
+				.setParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelVisible);
 		projWizard.getToolkit().getViewConfigModel().setParsedValue(
 				ViewConfigEntry.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), viewGetter.northPanelVisible);
 		projWizard.getToolkit().getViewConfigModel().setParsedValue(
@@ -146,8 +149,8 @@ final class DisposeTask extends ProjWizTask {
 		projWizard.getToolkit().getViewConfigModel()
 				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(), viewGetter.frameHeight);
 
-		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfigEntry.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), viewGetter.extendedState);
+		projWizard.getToolkit().getViewConfigModel()
+				.setParsedValue(ViewConfigEntry.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), viewGetter.extendedState);
 
 		info(LoggerStringKey.TASK_DISPOSE_3);
 		PropConfigSaver viewConfigSaver = null;

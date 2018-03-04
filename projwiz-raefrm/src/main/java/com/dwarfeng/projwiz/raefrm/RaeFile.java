@@ -526,19 +526,6 @@ public abstract class RaeFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean acceptIn(String key) {
-		lock.readLock().lock();
-		try {
-			return isFolder;
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean addObverser(FileObverser obverser) {
 		lock.writeLock().lock();
 		try {
@@ -565,7 +552,7 @@ public abstract class RaeFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void discardLabel(String label) throws IOException {
+	public boolean discardLabel(String label) throws IOException {
 		throw new UnsupportedOperationException("discardLabel");
 	}
 
@@ -608,7 +595,7 @@ public abstract class RaeFile implements File {
 	 */
 	@Override
 	public Set<String> getLabels() {
-		throw new UnsupportedOperationException("getLabels");
+		return Collections.emptySet();
 	}
 
 	/**
@@ -636,7 +623,7 @@ public abstract class RaeFile implements File {
 	 */
 	@Override
 	public long getLength(String label) {
-		return -1;
+		throw new IllegalArgumentException("文件中不包含指定的标签: " + label);
 	}
 
 	/**
@@ -688,10 +675,18 @@ public abstract class RaeFile implements File {
 	public Class<? extends FileProcessor> getProcessorClass() {
 		lock.readLock().lock();
 		try {
-			return getProcessorClass();
+			return processorClass;
 		} finally {
 			lock.readLock().unlock();
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isAcceptSubFile(File file) {
+		return true;
 	}
 
 	/**
@@ -722,7 +717,7 @@ public abstract class RaeFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void newLabel(String label) throws IOException {
+	public boolean newLabel(String label) throws IOException {
 		throw new UnsupportedOperationException("newLabel");
 	}
 
@@ -759,20 +754,70 @@ public abstract class RaeFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setProcessorClass(Class<? extends FileProcessor> clazz) {
+	public boolean setProcessorClass(Class<? extends FileProcessor> clazz) {
 		lock.writeLock().lock();
 		try {
 			if (Objects.equals(processorClass, clazz)) {
-				return;
+				return false;
 			}
 
 			Class<? extends FileProcessor> oldValue = this.processorClass;
 			this.processorClass = clazz;
 
 			fireProcessorClassChanged(oldValue, clazz);
+			return true;
 		} finally {
 			lock.writeLock().unlock();
 		}
+	}
+
+	/**
+	 * 向记录器中输出一条调试。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void debug(Name name) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().debug(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
+	}
+
+	/**
+	 * 向记录器中输出一条错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void error(Name name, Throwable e) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().error(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
+	}
+
+	/**
+	 * 向记录器中输出一条致命错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void fatal(Name name, Throwable e) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().fatal(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
 	}
 
 	/**
@@ -1011,6 +1056,66 @@ public abstract class RaeFile implements File {
 	}
 
 	/**
+	 * 向记录器中格式化输出一条调试。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatDebug(Name name, Object... args) {
+		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().debug(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
+	}
+
+	/**
+	 * 向记录器中格式化输出一条错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatError(Name name, Throwable e, Object... args) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().error(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
+	}
+
+	/**
+	 * 向记录器中格式化输出一条致命错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatFatal(Name name, Throwable e, Object... args) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().fatal(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
+	}
+
+	/**
 	 * 向记录器中格式化输出一条信息。
 	 * 
 	 * @param name
@@ -1025,6 +1130,43 @@ public abstract class RaeFile implements File {
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
 		getToolkit().info(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
+	}
+
+	/**
+	 * 返回指定标签键对应的标签格式化文本。
+	 * 
+	 * @param name
+	 *            指定的标签键。
+	 * @param args
+	 *            参数。
+	 * @return 指定标签键对应的格式化标签文本。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 */
+	protected String formatLabel(Name name, Object... args) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		return String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args);
+	}
+
+	/**
+	 * 向记录器中格式化输出一条显示。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatTrace(Name name, Object... args) {
+		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().trace(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -1120,6 +1262,22 @@ public abstract class RaeFile implements File {
 	}
 
 	/**
+	 * 返回指定标签键对应的标签文本。
+	 * 
+	 * @param name
+	 *            指定的标签键。
+	 * @return 指定的标签键对应的标签文本。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 */
+	protected String label(Name name) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		return projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL);
+	}
+
+	/**
 	 * 打开指定资源键对应的资源。
 	 * 
 	 * <p>
@@ -1192,6 +1350,21 @@ public abstract class RaeFile implements File {
 	 */
 	protected void setModifyTime(long modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	/**
+	 * 向记录器中输出一条显示。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void trace(Name name) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().trace(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
 	/**

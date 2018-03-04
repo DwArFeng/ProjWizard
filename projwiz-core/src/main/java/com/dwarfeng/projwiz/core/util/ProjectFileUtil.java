@@ -8,22 +8,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+import com.dwarfeng.dutil.develop.cfg.ConfigChecker;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 
 /**
- * 有关于文件的工具包。
+ * 有关于文件和工程的工具包。
  * 
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public class FileUtil {
+public class ProjectFileUtil {
 
 	/**
 	 * 文件名称比较器。
 	 * 
-	 * TODO 更合理的实现方式。
+	 * TODO 更合理的实现方式（在不久的将来会去掉此类，改成组件形式）。
 	 * 
 	 * @author DwArFeng
 	 * @since 0.0.1-alpha
@@ -55,8 +56,37 @@ public class FileUtil {
 
 	}
 
+	private static final class FileNameChecker implements ConfigChecker {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isValid(String value) {
+			return isValidProjectName(value);
+		}
+
+	}
+
+	private static final class ProjectNameChecker implements ConfigChecker {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isValid(String value) {
+			return isValidProjectName(value);
+		}
+
+	}
+
 	private static final DefaultFileComparator FILE_COMPARAOTR = new DefaultFileComparator();
 
+	private final static String STD_PATH_PROJECT_DIM = ":";
+
+	private final static String STD_PATH_FOLDER_DIM = "/";
+
+	private final static String STD_PATH_FILE_DIM = ";";
 	private final static String MULTI_STD_PATH_REGEX = "^([^;^\\*^%^&^@^!^#^\\^^\\\\^/^"
 			+ "+^:^$^\\r^\\n]+:([^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+/)*[^;^\\*^%^&"
 			+ "^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+;)*[^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r"
@@ -65,9 +95,9 @@ public class FileUtil {
 	private final static String SINGLE_STD_PATH_REGEX = "^[^;^\\*^%^&^@^!^#^\\^^\\\\^/^"
 			+ "+^:^$^\\r^\\n]+:([^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+/)*[^;^\\*^%^&"
 			+ "^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+$";
-	private final static String STD_PATH_PROJECT_DIM = ":";
-	private final static String STD_PATH_FOLDER_DIM = "/";
-	private final static String STD_PATH_FILE_DIM = ";";
+
+	private final static String FILE_NAME_REGEX = "^[^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+$";
+	private final static String PROJECT_NAME_REGEX = "^[^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+$";
 
 	/**
 	 * 返回指定的文件是否拥有指定名称的子文件。
@@ -361,6 +391,21 @@ public class FileUtil {
 	}
 
 	/**
+	 * 返回一个字符串是否是单个文件的标准路径。
+	 * 
+	 * @param string
+	 *            指定的字符串。
+	 * @return 指定的字符串是否是单个文件的标准路径。
+	 */
+	public static final boolean isSingleStdPath(String string) {
+		if (Objects.isNull(string)) {
+			return false;
+		}
+
+		return string.matches(SINGLE_STD_PATH_REGEX);
+	}
+
+	/**
 	 * 返回一个字符串是否是标准路径。
 	 * 
 	 * @param string
@@ -376,22 +421,55 @@ public class FileUtil {
 	}
 
 	/**
-	 * 返回一个字符串是否是单个文件的标准路径。
+	 * 返回指定的字符串是否可以作为一个文件名。
 	 * 
-	 * @param string
+	 * @param name
 	 *            指定的字符串。
-	 * @return 指定的字符串是否是单个文件的标准路径。
+	 * @return 指定的字符串是否可以作为一个工程名。
 	 */
-	public static final boolean isSingleStdPath(String string) {
-		if (Objects.isNull(string)) {
+	public static final boolean isValidFileName(String name) {
+		if (Objects.isNull(name)) {
 			return false;
 		}
 
-		return string.matches(SINGLE_STD_PATH_REGEX);
+		return name.matches(FILE_NAME_REGEX);
+	}
+
+	/**
+	 * 返回指定的字符串是否可以作为一个工程名。
+	 * 
+	 * @param name
+	 *            指定的字符串。
+	 * @return 指定的字符串是否可以作为一个工程名。
+	 */
+	public static final boolean isValidProjectName(String name) {
+		if (Objects.isNull(name)) {
+			return false;
+		}
+
+		return name.matches(PROJECT_NAME_REGEX);
+	}
+
+	/**
+	 * 生成新的文件名称检查器。
+	 * 
+	 * @return 新的文件名称检查器。
+	 */
+	public static ConfigChecker newFileNameChecker() {
+		return new FileNameChecker();
+	}
+
+	/**
+	 * 生成新的工程名称检查器。
+	 * 
+	 * @return 新的工程名称检查器。
+	 */
+	public static ConfigChecker newProjectNameChecker() {
+		return new ProjectNameChecker();
 	}
 
 	// 禁止外部实例化
-	private FileUtil() {
+	private ProjectFileUtil() {
 	}
 
 }

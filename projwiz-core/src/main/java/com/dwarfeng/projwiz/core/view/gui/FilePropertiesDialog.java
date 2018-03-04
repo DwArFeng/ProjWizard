@@ -47,7 +47,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
-import com.dwarfeng.projwiz.core.util.FileUtil;
+import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
@@ -125,7 +125,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 				project.getLock().readLock().lock();
 				try {
 					if (project.getFileTree().contains(file)) {
-						textField2.setText(FileUtil.getStdPath(project, file));
+						textField2.setText(ProjectFileUtil.getStdPath(project, file));
 					}
 				} finally {
 					project.getLock().readLock().unlock();
@@ -758,7 +758,7 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 		project.getLock().readLock().lock();
 		try {
 			if (project.getFileTree().contains(file)) {
-				textField2.setText(FileUtil.getStdPath(project, file));
+				textField2.setText(ProjectFileUtil.getStdPath(project, file));
 				projectFitFlag = true;
 			}
 		} finally {

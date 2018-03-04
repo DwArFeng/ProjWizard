@@ -161,14 +161,6 @@ public class RaeCreatedFile extends RaeFile {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean acceptIn(String key) {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Set<String> getLabels() {
 		lock.readLock().lock();
 		try {

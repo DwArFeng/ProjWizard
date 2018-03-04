@@ -378,7 +378,7 @@ final class MfPanel_02 extends ProjWizPanel {
 			try {
 				task.awaitFinish();
 			} catch (InterruptedException ignore) {
-				// 抛异常也要遵守基本法
+				// 抛异常也要遵守基本法。
 			}
 
 			SwingUtil.invokeInEventQueue(() -> {

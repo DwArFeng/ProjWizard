@@ -30,4 +30,33 @@
 		classify="com.dwarfeng.projwiz.basic4.mepp" filename="cmpoent.icon.png"
 		default="/com/dwarfeng/progwiz/resources/basic4/mepp/configuration/cmpoent.icon.png" />
 
+
+	<info key="com.dwarfeng.projwiz.basic4.fofp.configuration.core"
+		classify="com.dwarfeng.projwiz.basic4.fofp" filename="cfg.core.properties"
+		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/cfg.core.properties" />
+
+	<info key="com.dwarfeng.projwiz.basic4.fofp.perm.demand.setting"
+		classify="com.dwarfeng.projwiz.basic4.fofp" filename="perm.demand.xml"
+		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/perm.demand.xml" />
+
+	<info key="com.dwarfeng.projwiz.basic4.fofp.i18n.label.file.setting"
+		classify="com.dwarfeng.projwiz.basic4.fofp" filename="i18n.label.file.setting"
+		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/i18n.label.file.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.basic4.fofp.i18n.label.resource.setting"
+		classify="com.dwarfeng.projwiz.basic4.fofp" filename="i18n.label.resource.setting"
+		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/i18n.label.resource.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.basic4.fofp.i18n.logger.file.setting"
+		classify="com.dwarfeng.projwiz.basic4.fofp" filename="i18n.logger.file.setting"
+		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/i18n.logger.file.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.basic4.fofp.i18n.logger.resource.setting"
+		classify="com.dwarfeng.projwiz.basic4.fofp" filename="i18n.logger.resource.setting"
+		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/i18n.logger.resource.setting.xml" />
+
+	<info key="com.dwarfeng.projwiz.basic4.fofp.image.cmpoent"
+		classify="com.dwarfeng.projwiz.basic4.fofp" filename="cmpoent.icon.png"
+		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/cmpoent.icon.png" />
+
 </root>

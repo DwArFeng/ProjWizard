@@ -59,17 +59,17 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObverser> {
 
 	/**
-	 * 返回该注册类下指定文件是否允许指定键对应的注册类在其中。
+	 * 返回该文件是否允许指定的文件作为其子文件。
 	 * <p>
-	 * 该方法仅针对于文件夹有效。
+	 * 该方法仅针对于文件夹有效，非文件夹的文件将不会调用该方法。
 	 * 
-	 * @param key
-	 *            指定的键。
-	 * @return 是否允许指定的键对应的注册类在其中。
+	 * @param file
+	 *            指定的文件。
+	 * @return 是否允许指定的文件作为其子文件。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public boolean acceptIn(String key);
+	public boolean isAcceptSubFile(File file);
 
 	/**
 	 * 丢弃仓库中的某个标签（可选操作）。
@@ -78,14 +78,13 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	 * 
 	 * @param label
 	 *            指定的标签。
+	 * @return 该操作是否对文件造成了改变（是否真正的移除了指定的标签）。
 	 * @throws IOException
 	 *             IO异常。
-	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
 	 * @throws UnsupportedOperationException
 	 *             不支持该操作。
 	 */
-	public void discardLabel(String label) throws IOException;
+	public boolean discardLabel(String label) throws IOException;
 
 	/**
 	 * 获取文件的访问时间。
@@ -204,16 +203,15 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	 * 
 	 * @param label
 	 *            指定的标签。
+	 * @return 该操作是否对文件造成了改变（是否真正的开辟了指定的标签）。
 	 * @throws IllegalArgumentException
 	 *             仓库中已经存在指定的标签。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
 	 * @throws IOException
 	 *             IO异常。
 	 * @throws UnsupportedOperationException
 	 *             不支持该操作。
 	 */
-	public void newLabel(String label) throws IOException;
+	public boolean newLabel(String label) throws IOException;
 
 	/**
 	 * 打开指定的标签对应的输入流（可选操作）。
@@ -266,7 +264,8 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	 * 
 	 * @param clazz
 	 *            指定的文档处理器的子类。
+	 * @return 该方法是否改变了文件本身（是否生效）。
 	 */
-	public void setProcessorClass(Class<? extends FileProcessor> clazz);
+	public boolean setProcessorClass(Class<? extends FileProcessor> clazz);
 
 }

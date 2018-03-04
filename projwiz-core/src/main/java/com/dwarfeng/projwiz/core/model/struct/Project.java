@@ -94,6 +94,8 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	 *            指定文件的父节点。
 	 * @param file
 	 *            指定的文件。
+	 * @param exceptName
+	 *            该文件的期望名称。
 	 * @param situation
 	 *            添加文件时的情景。
 	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
@@ -104,7 +106,7 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	 * @throws UnsupportedOperationException
 	 *             不支持的操作。
 	 */
-	public File addFile(File parent, File file, AddingSituation situation);
+	public File addFile(File parent, File file, String exceptName, AddingSituation situation);
 
 	/**
 	 * 获取工程中指定文件的名称。

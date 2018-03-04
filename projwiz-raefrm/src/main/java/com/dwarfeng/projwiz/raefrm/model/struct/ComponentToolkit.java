@@ -42,11 +42,11 @@ public interface ComponentToolkit {
 	public SyncI18nHandler getLabelI18nHandler();
 
 	/**
-	 * 获取组件中的配置处理器。
+	 * 获取组件中的核心配置处理器。
 	 * 
-	 * @return 组件中的配置处理器。
+	 * @return 组件中的核心配置处理器。
 	 */
-	public SyncExconfigModel getConfigModel();
+	public SyncExconfigModel getCoreConfigModel();
 
 	/**
 	 * 获取组件中的权限需求模型。

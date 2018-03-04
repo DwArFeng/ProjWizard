@@ -19,7 +19,7 @@ import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.util.FileUtil;
+import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
@@ -107,7 +107,7 @@ final class OpenProjectTask extends ProjWizTask {
 		if (Objects.nonNull(repeditionFile)) {
 			projWizard.getToolkit().showMessageDialog(new MessageDialogSetting.Builder()
 					.setMessage(
-							formatLabel(LabelStringKey.MSGDIA_36, FileUtil.getStdPath(openedProject, repeditionFile)))
+							formatLabel(LabelStringKey.MSGDIA_36, ProjectFileUtil.getStdPath(openedProject, repeditionFile)))
 					.setTitle(label(LabelStringKey.MSGDIA_31)).setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
 			return;
 		}

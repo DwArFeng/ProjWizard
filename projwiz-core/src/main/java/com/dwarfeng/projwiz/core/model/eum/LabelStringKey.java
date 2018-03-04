@@ -100,6 +100,9 @@ public enum LabelStringKey implements Name {
 
 	INPUTDIA_1(new DefaultName("inputdia.1")), //
 	INPUTDIA_2(new DefaultName("inputdia.2")), //
+	INPUTDIA_3(new DefaultName("inputdia.3")), //
+	INPUTDIA_4(new DefaultName("inputdia.4")), //
+	INPUTDIA_5(new DefaultName("inputdia.5")), //
 
 	MAINFRAME_1(new DefaultName("mainframe.1")), //
 	MAINFRAME_2(new DefaultName("mainframe.2")), //

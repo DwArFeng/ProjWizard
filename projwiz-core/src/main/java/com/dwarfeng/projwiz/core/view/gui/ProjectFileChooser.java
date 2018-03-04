@@ -81,7 +81,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.Project.AddingSituation;
 import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.util.FileUtil;
+import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 
 /**
@@ -1118,9 +1118,9 @@ public final class ProjectFileChooser extends ProjWizPanel {
 			}
 
 			if (selectedFiles.isEmpty()) {
-				textField_filePath.setText(FileUtil.getStdPath(currentProject, currentRootFile));
+				textField_filePath.setText(ProjectFileUtil.getStdPath(currentProject, currentRootFile));
 			} else {
-				textField_filePath.setText(FileUtil.getStdPath(Arrays.asList(currentProject), selectedFiles));
+				textField_filePath.setText(ProjectFileUtil.getStdPath(Arrays.asList(currentProject), selectedFiles));
 			}
 		} else {
 			textField_filePath.setText(null);
@@ -1135,7 +1135,7 @@ public final class ProjectFileChooser extends ProjWizPanel {
 			currentProject.getLock().readLock().lock();
 			try {
 				currentProject.getFileTree().getChilds(currentRootFile).forEach(file -> {
-					CollectionUtil.insertByOrder(fileListModel, file, FileUtil.defaultFileComparator());
+					CollectionUtil.insertByOrder(fileListModel, file, ProjectFileUtil.defaultFileComparator());
 					fileNameMap.put(file, currentProject.getFileName(file));
 				});
 			} finally {

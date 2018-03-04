@@ -34,6 +34,12 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 	protected final class ProjProcToolkitImpl implements ProjProcToolkit {
 
 		/**
+		 * 新实例。
+		 */
+		public ProjProcToolkitImpl() {
+		}
+
+		/**
 		 * {@inheritDoc}
 		 */
 		@Override
@@ -69,8 +75,8 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncExconfigModel getConfigModel() {
-			return configModel;
+		public SyncExconfigModel getCoreConfigModel() {
+			return coreConfigModel;
 		}
 
 		/**

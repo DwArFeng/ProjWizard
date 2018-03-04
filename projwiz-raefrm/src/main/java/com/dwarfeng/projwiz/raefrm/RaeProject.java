@@ -3,7 +3,6 @@ package com.dwarfeng.projwiz.raefrm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -16,7 +15,6 @@ import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.MapTree;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
@@ -49,11 +47,10 @@ public abstract class RaeProject implements Project {
 		protected final String name;
 		/** 对应的工程处理器的工具包。 */
 		protected final ProjProcToolkit projprocToolkit;
-
 		/** 抽象工程的工程树。 */
-		protected Tree<File> fileTree = new MapTree<>();
+		protected final Tree<File> fileTree;
 		/** Rae工程的文件名称映射。 */
-		protected Map<File, String> fileNameMap = new HashMap<>();
+		protected final Map<File, String> fileNameMap;
 
 		/** 工程的观察器集合。 */
 		protected Set<ProjectObverser> obversers = Collections.newSetFromMap(new WeakHashMap<>());
@@ -67,18 +64,26 @@ public abstract class RaeProject implements Project {
 		 *            指定的名称。
 		 * @param projprocToolkit
 		 *            指定的工程文件处理器工具包。
+		 * @param fileTree
+		 *            指定的文件树。
+		 * @param fileNameMap
+		 *            指定的文件-名称映射。
 		 * @throws NullPointerException
 		 *             入口参数为 <code>null</code>。
 		 */
-		protected RaeProjectBuilder(Class<? extends ProjectProcessor> processorClass, String name,
-				ProjProcToolkit projprocToolkit) {
+		public RaeProjectBuilder(Class<? extends ProjectProcessor> processorClass, String name,
+				ProjProcToolkit projprocToolkit, Tree<File> fileTree, Map<File, String> fileNameMap) {
 			Objects.requireNonNull(processorClass, "入口参数 processorClass 不能为 null。");
 			Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 			Objects.requireNonNull(projprocToolkit, "入口参数 projprocToolkit 不能为 null。");
+			Objects.requireNonNull(fileTree, "入口参数 fileTree 不能为 null。");
+			Objects.requireNonNull(fileNameMap, "入口参数 fileNameMap 不能为 null。");
 
 			this.processorClass = processorClass;
 			this.name = name;
 			this.projprocToolkit = projprocToolkit;
+			this.fileTree = fileTree;
+			this.fileNameMap = fileNameMap;
 		}
 
 		/**
@@ -139,30 +144,6 @@ public abstract class RaeProject implements Project {
 		 */
 		public ProjProcToolkit getProjprocToolkit() {
 			return projprocToolkit;
-		}
-
-		/**
-		 * 设置工程中的文件-名称映射。
-		 * 
-		 * @param fileNameMap
-		 *            指定的文件-名称映射。
-		 * @return 构造器自身。
-		 */
-		public RaeProjectBuilder setFileNameMap(Map<File, String> fileNameMap) {
-			this.fileNameMap = Objects.isNull(fileNameMap) ? new HashMap<>() : fileNameMap;
-			return this;
-		}
-
-		/**
-		 * 设置工程中的文件树。
-		 * 
-		 * @param fileTree
-		 *            指定的文件树。
-		 * @return 构造器自身。
-		 */
-		public RaeProjectBuilder setFileTree(Tree<File> fileTree) {
-			this.fileTree = Objects.isNull(fileTree) ? new MapTree<>() : fileTree;
-			return this;
 		}
 
 		/**
@@ -236,7 +217,7 @@ public abstract class RaeProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File addFile(File parent, File file, AddingSituation situation) {
+	public File addFile(File parent, File file, String exceptName, AddingSituation situation) {
 		throw new UnsupportedOperationException("addFile");
 	}
 
@@ -420,6 +401,55 @@ public abstract class RaeProject implements Project {
 	}
 
 	/**
+	 * 向记录器中输出一条调试。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void debug(Name name) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().debug(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
+	}
+
+	/**
+	 * 向记录器中输出一条错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void error(Name name, Throwable e) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().error(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
+	}
+
+	/**
+	 * 向记录器中输出一条致命错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void fatal(Name name, Throwable e) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().fatal(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
+	}
+
+	/**
 	 * 通知文件被添加。
 	 * 
 	 * @param path
@@ -512,6 +542,66 @@ public abstract class RaeProject implements Project {
 	}
 
 	/**
+	 * 向记录器中格式化输出一条调试。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatDebug(Name name, Object... args) {
+		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().debug(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
+	}
+
+	/**
+	 * 向记录器中格式化输出一条错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatError(Name name, Throwable e, Object... args) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().error(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
+	}
+
+	/**
+	 * 向记录器中格式化输出一条致命错误。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param e
+	 *            指定的可抛出对象。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatFatal(Name name, Throwable e, Object... args) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().fatal(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
+	}
+
+	/**
 	 * 向记录器中格式化输出一条信息。
 	 * 
 	 * @param name
@@ -526,6 +616,43 @@ public abstract class RaeProject implements Project {
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
 		getToolkit().info(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
+	}
+
+	/**
+	 * 返回指定标签键对应的标签格式化文本。
+	 * 
+	 * @param name
+	 *            指定的标签键。
+	 * @param args
+	 *            参数。
+	 * @return 指定标签键对应的格式化标签文本。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 */
+	protected String formatLabel(Name name, Object... args) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		return String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args);
+	}
+
+	/**
+	 * 向记录器中格式化输出一条显示。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @param args
+	 *            参数。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void formatTrace(Name name, Object... args) {
+		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+
+		getToolkit().trace(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -621,6 +748,22 @@ public abstract class RaeProject implements Project {
 	}
 
 	/**
+	 * 返回指定标签键对应的标签文本。
+	 * 
+	 * @param name
+	 *            指定的标签键。
+	 * @return 指定的标签键对应的标签文本。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 */
+	protected String label(Name name) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		return projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL);
+	}
+
+	/**
 	 * 打开指定资源键对应的资源。
 	 * 
 	 * <p>
@@ -663,6 +806,21 @@ public abstract class RaeProject implements Project {
 			resource.autoReset();
 		}
 		return resource.openInputStream();
+	}
+
+	/**
+	 * 向记录器中输出一条显示。
+	 * 
+	 * @param name
+	 *            指定的文本键。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected void trace(Name name) {
+		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+
+		getToolkit().trace(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
 	/**

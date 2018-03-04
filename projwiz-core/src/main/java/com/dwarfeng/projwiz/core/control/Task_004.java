@@ -94,7 +94,8 @@ final class NewProjectTask extends ProjWizTask {
 			return;
 		}
 
-		// 判断project是否与已经打开的工程重名。
+		// 判断project是否与已经打开的工程重名。TODO
+		// 还要判断工程名称是否合法，而且在名称重复和不合法的时候要循环询问，直到合法或用户取消。
 		String projectName = project.getName();
 		if (isNameAlreadyExists(projectName)) {
 			projWizard.getToolkit().showMessageDialog(new MessageDialogSetting.Builder()

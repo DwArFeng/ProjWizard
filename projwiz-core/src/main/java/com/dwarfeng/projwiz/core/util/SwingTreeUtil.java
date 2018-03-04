@@ -20,14 +20,23 @@ public class SwingTreeUtil {
 	/**
 	 * 由指定的树生成Swing树节点。
 	 * 
+	 * <p>
+	 * 指定的文件树要求必须拥有根元素——这也是工程中文件树的要求之一。
+	 * 
 	 * @param tree
 	 *            指定的文件树。
 	 * @return 由指定的文件树生成的 Swing树节点。
+	 * @throws IllegalArgumentException
+	 *             指定的文件树不合法。
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
 	public static DefaultMutableTreeNode newTreeNodeFromTree(Tree<? extends File> tree) {
 		Objects.requireNonNull(tree, "入口参数 tree 不能为 null。");
+
+		if (Objects.isNull(tree.getRoot())) {
+			throw new IllegalArgumentException("入口参数 tree 没有根元素。");
+		}
 		return genNode(tree, tree.getRoot());
 	}
 
@@ -110,7 +119,7 @@ public class SwingTreeUtil {
 
 		for (int i = 0; i < parentNode.getChildCount(); i++) {
 			File fileCurr = (File) ((DefaultMutableTreeNode) parentNode.getChildAt(i)).getUserObject();
-			if (FileUtil.defaultFileComparator().compare(file2Insert, fileCurr) <= 0) {
+			if (ProjectFileUtil.defaultFileComparator().compare(file2Insert, fileCurr) <= 0) {
 				parentNode.insert(node, i);
 				return i;
 			}
