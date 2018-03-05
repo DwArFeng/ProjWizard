@@ -11,7 +11,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
+import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
@@ -114,7 +114,7 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 	 * {@inheritDoc}
 	 */
 	@Override
-	public PropSuppiler getFilePropSuppiler(File file) {
+	public PropUI getFilePropUI(Project project, File file) {
 		return null;
 	}
 
@@ -138,7 +138,7 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 	 * {@inheritDoc}
 	 */
 	@Override
-	public PropSuppiler getProjectPropSuppiler(Project project) {
+	public PropUI getProjectPropUI(Project project) {
 		return null;
 	}
 

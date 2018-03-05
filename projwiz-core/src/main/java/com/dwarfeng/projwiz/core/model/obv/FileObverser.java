@@ -114,20 +114,4 @@ public interface FileObverser extends Obverser {
 	public void fireProcessorClassChanged(Class<? extends FileProcessor> oldValue,
 			Class<? extends FileProcessor> newValue);
 
-	/**
-	 * 通知文件的读支持发生了改变。
-	 * 
-	 * @param newValue
-	 *            新的值。
-	 */
-	public void fireReadSupportedChanged(boolean newValue);
-
-	/**
-	 * 通知文件的写支持发生了改变。
-	 * 
-	 * @param newValue
-	 *            新的值。
-	 */
-	public void fireWriteSupportedChanged(boolean newValue);
-
 }

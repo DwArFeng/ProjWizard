@@ -71,13 +71,13 @@ public interface FileProcessor extends Component {
 	public IconVariability getFileThumbVariability(File file);
 
 	/**
-	 * 获取文件处理器指定的文件对应的属性提供器。
+	 * 获取文件处理器指定的文件对应的属性用户接口。
 	 * 
 	 * @param file
 	 *            指定的文件。
-	 * @return 指定的文件对应的属性提供器。
+	 * @return 指定的文件对应的属性用户接口。
 	 */
-	public PropSuppiler getPropSuppiler(File file);
+	public PropUI getPropUI(File file);
 
 	/**
 	 * 返回指定的文档对应的缩略图。

@@ -46,7 +46,7 @@ import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
+import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
@@ -215,8 +215,8 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 
 	};
 
-	private PropSuppiler propSuppilerFromProject;
-	private PropSuppiler propSuppilerFromFile;
+	private PropUI propUIFromProject;
+	private PropUI propUIFromFile;
 
 	private boolean disposeFlag = false;
 
@@ -469,11 +469,11 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (Objects.nonNull(propSuppilerFromFile)) {
-					propSuppilerFromFile.fireApplied();
+				if (Objects.nonNull(propUIFromFile)) {
+					propUIFromFile.fireApplied();
 				}
-				if (Objects.nonNull(propSuppilerFromProject)) {
-					propSuppilerFromProject.fireApplied();
+				if (Objects.nonNull(propUIFromProject)) {
+					propUIFromProject.fireApplied();
 				}
 
 				dispose();
@@ -498,11 +498,11 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (Objects.nonNull(propSuppilerFromFile)) {
-					propSuppilerFromFile.fireApplied();
+				if (Objects.nonNull(propUIFromFile)) {
+					propUIFromFile.fireApplied();
 				}
-				if (Objects.nonNull(propSuppilerFromProject)) {
-					propSuppilerFromProject.fireApplied();
+				if (Objects.nonNull(propUIFromProject)) {
+					propUIFromProject.fireApplied();
 				}
 			}
 		});
@@ -772,9 +772,9 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 		try {
 			ProjectProcessor processor = componentModel.get(project.getProcessorClass());
 			if (Objects.nonNull(processor)
-					&& Objects.nonNull((propSuppilerFromProject = processor.getFilePropSuppiler(file)))) {
+					&& Objects.nonNull((propUIFromProject = processor.getFilePropUI(project, file)))) {
 				Component component = null;
-				if (Objects.nonNull(component = propSuppilerFromProject.getComponent())) {
+				if (Objects.nonNull(component = propUIFromProject.getComponent())) {
 					fromProjectProcessor.add(component, BorderLayout.CENTER);
 				}
 				fromProjectProcessor.repaint();
@@ -788,10 +788,9 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 		componentModel.getLock().readLock().lock();
 		try {
 			FileProcessor processor = componentModel.get(file.getProcessorClass());
-			if (Objects.nonNull(processor)
-					&& Objects.nonNull((propSuppilerFromFile = processor.getPropSuppiler(file)))) {
+			if (Objects.nonNull(processor) && Objects.nonNull((propUIFromFile = processor.getPropUI(file)))) {
 				Component component = null;
-				if (Objects.nonNull(component = propSuppilerFromFile.getComponent())) {
+				if (Objects.nonNull(component = propUIFromFile.getComponent())) {
 					fromFileProcessor.add(component, BorderLayout.CENTER);
 				}
 				fromFileProcessor.repaint();

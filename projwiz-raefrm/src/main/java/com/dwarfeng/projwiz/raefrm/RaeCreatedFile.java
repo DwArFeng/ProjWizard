@@ -36,8 +36,8 @@ public class RaeCreatedFile extends RaeFile {
 		/** 标签-数据映射。 */
 		protected Map<String, ByteBuffer> buffers = new HashMap<>();
 
-		public Builder(boolean isFolder, ProjProcToolkit projprocToolkit, Name fileType) {
-			super(isFolder, projprocToolkit, fileType);
+		public Builder(boolean isFolder, ProjProcToolkit projProcToolkit, Name fileType) {
+			super(isFolder, projProcToolkit, fileType);
 		}
 
 		/**
@@ -45,7 +45,7 @@ public class RaeCreatedFile extends RaeFile {
 		 */
 		@Override
 		public RaeCreatedFile build() {
-			return new RaeCreatedFile(buffers, isFolder, projprocToolkit, fileType, processorClass, accessTime,
+			return new RaeCreatedFile(buffers, isFolder, projProcToolkit, fileType, processorClass, accessTime,
 					createTime, modifyTime, obversers);
 		}
 
@@ -129,7 +129,7 @@ public class RaeCreatedFile extends RaeFile {
 	 *            指定的缓冲映射。
 	 * @param isFolder
 	 *            是否为文件夹。
-	 * @param projprocToolkit
+	 * @param projProcToolkit
 	 *            对应的工程处理器的工具包。
 	 * @param fileType
 	 *            文件的类型。
@@ -148,10 +148,10 @@ public class RaeCreatedFile extends RaeFile {
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	protected RaeCreatedFile(Map<String, ByteBuffer> buffers, boolean isFolder, ProjProcToolkit projprocToolkit,
+	protected RaeCreatedFile(Map<String, ByteBuffer> buffers, boolean isFolder, ProjProcToolkit projProcToolkit,
 			Name fileType, Class<? extends FileProcessor> processorClass, long accessTime, long createTime,
 			long modifyTime, Set<FileObverser> obversers) {
-		super(isFolder, projprocToolkit, fileType, processorClass, accessTime, createTime, modifyTime, obversers);
+		super(isFolder, projProcToolkit, fileType, processorClass, accessTime, createTime, modifyTime, obversers);
 
 		Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
 		this.buffers = buffers;

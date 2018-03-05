@@ -59,12 +59,4 @@ public abstract class FileAdapter implements FileObverser {
 			Class<? extends FileProcessor> newValue) {
 	}
 
-	@Override
-	public void fireReadSupportedChanged(boolean newValue) {
-	}
-
-	@Override
-	public void fireWriteSupportedChanged(boolean newValue) {
-	}
-
 }

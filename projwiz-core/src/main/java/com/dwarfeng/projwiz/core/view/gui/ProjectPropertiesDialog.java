@@ -41,13 +41,13 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.Project.AddingSituation;
 import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
+import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSuppiler {
 
-	private static final long serialVersionUID = -4834676328225083456L;
+	private static final long serialVersionUID = -2539525092721991483L;
 
 	private final JButton applyButton;
 	private final JButton cancelButton;
@@ -102,7 +102,7 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 
 	};
 
-	private PropSuppiler propSuppiler;
+	private PropUI propUI;
 
 	private int fileSize = 0;
 	private boolean disposeFlag = false;
@@ -260,8 +260,8 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (Objects.nonNull(propSuppiler)) {
-					propSuppiler.fireConfirmed();
+				if (Objects.nonNull(propUI)) {
+					propUI.fireConfirmed();
 				}
 				dispose();
 			}
@@ -273,7 +273,7 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				propSuppiler.fireCanceled();
+				propUI.fireCanceled();
 				dispose();
 			}
 		});
@@ -284,8 +284,8 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (Objects.nonNull(propSuppiler)) {
-					propSuppiler.fireApplied();
+				if (Objects.nonNull(propUI)) {
+					propUI.fireApplied();
 				}
 			}
 		});
@@ -471,10 +471,9 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 		componentModel.getLock().readLock().lock();
 		try {
 			ProjectProcessor processor = componentModel.get(project.getProcessorClass());
-			if (Objects.nonNull(processor)
-					&& Objects.nonNull((propSuppiler = processor.getProjectPropSuppiler(project)))) {
+			if (Objects.nonNull(processor) && Objects.nonNull((propUI = processor.getProjectPropUI(project)))) {
 				Component component = null;
-				if (Objects.nonNull(component = propSuppiler.getComponent())) {
+				if (Objects.nonNull(component = propUI.getComponent())) {
 					fromProjectProcessor.add(component, BorderLayout.CENTER);
 				}
 				fromProjectProcessor.repaint();

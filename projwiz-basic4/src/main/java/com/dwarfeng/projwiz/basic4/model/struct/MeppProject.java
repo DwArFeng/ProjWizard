@@ -36,7 +36,7 @@ import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public class MemoryProject extends RaeProject {
+public class MeppProject extends RaeProject {
 
 	/**
 	 * 内存工程的构造器。
@@ -54,7 +54,7 @@ public class MemoryProject extends RaeProject {
 		 * 
 		 * @param name
 		 *            指定的工程名称。
-		 * @param projprocToolkit
+		 * @param projProcToolkit
 		 *            指定的工程处理器工具包。
 		 * @param fileTree
 		 *            指定的文件树。
@@ -63,9 +63,9 @@ public class MemoryProject extends RaeProject {
 		 * @throws NullPointerException
 		 *             入口参数为 <code>null</code>。
 		 */
-		public Builder(String name, ProjProcToolkit projprocToolkit, Tree<File> fileTree,
+		public Builder(String name, ProjProcToolkit projProcToolkit, Tree<File> fileTree,
 				Map<File, String> fileNameMap) {
-			super(MemoryProjectProcessor.class, name, projprocToolkit, fileTree, fileNameMap);
+			super(MemoryProjectProcessor.class, name, projProcToolkit, fileTree, fileNameMap);
 		}
 
 		/**
@@ -73,7 +73,7 @@ public class MemoryProject extends RaeProject {
 		 */
 		@Override
 		public RaeProject build() {
-			return new MemoryProject(processorClass, name, fileTree, fileNameMap, projprocToolkit, obversers,
+			return new MeppProject(processorClass, name, fileTree, fileNameMap, projProcToolkit, obversers,
 					defaultBuffCapa);
 		}
 
@@ -119,16 +119,16 @@ public class MemoryProject extends RaeProject {
 	 * @param name
 	 * @param fileTree
 	 * @param fileNameMap
-	 * @param projprocToolkit
+	 * @param projProcToolkit
 	 * @param obversers
 	 * @param defaultBufferCapa
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	protected MemoryProject(Class<? extends ProjectProcessor> processorClass, String name, Tree<File> fileTree,
-			Map<File, String> fileNameMap, ProjProcToolkit projprocToolkit, Set<ProjectObverser> obversers,
+	protected MeppProject(Class<? extends ProjectProcessor> processorClass, String name, Tree<File> fileTree,
+			Map<File, String> fileNameMap, ProjProcToolkit projProcToolkit, Set<ProjectObverser> obversers,
 			int defaultBufferCapa) {
-		super(processorClass, name, fileTree, fileNameMap, projprocToolkit, obversers);
+		super(processorClass, name, fileTree, fileNameMap, projProcToolkit, obversers);
 
 		NumberUtil.requireInInterval(defaultBufferCapa, Interval.INTERVAL_NOT_NEGATIVE, "新文件默认缓冲容量不能小于0");
 		this.defaultBuffCapa = defaultBufferCapa;
@@ -281,7 +281,7 @@ public class MemoryProject extends RaeProject {
 
 			// 检查文件在同级中是否重名，有重名则报错。
 			if (isNameRepeat(fileTree.getParent(file), newName)) {
-				Toolkit toolkit = projprocToolkit.getToolkit();
+				Toolkit toolkit = projProcToolkit.getToolkit();
 				toolkit.showMessageDialog(
 						new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_0))
 								.setTitle(label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_1))
@@ -362,7 +362,7 @@ public class MemoryProject extends RaeProject {
 		// 进行文件名称的进一步处理
 		if (Objects.isNull(exceptName)) {
 			// 将名称设置为默认的名称，必要时加上序号。
-			String fileName = projprocToolkit.getCoreConfigModel()
+			String fileName = projProcToolkit.getCoreConfigModel()
 					.getParsedValue(MeppConfigEntry.PROJECT_NEWFILE_NAME_DEFAULT.getConfigKey(), String.class);
 
 			if (!isNameRepeat(parent, fileName)) {
@@ -393,7 +393,7 @@ public class MemoryProject extends RaeProject {
 		Map<String, ByteBuffer> buffers = new HashMap<>();
 
 		// 复制指定文件的数据。
-		int transBufferSize = projprocToolkit.getCoreConfigModel()
+		int transBufferSize = projProcToolkit.getCoreConfigModel()
 				.getParsedValue(MeppConfigEntry.PROJECT_BUFFER_DATATRANS.getConfigKey(), Integer.class);
 
 		if (file.isReadSupported()) {
@@ -407,7 +407,7 @@ public class MemoryProject extends RaeProject {
 					IOUtil.trans(in, out, transBufferSize);
 					buffers.put(label, buffer);
 				} catch (IOException e) {
-					Toolkit toolkit = projprocToolkit.getToolkit();
+					Toolkit toolkit = projProcToolkit.getToolkit();
 					toolkit.showMessageDialog(
 							new MessageDialogSetting.Builder().setTitle(label(LabelStringKey.MEPP_PROJECT_ADDFILE_1))
 									.setMessage(label(LabelStringKey.MEPP_PROJECT_ADDFILE_0))
@@ -435,9 +435,9 @@ public class MemoryProject extends RaeProject {
 			}
 		}
 
-		MemoryFile actualAddedFile = new MemoryFile.Builder(file.isFolder(), projprocToolkit, file.getFileType(),
-				buffers).setAccessTime(file.getAccessTime()).setCreateTime(file.getCreateTime())
-						.setModifyTime(file.getModifyTime()).setBuffCapa(defaultBuffCapa).build();
+		MeppFile actualAddedFile = new MeppFile.Builder(file.isFolder(), projProcToolkit, file.getFileType(), buffers)
+				.setAccessTime(file.getAccessTime()).setCreateTime(file.getCreateTime())
+				.setModifyTime(file.getModifyTime()).setBuffCapa(defaultBuffCapa).build();
 
 		fileTree.add(parent, actualAddedFile);
 		fileNameMap.put(actualAddedFile, actualFileName);

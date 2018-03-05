@@ -14,6 +14,7 @@ import com.dwarfeng.dutil.basic.io.ByteBufferOutputStream;
 import com.dwarfeng.dutil.basic.num.Interval;
 import com.dwarfeng.dutil.basic.num.NumberUtil;
 import com.dwarfeng.dutil.basic.str.Name;
+import com.dwarfeng.projwiz.basic4.model.obv.MeppFileObverser;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.raefrm.RaeFile;
@@ -25,7 +26,7 @@ import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public class MemoryFile extends RaeFile {
+public class MeppFile extends RaeFile {
 
 	/**
 	 * 内存文件构造器。
@@ -50,7 +51,7 @@ public class MemoryFile extends RaeFile {
 		 * 
 		 * @param isFolder
 		 *            是否为文件夹。
-		 * @param projprocToolkit
+		 * @param projProcToolkit
 		 *            指定的工程文件处理器工具包。
 		 * @param fileType
 		 *            指定的文件名称。
@@ -59,9 +60,9 @@ public class MemoryFile extends RaeFile {
 		 * @throws NullPointerException
 		 *             入口参数为 <code>null</code>。
 		 */
-		public Builder(boolean isFolder, ProjProcToolkit projprocToolkit, Name fileType,
+		public Builder(boolean isFolder, ProjProcToolkit projProcToolkit, Name fileType,
 				Map<String, ByteBuffer> buffers) {
-			super(isFolder, projprocToolkit, fileType);
+			super(isFolder, projProcToolkit, fileType);
 
 			Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
 			this.buffers = buffers;
@@ -72,9 +73,9 @@ public class MemoryFile extends RaeFile {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public MemoryFile build() {
-			return new MemoryFile(isFolder, projprocToolkit, fileType, processorClass, accessTime, createTime,
-					modifyTime, obversers, buffers, buffCapa, readSupported, writeSupported);
+		public MeppFile build() {
+			return new MeppFile(isFolder, projProcToolkit, fileType, processorClass, accessTime, createTime, modifyTime,
+					obversers, buffers, buffCapa, readSupported, writeSupported);
 		}
 
 		/**
@@ -211,7 +212,7 @@ public class MemoryFile extends RaeFile {
 	 * 
 	 * @param isFolder
 	 *            是否为文件夹。
-	 * @param projprocToolkit
+	 * @param projProcToolkit
 	 *            对应的工程处理器的工具包。
 	 * @param fileType
 	 *            文件的类型。
@@ -238,11 +239,11 @@ public class MemoryFile extends RaeFile {
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	protected MemoryFile(boolean isFolder, ProjProcToolkit projprocToolkit, Name fileType,
+	protected MeppFile(boolean isFolder, ProjProcToolkit projProcToolkit, Name fileType,
 			Class<? extends FileProcessor> processorClass, long accessTime, long createTime, long modifyTime,
 			Set<FileObverser> obversers, Map<String, ByteBuffer> buffers, int buffCapa, boolean readSupported,
 			boolean writeSupported) {
-		super(isFolder, projprocToolkit, fileType, processorClass, accessTime, createTime, modifyTime, obversers);
+		super(isFolder, projProcToolkit, fileType, processorClass, accessTime, createTime, modifyTime, obversers);
 
 		Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
 		NumberUtil.requireInInterval(buffCapa, Interval.INTERVAL_NOT_NEGATIVE, "参数 buffCapa 不能小于0。");
@@ -277,6 +278,32 @@ public class MemoryFile extends RaeFile {
 			return true;
 		} finally {
 			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * 获取文件中的缓冲容量。
+	 * 
+	 * @return 文件的缓冲容量。
+	 */
+	public int getBuffCapa() {
+		return buffCapa;
+	}
+
+	/**
+	 * 获取文件中的标签-字节缓冲映射。
+	 * 
+	 * <p>
+	 * 该映射是不可更改的。
+	 * 
+	 * @return 文件中的标签-字节缓冲映射。
+	 */
+	public Map<String, ByteBuffer> getBuffers() {
+		lock.readLock().lock();
+		try {
+			return Collections.unmodifiableMap(buffers);
+		} finally {
+			lock.readLock().unlock();
 		}
 	}
 
@@ -445,6 +472,16 @@ public class MemoryFile extends RaeFile {
 
 	}
 
+	/**
+	 * 设置文件的缓冲容量。
+	 * 
+	 * @param buffCapa
+	 *            分配大小。
+	 */
+	public void setBuffCapa(int buffCapa) {
+		this.buffCapa = buffCapa;
+	}
+
 	public void setReadSupported(boolean readSupported) {
 		lock.writeLock().lock();
 		try {
@@ -466,39 +503,39 @@ public class MemoryFile extends RaeFile {
 	}
 
 	/**
-	 * 获取文件中的缓冲容量。
+	 * 通知内存文件的可读性发生了改变。
 	 * 
-	 * @return 文件的缓冲容量。
+	 * @param newValue
+	 *            新值。
 	 */
-	public int getBuffCapa() {
-		return buffCapa;
+	protected void fireReadSupportedChanged(boolean newValue) {
+		obversers.forEach(obverser -> {
+			try {
+				if (obverser instanceof MeppFileObverser) {
+					((MeppFileObverser) obverser).fireReadSupportedChanged(newValue);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	/**
-	 * 设置文件的缓冲容量。
+	 * 通知内存文件的可写性发生了改变。
 	 * 
-	 * @param buffCapa
-	 *            分配大小。
+	 * @param newValue
+	 *            新值。
 	 */
-	public void setBuffCapa(int buffCapa) {
-		this.buffCapa = buffCapa;
-	}
-
-	/**
-	 * 获取文件中的标签-字节缓冲映射。
-	 * 
-	 * <p>
-	 * 该映射是不可更改的。
-	 * 
-	 * @return 文件中的标签-字节缓冲映射。
-	 */
-	public Map<String, ByteBuffer> getBuffers() {
-		lock.readLock().lock();
-		try {
-			return Collections.unmodifiableMap(buffers);
-		} finally {
-			lock.readLock().unlock();
-		}
+	protected void fireWriteSupportedChanged(boolean newValue) {
+		obversers.forEach(obverser -> {
+			try {
+				if (obverser instanceof MeppFileObverser) {
+					((MeppFileObverser) obverser).fireWriteSupportedChanged(newValue);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 }

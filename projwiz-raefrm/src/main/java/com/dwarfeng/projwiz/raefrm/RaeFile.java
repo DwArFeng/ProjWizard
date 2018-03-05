@@ -282,7 +282,7 @@ public abstract class RaeFile implements File {
 		/** 文件是否为文件夹。 */
 		protected final boolean isFolder;
 		/** 对应的工程处理器的工具包。 */
-		protected final ProjProcToolkit projprocToolkit;
+		protected final ProjProcToolkit projProcToolkit;
 		/** 文件的类型。 */
 		protected final Name fileType;
 
@@ -303,20 +303,20 @@ public abstract class RaeFile implements File {
 		 * 
 		 * @param isFolder
 		 *            是否为文件夹。
-		 * @param projprocToolkit
+		 * @param projProcToolkit
 		 *            指定的工程文件处理器工具包。
 		 * @param fileType
 		 *            指定的文件名称。
 		 * @throws NullPointerException
 		 *             入口参数为 <code>null</code>。
 		 */
-		protected RaeFileBuilder(boolean isFolder, ProjProcToolkit projprocToolkit, Name fileType) {
+		protected RaeFileBuilder(boolean isFolder, ProjProcToolkit projProcToolkit, Name fileType) {
 			Objects.requireNonNull(isFolder, "入口参数 isFolder 不能为 null。");
-			Objects.requireNonNull(projprocToolkit, "入口参数 projprocToolkit 不能为 null。");
+			Objects.requireNonNull(projProcToolkit, "入口参数 projProcToolkit 不能为 null。");
 			Objects.requireNonNull(fileType, "入口参数 fileType 不能为 null。");
 
 			this.isFolder = isFolder;
-			this.projprocToolkit = projprocToolkit;
+			this.projProcToolkit = projProcToolkit;
 			this.fileType = fileType;
 		}
 
@@ -386,7 +386,7 @@ public abstract class RaeFile implements File {
 		 * @return 文件的工程处理器工具箱。
 		 */
 		public ProjProcToolkit getProjprocToolkit() {
-			return projprocToolkit;
+			return projProcToolkit;
 		}
 
 		/**
@@ -468,7 +468,7 @@ public abstract class RaeFile implements File {
 	/** 文件是否为文件夹。 */
 	protected final boolean isFolder;
 	/** 对应的工程处理器的工具包。 */
-	protected final ProjProcToolkit projprocToolkit;
+	protected final ProjProcToolkit projProcToolkit;
 	/** 文件的类型。 */
 	protected final Name fileType;
 
@@ -486,7 +486,7 @@ public abstract class RaeFile implements File {
 	 * 
 	 * @param isFolder
 	 *            是否为文件夹。
-	 * @param projprocToolkit
+	 * @param projProcToolkit
 	 *            对应的工程处理器的工具包。
 	 * @param fileType
 	 *            文件的类型。
@@ -505,15 +505,15 @@ public abstract class RaeFile implements File {
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	protected RaeFile(boolean isFolder, ProjProcToolkit projprocToolkit, Name fileType,
+	protected RaeFile(boolean isFolder, ProjProcToolkit projProcToolkit, Name fileType,
 			Class<? extends FileProcessor> processorClass, long accessTime, long createTime, long modifyTime,
 			Set<FileObverser> obversers) {
-		Objects.requireNonNull(projprocToolkit, "入口参数 projprocToolkit 不能为 null。");
+		Objects.requireNonNull(projProcToolkit, "入口参数 projProcToolkit 不能为 null。");
 		Objects.requireNonNull(fileType, "入口参数 fileType 不能为 null。");
 		Objects.requireNonNull(obversers, "入口参数 obversers 不能为 null。");
 
 		this.isFolder = isFolder;
-		this.projprocToolkit = projprocToolkit;
+		this.projProcToolkit = projProcToolkit;
 		this.fileType = fileType;
 		this.processorClass = processorClass;
 		this.accessTime = accessTime;
@@ -782,7 +782,7 @@ public abstract class RaeFile implements File {
 	protected void debug(Name name) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().debug(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().debug(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
@@ -799,7 +799,7 @@ public abstract class RaeFile implements File {
 	protected void error(Name name, Throwable e) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().error(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().error(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
 	}
 
@@ -816,7 +816,7 @@ public abstract class RaeFile implements File {
 	protected void fatal(Name name, Throwable e) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().fatal(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().fatal(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
 	}
 
@@ -1024,38 +1024,6 @@ public abstract class RaeFile implements File {
 	}
 
 	/**
-	 * 通知文件的读支持发生了改变。
-	 * 
-	 * @param newValue
-	 *            新的值。
-	 */
-	protected void fireReadSupportedChanged(boolean newValue) {
-		obversers.forEach(obverser -> {
-			try {
-				obverser.fireReadSupportedChanged(newValue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * 通知文件的写支持发生了改变。
-	 * 
-	 * @param newValue
-	 *            新的值。
-	 */
-	protected void fireWriteSupportedChanged(boolean newValue) {
-		obversers.forEach(obverser -> {
-			try {
-				obverser.fireWriteSupportedChanged(newValue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
 	 * 向记录器中格式化输出一条调试。
 	 * 
 	 * @param name
@@ -1069,7 +1037,7 @@ public abstract class RaeFile implements File {
 		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().debug(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().debug(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -1090,7 +1058,7 @@ public abstract class RaeFile implements File {
 		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().error(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().error(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
 	}
 
@@ -1111,7 +1079,7 @@ public abstract class RaeFile implements File {
 		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().fatal(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().fatal(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
 	}
 
@@ -1129,7 +1097,7 @@ public abstract class RaeFile implements File {
 		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().info(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().info(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -1148,7 +1116,7 @@ public abstract class RaeFile implements File {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		return String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		return String.format(projProcToolkit.getLabelI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args);
 	}
 
@@ -1166,7 +1134,7 @@ public abstract class RaeFile implements File {
 		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().trace(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().trace(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -1184,7 +1152,7 @@ public abstract class RaeFile implements File {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().warn(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().warn(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -1205,7 +1173,7 @@ public abstract class RaeFile implements File {
 		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().warn(String.format(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().warn(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
 	}
 
@@ -1215,7 +1183,7 @@ public abstract class RaeFile implements File {
 	 * @return 组件的工具包。
 	 */
 	protected final Toolkit getToolkit() {
-		return projprocToolkit.getToolkit();
+		return projProcToolkit.getToolkit();
 	}
 
 	/**
@@ -1229,7 +1197,7 @@ public abstract class RaeFile implements File {
 	protected void info(Name name) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().info(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().info(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
@@ -1244,7 +1212,7 @@ public abstract class RaeFile implements File {
 	 */
 	protected boolean isNotPermKeyAvaliable(Name permKey) {
 		Objects.requireNonNull(permKey, "入口参数 permKey 不能为 null。");
-		return projprocToolkit.getPermDemandModel().isNotPermKeyAvaliable(permKey, getToolkit());
+		return projProcToolkit.getPermDemandModel().isNotPermKeyAvaliable(permKey, getToolkit());
 	}
 
 	/**
@@ -1258,7 +1226,7 @@ public abstract class RaeFile implements File {
 	 */
 	protected boolean isPermKeyAvailable(Name permKey) {
 		Objects.requireNonNull(permKey, "入口参数 permKey 不能为 null。");
-		return projprocToolkit.getPermDemandModel().isPermKeyAvailable(permKey, getToolkit());
+		return projProcToolkit.getPermDemandModel().isPermKeyAvailable(permKey, getToolkit());
 	}
 
 	/**
@@ -1273,7 +1241,7 @@ public abstract class RaeFile implements File {
 	protected String label(Name name) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		return projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		return projProcToolkit.getLabelI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL);
 	}
 
@@ -1363,7 +1331,7 @@ public abstract class RaeFile implements File {
 	protected void trace(Name name) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().trace(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().trace(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
@@ -1378,7 +1346,7 @@ public abstract class RaeFile implements File {
 	protected void warn(Name name) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().warn(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().warn(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
@@ -1395,7 +1363,7 @@ public abstract class RaeFile implements File {
 	protected void warn(Name name, Throwable e) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().warn(projprocToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getToolkit().warn(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
 	}
 

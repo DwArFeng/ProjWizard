@@ -14,10 +14,11 @@ import com.dwarfeng.projwiz.basic4.model.eum.ImageKey;
 import com.dwarfeng.projwiz.basic4.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigEntry;
 import com.dwarfeng.projwiz.basic4.model.eum.PermDemandKey;
-import com.dwarfeng.projwiz.basic4.model.struct.MemoryFile;
-import com.dwarfeng.projwiz.basic4.model.struct.MemoryProject;
 import com.dwarfeng.projwiz.basic4.model.struct.MeppConstantsProvider;
+import com.dwarfeng.projwiz.basic4.model.struct.MeppFile;
+import com.dwarfeng.projwiz.basic4.model.struct.MeppProject;
 import com.dwarfeng.projwiz.basic4.util.Constants;
+import com.dwarfeng.projwiz.basic4.view.MeppProjectPropUI;
 import com.dwarfeng.projwiz.core.model.cm.MapTree;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
 import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
@@ -25,7 +26,7 @@ import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Project;
-import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
+import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
@@ -81,9 +82,19 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public PropSuppiler getFilePropSuppiler(File file) {
-		// TODO Auto-generated method stub
-		return super.getFilePropSuppiler(file);
+	public PropUI getFilePropUI(Project project, File file) {
+		lock.writeLock().lock();
+		try {
+			if (!(project instanceof MeppProject)) {
+				return null;
+			}
+
+			// TODO return new MeppProjectPropUI.Builder(new
+			// ProjProcToolkitImpl(), (MeppProject) project).build();
+			return null;
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
@@ -106,9 +117,17 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public PropSuppiler getProjectPropSuppiler(Project project) {
-		// TODO Auto-generated method stub
-		return super.getProjectPropSuppiler(project);
+	public PropUI getProjectPropUI(Project project) {
+		lock.writeLock().lock();
+		try {
+			if (!(project instanceof MeppProject)) {
+				return null;
+			}
+
+			return new MeppProjectPropUI.Builder(new ProjProcToolkitImpl(), (MeppProject) project).build();
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
@@ -192,7 +211,7 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 						.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_VALUE.getConfigKey(), Integer.class);
 			}
 
-			File rootFile = new MemoryFile.Builder(true, new ProjProcToolkitImpl(), FileType.FOLDER, new HashMap<>())
+			File rootFile = new MeppFile.Builder(true, new ProjProcToolkitImpl(), FileType.FOLDER, new HashMap<>())
 					.setBuffCapa(0).setReadSupported(false).setWriteSupported(false).build();
 
 			Tree<File> fileTree = new MapTree<>();
@@ -200,7 +219,7 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 			Map<File, String> fileNameMap = new HashMap<>();
 			fileNameMap.put(rootFile, Constants.ROOT_FILE_NAME);
 
-			return new MemoryProject.Builder(name, new ProjProcToolkitImpl(), fileTree, fileNameMap)
+			return new MeppProject.Builder(name, new ProjProcToolkitImpl(), fileTree, fileNameMap)
 					.setDefaultBuffCapa(buffCapa).build();
 		} finally {
 			lock.writeLock().unlock();

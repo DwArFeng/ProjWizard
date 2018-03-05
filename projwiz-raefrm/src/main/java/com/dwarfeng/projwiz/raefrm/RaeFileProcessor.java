@@ -13,7 +13,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Project;
-import com.dwarfeng.projwiz.core.model.struct.PropSuppiler;
+import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
@@ -144,7 +144,7 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	 * {@inheritDoc}
 	 */
 	@Override
-	public PropSuppiler getPropSuppiler(File file) {
+	public PropUI getPropUI(File file) {
 		return null;
 	}
 

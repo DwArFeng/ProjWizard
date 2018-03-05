@@ -1,403 +1,165 @@
 package com.dwarfeng.projwiz.raefrm;
 
+import java.awt.Component;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
+import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import javax.swing.JPanel;
 
 import com.dwarfeng.dutil.basic.prog.Buildable;
-import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.str.Name;
+import com.dwarfeng.dutil.develop.i18n.I18n;
+import com.dwarfeng.dutil.develop.i18n.obv.I18nAdapter;
+import com.dwarfeng.dutil.develop.i18n.obv.I18nObverser;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.Tree;
-import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
-import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
-import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
-import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
+import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
-import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
- * Rae框架工程。
+ * Rae框架下的工程属性用户接口。
  * 
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public abstract class RaeProject implements Project {
+public abstract class RaeProjectPropUI<P extends Project> extends JPanel implements PropUI {
+
+	private static final long serialVersionUID = -13145783626707281L;
 
 	/**
-	 * Rae框架工程的构造器。
+	 * Rae框架工程属性用户接口的构造器。
 	 * 
 	 * @author DwArFeng
 	 * @since 0.0.3-alpha
 	 */
-	protected abstract static class RaeProjectBuilder implements Buildable<RaeProject> {
+	public abstract static class RaeProjectPropUIBuilder<P extends Project> implements Buildable<RaeProjectPropUI<P>> {
 
-		/** 该工程的处理器类。 */
-		protected final Class<? extends ProjectProcessor> processorClass;
-		/** 工程的名称。 */
-		protected final String name;
 		/** 对应的工程处理器的工具包。 */
 		protected final ProjProcToolkit projProcToolkit;
-		/** 抽象工程的工程树。 */
-		protected final Tree<File> fileTree;
-		/** Rae工程的文件名称映射。 */
-		protected final Map<File, String> fileNameMap;
-
-		/** 工程的观察器集合。 */
-		protected Set<ProjectObverser> obversers = Collections.newSetFromMap(new WeakHashMap<>());
+		/** 工程属性用户接口的目标工程。 */
+		protected final P project;
 
 		/**
 		 * 新实例。
 		 * 
-		 * @param processorClass
-		 *            指定的处理器类。
-		 * @param name
-		 *            指定的名称。
 		 * @param projProcToolkit
 		 *            指定的工程文件处理器工具包。
-		 * @param fileTree
-		 *            指定的文件树。
-		 * @param fileNameMap
-		 *            指定的文件-名称映射。
+		 * @param project
+		 *            指定的工程。
 		 * @throws NullPointerException
 		 *             入口参数为 <code>null</code>。
 		 */
-		public RaeProjectBuilder(Class<? extends ProjectProcessor> processorClass, String name,
-				ProjProcToolkit projProcToolkit, Tree<File> fileTree, Map<File, String> fileNameMap) {
-			Objects.requireNonNull(processorClass, "入口参数 processorClass 不能为 null。");
-			Objects.requireNonNull(name, "入口参数 name 不能为 null。");
+		protected RaeProjectPropUIBuilder(ProjProcToolkit projProcToolkit, P project) {
 			Objects.requireNonNull(projProcToolkit, "入口参数 projProcToolkit 不能为 null。");
-			Objects.requireNonNull(fileTree, "入口参数 fileTree 不能为 null。");
-			Objects.requireNonNull(fileNameMap, "入口参数 fileNameMap 不能为 null。");
+			Objects.requireNonNull(project, "入口参数 project 不能为 null。");
 
-			this.processorClass = processorClass;
-			this.name = name;
 			this.projProcToolkit = projProcToolkit;
-			this.fileTree = fileTree;
-			this.fileNameMap = fileNameMap;
+			this.project = project;
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public abstract RaeProject build();
+		public abstract RaeProjectPropUI<P> build();
 
 		/**
-		 * 获取工程的文件-名称映射。
+		 * 获取用户接口的目标文件。
 		 * 
-		 * @return 工程的文件-名称映射。
+		 * @return 用户接口的目标文件。
 		 */
-		public Map<File, String> getFileNameMap() {
-			return fileNameMap;
+		public P getProject() {
+			return project;
 		}
 
 		/**
-		 * 获取工程的文件树。
+		 * 获取用户接口的工程处理器工具箱。
 		 * 
-		 * @return 工程的文件树。
+		 * @return 用户接口的工程处理器工具箱。
 		 */
-		public Tree<File> getFileTree() {
-			return fileTree;
-		}
-
-		/**
-		 * 获取工程的名称。
-		 * 
-		 * @return 工程的名称。
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * 获取工程的观察器集合。
-		 * 
-		 * @return 工程的观察器集合。
-		 */
-		public Set<ProjectObverser> getObversers() {
-			return obversers;
-		}
-
-		/**
-		 * 获取工程的处理器类。
-		 * 
-		 * @return 工程的处理器类。
-		 */
-		public Class<? extends ProjectProcessor> getProcessorClass() {
-			return processorClass;
-		}
-
-		/**
-		 * 获取工程的工程文件处理器工具包。
-		 * 
-		 * @return 工程的工程文件处理器工具包。
-		 */
-		public ProjProcToolkit getProjprocToolkit() {
+		public ProjProcToolkit getProjProcToolkit() {
 			return projProcToolkit;
-		}
-
-		/**
-		 * 设置工程中的观察器集合。
-		 * 
-		 * @param obversers
-		 *            工程中的观察器集合。
-		 * @return 构造器自身。
-		 */
-		public RaeProjectBuilder setObversers(Set<ProjectObverser> obversers) {
-			this.obversers = Objects.isNull(obversers) ? Collections.newSetFromMap(new WeakHashMap<>()) : obversers;
-			return this;
 		}
 
 	}
 
-	/** 工程的同步读写锁。 */
-	protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
-	/** 工程的观察器集合。 */
-	protected final Set<ProjectObverser> obversers;
-
-	/** 该工程的处理器类。 */
-	protected final Class<? extends ProjectProcessor> processorClass;
-	/** 工程的名称。 */
-	protected final String name;
-	/** 抽象工程的工程树。 */
-	protected final Tree<File> fileTree;
-	/** Rae工程的文件名称映射。 */
-	protected final Map<File, String> fileNameMap;
-
 	/** 对应的工程处理器的工具包。 */
 	protected final ProjProcToolkit projProcToolkit;
+	/** 工程属性用户接口的目标工程。 */
+	protected final P project;
+
+	/** 国际化观察器。 */
+	protected final I18nObverser i18nObverser = new I18nAdapter() {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void fireCurrentLocaleChanged(Locale oldLocale, Locale newLocale, I18n newI18n) {
+			refreshLabels();
+		}
+
+	};
 
 	/**
 	 * 新实例。
 	 * 
-	 * @param processorClass
-	 *            该工程的控制器类。
-	 * @param name
-	 *            该工程的名称。
-	 * @param fileTree
-	 *            该工程的文件树。
-	 * @param fileNameMap
-	 *            该工程的文件名称映射。
 	 * @param projProcToolkit
-	 *            该工程的工程处理器工具包。
-	 * @param obversers
-	 *            该工程的观察器集合。
+	 *            指定的工程文件处理器工具包。
+	 * @param project
+	 *            指定的工程。
+	 * @param file
+	 *            指定的文件。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	protected RaeProject(Class<? extends ProjectProcessor> processorClass, String name, Tree<File> fileTree,
-			Map<File, String> fileNameMap, ProjProcToolkit projProcToolkit, Set<ProjectObverser> obversers) {
-		Objects.requireNonNull(processorClass, "入口参数 processorClass 不能为 null。");
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-		Objects.requireNonNull(fileTree, "入口参数 fileTree 不能为 null。");
-		Objects.requireNonNull(fileNameMap, "入口参数 fileNameMap 不能为 null。");
+	protected RaeProjectPropUI(ProjProcToolkit projProcToolkit, P project) {
 		Objects.requireNonNull(projProcToolkit, "入口参数 projProcToolkit 不能为 null。");
-		Objects.requireNonNull(obversers);
+		Objects.requireNonNull(project, "入口参数 project 不能为 null。");
 
-		this.processorClass = processorClass;
-		this.name = name;
-		this.fileTree = fileTree;
-		this.fileNameMap = fileNameMap;
 		this.projProcToolkit = projProcToolkit;
-		this.obversers = obversers;
+		this.project = project;
+
+		this.projProcToolkit.getLabelI18nHandler().addObverser(i18nObverser);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File addFile(File parent, File file, String exceptName, AddingSituation situation) {
-		throw new UnsupportedOperationException("addFile");
-	}
+	public abstract void fireApplied();
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean addObverser(ProjectObverser obverser) {
-		lock.writeLock().lock();
-		try {
-			return obversers.add(obverser);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
+	public abstract void fireCanceled();
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void clearObverser() {
-		lock.writeLock().lock();
-		try {
-			obversers.clear();
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
+	public abstract void fireConfirmed();
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileName(File file) {
-		lock.readLock().lock();
-		try {
-			return fileNameMap.getOrDefault(file, null);
-		} finally {
-			lock.readLock().unlock();
-		}
+	public Component getComponent() {
+		return this;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * 获取工程属性用户接口的目标工程。
+	 * 
+	 * @return 工程属性用户接口的目标工程。
 	 */
-	@Override
-	public Tree<? extends File> getFileTree() {
-		lock.readLock().lock();
-		try {
-			return ModelUtil.unmodifiableTree(fileTree);
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ReadWriteLock getLock() {
-		return lock;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Set<ProjectObverser> getObversers() {
-		lock.readLock().lock();
-		try {
-			return Collections.unmodifiableSet(obversers);
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Class<? extends ProjectProcessor> getProcessorClass() {
-		return processorClass;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isAddFileSupported(AddingSituation situation) {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isRemoveFileSupported(RemovingSituation situation) {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isRenameFileSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isSaveSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isStopSuggest() {
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File removeFile(File file, RemovingSituation situation) {
-		throw new UnsupportedOperationException("removeFile");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean removeObverser(ProjectObverser obverser) {
-		lock.writeLock().lock();
-		try {
-			return obversers.remove(obverser);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File renameFile(File file, String newName) {
-		throw new UnsupportedOperationException("renameFile");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void save() throws ProcessException {
-		throw new UnsupportedOperationException("save");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void stop() {
-		lock.writeLock().lock();
-		try {
-			fireStopped();
-		} finally {
-			lock.writeLock().unlock();
-		}
+	public P getProject() {
+		return project;
 	}
 
 	/**
@@ -411,8 +173,15 @@ public abstract class RaeProject implements Project {
 	protected void debug(Name name) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().debug(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().debug(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
+	}
+
+	/**
+	 * 释放系统资源。
+	 */
+	protected void dispose() {
+		this.projProcToolkit.getLabelI18nHandler().removeObverser(i18nObverser);
 	}
 
 	/**
@@ -428,7 +197,7 @@ public abstract class RaeProject implements Project {
 	protected void error(Name name, Throwable e) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().error(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().error(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
 	}
 
@@ -445,100 +214,8 @@ public abstract class RaeProject implements Project {
 	protected void fatal(Name name, Throwable e) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().fatal(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().fatal(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
-	}
-
-	/**
-	 * 通知文件被添加。
-	 * 
-	 * @param path
-	 *            指定的文件所在的路径。
-	 * @param parent
-	 *            指定文件的父节点。
-	 * @param file
-	 *            指定的文件。
-	 * @param situation
-	 *            文件的添加情形。
-	 */
-	protected void fireFileAdded(Tree.Path<File> path, File parent, File file, Project.AddingSituation situation) {
-		obversers.forEach(obverser -> {
-			try {
-				obverser.fireFileAdded(path, parent, file, situation);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * 通知指定的文件以删除的方式被移除。
-	 * 
-	 * @param path
-	 *            指定的文件所在的路径。
-	 * @param parent
-	 *            指定的文件的父节点。
-	 * @param file
-	 *            指定的文件。
-	 * @param situation
-	 *            文件的移除情形。
-	 */
-	protected void fireFileRemoved(Tree.Path<File> path, File parent, File file, Project.RemovingSituation situation) {
-		obversers.forEach(obverser -> {
-			try {
-				obverser.fireFileRemoved(path, parent, file, situation);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * 通知指定的文件被重命名。
-	 * 
-	 * @param path
-	 *            指定的文件所在的路径。
-	 * @param file
-	 *            指定的文件。
-	 * @param oldName
-	 *            指定文件的旧名字。
-	 * @param newName
-	 *            指定文件的新名字。
-	 */
-	protected void fireFileRenamed(Path<File> path, File file, String oldName, String newName) {
-		obversers.forEach(obverser -> {
-			try {
-				obverser.fireFileRenamed(path, file, oldName, newName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * 通知工程被保存。
-	 */
-	protected void fireSaved() {
-		obversers.forEach(obverser -> {
-			try {
-				obverser.fireSaved();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * 通知观察器该工程通知运行。
-	 */
-	protected void fireStopped() {
-		obversers.forEach(obverser -> {
-			try {
-				obverser.fireStopped();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
 	}
 
 	/**
@@ -555,7 +232,7 @@ public abstract class RaeProject implements Project {
 		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().debug(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().debug(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -576,7 +253,7 @@ public abstract class RaeProject implements Project {
 		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().error(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().error(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
 	}
 
@@ -597,7 +274,7 @@ public abstract class RaeProject implements Project {
 		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().fatal(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().fatal(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
 	}
 
@@ -615,7 +292,7 @@ public abstract class RaeProject implements Project {
 		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().info(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().info(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -652,7 +329,7 @@ public abstract class RaeProject implements Project {
 		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().trace(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().trace(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -670,7 +347,7 @@ public abstract class RaeProject implements Project {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().warn(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().warn(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
 	}
 
@@ -691,7 +368,7 @@ public abstract class RaeProject implements Project {
 		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
 
-		getToolkit().warn(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().warn(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
 	}
 
@@ -700,7 +377,7 @@ public abstract class RaeProject implements Project {
 	 * 
 	 * @return 组件的工具包。
 	 */
-	protected final Toolkit getToolkit() {
+	protected final Toolkit getProjwizToolkit() {
 		return projProcToolkit.getToolkit();
 	}
 
@@ -715,7 +392,7 @@ public abstract class RaeProject implements Project {
 	protected void info(Name name) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().info(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().info(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
@@ -730,7 +407,7 @@ public abstract class RaeProject implements Project {
 	 */
 	protected boolean isNotPermKeyAvaliable(Name permKey) {
 		Objects.requireNonNull(permKey, "入口参数 permKey 不能为 null。");
-		return projProcToolkit.getPermDemandModel().isNotPermKeyAvaliable(permKey, getToolkit());
+		return projProcToolkit.getPermDemandModel().isNotPermKeyAvaliable(permKey, getProjwizToolkit());
 	}
 
 	/**
@@ -744,7 +421,7 @@ public abstract class RaeProject implements Project {
 	 */
 	protected boolean isPermKeyAvailable(Name permKey) {
 		Objects.requireNonNull(permKey, "入口参数 permKey 不能为 null。");
-		return projProcToolkit.getPermDemandModel().isPermKeyAvailable(permKey, getToolkit());
+		return projProcToolkit.getPermDemandModel().isPermKeyAvailable(permKey, getProjwizToolkit());
 	}
 
 	/**
@@ -796,7 +473,7 @@ public abstract class RaeProject implements Project {
 	protected InputStream openResource(Name resourceKey, boolean autoReset) throws IOException {
 		Objects.requireNonNull(resourceKey, "入口参数 resourceKey 不能为 null。");
 
-		ResourceHandler cfgHandlerReadOnly = getToolkit().getCfgHandlerReadOnly();
+		ResourceHandler cfgHandlerReadOnly = getProjwizToolkit().getCfgHandlerReadOnly();
 		if (!cfgHandlerReadOnly.containsKey(resourceKey)) {
 			throw new IOException(String.format("不存在指定的资源: %s", resourceKey.getName()));
 		}
@@ -809,6 +486,11 @@ public abstract class RaeProject implements Project {
 	}
 
 	/**
+	 * 刷新标签。
+	 */
+	protected abstract void refreshLabels();
+
+	/**
 	 * 向记录器中输出一条显示。
 	 * 
 	 * @param name
@@ -819,7 +501,7 @@ public abstract class RaeProject implements Project {
 	protected void trace(Name name) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().trace(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().trace(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
@@ -834,7 +516,7 @@ public abstract class RaeProject implements Project {
 	protected void warn(Name name) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().warn(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().warn(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
 	}
 
@@ -851,8 +533,7 @@ public abstract class RaeProject implements Project {
 	protected void warn(Name name, Throwable e) {
 		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
 
-		getToolkit().warn(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
+		getProjwizToolkit().warn(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
 	}
-
 }

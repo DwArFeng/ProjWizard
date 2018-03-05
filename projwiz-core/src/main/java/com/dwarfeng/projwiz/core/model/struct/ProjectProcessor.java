@@ -17,21 +17,23 @@ import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 public interface ProjectProcessor extends Component {
 
 	/**
-	 * 获取文件处理器指定的文件对应的属性提供器。
+	 * 获取文件处理器指定的文件对应的属性用户接口。
 	 * 
 	 * <p>
-	 * 如果不需要指定的属性提供器，返回 <code>null</code>即可。
+	 * 如果不需要指定的属性用户接口，返回 <code>null</code>即可。
 	 * 
+	 * @param project
+	 *            指定文件所在的工程。
 	 * @param file
 	 *            指定的文件。
-	 * @return 指定的文件对应的属性提供器。
+	 * @return 指定的文件对应的属性用户接口。
 	 */
-	public PropSuppiler getFilePropSuppiler(File file);
+	public PropUI getFilePropUI(Project project, File file);
 
 	/**
 	 * 获取指定工程的图标。
 	 * <p>
-	 * 如果不需要指定的属性提供器，返回 <code>null</code>即可。
+	 * 如果不需要指定的属性用户接口，返回 <code>null</code>即可。
 	 * 
 	 * @param project
 	 *            指定的工程。
@@ -49,13 +51,13 @@ public interface ProjectProcessor extends Component {
 	public IconVariability getProjectIconFixType(Project project);
 
 	/**
-	 * 获取工程处理器指定的工程对应的属性提供器。
+	 * 获取工程处理器指定的工程对应的属性用户接口。
 	 * 
 	 * @param project
 	 *            指定的工程。
-	 * @return 指定的文件对应的属性提供器。
+	 * @return 指定的文件对应的属性用户接口。
 	 */
-	public PropSuppiler getProjectPropSuppiler(Project project);
+	public PropUI getProjectPropUI(Project project);
 
 	/**
 	 * 获取指定工程的缩略图。
