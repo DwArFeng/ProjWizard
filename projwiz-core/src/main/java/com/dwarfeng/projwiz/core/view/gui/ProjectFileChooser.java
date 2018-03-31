@@ -2,27 +2,20 @@ package com.dwarfeng.projwiz.core.view.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,19 +31,13 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -69,8 +56,6 @@ import com.dwarfeng.dutil.basic.prog.Filter;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
-import com.dwarfeng.projwiz.core.model.eum.FileChooserDialogType;
-import com.dwarfeng.projwiz.core.model.eum.FileSelectionMode;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.obv.ProjectAdapter;
@@ -82,6 +67,8 @@ import com.dwarfeng.projwiz.core.model.struct.Project.AddingSituation;
 import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
+import com.dwarfeng.projwiz.core.view.eum.ChooseOption;
+import com.dwarfeng.projwiz.core.view.eum.FileSelectionMode;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 
 /**
@@ -89,7 +76,7 @@ import com.dwarfeng.projwiz.core.view.struct.GuiManager;
  * @author DwArFeng
  * @since 0.0.2-alpha
  */
-public final class ProjectFileChooser extends ProjWizPanel {
+public final class ProjectFileChooser extends ProjWizChooser {
 
 	/**
 	 * 文件过滤器。
@@ -105,66 +92,6 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		 * @return 文件过滤器的描述。
 		 */
 		public String getDescription();
-	}
-
-	/**
-	 * 对话框返回的选项。
-	 * 
-	 * @author DwArFeng
-	 * @since 0.0.2-alpha
-	 */
-	public enum ReturnOption {
-		/** 点击取消按钮后返回的选项。 */
-		CANCEL_OPTION,
-		/** 点击确定按钮后返回的选项。 */
-		APPROVE_OPTION,
-		/** 发生错误时返回的选项。 */
-		ERROR_OPTION,
-
-	}
-
-	private final class FileChooserDialog extends ProjWizDialog {
-
-		/**
-		 * 新实例。
-		 */
-		@SuppressWarnings("unused")
-		public FileChooserDialog() {
-			this(null, null, null);
-		}
-
-		/**
-		 * 新实例。
-		 * 
-		 * @param guiManager
-		 *            指定的 GUI 管理器。
-		 * @param i18nHandler
-		 *            指定的国际化处理器。
-		 * @param owner
-		 *            对话框指定的所有者。
-		 */
-		public FileChooserDialog(GuiManager guiManager, I18nHandler i18nHandler, Window owner) {
-			super(guiManager, i18nHandler, owner);
-			setTitle(label(LabelStringKey.PROJFC_8));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void dispose() {
-			ProjectFileChooser.this.dispose();
-			super.dispose();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		protected void refreshLabels() {
-			setTitle(label(LabelStringKey.PROJFC_8));
-		}
-
 	}
 
 	/**
@@ -218,8 +145,6 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	private final JList<File> list_file;
 	private final JLabel label_pathName;
 	private final JLabel label_fileFilter;
-	private final JButton button_approve;
-	private final JButton button_cancel;
 	private final JTextField textField_filePath;
 	private final JButton uptoButton;
 	private final JButton frontpageButton;
@@ -393,14 +318,12 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	private boolean acceptAllFileFilterUsed;
 	private boolean controlButtonsAreShown;
 	private File currentDirectory;
-	private FileChooserDialogType dialogType;
 	private boolean dragEnabled;
 	private Set<FileFilter> fileFilters;
 	private boolean fileHidingEnabled;
 	private FileSelectionMode fileSelectionMode;
 	private boolean multiSelectionEnabled;
 	private ProjWizDialog currentDialog;
-	private ReturnOption returnValue;
 	private FocusComponent focusComponent;
 
 	/**
@@ -420,20 +343,9 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	 */
 	public ProjectFileChooser(GuiManager guiManager, I18nHandler i18nHandler, SyncListModel<Project> holdProjectModel,
 			SyncComponentModel componentModel) {
-		super(guiManager, i18nHandler);
+		super(guiManager, i18nHandler, LabelStringKey.PROJFC_4);
 
 		setPreferredSize(new Dimension(500, 300));
-		registerKeyboardAction(e -> {
-			if (Objects.isNull(currentDialog)) {
-				returnValue = ReturnOption.ERROR_OPTION;
-				throw new IllegalStateException("ESC键侦听器似乎不该在这个时候触发");
-			}
-
-			syncSelectedFiles(false);
-
-			returnValue = ReturnOption.CANCEL_OPTION;
-			currentDialog.dispose();
-		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
 		if (Objects.nonNull(holdProjectModel)) {
 			holdProjectModel.addObverser(holdProjectObverser);
@@ -604,13 +516,11 @@ public final class ProjectFileChooser extends ProjWizPanel {
 						showRootFile();
 					} else {
 						if (Objects.isNull(currentDialog)) {
-							returnValue = ReturnOption.ERROR_OPTION;
+							chooseOption = ChooseOption.ERROR_OPTION;
 							return;
 						}
 
-						syncSelectedFiles(true);
-
-						returnValue = ReturnOption.APPROVE_OPTION;
+						chooseOption = ChooseOption.APPROVE_OPTION;
 						currentDialog.dispose();
 					}
 				}
@@ -708,51 +618,18 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		panel.add(comboBox_fileFilter, gbc_comboBox_fileFilter);
 		comboBox_fileFilter.setEnabled(false);
 
-		button_approve = new JButton(label(LabelStringKey.PROJFC_4));
 		GridBagConstraints gbc_button_approve = new GridBagConstraints();
 		gbc_button_approve.insets = new Insets(0, 0, 0, 5);
 		gbc_button_approve.gridx = 2;
 		gbc_button_approve.gridy = 3;
 		panel.add(button_approve, gbc_button_approve);
-		button_approve.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (Objects.isNull(currentDialog)) {
-					returnValue = ReturnOption.ERROR_OPTION;
-					throw new IllegalStateException("确认按钮的侦听器似乎不该在这个时候触发");
-				}
-
-				syncSelectedFiles(true);
-
-				returnValue = ReturnOption.APPROVE_OPTION;
-				currentDialog.dispose();
-			}
-		});
-
-		button_cancel = new JButton(label(LabelStringKey.PROJFC_7));
 		GridBagConstraints gbc_button_cancel = new GridBagConstraints();
 		gbc_button_cancel.gridx = 3;
 		gbc_button_cancel.gridy = 3;
 		panel.add(button_cancel, gbc_button_cancel);
-		button_cancel.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (Objects.isNull(currentDialog)) {
-					returnValue = ReturnOption.ERROR_OPTION;
-					throw new IllegalStateException("取消按钮的侦听器似乎不该在这个时候触发");
-				}
-
-				syncSelectedFiles(false);
-
-				returnValue = ReturnOption.CANCEL_OPTION;
-				currentDialog.dispose();
-			}
-		});
 
 		syncSettings();
-
 		syncHoldProjectModel();
 		syncComponentModel();
 
@@ -766,6 +643,9 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		if (Objects.nonNull(this.currentProject)) {
 			currentProject.removeObverser(currentProjectObverser);
 		}
+
+		// 同步选择文件
+		syncSelectedFile();
 	}
 
 	/**
@@ -780,13 +660,6 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	 */
 	public File getCurrentDirectory() {
 		return currentDirectory;
-	}
-
-	/**
-	 * @return the dialogType
-	 */
-	public FileChooserDialogType getDialogType() {
-		return dialogType;
 	}
 
 	/**
@@ -836,7 +709,9 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	}
 
 	/**
-	 * @return the controlButtonsAreShown
+	 * 获取控制按钮是否显示。
+	 * 
+	 * @return 控制按钮是否显示。
 	 */
 	public boolean isControlButtonsAreShown() {
 		return controlButtonsAreShown;
@@ -881,8 +756,10 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	}
 
 	/**
-	 * @param controlButtonsAreShown
-	 *            the controlButtonsAreShown to set
+	 * 设置控制按钮是否显示。
+	 * 
+	 * @param aFlag
+	 *            是否显示。
 	 */
 	public void setControlButtonsAreShown(boolean controlButtonsAreShown) {
 		this.controlButtonsAreShown = controlButtonsAreShown;
@@ -894,19 +771,6 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	 */
 	public void setCurrentDirectory(File currentDirectory) {
 		this.currentDirectory = currentDirectory;
-	}
-
-	/**
-	 * @param dialogType
-	 *            the dialogType to set
-	 */
-	public void setDialogType(FileChooserDialogType dialogType) {
-		if (this.dialogType == dialogType) {
-			return;
-		}
-
-		this.dialogType = dialogType;
-		setApproveButtonText();
 	}
 
 	/**
@@ -972,139 +836,13 @@ public final class ProjectFileChooser extends ProjWizPanel {
 	}
 
 	/**
-	 * 
-	 * @param parent
-	 * @param approveButtonText
-	 * @return
-	 * @throws HeadlessException
-	 */
-	public ReturnOption showDialog(Component parent) throws HeadlessException {
-		if (currentDialog != null) {
-			// Prevent to show second instance of dialog if the previous one
-			// still exists
-			return ReturnOption.ERROR_OPTION;
-		}
-
-		currentDialog = createDialog(parent);
-		currentDialog.addWindowListener(new WindowAdapter() {
-
-			@Override
-			public void windowClosing(WindowEvent e) {
-				returnValue = ReturnOption.CANCEL_OPTION;
-			}
-		});
-		returnValue = ReturnOption.ERROR_OPTION;
-
-		currentDialog.setVisible(true);
-
-		// Remove all components from dialog. The MetalFileChooserUI.installUI()
-		// method (and other LAFs)
-		// registers AWT listener for dialogs and produces memory leaks. It
-		// happens when
-		// installUI invoked after the showDialog method.
-		currentDialog.getContentPane().removeAll();
-		currentDialog.dispose();
-		currentDialog = null;
-		return returnValue;
-	}
-
-	/**
-	 * 
-	 * @param parent
-	 * @return
-	 * @throws HeadlessException
-	 */
-	public ReturnOption showOpenDialog(Component parent) throws HeadlessException {
-		setDialogType(FileChooserDialogType.OPEN_DIALOG);
-		return showDialog(parent);
-	}
-
-	/**
-	 * 
-	 * @param parent
-	 * @return
-	 * @throws HeadlessException
-	 */
-	public ReturnOption showSaveDialog(Component parent) throws HeadlessException {
-		setDialogType(FileChooserDialogType.SAVE_DIALOG);
-		return showDialog(parent);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	protected void refreshLabels() {
-		setApproveButtonText();
 		label_pathName.setText(label(LabelStringKey.PROJFC_2));
 		label_fileFilter.setText(label(LabelStringKey.PROJFC_3));
-		setConfirmButtonLabel();
-	}
-
-	private FileChooserDialog createDialog(Component parent) throws HeadlessException {
-		FileChooserDialog dialog;
-		Window window = SwingUtilities.getWindowAncestor(parent);
-
-		dialog = new FileChooserDialog(guiManager, i18nHandler, window);
-		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
-		this.currentDialog = dialog;
-		dialog.addWindowListener(new WindowAdapter() {
-
-			@Override
-			public void windowClosed(WindowEvent e) {
-				currentDialog = null;
-			}
-		});
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setComponentOrientation(this.getComponentOrientation());
-		dialog.getRootPane().setDefaultButton(button_approve);
-
-		Container contentPane = dialog.getContentPane();
-		contentPane.setLayout(new BorderLayout());
-		contentPane.add(this, BorderLayout.CENTER);
-
-		if (JDialog.isDefaultLookAndFeelDecorated()) {
-			boolean supportsWindowDecorations = UIManager.getLookAndFeel().getSupportsWindowDecorations();
-			if (supportsWindowDecorations) {
-				dialog.getRootPane().setWindowDecorationStyle(JRootPane.FILE_CHOOSER_DIALOG);
-			}
-		}
-		dialog.pack();
-		dialog.setLocationRelativeTo(parent);
-
-		return dialog;
-	}
-
-	private void setApproveButtonText() {
-		switch (dialogType) {
-		case OPEN_DIALOG:
-			button_approve.setText(label(LabelStringKey.PROJFC_5));
-			break;
-		case SAVE_DIALOG:
-			button_approve.setText(label(LabelStringKey.PROJFC_6));
-			break;
-		default:
-			button_approve.setText(label(LabelStringKey.PROJFC_4));
-			break;
-		}
-	}
-
-	private void setConfirmButtonLabel() {
-		if (Objects.isNull(dialogType)) {
-			button_approve.setText(label(LabelStringKey.PROJFC_4));
-		} else {
-			switch (dialogType) {
-			case OPEN_DIALOG:
-				button_approve.setText(label(LabelStringKey.PROJFC_5));
-				break;
-			case SAVE_DIALOG:
-				button_approve.setText(label(LabelStringKey.PROJFC_6));
-				break;
-			default:
-				button_approve.setText(label(LabelStringKey.PROJFC_4));
-				break;
-			}
-		}
+		super.refreshLabels();
 	}
 
 	private void showFilePath() {
@@ -1167,36 +905,28 @@ public final class ProjectFileChooser extends ProjWizPanel {
 		}
 	}
 
-	/**
-	 * aFlag 为 <code>true</code> 的时候，将选择的文件同步到 selectedFiles中，否则直接清空
-	 * selectedFiles。
-	 * 
-	 * @param aFlag
-	 *            是否选择了文件。
-	 */
-	private void syncSelectedFiles(boolean aFlag) {
-		boolean flag = false;
-
+	private void syncSelectedFile() {
 		selectedFiles.clear();
 		selectedFile.set(null);
 
-		if (!aFlag) {
-			return;
-		}
-
-		for (int i = 0; i < fileListModel.size(); i++) {
-			if (fileListSelectionModel.isSelectedIndex(i)) {
-				selectedFiles.add(fileListModel.get(i));
-				if (!flag) {
-					selectedFile.set(fileListModel.get(i));
-					flag = true;
+		switch (chooseOption) {
+		case APPROVE_OPTION:
+			if (fileListSelectionModel.getMinSelectionIndex() == -1) {
+				selectedFiles.add(currentRootFile);
+				selectedFile.set(currentRootFile);
+			} else {
+				for (int i = 0; i < fileListModel.size(); i++) {
+					if (fileListSelectionModel.isSelectedIndex(i)) {
+						selectedFiles.add(fileListModel.get(i));
+					}
+				}
+				if (!fileListModel.isEmpty() && fileListSelectionModel.getMinSelectionIndex() >= 0) {
+					selectedFile.set(fileListModel.get(fileListSelectionModel.getAnchorSelectionIndex()));
 				}
 			}
-		}
-
-		if (selectedFiles.size() == 0) {
-			selectedFiles.add(currentRootFile);
-			selectedFile.set(currentRootFile);
+			break;
+		default:
+			break;
 		}
 	}
 

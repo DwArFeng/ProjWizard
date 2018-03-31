@@ -3,24 +3,22 @@ package com.dwarfeng.projwiz.core.control;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
-import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
+import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
-import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
+import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class OpenProjectTask extends ProjWizTask {
@@ -56,30 +54,17 @@ final class OpenProjectTask extends ProjWizTask {
 							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 		}
 
-		AtomicReference<ComponentSelectDialog> dialogRef = new AtomicReference<>();
-
-		SwingUtil.invokeAndWaitInEventQueue(() -> {
-			dialogRef.set(new ComponentSelectDialog(projWizard.getToolkit().getGuiManager(),
-					projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getMainFrame(),
-					projWizard.getToolkit().getComponentModel(), component -> {
-						if (!(component instanceof ProjectProcessor)) {
-							return false;
-						}
-						return ((ProjectProcessor) component).isOpenProjectSupported();
-					}));
-		});
-
-		projWizard.getToolkit().showExternalWindow(dialogRef.get());
-		dialogRef.get().waitDispose();
-
-		if (dialogRef.get().getOption() != DialogOption.OK_YES) {
+		Component[] components = projWizard.getToolkit().chooseComponent(
+				new ComponentChooserSetting.Builder().setMultiSelectionEnabled(false).setComponentFilter(component -> {
+					if (!(component instanceof ProjectProcessor)) {
+						return false;
+					}
+					return ((ProjectProcessor) component).isOpenProjectSupported();
+				}).build());
+		if (components.length == 0) {
 			return;
 		}
-
-		ProjectProcessor processor = dialogRef.get().getCurrentComponent(ProjectProcessor.class);
-		if (Objects.isNull(processor)) {
-			return;
-		}
+		ProjectProcessor processor = (ProjectProcessor) components[0];
 
 		Project openedProject = processor.openProject();
 		if (Objects.isNull(openedProject)) {
@@ -106,8 +91,8 @@ final class OpenProjectTask extends ProjWizTask {
 		File repeditionFile = checkNameRepetition(openedProject, openedProject.getFileTree());
 		if (Objects.nonNull(repeditionFile)) {
 			projWizard.getToolkit().showMessageDialog(new MessageDialogSetting.Builder()
-					.setMessage(
-							formatLabel(LabelStringKey.MSGDIA_36, ProjectFileUtil.getStdPath(openedProject, repeditionFile)))
+					.setMessage(formatLabel(LabelStringKey.MSGDIA_36,
+							ProjectFileUtil.getStdPath(openedProject, repeditionFile)))
 					.setTitle(label(LabelStringKey.MSGDIA_31)).setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
 			return;
 		}

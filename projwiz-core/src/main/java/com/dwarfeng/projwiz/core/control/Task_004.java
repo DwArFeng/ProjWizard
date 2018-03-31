@@ -1,23 +1,21 @@
 package com.dwarfeng.projwiz.core.control;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
-import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
+import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
-import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
+import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class NewProjectTask extends ProjWizTask {
@@ -53,30 +51,17 @@ final class NewProjectTask extends ProjWizTask {
 							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 		}
 
-		AtomicReference<ComponentSelectDialog> dialogRef = new AtomicReference<>();
-
-		SwingUtil.invokeAndWaitInEventQueue(() -> {
-			dialogRef.set(new ComponentSelectDialog(projWizard.getToolkit().getGuiManager(),
-					projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getMainFrame(),
-					projWizard.getToolkit().getComponentModel(), component -> {
-						if (!(component instanceof ProjectProcessor)) {
-							return false;
-						}
-						return ((ProjectProcessor) component).isNewProjectSupported();
-					}));
-		});
-
-		projWizard.getToolkit().showExternalWindow(dialogRef.get());
-		dialogRef.get().waitDispose();
-
-		if (dialogRef.get().getOption() != DialogOption.OK_YES) {
+		Component[] components = projWizard.getToolkit().chooseComponent(
+				new ComponentChooserSetting.Builder().setMultiSelectionEnabled(false).setComponentFilter(component -> {
+					if (!(component instanceof ProjectProcessor)) {
+						return false;
+					}
+					return ((ProjectProcessor) component).isNewProjectSupported();
+				}).build());
+		if (components.length == 0) {
 			return;
 		}
-
-		ProjectProcessor processor = dialogRef.get().getCurrentComponent(ProjectProcessor.class);
-		if (Objects.isNull(processor)) {
-			return;
-		}
+		ProjectProcessor processor = (ProjectProcessor) components[0];
 
 		Project project = null;
 

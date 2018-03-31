@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
-import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
@@ -15,7 +13,6 @@ import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
-import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.FileProcToolkit;
 
@@ -33,54 +30,13 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	 * @author DwArFeng
 	 * @since 0.0.3-alpha
 	 */
-	protected final class ProjProcToolkitImpl implements FileProcToolkit {
+	protected final class ProjProcToolkitImpl extends ComponentToolkitImpl implements FileProcToolkit {
 
 		/**
-		 * {@inheritDoc}
+		 * 新实例。
 		 */
-		@Override
-		public Toolkit getToolkit() {
-			return toolkitRef.get();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public ConstantsProvider getConstantsProvider() {
-			return constantsProvider;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncI18nHandler getLoggerI18nHandler() {
-			return loggerI18nHandler;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncI18nHandler getLabelI18nHandler() {
-			return labelI18nHandler;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncExconfigModel getCoreConfigModel() {
-			return coreConfigModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncPermDemandModel getPermDemandModel() {
-			return permDemandModel;
+		protected ProjProcToolkitImpl() {
+			super();
 		}
 
 	}
@@ -111,8 +67,6 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	public boolean canOpenFile(File file) {
 		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
 
-		if (file.getProcessorClass().equals(this.getClass()))
-			return true;
 		return false;
 	}
 

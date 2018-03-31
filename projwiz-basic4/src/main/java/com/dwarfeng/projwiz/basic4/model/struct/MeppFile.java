@@ -74,44 +74,8 @@ public class MeppFile extends RaeFile {
 		 */
 		@Override
 		public MeppFile build() {
-			return new MeppFile(isFolder, projProcToolkit, fileType, processorClass, accessTime, createTime, modifyTime,
-					obversers, buffers, buffCapa, readSupported, writeSupported);
-		}
-
-		/**
-		 * 获取文件的缓冲容量。
-		 * 
-		 * @return 文件的缓冲容量。
-		 */
-		public int getBuffCapa() {
-			return buffCapa;
-		}
-
-		/**
-		 * 获取内存文件的标签-字节缓冲映射。
-		 * 
-		 * @return 内存文件的标签-字节缓冲映射。
-		 */
-		public Map<String, ByteBuffer> getBuffers() {
-			return buffers;
-		}
-
-		/**
-		 * 获取文件是否可读。
-		 * 
-		 * @return 文件是否可读。
-		 */
-		public boolean isReadSupported() {
-			return readSupported;
-		}
-
-		/**
-		 * 获取文件是否可写。
-		 * 
-		 * @return 文件是否可写。
-		 */
-		public boolean isWriteSupported() {
-			return writeSupported;
+			return new MeppFile(isFolder, projProcToolkit, fileType, processorClass, accessTime, modifyTime, obversers,
+					buffers, buffCapa, readSupported, writeSupported);
 		}
 
 		/**
@@ -132,15 +96,6 @@ public class MeppFile extends RaeFile {
 		 */
 		public Builder setBuffCapa(int buffCapa) {
 			this.buffCapa = Math.max(0, buffCapa);
-			return this;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Builder setCreateTime(long createTime) {
-			super.setCreateTime(createTime);
 			return this;
 		}
 
@@ -240,10 +195,10 @@ public class MeppFile extends RaeFile {
 	 *             入口参数为 <code>null</code>。
 	 */
 	protected MeppFile(boolean isFolder, ProjProcToolkit projProcToolkit, Name fileType,
-			Class<? extends FileProcessor> processorClass, long accessTime, long createTime, long modifyTime,
+			Class<? extends FileProcessor> processorClass, long accessTime, long modifyTime,
 			Set<FileObverser> obversers, Map<String, ByteBuffer> buffers, int buffCapa, boolean readSupported,
 			boolean writeSupported) {
-		super(isFolder, projProcToolkit, fileType, processorClass, accessTime, createTime, modifyTime, obversers);
+		super(isFolder, projProcToolkit, fileType, processorClass, accessTime, modifyTime, obversers);
 
 		Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
 		NumberUtil.requireInInterval(buffCapa, Interval.INTERVAL_NOT_NEGATIVE, "参数 buffCapa 不能小于0。");

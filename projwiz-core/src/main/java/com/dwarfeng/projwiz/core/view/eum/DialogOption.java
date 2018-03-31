@@ -1,4 +1,4 @@
-package com.dwarfeng.projwiz.core.model.eum;
+package com.dwarfeng.projwiz.core.view.eum;
 
 /**
  * 对话框中的选项类型。

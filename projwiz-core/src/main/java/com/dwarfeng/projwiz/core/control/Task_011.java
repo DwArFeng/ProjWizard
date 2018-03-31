@@ -1,12 +1,22 @@
 package com.dwarfeng.projwiz.core.control;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.dwarfeng.dutil.basic.cna.model.DefaultReferenceModel;
+import com.dwarfeng.dutil.basic.cna.model.ModelUtil;
+import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.projwiz.core.view.gui.EditorMonitor;
 import com.dwarfeng.projwiz.core.view.gui.ProjectAndFileMonitor;
 
 final class ShowProjectAndFileMonitorTask extends ProjWizTask {
+
+	/** 对话框单例引用。 */
+	private final static ReferenceModel<ProjectAndFileMonitor> dialogInstanceRef = ModelUtil
+			.syncReferenceModel(new DefaultReferenceModel<>(null));
 
 	public ShowProjectAndFileMonitorTask(ProjWizard projWizard) {
 		super(projWizard);
@@ -17,15 +27,28 @@ final class ShowProjectAndFileMonitorTask extends ProjWizTask {
 	 */
 	@Override
 	protected void todo() throws Exception {
-		if (projWizard.getToolkit().containsDialog(ProjectAndFileMonitor.class.toString())) {
-			projWizard.getToolkit().showExternalWindow(ProjectAndFileMonitor.class.toString());
+		if (Objects.nonNull(dialogInstanceRef.get())) {
+			SwingUtil.invokeInEventQueue(() -> {
+				dialogInstanceRef.get().requestFocus();
+			});
 		} else {
 			AtomicReference<ProjectAndFileMonitor> dialogRef = new AtomicReference<>();
 			SwingUtil.invokeAndWaitInEventQueue(() -> {
-				dialogRef.set(new ProjectAndFileMonitor(projWizard.getToolkit().getGuiManager(),
-						projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getAnchorFileModel(),
-						projWizard.getToolkit().getFocusProjectModel(), projWizard.getToolkit().getFocusFileModel(),
-						projWizard.getToolkit().getHoldProjectModel(), projWizard.getToolkit().getComponentModel()));
+				ProjectAndFileMonitor newDialogInstance = new ProjectAndFileMonitor(
+						projWizard.getToolkit().getGuiManager(), projWizard.getToolkit().getLabelI18nHandler(),
+						projWizard.getToolkit().getAnchorFileModel(), projWizard.getToolkit().getFocusProjectModel(),
+						projWizard.getToolkit().getFocusFileModel(), projWizard.getToolkit().getHoldProjectModel(),
+						projWizard.getToolkit().getComponentModel());
+				newDialogInstance.addWindowListener(new WindowAdapter() {
+
+					@Override
+					public void windowClosed(WindowEvent e) {
+						dialogInstanceRef.set(null);
+					}
+
+				});
+				dialogRef.set(newDialogInstance);
+				dialogInstanceRef.set(newDialogInstance);
 			});
 			projWizard.getToolkit().showExternalWindow(dialogRef.get());
 		}
@@ -33,6 +56,10 @@ final class ShowProjectAndFileMonitorTask extends ProjWizTask {
 }
 
 final class ShowEditorMonitorTask extends ProjWizTask {
+
+	/** 对话框单例引用。 */
+	private final static ReferenceModel<EditorMonitor> dialogInstanceRef = ModelUtil
+			.syncReferenceModel(new DefaultReferenceModel<>(null));
 
 	public ShowEditorMonitorTask(ProjWizard projWizard) {
 		super(projWizard);
@@ -43,14 +70,27 @@ final class ShowEditorMonitorTask extends ProjWizTask {
 	 */
 	@Override
 	protected void todo() throws Exception {
-		if (projWizard.getToolkit().containsDialog(EditorMonitor.class.toString())) {
-			projWizard.getToolkit().showExternalWindow(EditorMonitor.class.toString());
+		if (Objects.nonNull(dialogInstanceRef.get())) {
+			SwingUtil.invokeInEventQueue(() -> {
+				dialogInstanceRef.get().requestFocus();
+			});
 		} else {
 			AtomicReference<EditorMonitor> dialogRef = new AtomicReference<>();
 			SwingUtil.invokeAndWaitInEventQueue(() -> {
-				dialogRef.set(new EditorMonitor(projWizard.getToolkit().getGuiManager(),
+				EditorMonitor newDialogInstance = new EditorMonitor(projWizard.getToolkit().getGuiManager(),
 						projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getFocusEditorModel(),
-						projWizard.getToolkit().getEditorModel(), projWizard.getToolkit().getComponentModel()));
+						projWizard.getToolkit().getEditorModel(), projWizard.getToolkit().getComponentModel());
+				dialogRef.set(newDialogInstance);
+				newDialogInstance.addWindowListener(new WindowAdapter() {
+
+					@Override
+					public void windowClosed(WindowEvent e) {
+						dialogInstanceRef.set(null);
+					}
+
+				});
+				dialogRef.set(newDialogInstance);
+				dialogInstanceRef.set(newDialogInstance);
 			});
 			projWizard.getToolkit().showExternalWindow(dialogRef.get());
 		}

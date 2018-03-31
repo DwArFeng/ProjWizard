@@ -16,16 +16,6 @@ public interface FileObverser extends Obverser {
 	public void fireAccessTimeChanged(long oldValue, long newValue);
 
 	/**
-	 * 通知创建时间发生改变。
-	 * 
-	 * @param oldValue
-	 *            旧的创建时间。
-	 * @param newValue
-	 *            新的创建时间。
-	 */
-	public void fireCreateTimeChanged(long oldValue, long newValue);
-
-	/**
 	 * 通知指定的文件的指定标签所在的输入流被关闭。
 	 * 
 	 * @param label

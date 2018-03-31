@@ -13,6 +13,9 @@ public enum ImageKey implements Name {
 	/** MEPP的工程图标。 */
 	MEPP_PROJ_ICON(Constants.RESOURCE_MEPP_IMAGE_ROOT_PATH, "proj_icon.png"),
 
+	/** FOFP的文件图标。 */
+	FOFP_FILE_ICON(Constants.RESOURCE_FOFP_IMAGE_ROOT_PATH, "file_icon.png"),
+
 	;
 
 	private final String rootPath;

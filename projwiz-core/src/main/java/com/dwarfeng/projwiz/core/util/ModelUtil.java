@@ -33,237 +33,6 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
  */
 public final class ModelUtil {
 
-	private static final class UnmodifiableComponentModel implements ComponentModel {
-
-		private final ComponentModel delegate;
-
-		public UnmodifiableComponentModel(ComponentModel delegate) {
-			this.delegate = delegate;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public int size() {
-			return delegate.size();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean isEmpty() {
-			return delegate.isEmpty();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean contains(Object o) {
-			return delegate.contains(o);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Iterator<Component> iterator() {
-			return CollectionUtil.unmodifiableIterator(delegate.iterator());
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Object[] toArray() {
-			return delegate.toArray();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public <T> T[] toArray(T[] a) {
-			return delegate.toArray(a);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean add(Component e) {
-			throw new UnsupportedOperationException("add");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean remove(Object o) {
-			throw new UnsupportedOperationException("remove");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean containsAll(Collection<?> c) {
-			return delegate.containsAll(c);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean addAll(Collection<? extends Component> c) {
-			throw new UnsupportedOperationException("addAll");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean retainAll(Collection<?> c) {
-			throw new UnsupportedOperationException("retainAll");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean removeAll(Collection<?> c) {
-			throw new UnsupportedOperationException("removeAll");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void clear() {
-			throw new UnsupportedOperationException("clear");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Set<SetObverser<Component>> getObversers() {
-			return delegate.getObversers();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean addObverser(SetObverser<Component> obverser) {
-			throw new UnsupportedOperationException("addObverser");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean removeObverser(SetObverser<Component> obverser) {
-			throw new UnsupportedOperationException("removeObverser");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void clearObverser() {
-			throw new UnsupportedOperationException("clearObverser");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public <T extends Component> T get(Class<T> clazz) {
-			return delegate.get(clazz);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public <T extends Component> Collection<T> getSubs(Class<T> clazz) {
-			return delegate.getSubs(clazz);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean containsClass(Class<?> clazz) {
-			return delegate.contains(clazz);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean containsAllClass(Collection<Class<?>> c) {
-			return delegate.containsAllClass(c);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean removeClass(Class<?> clazz) {
-			throw new UnsupportedOperationException("removeClass");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean removeAllClass(Collection<Class<?>> c) {
-			throw new UnsupportedOperationException("removeAllClass");
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean retainAllClass(Collection<Class<?>> c) {
-			throw new UnsupportedOperationException("retainAllClass");
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj == this) {
-				return true;
-			}
-
-			if (obj == delegate) {
-				return true;
-			}
-
-			return delegate.equals(obj);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public int hashCode() {
-			return delegate.hashCode();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public String toString() {
-			return delegate.toString();
-		}
-
-	}
-
 	private static final class SyncComponentModelImpl implements SyncComponentModel {
 
 		private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -952,6 +721,237 @@ public final class ModelUtil {
 
 	}
 
+	private static final class UnmodifiableComponentModel implements ComponentModel {
+
+		private final ComponentModel delegate;
+
+		public UnmodifiableComponentModel(ComponentModel delegate) {
+			this.delegate = delegate;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean add(Component e) {
+			throw new UnsupportedOperationException("add");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean addAll(Collection<? extends Component> c) {
+			throw new UnsupportedOperationException("addAll");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean addObverser(SetObverser<Component> obverser) {
+			throw new UnsupportedOperationException("addObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException("clear");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clearObverser() {
+			throw new UnsupportedOperationException("clearObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean contains(Object o) {
+			return delegate.contains(o);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsAll(Collection<?> c) {
+			return delegate.containsAll(c);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsAllClass(Collection<Class<?>> c) {
+			return delegate.containsAllClass(c);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean containsClass(Class<?> clazz) {
+			return delegate.contains(clazz);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			}
+
+			if (obj == delegate) {
+				return true;
+			}
+
+			return delegate.equals(obj);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public <T extends Component> T get(Class<T> clazz) {
+			return delegate.get(clazz);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<SetObverser<Component>> getObversers() {
+			return delegate.getObversers();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public <T extends Component> Collection<T> getSubs(Class<T> clazz) {
+			return delegate.getSubs(clazz);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int hashCode() {
+			return delegate.hashCode();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isEmpty() {
+			return delegate.isEmpty();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Iterator<Component> iterator() {
+			return CollectionUtil.unmodifiableIterator(delegate.iterator());
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean remove(Object o) {
+			throw new UnsupportedOperationException("remove");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			throw new UnsupportedOperationException("removeAll");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeAllClass(Collection<Class<?>> c) {
+			throw new UnsupportedOperationException("removeAllClass");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeClass(Class<?> clazz) {
+			throw new UnsupportedOperationException("removeClass");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeObverser(SetObverser<Component> obverser) {
+			throw new UnsupportedOperationException("removeObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean retainAll(Collection<?> c) {
+			throw new UnsupportedOperationException("retainAll");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean retainAllClass(Collection<Class<?>> c) {
+			throw new UnsupportedOperationException("retainAllClass");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int size() {
+			return delegate.size();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Object[] toArray() {
+			return delegate.toArray();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public <T> T[] toArray(T[] a) {
+			return delegate.toArray(a);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String toString() {
+			return delegate.toString();
+		}
+
+	}
+
 	private static final class UnmodifiablePluginClassLoader implements PluginClassLoader {
 
 		private final PluginClassLoader delegate;
@@ -1508,20 +1508,6 @@ public final class ModelUtil {
 	}
 
 	/**
-	 * 根据指定的组件模型生成一个不可编辑的组件模型。
-	 * 
-	 * @param componentModel
-	 *            指定的组件模型。
-	 * @return 由指定的组件模型生成的不可编辑的组件模型。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	public static ComponentModel unmodifiableComponentModel(ComponentModel componentModel) {
-		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
-		return new UnmodifiableComponentModel(componentModel);
-	}
-
-	/**
 	 * 根据指定的工具包权限模型生成一个线程安全的工具包权限模型。
 	 * 
 	 * @param toolkitPermModel
@@ -1545,6 +1531,20 @@ public final class ModelUtil {
 	public static PluginClassLoader unmodifaiblePluginClassLoader(PluginClassLoader pluginClassLoader) {
 		Objects.requireNonNull(pluginClassLoader, "入口参数 pluginClassLoader 不能为 null。");
 		return new UnmodifiablePluginClassLoader(pluginClassLoader);
+	}
+
+	/**
+	 * 根据指定的组件模型生成一个不可编辑的组件模型。
+	 * 
+	 * @param componentModel
+	 *            指定的组件模型。
+	 * @return 由指定的组件模型生成的不可编辑的组件模型。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	public static ComponentModel unmodifiableComponentModel(ComponentModel componentModel) {
+		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
+		return new UnmodifiableComponentModel(componentModel);
 	}
 
 	/**

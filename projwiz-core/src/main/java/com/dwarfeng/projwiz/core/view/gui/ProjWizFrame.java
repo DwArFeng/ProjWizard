@@ -144,8 +144,9 @@ public abstract class ProjWizFrame extends JFrame {
 	protected String formatLabel(LabelStringKey labelStringKey, Object... args) {
 		Objects.requireNonNull(labelStringKey, "入口参数 labelStringKey 不能为 null。");
 		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-
-		return String.format(i18nHandler.getStringOrDefault(labelStringKey, Constants.MISSING_LABEL), args);
+	
+		return String.format(Objects.isNull(i18nHandler) ? Constants.MISSING_LABEL
+				: i18nHandler.getStringOrDefault(labelStringKey, Constants.MISSING_LABEL), args);
 	}
 
 	/**
@@ -159,8 +160,9 @@ public abstract class ProjWizFrame extends JFrame {
 	 */
 	protected String label(LabelStringKey labelStringKey) {
 		Objects.requireNonNull(labelStringKey, "入口参数 labelStringKey 不能为 null。");
-
-		return i18nHandler.getStringOrDefault(labelStringKey, Constants.MISSING_LABEL);
+	
+		return Objects.isNull(i18nHandler) ? Constants.MISSING_LABEL
+				: i18nHandler.getStringOrDefault(labelStringKey, Constants.MISSING_LABEL);
 	}
 
 	/**

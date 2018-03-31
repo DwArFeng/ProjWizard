@@ -4,7 +4,7 @@ import javax.swing.Icon;
 import javax.swing.UIManager;
 
 import com.dwarfeng.dutil.basic.prog.Buildable;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 
 /**
  * 信息对话框设置构造器。

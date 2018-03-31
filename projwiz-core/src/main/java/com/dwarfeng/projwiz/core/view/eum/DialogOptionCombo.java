@@ -1,4 +1,4 @@
-package com.dwarfeng.projwiz.core.model.eum;
+package com.dwarfeng.projwiz.core.view.eum;
 
 import javax.swing.JOptionPane;
 

@@ -1,6 +1,7 @@
 package com.dwarfeng.projwiz.core.model.struct;
 
 import java.awt.Image;
+import java.awt.Window;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -8,12 +9,10 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
-import com.dwarfeng.dutil.basic.cna.model.KeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.ListModel;
 import com.dwarfeng.dutil.basic.cna.model.MapModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SetModel;
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
@@ -35,21 +34,21 @@ import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.model.eum.DialogOption;
-import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
+import com.dwarfeng.projwiz.core.view.eum.DialogOption;
+import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
+import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
-import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 /**
  * 等级与特权工具包。
@@ -121,6 +120,15 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Component[] chooseComponent(ComponentChooserSetting setting) throws IllegalStateException {
+		checkPermissionAndState(Method.CHOOSECOMPONENT);
+		return standardToolkit.chooseComponent(setting);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public File[] chooseProjectFile(ProjectFileChooserSetting setting) throws IllegalMonitorStateException {
 		checkPermissionAndState(Method.CHOOSEPROJECTFILE);
 		return standardToolkit.chooseProjectFile(setting);
@@ -142,15 +150,6 @@ public final class LnpToolkit implements Toolkit {
 	public void clearProgramObverser() throws IllegalStateException {
 		checkPermissionAndState(Method.CLEARPROGRAMOBVERSER);
 		standardToolkit.clearProgramObverser();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean containsDialog(String key) throws IllegalStateException {
-		checkPermissionAndState(Method.CONTAINSDIALOG);
-		return standardToolkit.containsDialog(key);
 	}
 
 	/**
@@ -329,7 +328,7 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncKeySetModel<String, WindowSuppiler> getExternalWindowModel() throws IllegalStateException {
+	public SyncSetModel<Window> getExternalWindowModel() throws IllegalStateException {
 		checkPermissionAndState(Method.GETEXTERNALWINDOWMODEL);
 		return standardToolkit.getExternalWindowModel();
 	}
@@ -338,7 +337,7 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public KeySetModel<String, WindowSuppiler> getExternalWindowModelReadOnly() throws IllegalStateException {
+	public SetModel<Window> getExternalWindowModelReadOnly() throws IllegalStateException {
 		checkPermissionAndState(Method.GETEXTERNALWINDOWMODELREADONLY);
 		return standardToolkit.getExternalWindowModelReadOnly();
 	}
@@ -725,18 +724,9 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void showExternalWindow(String key) {
+	public void showExternalWindow(Window window) throws IllegalStateException {
 		checkPermissionAndState(Method.SHOWEXTERNALWINDOW);
-		standardToolkit.showExternalWindow(key);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void showExternalWindow(WindowSuppiler suppiler) {
-		checkPermissionAndState(Method.SHOWEXTERNALWINDOW);
-		standardToolkit.showExternalWindow(suppiler);
+		standardToolkit.showExternalWindow(window);
 	}
 
 	/**

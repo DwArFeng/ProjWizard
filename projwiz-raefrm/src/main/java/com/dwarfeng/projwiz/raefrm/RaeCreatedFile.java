@@ -46,7 +46,7 @@ public class RaeCreatedFile extends RaeFile {
 		@Override
 		public RaeCreatedFile build() {
 			return new RaeCreatedFile(buffers, isFolder, projProcToolkit, fileType, processorClass, accessTime,
-					createTime, modifyTime, obversers);
+					modifyTime, obversers);
 		}
 
 		/**
@@ -76,15 +76,6 @@ public class RaeCreatedFile extends RaeFile {
 		 */
 		public Builder setBuffers(Map<String, ByteBuffer> buffers) {
 			this.buffers = Objects.isNull(buffers) ? new HashMap<>() : buffers;
-			return this;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Builder setCreateTime(long createTime) {
-			super.setCreateTime(createTime);
 			return this;
 		}
 
@@ -149,9 +140,9 @@ public class RaeCreatedFile extends RaeFile {
 	 *             入口参数为 <code>null</code>。
 	 */
 	protected RaeCreatedFile(Map<String, ByteBuffer> buffers, boolean isFolder, ProjProcToolkit projProcToolkit,
-			Name fileType, Class<? extends FileProcessor> processorClass, long accessTime, long createTime,
-			long modifyTime, Set<FileObverser> obversers) {
-		super(isFolder, projProcToolkit, fileType, processorClass, accessTime, createTime, modifyTime, obversers);
+			Name fileType, Class<? extends FileProcessor> processorClass, long accessTime, long modifyTime,
+			Set<FileObverser> obversers) {
+		super(isFolder, projProcToolkit, fileType, processorClass, accessTime, modifyTime, obversers);
 
 		Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
 		this.buffers = buffers;

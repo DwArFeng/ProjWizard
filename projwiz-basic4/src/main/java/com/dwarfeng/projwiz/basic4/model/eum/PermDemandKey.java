@@ -9,7 +9,9 @@ import com.dwarfeng.dutil.basic.str.Name;
  * @since 0.0.3-alpha
  */
 public enum PermDemandKey implements Name {
-	MEPP_PROCESSOR_NEWPROJECT("processor.newproject");
+	MEPP_PROCESSOR_NEWPROJECT("processor.newproject"), //
+
+	FOFP_PROCESSOR_NEWFILE("processor.newfile"),//
 
 	;
 

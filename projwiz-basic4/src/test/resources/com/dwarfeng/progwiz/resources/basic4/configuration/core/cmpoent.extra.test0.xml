@@ -5,4 +5,8 @@
 		<toolkit perm-level="667">
 		</toolkit>
 	</info>
+	<info class="com.dwarfeng.projwiz.basic4.impl.FolderFileProcessor">
+		<toolkit perm-level="667">
+		</toolkit>
+	</info>
 </root>

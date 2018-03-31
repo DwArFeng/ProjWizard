@@ -1,7 +1,13 @@
 package com.dwarfeng.projwiz.core.control;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.dwarfeng.dutil.basic.cna.model.DefaultReferenceModel;
+import com.dwarfeng.dutil.basic.cna.model.ModelUtil;
+import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.projwiz.core.model.struct.File;
@@ -10,6 +16,10 @@ import com.dwarfeng.projwiz.core.view.gui.FilePropertiesDialog;
 import com.dwarfeng.projwiz.core.view.gui.ProjectPropertiesDialog;
 
 final class ShowAnchorFilePropertiesDialogTask extends ProjWizTask {
+
+	/** 对话框单例引用。 */
+	private final static ReferenceModel<FilePropertiesDialog> dialogInstanceRef = ModelUtil
+			.syncReferenceModel(new DefaultReferenceModel<>(null));
 
 	public ShowAnchorFilePropertiesDialogTask(ProjWizard projWizard) {
 		super(projWizard);
@@ -36,27 +46,39 @@ final class ShowAnchorFilePropertiesDialogTask extends ProjWizTask {
 			anchorFileModel.getLock().readLock().unlock();
 		}
 
-		AtomicReference<FilePropertiesDialog> dialogRef = new AtomicReference<>();
-
-		if (projWizard.getToolkit().containsDialog(FilePropertiesDialog.class.toString())) {
-			dialogRef.set((FilePropertiesDialog) projWizard.getToolkit().getExternalWindowModel()
-					.get(FilePropertiesDialog.class.toString()));
-			projWizard.getToolkit().showExternalWindow(FilePropertiesDialog.class.toString());
+		if (Objects.nonNull(dialogInstanceRef.get())) {
+			SwingUtil.invokeInEventQueue(() -> {
+				dialogInstanceRef.get().requestFocus();
+			});
 		} else {
+			AtomicReference<FilePropertiesDialog> dialogRef = new AtomicReference<>();
 			SwingUtil.invokeAndWaitInEventQueue(() -> {
-				dialogRef.set(new FilePropertiesDialog(projWizard.getToolkit().getGuiManager(),
-						projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getMainFrame(),
-						projWizard.getToolkit().getComponentModel(), focusProject, anchorFile));
+				FilePropertiesDialog newDialogInstance = new FilePropertiesDialog(
+						projWizard.getToolkit().getGuiManager(), projWizard.getToolkit().getLabelI18nHandler(),
+						projWizard.getToolkit().getMainFrame(), projWizard.getToolkit().getComponentModel(),
+						focusProject, anchorFile);
+				dialogRef.set(newDialogInstance);
+				newDialogInstance.addWindowListener(new WindowAdapter() {
+
+					@Override
+					public void windowClosed(WindowEvent e) {
+						dialogInstanceRef.set(null);
+					}
+
+				});
+				dialogRef.set(newDialogInstance);
+				dialogInstanceRef.set(newDialogInstance);
 			});
 			projWizard.getToolkit().showExternalWindow(dialogRef.get());
-
 		}
-
-		dialogRef.get().waitDispose();
 	}
 }
 
 final class ShowFocusProjectPropertiesDialogTask extends ProjWizTask {
+
+	/** 对话框单例引用。 */
+	private final static ReferenceModel<ProjectPropertiesDialog> dialogInstanceRef = ModelUtil
+			.syncReferenceModel(new DefaultReferenceModel<>(null));
 
 	public ShowFocusProjectPropertiesDialogTask(ProjWizard projWizard) {
 		super(projWizard);
@@ -69,22 +91,30 @@ final class ShowFocusProjectPropertiesDialogTask extends ProjWizTask {
 	protected void todo() throws Exception {
 		final Project focusProject = projWizard.getToolkit().getFocusProjectModel().get();
 
-		AtomicReference<ProjectPropertiesDialog> dialogRef = new AtomicReference<>();
-
-		if (projWizard.getToolkit().containsDialog(FilePropertiesDialog.class.toString())) {
-			dialogRef.set((ProjectPropertiesDialog) projWizard.getToolkit().getExternalWindowModel()
-					.get(FilePropertiesDialog.class.toString()));
-			projWizard.getToolkit().showExternalWindow(FilePropertiesDialog.class.toString());
+		if (Objects.nonNull(dialogInstanceRef.get())) {
+			SwingUtil.invokeInEventQueue(() -> {
+				dialogInstanceRef.get().requestFocus();
+			});
 		} else {
+			AtomicReference<ProjectPropertiesDialog> dialogRef = new AtomicReference<>();
 			SwingUtil.invokeAndWaitInEventQueue(() -> {
-				dialogRef.set(new ProjectPropertiesDialog(projWizard.getToolkit().getGuiManager(),
-						projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getMainFrame(),
-						projWizard.getToolkit().getComponentModel(), focusProject));
+				ProjectPropertiesDialog newDialogInstance = new ProjectPropertiesDialog(
+						projWizard.getToolkit().getGuiManager(), projWizard.getToolkit().getLabelI18nHandler(),
+						projWizard.getToolkit().getMainFrame(), projWizard.getToolkit().getComponentModel(),
+						focusProject);
+				dialogRef.set(newDialogInstance);
+				newDialogInstance.addWindowListener(new WindowAdapter() {
+
+					@Override
+					public void windowClosed(WindowEvent e) {
+						dialogInstanceRef.set(null);
+					}
+
+				});
+				dialogRef.set(newDialogInstance);
+				dialogInstanceRef.set(newDialogInstance);
 			});
 			projWizard.getToolkit().showExternalWindow(dialogRef.get());
-
 		}
-
-		dialogRef.get().waitDispose();
 	}
 }

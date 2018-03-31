@@ -1,10 +1,10 @@
 package com.dwarfeng.projwiz.core.control;
 
 import com.dwarfeng.dutil.basic.prog.ProcessException;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Project;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class SaveFocusProjectTask extends ProjWizTask {

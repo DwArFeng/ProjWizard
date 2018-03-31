@@ -21,7 +21,6 @@ import com.dwarfeng.projwiz.basic4.util.Constants;
 import com.dwarfeng.projwiz.basic4.view.MeppProjectPropUI;
 import com.dwarfeng.projwiz.core.model.cm.MapTree;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
@@ -29,6 +28,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.raefrm.RaeProjectProcessor;
 

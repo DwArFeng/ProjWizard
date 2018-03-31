@@ -6,8 +6,14 @@ import javax.swing.Icon;
 import javax.swing.UIManager;
 
 import com.dwarfeng.dutil.basic.prog.Buildable;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 
+/**
+ * 输入对话框设置。
+ * 
+ * @author DwArFeng
+ * @since 0.0.3-alpha
+ */
 public final class InputDialogSetting {
 
 	/**

@@ -43,11 +43,8 @@ import com.dwarfeng.projwiz.core.model.struct.Project.RemovingSituation;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
-import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
-public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSuppiler {
-
-	private static final long serialVersionUID = -2539525092721991483L;
+public class ProjectPropertiesDialog extends ProjWizDialog {
 
 	private final JButton applyButton;
 	private final JButton cancelButton;
@@ -309,14 +306,6 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getKey() {
-		return this.getClass().toString();
-	}
-
-	/**
 	 * 获取当前的工程。
 	 * 
 	 * @return 当前的工程。
@@ -332,27 +321,6 @@ public class ProjectPropertiesDialog extends ProjWizDialog implements WindowSupp
 	 */
 	public SyncComponentModel getComponentModel() {
 		return componentModel;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Window getWindow() {
-		return this;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isDispose() {
-		disposeLock.lock();
-		try {
-			return disposeFlag;
-		} finally {
-			disposeLock.unlock();
-		}
 	}
 
 	/**

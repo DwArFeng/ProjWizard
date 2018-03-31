@@ -6,16 +6,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -49,16 +44,15 @@ import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
-import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 /**
  * 
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppiler {
+public class ProjectAndFileMonitor extends ProjWizDialog {
 
-	private static final long serialVersionUID = -8130855624060062411L;
+	private static final long serialVersionUID = 776225679594600238L;
 
 	private final JLabel label_1;
 	private final JLabel label_2;
@@ -313,9 +307,6 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 
 	};
 
-	private boolean disposeFlag = false;
-	private final Lock disposeLock = new ReentrantLock();
-
 	/**
 	 * 新实例。
 	 */
@@ -336,19 +327,6 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 			SyncSetModel<File> focusFileModel, SyncListModel<Project> holdProjectModel,
 			SyncComponentModel componentModel) {
 		super(guiManager, i18nHandler);
-
-		addWindowListener(new WindowAdapter() {
-
-			@Override
-			public void windowClosed(WindowEvent e) {
-				disposeLock.lock();
-				try {
-					disposeFlag = true;
-				} finally {
-					disposeLock.unlock();
-				}
-			}
-		});
 
 		setAlwaysOnTop(true);
 		setTitle(label(LabelStringKey.OAFDIA_5));
@@ -465,25 +443,20 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	 */
 	@Override
 	public void dispose() {
-		disposeLock.lock();
-		try {
-			if (Objects.nonNull(this.anchorFileModel)) {
-				this.anchorFileModel.removeObverser(anchorFileObverser);
-			}
-			if (Objects.nonNull(this.focusFileModel)) {
-				this.focusFileModel.removeObverser(focusFileObverser);
-			}
-			if (Objects.nonNull(this.focusProjectModel)) {
-				this.focusProjectModel.removeObverser(focusProjectObverser);
-			}
-			if (Objects.nonNull(this.holdProjectModel)) {
-				this.holdProjectModel.removeObverser(holdProjectObverser);
-			}
-
-			super.dispose();
-		} finally {
-			disposeLock.unlock();
+		if (Objects.nonNull(this.anchorFileModel)) {
+			this.anchorFileModel.removeObverser(anchorFileObverser);
 		}
+		if (Objects.nonNull(this.focusFileModel)) {
+			this.focusFileModel.removeObverser(focusFileObverser);
+		}
+		if (Objects.nonNull(this.focusProjectModel)) {
+			this.focusProjectModel.removeObverser(focusProjectObverser);
+		}
+		if (Objects.nonNull(this.holdProjectModel)) {
+			this.holdProjectModel.removeObverser(holdProjectObverser);
+		}
+
+		super.dispose();
 	}
 
 	/**
@@ -521,35 +494,6 @@ public class ProjectAndFileMonitor extends ProjWizDialog implements WindowSuppil
 	 */
 	public SyncListModel<Project> getHoldProjectModel() {
 		return holdProjectModel;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getKey() {
-		return this.getClass().toString();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Window getWindow() {
-		return this;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isDispose() {
-		disposeLock.lock();
-		try {
-			return disposeFlag;
-		} finally {
-			disposeLock.unlock();
-		}
 	}
 
 	/**

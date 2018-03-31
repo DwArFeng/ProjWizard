@@ -26,6 +26,8 @@ import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
  */
 public class MeppProjectPropUI extends RaeProjectPropUI<MeppProject> {
 
+	private static final long serialVersionUID = -1365080258775148295L;
+
 	/**
 	 * 构造器。
 	 * 
@@ -88,7 +90,7 @@ public class MeppProjectPropUI extends RaeProjectPropUI<MeppProject> {
 		gridBagLayout.rowWeights = new double[] { 1.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
-		label1 = new JLabel(label(LabelStringKey.MEPP_PROJECT_PROPUI_0));
+		label1 = new JLabel(this.projProcToolkit.label(LabelStringKey.MEPP_PROJECT_PROPUI_0));
 		GridBagConstraints gbc_label1 = new GridBagConstraints();
 		gbc_label1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_label1.insets = new Insets(0, 0, 5, 5);
@@ -138,7 +140,7 @@ public class MeppProjectPropUI extends RaeProjectPropUI<MeppProject> {
 	 */
 	@Override
 	protected void refreshLabels() {
-		label1.setText(label(LabelStringKey.MEPP_PROJECT_PROPUI_0));
+		label1.setText(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_PROPUI_0));
 	}
 
 	private void syncProject() {

@@ -48,6 +48,7 @@ import com.dwarfeng.projwiz.raefrm.model.eum.ConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.raefrm.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.raefrm.model.io.XmlPermDemandLoader;
+import com.dwarfeng.projwiz.raefrm.model.struct.ComponentToolkit;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider.ResourceKeyType;
 import com.dwarfeng.projwiz.raefrm.util.Constants;
@@ -60,6 +61,408 @@ import com.dwarfeng.projwiz.raefrm.util.ModelUtil;
  * @since 0.0.3-alpha
  */
 public abstract class RaeComponent implements Component {
+
+	/**
+	 * 组件理器工具包的内部实现。
+	 * 
+	 * @author DwArFeng
+	 * @since 0.0.3-alpha
+	 */
+	protected class ComponentToolkitImpl implements ComponentToolkit {
+
+		/**
+		 * 新实例。
+		 */
+		public ComponentToolkitImpl() {
+
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void debug(Name name) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.debug(name);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void error(Name name, Throwable e) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.error(name, e);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void fatal(Name name, Throwable e) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.fatal(name, e);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void formatDebug(Name name, Object... args) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.formatDebug(name, args);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void formatError(Name name, Throwable e, Object... args) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.formatError(name, e, args);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void formatFatal(Name name, Throwable e, Object... args) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.formatFatal(name, e, args);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void formatInfo(Name name, Object... args) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.formatInfo(name, args);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String formatLabel(Name name, Object... args) {
+			lock.readLock().lock();
+			try {
+				return RaeComponent.this.formatLabel(name, args);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void formatTrace(Name name, Object... args) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.formatTrace(name, args);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void formatWarn(Name name, Object... args) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.formatWarn(name, args);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void formatWarn(Name name, Throwable e, Object... args) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.formatWarn(name, e, args);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ConstantsProvider getConstantsProvider() {
+			lock.readLock().lock();
+			try {
+				return constantsProvider;
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncExconfigModel getCoreConfigModel() {
+			lock.readLock().lock();
+			try {
+				return coreConfigModel;
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncI18nHandler getLabelI18nHandler() {
+			lock.readLock().lock();
+			try {
+				return labelI18nHandler;
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ReadWriteLock getLock() {
+			return lock;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncI18nHandler getLoggerI18nHandler() {
+			lock.readLock().lock();
+			try {
+				return loggerI18nHandler;
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public SyncPermDemandModel getPermDemandModel() {
+			lock.readLock().lock();
+			try {
+				return permDemandModel;
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Toolkit getToolkit() {
+			lock.readLock().lock();
+			try {
+				return toolkitRef.get();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void info(Name name) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.info(name);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isNotPermKeyAvaliable(Name permKey) {
+			lock.readLock().lock();
+			try {
+				return RaeComponent.this.isNotPermKeyAvaliable(permKey);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isPermKeyAvailable(Name permKey) {
+			lock.readLock().lock();
+			try {
+				return RaeComponent.this.isPermKeyAvailable(permKey);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String label(Name name) {
+			lock.readLock().lock();
+			try {
+				return RaeComponent.this.label(name);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public InputStream openResource(Name resourceKey) throws IOException {
+			lock.writeLock().lock();
+			try {
+				return RaeComponent.this.openResource(resourceKey);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public InputStream openResource(Name resourceKey, boolean autoReset) throws IOException {
+			lock.writeLock().lock();
+			try {
+				return RaeComponent.this.openResource(resourceKey, autoReset);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void requirePermKeyAvailable(Name permKey) throws IllegalStateException {
+			lock.readLock().lock();
+			try {
+				RaeComponent.this.requirePermKeyAvailable(permKey);
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void trace(Name name) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.trace(name);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void warn(Name name) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.warn(name);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void warn(Name name, Throwable e) {
+			lock.writeLock().lock();
+			try {
+				RaeComponent.this.warn(name, e);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public OutputStream writeResource(Name resourceKey) throws IOException {
+			lock.writeLock().lock();
+			try {
+				return RaeComponent.this.writeResource(resourceKey);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public OutputStream writeResource(Name resourceKey, boolean autoReset) throws IOException {
+			lock.writeLock().lock();
+			try {
+				return RaeComponent.this.writeResource(resourceKey, autoReset);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+	}
 
 	/** 该组件使用的工具包引用。 */
 	protected final ReferenceModel<? extends Toolkit> toolkitRef;

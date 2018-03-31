@@ -9,7 +9,6 @@ import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
@@ -17,6 +16,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class OpenFocusFileTask extends ProjWizTask {

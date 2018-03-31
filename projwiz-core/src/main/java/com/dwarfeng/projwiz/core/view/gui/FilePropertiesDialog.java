@@ -49,11 +49,8 @@ import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
-import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
-public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppiler {
-
-	private static final long serialVersionUID = -777552149357910518L;
+public class FilePropertiesDialog extends ProjWizDialog {
 
 	private final JButton cancelButton;
 	private final JButton applyButton;
@@ -158,17 +155,6 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 			SwingUtil.invokeInEventQueue(() -> {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				textField5.setText(dateFormat.format(new Date(file.getAccessTime())));
-			});
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void fireCreateTimeChanged(long oldValue, long newValue) {
-			SwingUtil.invokeInEventQueue(() -> {
-				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				textField4.setText(dateFormat.format(new Date(file.getCreateTime())));
 			});
 		}
 
@@ -560,41 +546,12 @@ public class FilePropertiesDialog extends ProjWizDialog implements WindowSuppile
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getKey() {
-		return this.getClass().toString();
-	}
-
-	/**
 	 * 获取当前的工程。
 	 * 
 	 * @return 当前的工程。
 	 */
 	public Project getProject() {
 		return project;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Window getWindow() {
-		return this;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isDispose() {
-		disposeLock.lock();
-		try {
-			return disposeFlag;
-		} finally {
-			disposeLock.unlock();
-		}
 	}
 
 	/**

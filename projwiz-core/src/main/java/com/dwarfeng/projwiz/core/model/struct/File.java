@@ -90,17 +90,28 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	 * 获取文件的访问时间。
 	 * 
 	 * <p>
-	 * 访问时间小于0，代表文件从未访问。
+	 * 访问时间小于0，代表文件从未访问或不可用。
 	 * 
 	 * @return 文件的访问时间。
 	 */
 	public long getAccessTime();
 
 	/**
+	 * 设置文件的访问时间。
+	 * 
+	 * <p>
+	 * 访问时间小于0，代表文件从未访问或不可用。
+	 * 
+	 * @param time
+	 *            指定的访问时间。
+	 */
+	public void setAccessTime(long time);
+
+	/**
 	 * 获取文件的创建时间。
 	 * 
 	 * <p>
-	 * 创建时间小于0，代表文件从未创建。
+	 * 创建时间小于0，代表文件从未创建或不可用。
 	 * 
 	 * @return 文件的创建时间。
 	 */
@@ -142,11 +153,22 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	 * 获取文件的编辑时间。
 	 * 
 	 * <p>
-	 * 编辑时间小于0，代表文件从未编辑。
+	 * 编辑时间小于0，代表文件从未编辑或不可用。
 	 * 
 	 * @return 文件的编辑时间。
 	 */
 	public long getModifyTime();
+
+	/**
+	 * 设置文件的编辑时间。
+	 * 
+	 * <p>
+	 * 编辑时间小于0，代表文件从未编辑或不可用。
+	 * 
+	 * @param time
+	 *            指定的编辑时间。
+	 */
+	public void setModifyTime(long time);
 
 	/**
 	 * 返回文件的占用大小。

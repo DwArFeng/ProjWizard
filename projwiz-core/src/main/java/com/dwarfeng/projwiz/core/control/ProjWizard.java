@@ -2,6 +2,8 @@ package com.dwarfeng.projwiz.core.control;
 
 import java.awt.Image;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -18,16 +20,15 @@ import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import com.dwarfeng.dutil.basic.cna.ArrayUtil;
 import com.dwarfeng.dutil.basic.cna.model.DefaultReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.DelegateListModel;
 import com.dwarfeng.dutil.basic.cna.model.DelegateMapModel;
 import com.dwarfeng.dutil.basic.cna.model.DelegateSetModel;
-import com.dwarfeng.dutil.basic.cna.model.KeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.ListModel;
 import com.dwarfeng.dutil.basic.cna.model.MapModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SetModel;
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
@@ -63,14 +64,10 @@ import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.DefaultComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.DefaultToolkitPermModel;
-import com.dwarfeng.projwiz.core.model.cm.ExternalWindowModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.model.eum.DialogOption;
-import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.eum.ViewConfigEntry;
 import com.dwarfeng.projwiz.core.model.io.DefaultPluginClassLoader;
@@ -86,10 +83,15 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 import com.dwarfeng.projwiz.core.util.Constants;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
+import com.dwarfeng.projwiz.core.view.eum.ChooseOption;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
+import com.dwarfeng.projwiz.core.view.eum.DialogOption;
+import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
+import com.dwarfeng.projwiz.core.view.gui.ComponentChooser;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser;
-import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser.ReturnOption;
 import com.dwarfeng.projwiz.core.view.gui.SystemFileChooser;
+import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.DefaultMainFrameVisibleModel;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
@@ -97,7 +99,6 @@ import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
-import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 /**
  * ProjWizard
@@ -407,13 +408,52 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public Component[] chooseComponent(ComponentChooserSetting setting) throws IllegalStateException {
+			Objects.requireNonNull(setting, "入口参数 setting 不能为 null。");
+
+			ComponentChooser componentChooser = new ComponentChooser(guiManager, labelI18nHandler, componentModel);
+			componentChooser.setChooserDialogType(setting.getChooserDialogType());
+			componentChooser.setComponentFilter(setting.getComponentFilter());
+			// fileChooser.setFileSelectionMode(setting.getFileSelectionMode().getValue());
+			componentChooser.setControlButtonsAreShown(setting.isControlButtonsAreShown());
+			componentChooser.setMultiSelectionEnabled(setting.isMultiSelectionEnabled());
+			componentChooser.setLocale(labelI18nHandler.getCurrentLocale());
+
+			ChooseOption chooseOption = componentChooser.showDialog(mainFrame);
+
+			Component[] components;
+			switch (chooseOption) {
+			case APPROVE_OPTION:
+				if (setting.isMultiSelectionEnabled()) {
+					components = componentChooser.getSelectedComponents();
+				} else {
+					components = new Component[] { componentChooser.getSelectedComponent() };
+				}
+				break;
+			case CANCEL_OPTION:
+				components = new Component[0];
+				break;
+			case ERROR_OPTION:
+				components = new Component[0];
+				break;
+			default:
+				components = new Component[0];
+				break;
+			}
+			return ArrayUtil.getNotNull(components, new Component[0]);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public File[] chooseProjectFile(ProjectFileChooserSetting setting) throws IllegalStateException {
 			Objects.requireNonNull(setting, "入口参数 setting 不能为 null。");
 
 			ProjectFileChooser fileChooser = new ProjectFileChooser(guiManager, labelI18nHandler, holdProjectModel,
 					componentModel);
 			fileChooser.setCurrentDirectory(setting.getCurrentDirectory());
-			fileChooser.setDialogType(setting.getDialogType());
+			fileChooser.setChooserDialogType(setting.getChooserDialogType());
 			fileChooser.setFileFilters(setting.getFileFilters());
 			// fileChooser.setFileSelectionMode(setting.getFileSelectionMode().getValue());
 			fileChooser.setFileSelectionMode(setting.getFileSelectionMode());
@@ -424,33 +464,28 @@ public final class ProjWizard {
 			fileChooser.setMultiSelectionEnabled(setting.isMultiSelectionEnabled());
 			fileChooser.setLocale(labelI18nHandler.getCurrentLocale());
 
-			ReturnOption returnOption;
-			switch (setting.getDialogType()) {
-			case OPEN_DIALOG:
-				returnOption = fileChooser.showOpenDialog(mainFrame);
-				break;
-			case SAVE_DIALOG:
-				returnOption = fileChooser.showSaveDialog(mainFrame);
-				break;
-			default:
-				returnOption = fileChooser.showOpenDialog(mainFrame);
-				break;
-			}
+			ChooseOption chooseOption = fileChooser.showDialog(mainFrame);
 
-			switch (returnOption) {
+			File[] files;
+			switch (chooseOption) {
 			case APPROVE_OPTION:
-				return new File[0];
-			case CANCEL_OPTION:
 				if (setting.isMultiSelectionEnabled()) {
-					return fileChooser.getSelectedFiles();
+					files = fileChooser.getSelectedFiles();
 				} else {
-					return new File[] { fileChooser.getSelectedFile() };
+					files = new File[] { fileChooser.getSelectedFile() };
 				}
+				break;
+			case CANCEL_OPTION:
+				files = new File[0];
+				break;
 			case ERROR_OPTION:
-				return new File[0];
+				files = new File[0];
+				break;
 			default:
-				return new File[0];
+				files = new File[0];
+				break;
 			}
+			return ArrayUtil.getNotNull(files, new File[0]);
 		}
 
 		/**
@@ -462,7 +497,7 @@ public final class ProjWizard {
 
 			SystemFileChooser fileChooser = new SystemFileChooser(guiManager, labelI18nHandler);
 			fileChooser.setCurrentDirectory(setting.getCurrentDirectory());
-			switch (setting.getDialogType()) {
+			switch (setting.getChooserDialogType()) {
 			case OPEN_DIALOG:
 				fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 				break;
@@ -499,7 +534,7 @@ public final class ProjWizard {
 			fileChooser.setLocale(labelI18nHandler.getCurrentLocale());
 
 			int selectResult;
-			switch (setting.getDialogType()) {
+			switch (setting.getChooserDialogType()) {
 			case OPEN_DIALOG:
 				selectResult = fileChooser.showOpenDialog(mainFrame);
 				break;
@@ -511,21 +546,26 @@ public final class ProjWizard {
 				break;
 			}
 
+			java.io.File[] files;
 			switch (selectResult) {
 			case JFileChooser.CANCEL_OPTION:
-				return new java.io.File[0];
+				files = new java.io.File[0];
+				break;
 			case JFileChooser.APPROVE_OPTION:
 				if (setting.isMultiSelectionEnabled()) {
-					return fileChooser.getSelectedFiles();
+					files = fileChooser.getSelectedFiles();
 				} else {
-					return new java.io.File[] { fileChooser.getSelectedFile() };
+					files = new java.io.File[] { fileChooser.getSelectedFile() };
 				}
+				break;
 			case JFileChooser.ERROR_OPTION:
-				return new java.io.File[0];
+				files = new java.io.File[0];
+				break;
 			default:
-				return new java.io.File[0];
+				files = new java.io.File[0];
+				break;
 			}
-
+			return ArrayUtil.getNotNull(files, new java.io.File[0]);
 		}
 
 		/**
@@ -536,14 +576,6 @@ public final class ProjWizard {
 			synchronized (programObversers) {
 				programObversers.clear();
 			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public boolean containsDialog(String key) {
-			return externalWindowModel.containsKey(key);
 		}
 
 		/**
@@ -564,8 +596,6 @@ public final class ProjWizard {
 				if (Objects.isNull(mainFrame)) {
 					return false;
 				}
-
-				externalWindowModel.clear();
 
 				mainFrame.dispose();
 				mainFrame = null;
@@ -692,7 +722,8 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel() throws IllegalStateException {
+		public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel()
+				throws IllegalStateException {
 			return cmpoentToolkitModel;
 		}
 
@@ -758,7 +789,7 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncKeySetModel<String, WindowSuppiler> getExternalWindowModel() {
+		public SyncSetModel<Window> getExternalWindowModel() throws IllegalStateException {
 			return externalWindowModel;
 		}
 
@@ -766,9 +797,8 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public KeySetModel<String, WindowSuppiler> getExternalWindowModelReadOnly() throws IllegalStateException {
-			// TODO Auto-generated method stub
-			return null;
+		public SetModel<Window> getExternalWindowModelReadOnly() throws IllegalStateException {
+			return com.dwarfeng.dutil.basic.cna.model.ModelUtil.unmodifiableSetModel(externalWindowModel);
 		}
 
 		/**
@@ -1137,64 +1167,36 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void showExternalWindow(String key) {
-			externalWindowModel.getLock().readLock().lock();
-			try {
-				if (!externalWindowModel.containsKey(key)) {
-					return;
-				}
-
-				WindowSuppiler suppiler = externalWindowModel.get(key);
-				SwingUtil.invokeInEventQueue(() -> {
-					Window window = suppiler.getWindow();
-					window.setVisible(true);
-					window.requestFocus();
-				});
-			} finally {
-				externalWindowModel.getLock().readLock().unlock();
-			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void showExternalWindow(WindowSuppiler suppiler) {
-			Objects.requireNonNull(suppiler, "入口参数 suppiler 不能为 null。");
+		public void showExternalWindow(Window window) throws IllegalStateException {
+			Objects.requireNonNull(window, "入口参数 window 不能为 null。");
 
 			externalWindowModel.getLock().writeLock().lock();
 			try {
-				if (!externalWindowModel.containsKey(suppiler.getKey())) {
-					externalWindowModel.add(suppiler);
-					SwingUtil.invokeInEventQueue(() -> {
-						Window window = suppiler.getWindow();
-						window.setLocationRelativeTo(getMainFrame());
-						window.setVisible(true);
-						window.requestFocus();
-					});
-				} else {
-					WindowSuppiler suppilerAlreadyExists = externalWindowModel.get(suppiler.getKey());
-					if (Objects.deepEquals(suppilerAlreadyExists, suppiler)) {
-						SwingUtil.invokeInEventQueue(() -> {
-							Window window = suppilerAlreadyExists.getWindow();
-							window.setVisible(true);
-							window.requestFocus();
-						});
-					} else {
-						externalWindowModel.remove(suppilerAlreadyExists);
-						externalWindowModel.add(suppiler);
-						SwingUtil.invokeInEventQueue(() -> {
-							Window window = suppiler.getWindow();
-							window.setVisible(true);
-							window.setLocationRelativeTo(getMainFrame());
-							window.requestFocus();
-						});
-					}
+				if (externalWindowModel.contains(window)) {
+					window.requestFocus();
+					return;
 				}
+
+				SwingUtil.invokeInEventQueue(() -> {
+					window.addWindowListener(new WindowAdapter() {
+
+						@Override
+						public void windowClosed(WindowEvent e) {
+							if (externalWindowModel.contains(window)) {
+								externalWindowModel.remove(window);
+							}
+						}
+					});
+
+					window.setLocationRelativeTo(mainFrame);
+					window.setVisible(true);
+					window.requestFocus();
+				});
+
+				externalWindowModel.add(window);
 			} finally {
 				externalWindowModel.getLock().writeLock().unlock();
 			}
-
 		}
 
 		/**
@@ -1376,17 +1378,18 @@ public final class ProjWizard {
 	private static final Set<ProjWizard> INSTANCES = Collections.synchronizedSet(new HashSet<>());
 
 	// --------------------------------------------模型--------------------------------------------
-	// 并发后台
+	/** 并发后台。 */
 	private final Background concurrentBackground = new ExecutorServiceBackground(
 			Executors.newFixedThreadPool(4, ExecutorServiceBackground.THREAD_FACTORY),
 			Collections.newSetFromMap(new WeakHashMap<>()));
+	/** 队列后台。 */
 	private final Background queueBackground = new ExecutorServiceBackground(
 			Executors.newSingleThreadExecutor(ExecutorServiceBackground.THREAD_FACTORY),
 			Collections.newSetFromMap(new WeakHashMap<>()));
-	// 核心配置模型
+	/** 核心配置模型。 */
 	private final SyncExconfigModel coreConfigModel = ConfigUtil
 			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(CoreConfigEntry.values())));
-	// 标签国际化处理器
+	/** 标签国际化处理器。 */
 	private final SyncI18nHandler labelI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	// 记录器接口
 	private final SyncLoggerHandler loggerHandler = LoggerUtil.syncLoggerHandler(new DelegateLoggerHandler());
@@ -1413,9 +1416,6 @@ public final class ProjWizard {
 	// 焦点编辑器模型
 	private final SyncMapModel<Project, Editor> focusEditorModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
-	// 外部窗口
-	private final SyncKeySetModel<String, WindowSuppiler> externalWindowModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
-			.syncKeySetModel(new ExternalWindowModel());
 	// 编辑器模型
 	private final SyncMapModel<ProjectFilePair, Editor> editorModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
@@ -1438,6 +1438,9 @@ public final class ProjWizard {
 	// 组件-工具包引用模型
 	private final SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
+	/** 外部窗口模型。 */
+	private final SyncSetModel<Window> externalWindowModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
+			.syncSetModel(new DelegateSetModel<>());
 
 	// --------------------------------------------控制--------------------------------------------
 	/** 程序的侦听器集合 */

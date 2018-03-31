@@ -8,8 +8,8 @@ import java.util.Set;
 import javax.swing.filechooser.FileFilter;
 
 import com.dwarfeng.dutil.basic.prog.Buildable;
-import com.dwarfeng.projwiz.core.model.eum.FileChooserDialogType;
-import com.dwarfeng.projwiz.core.model.eum.FileSelectionMode;
+import com.dwarfeng.projwiz.core.view.eum.ChooserDialogType;
+import com.dwarfeng.projwiz.core.view.eum.FileSelectionMode;
 
 /**
  * 系统文件选择设置。
@@ -30,7 +30,7 @@ public final class SystemFileChooserSetting {
 		private boolean acceptAllFileFilterUsed = false;
 		private boolean controlButtonsAreShown = true;
 		private File currentDirectory = null;
-		private FileChooserDialogType dialogType = FileChooserDialogType.OPEN_DIALOG;
+		private ChooserDialogType chooserDialogType = ChooserDialogType.OPEN_DIALOG;
 		private boolean dragEnabled = false;
 		private Set<FileFilter> fileFilters = new HashSet<>();
 		private boolean fileHidingEnabled = false;
@@ -101,15 +101,15 @@ public final class SystemFileChooserSetting {
 		/**
 		 * 设置当前的对话框类型。
 		 * 
-		 * @param dialogType
+		 * @param chooserDialogType
 		 *            对话框类型。
 		 * @return 构造器自身。
 		 * @throws NullPointerException
 		 *             入口参数为 <code>null</code>。
 		 */
-		public Builder dialogType(FileChooserDialogType dialogType) {
-			Objects.requireNonNull(dialogType, "入口参数 dialogType 不能为 null。");
-			this.dialogType = dialogType;
+		public Builder chooserDialogType(ChooserDialogType chooserDialogType) {
+			Objects.requireNonNull(chooserDialogType, "入口参数 chooserDialogType 不能为 null。");
+			this.chooserDialogType = chooserDialogType;
 			return this;
 		}
 
@@ -182,7 +182,8 @@ public final class SystemFileChooserSetting {
 		@Override
 		public SystemFileChooserSetting build() {
 			return new SystemFileChooserSetting(acceptAllFileFilterUsed, controlButtonsAreShown, currentDirectory,
-					dialogType, dragEnabled, fileFilters, fileHidingEnabled, fileSelectionMode, multiSelectionEnabled);
+					chooserDialogType, dragEnabled, fileFilters, fileHidingEnabled, fileSelectionMode,
+					multiSelectionEnabled);
 		}
 
 	}
@@ -190,7 +191,7 @@ public final class SystemFileChooserSetting {
 	private final boolean acceptAllFileFilterUsed;
 	private final boolean controlButtonsAreShown;
 	private final File currentDirectory;
-	private final FileChooserDialogType dialogType;
+	private final ChooserDialogType chooserDialogType;
 	private final boolean dragEnabled;
 	private final Set<FileFilter> fileFilters;
 	private final boolean fileHidingEnabled;
@@ -198,12 +199,13 @@ public final class SystemFileChooserSetting {
 	private final boolean multiSelectionEnabled;
 
 	private SystemFileChooserSetting(boolean acceptAllFileFilterUsed, boolean controlButtonsAreShown,
-			File currentDirectory, FileChooserDialogType dialogType, boolean dragEnabled, Set<FileFilter> fileFilters,
-			boolean fileHidingEnabled, FileSelectionMode fileSelectionMode, boolean mutiSelectionEnabled) {
+			File currentDirectory, ChooserDialogType chooserDialogType, boolean dragEnabled,
+			Set<FileFilter> fileFilters, boolean fileHidingEnabled, FileSelectionMode fileSelectionMode,
+			boolean mutiSelectionEnabled) {
 		this.acceptAllFileFilterUsed = acceptAllFileFilterUsed;
 		this.controlButtonsAreShown = controlButtonsAreShown;
 		this.currentDirectory = currentDirectory;
-		this.dialogType = dialogType;
+		this.chooserDialogType = chooserDialogType;
 		this.dragEnabled = dragEnabled;
 		this.fileFilters = fileFilters;
 		this.fileHidingEnabled = fileHidingEnabled;
@@ -225,8 +227,8 @@ public final class SystemFileChooserSetting {
 	 * 
 	 * @return 对话框的类型。
 	 */
-	public FileChooserDialogType getDialogType() {
-		return dialogType;
+	public ChooserDialogType getChooserDialogType() {
+		return chooserDialogType;
 	}
 
 	/**
@@ -296,66 +298,13 @@ public final class SystemFileChooserSetting {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof SystemFileChooserSetting)) {
-			return false;
-		}
-		SystemFileChooserSetting other = (SystemFileChooserSetting) obj;
-		if (acceptAllFileFilterUsed != other.acceptAllFileFilterUsed) {
-			return false;
-		}
-		if (controlButtonsAreShown != other.controlButtonsAreShown) {
-			return false;
-		}
-		if (currentDirectory == null) {
-			if (other.currentDirectory != null) {
-				return false;
-			}
-		} else if (!currentDirectory.equals(other.currentDirectory)) {
-			return false;
-		}
-		if (dialogType != other.dialogType) {
-			return false;
-		}
-		if (dragEnabled != other.dragEnabled) {
-			return false;
-		}
-		if (fileFilters == null) {
-			if (other.fileFilters != null) {
-				return false;
-			}
-		} else if (!fileFilters.equals(other.fileFilters)) {
-			return false;
-		}
-		if (fileHidingEnabled != other.fileHidingEnabled) {
-			return false;
-		}
-		if (fileSelectionMode != other.fileSelectionMode) {
-			return false;
-		}
-		if (multiSelectionEnabled != other.multiSelectionEnabled) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (acceptAllFileFilterUsed ? 1231 : 1237);
+		result = prime * result + ((chooserDialogType == null) ? 0 : chooserDialogType.hashCode());
 		result = prime * result + (controlButtonsAreShown ? 1231 : 1237);
 		result = prime * result + ((currentDirectory == null) ? 0 : currentDirectory.hashCode());
-		result = prime * result + ((dialogType == null) ? 0 : dialogType.hashCode());
 		result = prime * result + (dragEnabled ? 1231 : 1237);
 		result = prime * result + ((fileFilters == null) ? 0 : fileFilters.hashCode());
 		result = prime * result + (fileHidingEnabled ? 1231 : 1237);
@@ -368,11 +317,50 @@ public final class SystemFileChooserSetting {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof SystemFileChooserSetting))
+			return false;
+		SystemFileChooserSetting other = (SystemFileChooserSetting) obj;
+		if (acceptAllFileFilterUsed != other.acceptAllFileFilterUsed)
+			return false;
+		if (chooserDialogType != other.chooserDialogType)
+			return false;
+		if (controlButtonsAreShown != other.controlButtonsAreShown)
+			return false;
+		if (currentDirectory == null) {
+			if (other.currentDirectory != null)
+				return false;
+		} else if (!currentDirectory.equals(other.currentDirectory))
+			return false;
+		if (dragEnabled != other.dragEnabled)
+			return false;
+		if (fileFilters == null) {
+			if (other.fileFilters != null)
+				return false;
+		} else if (!fileFilters.equals(other.fileFilters))
+			return false;
+		if (fileHidingEnabled != other.fileHidingEnabled)
+			return false;
+		if (fileSelectionMode != other.fileSelectionMode)
+			return false;
+		if (multiSelectionEnabled != other.multiSelectionEnabled)
+			return false;
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String toString() {
 		return "SystemFileChooserSetting [acceptAllFileFilterUsed=" + acceptAllFileFilterUsed
 				+ ", controlButtonsAreShown=" + controlButtonsAreShown + ", currentDirectory=" + currentDirectory
-				+ ", dialogType=" + dialogType + ", dragEnabled=" + dragEnabled + ", fileFilters=" + fileFilters
-				+ ", fileHidingEnabled=" + fileHidingEnabled + ", fileSelectionMode=" + fileSelectionMode
+				+ ", chooserDialogType=" + chooserDialogType + ", dragEnabled=" + dragEnabled + ", fileFilters="
+				+ fileFilters + ", fileHidingEnabled=" + fileHidingEnabled + ", fileSelectionMode=" + fileSelectionMode
 				+ ", multiSelectionEnabled=" + multiSelectionEnabled + "]";
 	}
 

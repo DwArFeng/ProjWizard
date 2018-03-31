@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <root>
-	<!-- 
-		<info key="processor.newproject">
-			<demand value="SHOWINPUTDIALOG" />
-			<demand value="SHOWMESSAGEDIALOG" />
-			<demand value="SUBMITTASK" />
-		</info>
-	 -->
+	<info key="processor.newfile">
+		<demand value="SHOWCOMPONENTDIALOG" />
+	</info>
 </root>

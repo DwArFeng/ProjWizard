@@ -4,8 +4,6 @@ import java.awt.Image;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
-import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
@@ -13,7 +11,6 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
-import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
@@ -31,60 +28,13 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 	 * @author DwArFeng
 	 * @since 0.0.3-alpha
 	 */
-	protected final class ProjProcToolkitImpl implements ProjProcToolkit {
+	protected final class ProjProcToolkitImpl extends ComponentToolkitImpl implements ProjProcToolkit {
 
 		/**
 		 * 新实例。
 		 */
 		public ProjProcToolkitImpl() {
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Toolkit getToolkit() {
-			return toolkitRef.get();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public ConstantsProvider getConstantsProvider() {
-			return constantsProvider;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncI18nHandler getLoggerI18nHandler() {
-			return loggerI18nHandler;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncI18nHandler getLabelI18nHandler() {
-			return labelI18nHandler;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncExconfigModel getCoreConfigModel() {
-			return coreConfigModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncPermDemandModel getPermDemandModel() {
-			return permDemandModel;
+			super();
 		}
 
 	}

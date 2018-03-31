@@ -18,11 +18,11 @@ import com.dwarfeng.projwiz.basic4.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigEntry;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 import com.dwarfeng.projwiz.raefrm.RaeProject;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
@@ -75,15 +75,6 @@ public class MeppProject extends RaeProject {
 		public RaeProject build() {
 			return new MeppProject(processorClass, name, fileTree, fileNameMap, projProcToolkit, obversers,
 					defaultBuffCapa);
-		}
-
-		/**
-		 * 获取文件的默认缓冲容量。
-		 * 
-		 * @return 文件的默认缓冲容量。
-		 */
-		public int getDefaultBufferCapa() {
-			return defaultBuffCapa;
 		}
 
 		/**
@@ -165,16 +156,29 @@ public class MeppProject extends RaeProject {
 		}
 	}
 
-	@Override
-	public boolean isAddFileSupported(AddingSituation situation) {
-		// TODO Auto-generated method stub
-		return super.isAddFileSupported(situation);
+	/**
+	 * 获取工程的默认缓冲容量。
+	 * 
+	 * @return 工程的默认缓冲容量。
+	 */
+	public int getDefaultBuffCapa() {
+		return defaultBuffCapa;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isAddFileSupported(AddingSituation situation) {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isRemoveFileSupported(RemovingSituation situation) {
-		// TODO Auto-generated method stub
-		return super.isRemoveFileSupported(situation);
+		return true;
 	}
 
 	/**
@@ -210,57 +214,6 @@ public class MeppProject extends RaeProject {
 		}
 	}
 
-	private File removeFileByOther(File file) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private File removeFileByMove(File file) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private File removeFileByDelete(File file) {
-		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
-
-		lock.writeLock().lock();
-		try {
-			if (!fileTree.contains(file)) {
-				formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_0, getName());
-				warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
-				formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2, file.getProcessorClass().toString(),
-						file.getClass().toString());
-				return null;
-			}
-
-			if (fileTree.getChilds(file).size() > 0) {
-				formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_3, getName());
-				warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
-				formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2, file.getProcessorClass().toString(),
-						file.getClass().toString());
-				return null;
-			}
-
-			if (Objects.equals(file, fileTree.getRoot())) {
-				formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_3, getName());
-				warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
-				formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2, file.getProcessorClass().toString(),
-						file.getClass().toString());
-				return null;
-			}
-
-			Path<File> path = fileTree.getPath(file);
-			File parent = fileTree.getParent(file);
-
-			fileTree.remove(file);
-			fireFileRemoved(path, parent, file, RemovingSituation.BY_DELETE);
-
-			return file;
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -272,20 +225,20 @@ public class MeppProject extends RaeProject {
 		lock.writeLock().lock();
 		try {
 			if (!fileTree.contains(file)) {
-				formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_5, getName());
-				warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
-				formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2, file.getProcessorClass().toString(),
-						file.getClass().toString());
+				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_5, getName());
+				projProcToolkit.warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
+				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2,
+						file.getProcessorClass().toString(), file.getClass().toString());
 				return null;
 			}
 
 			// 检查文件在同级中是否重名，有重名则报错。
 			if (isNameRepeat(fileTree.getParent(file), newName)) {
 				Toolkit toolkit = projProcToolkit.getToolkit();
-				toolkit.showMessageDialog(
-						new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_0))
-								.setTitle(label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_1))
-								.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
+				toolkit.showMessageDialog(new MessageDialogSetting.Builder()
+						.setMessage(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_0))
+						.setTitle(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_1))
+						.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 				return null;
 			}
 
@@ -298,6 +251,16 @@ public class MeppProject extends RaeProject {
 		} finally {
 			lock.writeLock().unlock();
 		}
+	}
+
+	/**
+	 * 设置工程的默认的缓冲容量。
+	 * 
+	 * @param defaultBuffCapa
+	 *            工程的默认的缓冲容量。
+	 */
+	public void setDefaultBuffCapa(int defaultBuffCapa) {
+		this.defaultBuffCapa = Math.max(0, defaultBuffCapa);
 	}
 
 	/**
@@ -319,40 +282,21 @@ public class MeppProject extends RaeProject {
 		return null;
 	}
 
-	/**
-	 * 获取工程的默认缓冲容量。
-	 * 
-	 * @return 工程的默认缓冲容量。
-	 */
-	public int getDefaultBuffCapa() {
-		return defaultBuffCapa;
-	}
-
-	/**
-	 * 设置工程的默认的缓冲容量。
-	 * 
-	 * @param defaultBuffCapa
-	 *            工程的默认的缓冲容量。
-	 */
-	public void setDefaultBuffCapa(int defaultBuffCapa) {
-		this.defaultBuffCapa = Math.max(0, defaultBuffCapa);
-	}
-
 	private File addFileByNew(File parent, File file, String exceptName) {
 		// 检查文件树是否含有父文件，不包含父文件则报错。
 		if (!fileTree.contains(parent)) {
-			formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_0, getName());
-			formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_1);
-			formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_2, parent.getProcessorClass().toString(),
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_0, getName());
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_1);
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_2, parent.getProcessorClass().toString(),
 					parent.getClass().toString());
 			return null;
 		}
 
 		// 检查文件树是否含有文件，已含有文件则报错。
 		if (fileTree.contains(file)) {
-			formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_3, getName());
-			formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_1);
-			formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_2, parent.getProcessorClass().toString(),
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_3, getName());
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_1);
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_2, parent.getProcessorClass().toString(),
 					parent.getClass().toString());
 			return null;
 		}
@@ -408,12 +352,12 @@ public class MeppProject extends RaeProject {
 					buffers.put(label, buffer);
 				} catch (IOException e) {
 					Toolkit toolkit = projProcToolkit.getToolkit();
-					toolkit.showMessageDialog(
-							new MessageDialogSetting.Builder().setTitle(label(LabelStringKey.MEPP_PROJECT_ADDFILE_1))
-									.setMessage(label(LabelStringKey.MEPP_PROJECT_ADDFILE_0))
-									.setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
+					toolkit.showMessageDialog(new MessageDialogSetting.Builder()
+							.setTitle(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_ADDFILE_1))
+							.setMessage(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_ADDFILE_0))
+							.setDialogMessage(DialogMessage.WARNING_MESSAGE).build());
 
-					warn(LoggerStringKey.MEPP_PROJECT_ADDFILE_4, e);
+					projProcToolkit.warn(LoggerStringKey.MEPP_PROJECT_ADDFILE_4, e);
 					return null;
 				} finally {
 					if (Objects.nonNull(out)) {
@@ -436,8 +380,8 @@ public class MeppProject extends RaeProject {
 		}
 
 		MeppFile actualAddedFile = new MeppFile.Builder(file.isFolder(), projProcToolkit, file.getFileType(), buffers)
-				.setAccessTime(file.getAccessTime()).setCreateTime(file.getCreateTime())
-				.setModifyTime(file.getModifyTime()).setBuffCapa(defaultBuffCapa).build();
+				.setAccessTime(file.getAccessTime()).setModifyTime(file.getModifyTime()).setBuffCapa(defaultBuffCapa)
+				.build();
 
 		fileTree.add(parent, actualAddedFile);
 		fileNameMap.put(actualAddedFile, actualFileName);
@@ -462,6 +406,57 @@ public class MeppProject extends RaeProject {
 			}
 		}
 		return false;
+	}
+
+	private File removeFileByDelete(File file) {
+		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
+
+		lock.writeLock().lock();
+		try {
+			if (!fileTree.contains(file)) {
+				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_0, getName());
+				projProcToolkit.warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
+				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2,
+						file.getProcessorClass().toString(), file.getClass().toString());
+				return null;
+			}
+
+			if (fileTree.getChilds(file).size() > 0) {
+				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_3, getName());
+				projProcToolkit.warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
+				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2,
+						file.getProcessorClass().toString(), file.getClass().toString());
+				return null;
+			}
+
+			if (Objects.equals(file, fileTree.getRoot())) {
+				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_3, getName());
+				projProcToolkit.warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
+				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2,
+						file.getProcessorClass().toString(), file.getClass().toString());
+				return null;
+			}
+
+			Path<File> path = fileTree.getPath(file);
+			File parent = fileTree.getParent(file);
+
+			fileTree.remove(file);
+			fireFileRemoved(path, parent, file, RemovingSituation.BY_DELETE);
+
+			return file;
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	private File removeFileByMove(File file) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private File removeFileByOther(File file) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

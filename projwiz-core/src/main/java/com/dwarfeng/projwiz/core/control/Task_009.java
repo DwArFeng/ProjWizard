@@ -1,20 +1,18 @@
 package com.dwarfeng.projwiz.core.control;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
-import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.model.eum.DialogOption;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
+import com.dwarfeng.projwiz.core.model.struct.Component;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
-import com.dwarfeng.projwiz.core.view.gui.ComponentSelectDialog;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
+import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
@@ -73,30 +71,17 @@ final class NewFileTask extends ProjWizTask {
 							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 		}
 
-		AtomicReference<ComponentSelectDialog> dialogRef = new AtomicReference<>();
-
-		SwingUtil.invokeAndWaitInEventQueue(() -> {
-			dialogRef.set(new ComponentSelectDialog(projWizard.getToolkit().getGuiManager(),
-					projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getMainFrame(),
-					projWizard.getToolkit().getComponentModel(), component -> {
-						if (!(component instanceof FileProcessor)) {
-							return false;
-						}
-						return ((FileProcessor) component).isNewFileSupported();
-					}));
-		});
-
-		projWizard.getToolkit().showExternalWindow(dialogRef.get());
-		dialogRef.get().waitDispose();
-
-		if (dialogRef.get().getOption() != DialogOption.OK_YES) {
+		Component[] components = projWizard.getToolkit().chooseComponent(
+				new ComponentChooserSetting.Builder().setMultiSelectionEnabled(false).setComponentFilter(component -> {
+					if (!(component instanceof FileProcessor)) {
+						return false;
+					}
+					return ((FileProcessor) component).isNewFileSupported();
+				}).build());
+		if (components.length == 0) {
 			return;
 		}
-
-		FileProcessor processor = dialogRef.get().getCurrentComponent(FileProcessor.class);
-		if (Objects.isNull(processor)) {
-			return;
-		}
+		FileProcessor processor = (FileProcessor) components[0];
 
 		File newFile = processor.newFile();
 		if (Objects.isNull(newFile)) {

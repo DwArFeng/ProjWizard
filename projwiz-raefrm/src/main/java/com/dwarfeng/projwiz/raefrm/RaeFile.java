@@ -12,12 +12,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.dwarfeng.dutil.basic.prog.Buildable;
 import com.dwarfeng.dutil.basic.str.Name;
-import com.dwarfeng.dutil.develop.resource.Resource;
-import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
-import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
@@ -290,8 +287,6 @@ public abstract class RaeFile implements File {
 		protected Class<? extends FileProcessor> processorClass = null;
 		/** 文件的访问时间。 */
 		protected long accessTime = -1;
-		/** 文件的创建时间。 */
-		protected long createTime = -1;
 		/** 文件的编辑时间。 */
 		protected long modifyTime = -1;
 
@@ -327,78 +322,6 @@ public abstract class RaeFile implements File {
 		public abstract RaeFile build();
 
 		/**
-		 * 获取文件的访问时间。
-		 * 
-		 * @return 文件的访问时间。
-		 */
-		public long getAccessTime() {
-			return accessTime;
-		}
-
-		/**
-		 * 获取文件的创建时间。
-		 * 
-		 * @return 文件的创建时间。
-		 */
-		public long getCreateTime() {
-			return createTime;
-		}
-
-		/**
-		 * 获取文件的类型。
-		 * 
-		 * @return 文件的类型。
-		 */
-		public Name getFileType() {
-			return fileType;
-		}
-
-		/**
-		 * 获取文件的编辑时间。
-		 * 
-		 * @return 文件的编辑时间。
-		 */
-		public long getModifyTime() {
-			return modifyTime;
-		}
-
-		/**
-		 * 获取文件的观察器集合。
-		 * 
-		 * @return 文件的观察器集合。
-		 */
-		public Set<FileObverser> getObversers() {
-			return obversers;
-		}
-
-		/**
-		 * 获取文件的处理器类。
-		 * 
-		 * @return 文件的处理器类。
-		 */
-		public Class<? extends FileProcessor> getProcessorClass() {
-			return processorClass;
-		}
-
-		/**
-		 * 获取文件的工程处理器工具箱。
-		 * 
-		 * @return 文件的工程处理器工具箱。
-		 */
-		public ProjProcToolkit getProjprocToolkit() {
-			return projProcToolkit;
-		}
-
-		/**
-		 * 获取该文件是否是文件夹。
-		 * 
-		 * @return 该文件是否是文件夹。
-		 */
-		public boolean isFolder() {
-			return isFolder;
-		}
-
-		/**
 		 * 设置文件的访问时间。
 		 * 
 		 * @param accessTime
@@ -407,18 +330,6 @@ public abstract class RaeFile implements File {
 		 */
 		public RaeFileBuilder setAccessTime(long accessTime) {
 			this.accessTime = accessTime;
-			return this;
-		}
-
-		/**
-		 * 设置文件的创建时间。
-		 * 
-		 * @param createTime
-		 *            指定的创建时间。
-		 * @return 构造器自身。
-		 */
-		public RaeFileBuilder setCreateTime(long createTime) {
-			this.createTime = createTime;
 			return this;
 		}
 
@@ -471,13 +382,13 @@ public abstract class RaeFile implements File {
 	protected final ProjProcToolkit projProcToolkit;
 	/** 文件的类型。 */
 	protected final Name fileType;
+	/** 文件的创建时间。 */
+	protected final long createTime;
 
 	/** 文件的处理器类。 */
 	protected Class<? extends FileProcessor> processorClass;
 	/** 文件的访问时间。 */
 	protected long accessTime;
-	/** 文件的创建时间。 */
-	protected long createTime;
 	/** 文件的编辑时间。 */
 	protected long modifyTime;
 
@@ -496,8 +407,6 @@ public abstract class RaeFile implements File {
 	 *            文件的名称。
 	 * @param accessTime
 	 *            文件的接触时间。
-	 * @param createTime
-	 *            文件的创建时间。
 	 * @param modifyTime
 	 *            文件的编辑时间。
 	 * @param obversers
@@ -506,18 +415,19 @@ public abstract class RaeFile implements File {
 	 *             入口参数为 <code>null</code>。
 	 */
 	protected RaeFile(boolean isFolder, ProjProcToolkit projProcToolkit, Name fileType,
-			Class<? extends FileProcessor> processorClass, long accessTime, long createTime, long modifyTime,
+			Class<? extends FileProcessor> processorClass, long accessTime, long modifyTime,
 			Set<FileObverser> obversers) {
 		Objects.requireNonNull(projProcToolkit, "入口参数 projProcToolkit 不能为 null。");
 		Objects.requireNonNull(fileType, "入口参数 fileType 不能为 null。");
 		Objects.requireNonNull(obversers, "入口参数 obversers 不能为 null。");
+
+		this.createTime = System.currentTimeMillis();
 
 		this.isFolder = isFolder;
 		this.projProcToolkit = projProcToolkit;
 		this.fileType = fileType;
 		this.processorClass = processorClass;
 		this.accessTime = accessTime;
-		this.createTime = createTime;
 		this.modifyTime = modifyTime;
 		this.obversers = obversers;
 	}
@@ -754,6 +664,36 @@ public abstract class RaeFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void setAccessTime(long time) {
+		lock.writeLock().lock();
+		try {
+			long oldValue = this.accessTime;
+			this.accessTime = time;
+			fireAccessTimeChanged(oldValue, time);
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setModifyTime(long time) {
+		lock.writeLock().lock();
+		try {
+			long oldValue = this.modifyTime;
+			this.modifyTime = time;
+			fireModifyTimeChanged(oldValue, time);
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean setProcessorClass(Class<? extends FileProcessor> clazz) {
 		lock.writeLock().lock();
 		try {
@@ -772,55 +712,6 @@ public abstract class RaeFile implements File {
 	}
 
 	/**
-	 * 向记录器中输出一条调试。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void debug(Name name) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-
-		getToolkit().debug(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
-	}
-
-	/**
-	 * 向记录器中输出一条错误。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param e
-	 *            指定的可抛出对象。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void error(Name name, Throwable e) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-
-		getToolkit().error(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
-	}
-
-	/**
-	 * 向记录器中输出一条致命错误。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param e
-	 *            指定的可抛出对象。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void fatal(Name name, Throwable e) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-
-		getToolkit().fatal(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
-	}
-
-	/**
 	 * 通知访问时间发生改变。
 	 * 
 	 * @param oldValue
@@ -832,24 +723,6 @@ public abstract class RaeFile implements File {
 		obversers.forEach(obverser -> {
 			try {
 				obverser.fireAccessTimeChanged(oldValue, newValue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * 通知创建时间发生改变。
-	 * 
-	 * @param oldValue
-	 *            旧的创建时间。
-	 * @param newValue
-	 *            新的创建时间。
-	 */
-	protected void fireCreateTimeChanged(long oldValue, long newValue) {
-		obversers.forEach(obverser -> {
-			try {
-				obverser.fireCreateTimeChanged(oldValue, newValue);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1021,350 +894,6 @@ public abstract class RaeFile implements File {
 		obversers.forEach(obverser -> {
 			obverser.fireProcessorClassChanged(oldValue, newValue);
 		});
-	}
-
-	/**
-	 * 向记录器中格式化输出一条调试。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param args
-	 *            参数。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void formatDebug(Name name, Object... args) {
-		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
-		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-
-		getToolkit().debug(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
-	}
-
-	/**
-	 * 向记录器中格式化输出一条错误。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param e
-	 *            指定的可抛出对象。
-	 * @param args
-	 *            参数。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void formatError(Name name, Throwable e, Object... args) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
-		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-
-		getToolkit().error(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
-	}
-
-	/**
-	 * 向记录器中格式化输出一条致命错误。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param e
-	 *            指定的可抛出对象。
-	 * @param args
-	 *            参数。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void formatFatal(Name name, Throwable e, Object... args) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
-		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-
-		getToolkit().fatal(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
-	}
-
-	/**
-	 * 向记录器中格式化输出一条信息。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param args
-	 *            参数。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void formatInfo(Name name, Object... args) {
-		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
-		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-
-		getToolkit().info(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
-	}
-
-	/**
-	 * 返回指定标签键对应的标签格式化文本。
-	 * 
-	 * @param name
-	 *            指定的标签键。
-	 * @param args
-	 *            参数。
-	 * @return 指定标签键对应的格式化标签文本。
-	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
-	 */
-	protected String formatLabel(Name name, Object... args) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-
-		return String.format(projProcToolkit.getLabelI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args);
-	}
-
-	/**
-	 * 向记录器中格式化输出一条显示。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param args
-	 *            参数。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void formatTrace(Name name, Object... args) {
-		Objects.requireNonNull(name, "入口参数 loggerStringKey 不能为 null。");
-		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-
-		getToolkit().trace(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
-	}
-
-	/**
-	 * 向记录器中格式化输出一条警告。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param args
-	 *            参数。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void formatWarn(Name name, Object... args) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-
-		getToolkit().warn(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args));
-	}
-
-	/**
-	 * 向记录器中格式化输出一条警告。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param e
-	 *            指定的可抛出对象。
-	 * @param args
-	 *            参数。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void formatWarn(Name name, Throwable e, Object... args) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
-		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
-
-		getToolkit().warn(String.format(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), args), e);
-	}
-
-	/**
-	 * 获取组件的工具包。
-	 * 
-	 * @return 组件的工具包。
-	 */
-	protected final Toolkit getToolkit() {
-		return projProcToolkit.getToolkit();
-	}
-
-	/**
-	 * 向记录器中输出一条信息。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void info(Name name) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-
-		getToolkit().info(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
-	}
-
-	/**
-	 * 返回此组件的工具包是否不满足指定的权限键对应的所有需求。
-	 * 
-	 * @param permKey
-	 *            指定的权限键。
-	 * @return 此组件的工具包是否不满足指定的权限键对应的所有需求。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected boolean isNotPermKeyAvaliable(Name permKey) {
-		Objects.requireNonNull(permKey, "入口参数 permKey 不能为 null。");
-		return projProcToolkit.getPermDemandModel().isNotPermKeyAvaliable(permKey, getToolkit());
-	}
-
-	/**
-	 * 返回此组件的工具包是否能满足指定的权限键对应的所有需求。
-	 * 
-	 * @param permKey
-	 *            含有指定的权限键的名称对象。
-	 * @return 此组件的工具包是否能满足指定的权限键对应的所有需求。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected boolean isPermKeyAvailable(Name permKey) {
-		Objects.requireNonNull(permKey, "入口参数 permKey 不能为 null。");
-		return projProcToolkit.getPermDemandModel().isPermKeyAvailable(permKey, getToolkit());
-	}
-
-	/**
-	 * 返回指定标签键对应的标签文本。
-	 * 
-	 * @param name
-	 *            指定的标签键。
-	 * @return 指定的标签键对应的标签文本。
-	 * @throws NullPointerException
-	 *             指定的入口参数为 <code> null </code>。
-	 */
-	protected String label(Name name) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-
-		return projProcToolkit.getLabelI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL);
-	}
-
-	/**
-	 * 打开指定资源键对应的资源。
-	 * 
-	 * <p>
-	 * 该方法通过 Toolkit 获取只读配置处理器，随后获取指定资源键对应的资源，在资源自动重置之后，打开输入流。
-	 * 
-	 * @param resourceKey
-	 *            指定的资源键对应的名称接口。
-	 * @return 指定资源对应的资源键。
-	 * @throws IOException
-	 *             IO异常。
-	 */
-	protected InputStream openResource(Name resourceKey) throws IOException {
-		return openResource(resourceKey, true);
-	}
-
-	/**
-	 * 打开指定资源键对应的资源。
-	 * 
-	 * <p>
-	 * 该方法通过 Toolkit 获取只读配置处理器，随后获取指定资源键对应的资源，打开输入流。
-	 * 
-	 * @param resourceKey
-	 *            指定的资源键对应的名称接口。
-	 * @param autoReset
-	 *            是否自动重置。
-	 * @return 指定资源对应的资源键。
-	 * @throws IOException
-	 *             IO异常。
-	 */
-	protected InputStream openResource(Name resourceKey, boolean autoReset) throws IOException {
-		Objects.requireNonNull(resourceKey, "入口参数 resourceKey 不能为 null。");
-
-		ResourceHandler cfgHandlerReadOnly = getToolkit().getCfgHandlerReadOnly();
-		if (!cfgHandlerReadOnly.containsKey(resourceKey)) {
-			throw new IOException(String.format("不存在指定的资源: %s", resourceKey.getName()));
-		}
-
-		Resource resource = cfgHandlerReadOnly.get(resourceKey.getName());
-		if (autoReset) {
-			resource.autoReset();
-		}
-		return resource.openInputStream();
-	}
-
-	/**
-	 * 设置文件的访问时间。
-	 * 
-	 * @param accessTime
-	 *            文件的访问时间。
-	 */
-	protected void setAccessTime(long accessTime) {
-		this.accessTime = accessTime;
-	}
-
-	/**
-	 * 设置文件的创建时间。
-	 * 
-	 * @param createTime
-	 *            文件的创建时间。
-	 */
-	protected void setCreateTime(long createTime) {
-		this.createTime = createTime;
-	}
-
-	/**
-	 * 设置文件的编辑时间。
-	 * 
-	 * @param modifyTime
-	 *            文件的编辑时间。
-	 */
-	protected void setModifyTime(long modifyTime) {
-		this.modifyTime = modifyTime;
-	}
-
-	/**
-	 * 向记录器中输出一条显示。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void trace(Name name) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-
-		getToolkit().trace(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
-	}
-
-	/**
-	 * 向记录器中输出一条信息。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void warn(Name name) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-
-		getToolkit().warn(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL));
-	}
-
-	/**
-	 * 向记录器中输出一条警告。
-	 * 
-	 * @param name
-	 *            指定的文本键。
-	 * @param e
-	 *            指定的可抛出对象。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	protected void warn(Name name, Throwable e) {
-		Objects.requireNonNull(name, "入口参数 name 不能为 null。");
-
-		getToolkit().warn(projProcToolkit.getLoggerI18nHandler().getStringOrDefault(name,
-				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL), e);
 	}
 
 }

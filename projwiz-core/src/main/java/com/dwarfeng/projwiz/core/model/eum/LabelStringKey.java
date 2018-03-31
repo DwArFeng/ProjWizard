@@ -119,10 +119,6 @@ public enum LabelStringKey implements Name {
 	INDICATEDIA_2(new DefaultName("indicatedia.2")), //
 	INDICATEDIA_3(new DefaultName("indicatedia.3")), //
 
-	PROCSELDIA_1(new DefaultName("procseldia.1")), //
-	PROCSELDIA_2(new DefaultName("procseldia.2")), //
-	PROCSELDIA_3(new DefaultName("procseldia.3")), //
-
 	FILEPROPDIA_1(new DefaultName("filepropdia.1")), //
 	FILEPROPDIA_2(new DefaultName("filepropdia.2")), //
 	FILEPROPDIA_3(new DefaultName("filepropdia.3")), //
@@ -171,10 +167,14 @@ public enum LabelStringKey implements Name {
 	PROJFC_2(new DefaultName("projfc.2")), //
 	PROJFC_3(new DefaultName("projfc.3")), //
 	PROJFC_4(new DefaultName("projfc.4")), //
-	PROJFC_5(new DefaultName("projfc.5")), //
-	PROJFC_6(new DefaultName("projfc.6")), //
-	PROJFC_7(new DefaultName("projfc.7")), //
-	PROJFC_8(new DefaultName("projfc.8")),//
+
+	PROJWIZCHOOSER_1(new DefaultName("projwizchooser.1")), //
+	PROJWIZCHOOSER_2(new DefaultName("projwizchooser.2")), //
+	PROJWIZCHOOSER_3(new DefaultName("projwizchooser.3")), //
+	PROJWIZCHOOSER_4(new DefaultName("projwizchooser.4")), //
+	PROJWIZCHOOSER_5(new DefaultName("projwizchooser.5")),//
+	
+	COMPCHOOSER_1(new DefaultName("compchooser.1")), //
 
 	;
 

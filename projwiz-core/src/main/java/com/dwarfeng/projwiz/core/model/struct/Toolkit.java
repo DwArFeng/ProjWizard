@@ -1,16 +1,15 @@
 package com.dwarfeng.projwiz.core.model.struct;
 
 import java.awt.Image;
+import java.awt.Window;
 import java.util.Set;
 
 import javax.swing.Icon;
 
-import com.dwarfeng.dutil.basic.cna.model.KeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.ListModel;
 import com.dwarfeng.dutil.basic.cna.model.MapModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SetModel;
-import com.dwarfeng.dutil.basic.cna.model.SyncKeySetModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncListModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
@@ -32,21 +31,21 @@ import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.model.eum.DialogOption;
-import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
+import com.dwarfeng.projwiz.core.view.eum.DialogOption;
+import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
+import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
-import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 /**
  * 功能处理器。
@@ -72,10 +71,10 @@ public interface Toolkit {
 	public enum Method {
 		ADDCORECONFIGOBVERSER, //
 		ADDPROGRAMOBVERSER, //
+		CHOOSECOMPONENT, //
 		CHOOSEPROJECTFILE, //
 		CHOOSESYSTEMFILE, //
 		CLEARPROGRAMOBVERSER, //
-		CONTAINSDIALOG, //
 		DEBUG, //
 		DISPOSEMAINFRAME, //
 		ERROR, //
@@ -119,7 +118,7 @@ public interface Toolkit {
 		GETPLUGINCLASSLOADER, //
 		GETPROGRAMOBVERSERS, //
 		GETPROJECTICONIMAGEMODEL, //
-		GETPROJECTICONIMAGEMODELREADONLY(), //
+		GETPROJECTICONIMAGEMODELREADONLY, //
 		GETPROJECTICONOBVMODEL, //
 		GETPROPERTY, //
 		GETRUNTIMESTATE, //
@@ -135,13 +134,11 @@ public interface Toolkit {
 		REMOVEPROGRAMOBVERSER, //
 		SETEXITCODE, //
 		SETRUNTIMESTATE, //
-		SHOWCOMPONENTDIALOG, //
 		SHOWCONFIRMDIALOG, //
 		SHOWDIALOG, //
 		SHOWEXTERNALWINDOW, //
 		SHOWINPUTDIALOG, //
 		SHOWMESSAGEDIALOG, //
-		SHOWNEWDIALOG, //
 		SHOWOPTIONDIALOG, //
 		START, //
 		SUBMITTASK, //
@@ -171,9 +168,29 @@ public interface Toolkit {
 	public boolean addProgramObverser(ProgramObverser obverser) throws IllegalStateException;
 
 	/**
+	 * 选择组件。
+	 * 
+	 * <p>
+	 * 该方法会打开一个组件选择对话框，并让用户在多个组件中选择一个或多个组件。
+	 * <p>
+	 * 该方法保证返回的组件数组中不含有 <code>null</code> 元素。
+	 * 
+	 * @param setting
+	 *            指定的设置。
+	 * @return 选择的组件数组，如果没有，则长度为0。
+	 * @throws IllegalStateException
+	 *             因为没有权限而抛出的异常。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 */
+	public Component[] chooseComponent(ComponentChooserSetting setting) throws IllegalStateException;
+
+	/**
 	 * 选择一个工程文件。
 	 * <p>
 	 * 该方法会打开一个文件选择对话框，并让
+	 * <p>
+	 * 该方法保证返回的组件数组中不含有 <code>null</code> 元素。
 	 * 
 	 * @param setting
 	 *            指定的设置。
@@ -182,6 +199,8 @@ public interface Toolkit {
 	 *             入口参数为 <code>null</code>。
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
 	 */
 	public File[] chooseProjectFile(ProjectFileChooserSetting setting) throws IllegalMonitorStateException;
 
@@ -189,6 +208,8 @@ public interface Toolkit {
 	 * 选择一个系统文件。
 	 * <p>
 	 * 该方法会打开一个文件选择对话框，并让
+	 * <p>
+	 * 该方法保证返回的组件数组中不含有 <code>null</code> 元素。
 	 * 
 	 * @param setting
 	 *            指定的设置。
@@ -197,6 +218,8 @@ public interface Toolkit {
 	 *             入口参数为 <code>null</code>。
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
 	 */
 	public java.io.File[] chooseSystemFile(SystemFileChooserSetting setting) throws IllegalStateException;
 
@@ -204,20 +227,6 @@ public interface Toolkit {
 	 * 清除所有的GUI观察器（慎用）。
 	 */
 	public void clearProgramObverser() throws IllegalStateException;
-
-	/**
-	 * 返回程序中是否含有指定键的对话框。
-	 * 
-	 * <p>
-	 * 对话框通过查重键来判断是否与已有的对话框重复。
-	 * 
-	 * @param key
-	 *            指定的键。
-	 * @return 程序中是否含有指定键的对话框。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public boolean containsDialog(String key) throws IllegalStateException;
 
 	/**
 	 * 使用指定的记录器处理器 <code>debug</code> 一条信息。
@@ -416,6 +425,29 @@ public interface Toolkit {
 	 */
 	public int getExitCode() throws IllegalStateException;
 
+	// /**
+	// * 获取外部窗口模型。
+	// *
+	// * @return 外部窗口模型。
+	// * @throws IllegalStateException
+	// * 因为没有权限而抛出的异常。
+	// */
+	// public SyncKeySetModel<String, WindowSuppiler> getExternalWindowModel()
+	// throws IllegalStateException;
+	//
+	// /**
+	// * 获取外部窗口模型。
+	// *
+	// * <p>
+	// * 外部窗口模型是只读的。
+	// *
+	// * @return 外部窗口模型。
+	// * @throws IllegalStateException
+	// * 因为没有权限而抛出的异常。
+	// */
+	// public KeySetModel<String, WindowSuppiler>
+	// getExternalWindowModelReadOnly() throws IllegalStateException;
+
 	/**
 	 * 获取外部窗口模型。
 	 * 
@@ -423,11 +455,10 @@ public interface Toolkit {
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
 	 */
-	public SyncKeySetModel<String, WindowSuppiler> getExternalWindowModel() throws IllegalStateException;
+	public SyncSetModel<Window> getExternalWindowModel() throws IllegalStateException;
 
 	/**
 	 * 获取外部窗口模型。
-	 * 
 	 * <p>
 	 * 外部窗口模型是只读的。
 	 * 
@@ -435,7 +466,7 @@ public interface Toolkit {
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
 	 */
-	public KeySetModel<String, WindowSuppiler> getExternalWindowModelReadOnly() throws IllegalStateException;
+	public SetModel<Window> getExternalWindowModelReadOnly() throws IllegalStateException;
 
 	/**
 	 * 获取文件图标图片模型。
@@ -853,36 +884,52 @@ public interface Toolkit {
 	 */
 	public DialogOption showConfirmDialog(ConfirmDialogSetting setting) throws IllegalStateException;
 
-	/**
-	 * 展示一个外部窗口。
-	 * 
-	 * <p>
-	 * 该方法会在程序的外部窗口模型中查找具有指定键的窗口提供器， 如果找到了， 则将该提供器设为可见的；
-	 * 如果在外部窗口模型中找不到指定的键，则什么也不做。
-	 * 
-	 * @param key
-	 *            指定的键。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	public void showExternalWindow(String key);
+	// /**
+	// * 展示一个外部窗口。
+	// *
+	// * <p>
+	// * 该方法会在程序的外部窗口模型中查找具有指定键的窗口提供器， 如果找到了， 则将该提供器设为可见的；
+	// * 如果在外部窗口模型中找不到指定的键，则什么也不做。
+	// *
+	// * @param key
+	// * 指定的键。
+	// * @throws NullPointerException
+	// * 入口参数为 <code>null</code>。
+	// */
+	// public void showExternalWindow(String key);
+	//
+	// /**
+	// * 展示一个外部的窗口。
+	// *
+	// * <p>
+	// * 该方法会在程序的外部窗口模型中查找具有与指定的窗口提供器键相同的窗口提供器，
+	// 如果找不到，则按照流程向模型中添加该提供器，并显示提供器中的窗口；
+	// * 如果在模型中找到了相同的键的提供器，则对比两个提供器是否严格相等， 如果严格相等，则显示该提供器的窗口；
+	// * 如果不是严格相等，则用该窗口提供器替换掉眼线的窗口提供器。
+	// *
+	// * @param suppiler
+	// * 窗口提供器。
+	// * @throws IllegalStateException
+	// * 因为没有执行权限而抛出的异常。
+	// * @throws NullPointerException
+	// * 入口参数为 <code>null</code>。
+	// */
+	// public void showExternalWindow(WindowSuppiler suppiler);
 
 	/**
-	 * 展示一个外部的窗口。
-	 * 
+	 * 展示一个外部窗口。
 	 * <p>
-	 * 该方法会在程序的外部窗口模型中查找具有与指定的窗口提供器键相同的窗口提供器， 如果找不到，则按照流程向模型中添加该提供器，并显示提供器中的窗口；
-	 * 如果在模型中找到了相同的键的提供器，则对比两个提供器是否严格相等， 如果严格相等，则显示该提供器的窗口；
-	 * 如果不是严格相等，则用该窗口提供器替换掉眼线的窗口提供器。
+	 * 该方法会在主界面的中心展示指定的外部窗口，并持有该窗口。 <br>
+	 * 当程序关闭时，会关闭所有打开的外部窗口。
 	 * 
-	 * @param suppiler
-	 *            窗口提供器。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
+	 * @param window
+	 *            指定的外部窗口。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
+	 * @throws IllegalStateException
+	 *             因为没有权限而抛出的异常。
 	 */
-	public void showExternalWindow(WindowSuppiler suppiler);
+	public void showExternalWindow(Window window) throws IllegalStateException;
 
 	/**
 	 * 显示一个输入对话框。

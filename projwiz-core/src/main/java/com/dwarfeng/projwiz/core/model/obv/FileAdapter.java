@@ -15,10 +15,6 @@ public abstract class FileAdapter implements FileObverser {
 	}
 
 	@Override
-	public void fireCreateTimeChanged(long oldValue, long newValue) {
-	}
-
-	@Override
 	public void fireInputClosed(String label) {
 	}
 

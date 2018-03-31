@@ -4,8 +4,8 @@ import javax.swing.Icon;
 import javax.swing.UIManager;
 
 import com.dwarfeng.dutil.basic.prog.Buildable;
-import com.dwarfeng.projwiz.core.model.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.model.eum.DialogOptionCombo;
+import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
+import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
 
 /**
  * 确认对话框设置。

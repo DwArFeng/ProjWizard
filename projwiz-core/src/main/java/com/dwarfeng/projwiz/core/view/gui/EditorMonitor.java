@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
@@ -40,16 +39,13 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
-import com.dwarfeng.projwiz.core.view.struct.WindowSuppiler;
 
 /**
  * 
  * @author DwArFeng
  * @since 0.0.2-alpha
  */
-public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
-
-	private static final long serialVersionUID = -251047540510364086L;
+public class EditorMonitor extends ProjWizDialog {
 
 	private final JTable focusTable;
 	private final JTable mapTable;
@@ -62,8 +58,6 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 	private SyncComponentModel componentModel;
 
 	private final DefaultTableModel focusTableModel = new DefaultTableModel() {
-
-		private static final long serialVersionUID = -7798822512172189454L;
 
 		/**
 		 * {@inheritDoc}
@@ -420,35 +414,6 @@ public class EditorMonitor extends ProjWizDialog implements WindowSuppiler {
 	 */
 	public SyncMapModel<Project, Editor> getFocusEditorModel() {
 		return focusEditorModel;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getKey() {
-		return this.getClass().toString();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Window getWindow() {
-		return this;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isDispose() {
-		disposeLock.lock();
-		try {
-			return disposeFlag;
-		} finally {
-			disposeLock.unlock();
-		}
 	}
 
 	/**
