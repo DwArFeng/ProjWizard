@@ -2,6 +2,6 @@
 
 <root>
 	<info key="processor.newfile">
-		<demand value="SHOWCOMPONENTDIALOG" />
+		<demand value="SHOWEXTERNALWINDOW" />
 	</info>
 </root>

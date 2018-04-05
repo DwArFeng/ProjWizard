@@ -1,17 +1,15 @@
-package com.dwarfeng.projwiz.basic4.tool;
+package com.dwarfeng.projwiz.raefrm.tool;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Arrays;
-import java.util.Objects;
 
 import com.dwarfeng.dutil.basic.io.CT;
 import com.dwarfeng.dutil.basic.io.FileUtil;
 import com.dwarfeng.dutil.develop.cfg.DefaultExconfigModel;
 import com.dwarfeng.dutil.develop.cfg.ExconfigModel;
 import com.dwarfeng.dutil.develop.cfg.io.PropConfigSaver;
-import com.dwarfeng.projwiz.basic4.model.eum.FofpConfigEntry;
-import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigEntry;
+import com.dwarfeng.projwiz.raefrm.model.eum.FileCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
 
 public class ConfigEntrySaver {
@@ -20,42 +18,31 @@ public class ConfigEntrySaver {
 		CT.trace("开始保存配置文件...");
 
 		// ------------------------------------------------------------------------------------------------------------
-		CT.trace("保存mepp配置文件...");
+		CT.trace("保存ProjProcCCE配置文件...");
 		ExconfigModel meppModel = new DefaultExconfigModel();
 		meppModel.addAll(Arrays.asList(ProjCoreConfigEntry.values()));
-		meppModel.addAll(Arrays.asList(MeppConfigEntry.values()));
 
-		File meppFile = new File("target" + File.separator + "mepp" + File.separator + "cfg.core.properties");
+		File meppFile = new File("target" + File.separator + "cfg.core-projproc.properties");
 		FileUtil.createFileIfNotExists(meppFile);
 
-		PropConfigSaver meppSaver = new PropConfigSaver(new FileOutputStream(meppFile));
-		try {
-			meppSaver.countinuousSave(meppModel);
+		try (PropConfigSaver projProcCCESaver = new PropConfigSaver(new FileOutputStream(meppFile))) {
+			projProcCCESaver.countinuousSave(meppModel);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (Objects.nonNull(meppSaver)) {
-				meppSaver.close();
-			}
 		}
 
 		// ------------------------------------------------------------------------------------------------------------
-		CT.trace("保存fofp配置文件...");
+		CT.trace("保存FileProcCCE配置文件...");
 		ExconfigModel fofpModel = new DefaultExconfigModel();
-		fofpModel.addAll(Arrays.asList(FofpConfigEntry.values()));
+		fofpModel.addAll(Arrays.asList(FileCoreConfigEntry.values()));
 
-		File fofpFile = new File("target" + File.separator + "fofp" + File.separator + "cfg.core.properties");
+		File fofpFile = new File("target" + File.separator + "cfg.core-fileproc.properties");
 		FileUtil.createFileIfNotExists(fofpFile);
 
-		PropConfigSaver fofpSaver = new PropConfigSaver(new FileOutputStream(fofpFile));
-		try {
-			fofpSaver.countinuousSave(fofpModel);
+		try (PropConfigSaver fileProcCCESaver = new PropConfigSaver(new FileOutputStream(fofpFile))) {
+			fileProcCCESaver.countinuousSave(fofpModel);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (Objects.nonNull(fofpSaver)) {
-				fofpSaver.close();
-			}
 		}
 
 		// ------------------------------------------------------------------------------------------------------------

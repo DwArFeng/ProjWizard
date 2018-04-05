@@ -4,6 +4,9 @@ import java.util.Collection;
 
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
+import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
+import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
+import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
 
 /**
  * 常量提供接口。
@@ -30,7 +33,7 @@ public interface ConstantsProvider {
 		I18N_LOGGER_FILE_SETTING,
 		/** 记录器国际化处理器资源设置的资源键。 */
 		I18N_LOGGER_RESOURCE_SETTING,
-		
+
 		/** 权限需求模型的配置。 */
 		PERM_DEMAND_SETTING,
 
@@ -59,9 +62,11 @@ public interface ConstantsProvider {
 	public Name getResourceKey(ResourceKeyType type);
 
 	/**
-	 * 获取该组件的自定义配置入口。
+	 * 获取该组件所有的额核心置入口。
+	 * <p> 对于工程处理器 {@link ProjectProcessor} 来说，返回的集合应包含 {@link ProjCoreConfigEntry} 中的所有元素。
+	 * <p> 对于文件处理器 {@link FileProcessor} 来说，返回的集合应包含 {@link FileCoreConfigEntry} 中的所有元素。
 	 * 
-	 * @return 该组件的自定义配置入口。
+	 * @return 该组件所有的核心配置入口组成的集合。
 	 */
-	public Collection<ExconfigEntry> getConfigEntries();
+	public Collection<ExconfigEntry> getCoreConfigEntries();
 }

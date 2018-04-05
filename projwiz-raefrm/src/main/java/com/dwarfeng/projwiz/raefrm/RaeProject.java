@@ -17,6 +17,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
+import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
@@ -157,18 +158,23 @@ public abstract class RaeProject implements Project {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File addFile(File parent, File file, String exceptName, AddingSituation situation) {
-		throw new UnsupportedOperationException("addFile");
+	public boolean addObverser(ProjectObverser obverser) {
+		lock.writeLock().lock();
+		try {
+			return obversers.add(obverser);
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean addObverser(ProjectObverser obverser) {
+	public boolean removeObverser(ProjectObverser obverser) {
 		lock.writeLock().lock();
 		try {
-			return obversers.add(obverser);
+			return obversers.remove(obverser);
 		} finally {
 			lock.writeLock().unlock();
 		}
@@ -255,7 +261,29 @@ public abstract class RaeProject implements Project {
 	 */
 	@Override
 	public boolean isAddFileSupported(AddingSituation situation) {
-		return false;
+		Objects.requireNonNull(situation, "入口参数 situation 不能为 null。");
+
+		lock.readLock().lock();
+		try {
+			switch (situation) {
+			case BY_COPY:
+				return projProcToolkit.getCoreConfigModel().getParsedValue(
+						ProjCoreConfigEntry.PROJECT_SUPPORTED_ADDING_BYCOPY.getConfigKey(), Boolean.class);
+			case BY_MOVE:
+				return projProcToolkit.getCoreConfigModel().getParsedValue(
+						ProjCoreConfigEntry.PROJECT_SUPPORTED_ADDING_BYMOVE.getConfigKey(), Boolean.class);
+			case BY_NEW:
+				return projProcToolkit.getCoreConfigModel().getParsedValue(
+						ProjCoreConfigEntry.PROJECT_SUPPORTED_ADDING_BYNEW.getConfigKey(), Boolean.class);
+			case OTHER:
+				return projProcToolkit.getCoreConfigModel().getParsedValue(
+						ProjCoreConfigEntry.PROJECT_SUPPORTED_ADDING_BYOTHER.getConfigKey(), Boolean.class);
+			default:
+				return false;
+			}
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -263,7 +291,26 @@ public abstract class RaeProject implements Project {
 	 */
 	@Override
 	public boolean isRemoveFileSupported(RemovingSituation situation) {
-		return false;
+		Objects.requireNonNull(situation, "入口参数 situation 不能为 null。");
+
+		lock.readLock().lock();
+		try {
+			switch (situation) {
+			case BY_DELETE:
+				return projProcToolkit.getCoreConfigModel().getParsedValue(
+						ProjCoreConfigEntry.PROJECT_SUPPORTED_REMOVING_BYDELETE.getConfigKey(), Boolean.class);
+			case BY_MOVE:
+				return projProcToolkit.getCoreConfigModel().getParsedValue(
+						ProjCoreConfigEntry.PROJECT_SUPPORTED_REMOVING_BYMOVE.getConfigKey(), Boolean.class);
+			case OTHER:
+				return projProcToolkit.getCoreConfigModel().getParsedValue(
+						ProjCoreConfigEntry.PROJECT_SUPPORTED_REMOVING_BYOTHER.getConfigKey(), Boolean.class);
+			default:
+				return false;
+			}
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -271,7 +318,13 @@ public abstract class RaeProject implements Project {
 	 */
 	@Override
 	public boolean isRenameFileSupported() {
-		return false;
+		lock.readLock().lock();
+		try {
+			return projProcToolkit.getCoreConfigModel()
+					.getParsedValue(ProjCoreConfigEntry.PROJECT_SUPPORTED_RENAME_FILE.getConfigKey(), Boolean.class);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -279,7 +332,13 @@ public abstract class RaeProject implements Project {
 	 */
 	@Override
 	public boolean isSaveSupported() {
-		return false;
+		lock.readLock().lock();
+		try {
+			return projProcToolkit.getCoreConfigModel()
+					.getParsedValue(ProjCoreConfigEntry.PROJECT_SUPPORTED_SAVE.getConfigKey(), Boolean.class);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -292,20 +351,25 @@ public abstract class RaeProject implements Project {
 
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isAddFileSupported(AddingSituation)} ,
+	 * 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出 {@link UnsupportedOperationException}；否则，调用
+	 * {@link #addFile_Sub(File, File, String, AddingSituation)}，返回要求的结果。
 	 */
 	@Override
-	public File removeFile(File file, RemovingSituation situation) {
-		throw new UnsupportedOperationException("removeFile");
-	}
+	public File addFile(File parent, File file, String exceptName, AddingSituation situation) {
+		Objects.requireNonNull(parent, "入口参数 parent 不能为 null。");
+		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
+		Objects.requireNonNull(exceptName, "入口参数 exceptName 不能为 null。");
+		Objects.requireNonNull(situation, "入口参数 situation 不能为 null。");
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean removeObverser(ProjectObverser obverser) {
 		lock.writeLock().lock();
 		try {
-			return obversers.remove(obverser);
+			if (!isAddFileSupported(situation)) {
+				throw new UnsupportedOperationException("addFile");
+			} else {
+				return addFile_Sub(parent, file, exceptName, situation);
+			}
 		} finally {
 			lock.writeLock().unlock();
 		}
@@ -313,18 +377,70 @@ public abstract class RaeProject implements Project {
 
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #removeFile(File, RemovingSituation)} ,
+	 * 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出 {@link UnsupportedOperationException}；否则，调用
+	 * {@link #removeFile_Sub(File, RemovingSituation)}，返回要求的结果。
 	 */
 	@Override
-	public File renameFile(File file, String newName) {
-		throw new UnsupportedOperationException("renameFile");
+	public File removeFile(File file, RemovingSituation situation) {
+		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
+		Objects.requireNonNull(situation, "入口参数 situation 不能为 null。");
+
+		lock.writeLock().lock();
+		try {
+			if (!isRemoveFileSupported(situation)) {
+				throw new UnsupportedOperationException("removeFile");
+			} else {
+				return removeFile_Sub(file, situation);
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isRenameFileSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #renameFile_Sub(File, String)}，返回要求的结果。
+	 */
+	@Override
+	public File renameFile(File file, String newName) {
+		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
+		Objects.requireNonNull(newName, "入口参数 newName 不能为 null。");
+
+		lock.writeLock().lock();
+		try {
+			if (!isRenameFileSupported()) {
+				throw new UnsupportedOperationException("renameFile");
+			} else {
+				return renameFile_Sub(file, newName);
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isSaveSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用 {@link #save_Sub()}，返回要求的结果。
 	 */
 	@Override
 	public void save() throws ProcessException {
-		throw new UnsupportedOperationException("save");
+		lock.writeLock().lock();
+		try {
+			if (!isSaveSupported()) {
+				throw new UnsupportedOperationException("save");
+			} else {
+				save_Sub();
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
@@ -339,6 +455,68 @@ public abstract class RaeProject implements Project {
 			lock.writeLock().unlock();
 		}
 	}
+
+	/**
+	 * 添加文件的子方法。
+	 * <p>
+	 * 该方法被 {@link #addFile(File, File, String, AddingSituation)} 调用。
+	 * 
+	 * @param parent
+	 *            指定文件的父节点。
+	 * @param file
+	 *            指定的文件。
+	 * @param exceptName
+	 *            该文件的期望名称。
+	 * @param situation
+	 *            添加文件时的情景。
+	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
+	 * @throws UnsupportedOperationException
+	 *             不支持的操作。
+	 */
+	protected abstract File addFile_Sub(File parent, File file, String exceptName, AddingSituation situation)
+			throws UnsupportedOperationException;
+
+	/**
+	 * 移除文件的子方法。
+	 * <p>
+	 * 该方法被 {@link #removeFile(File, RemovingSituation)} 调用。
+	 * 
+	 * @param file
+	 *            指定的文件。
+	 * @param situation
+	 *            移除文件时的情景。
+	 * @return 被移除的文件 ,如果失败，则为 <code>null</code>。。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract File removeFile_Sub(File file, RemovingSituation situation) throws UnsupportedOperationException;
+
+	/**
+	 * 重命名文件的子方法。
+	 * <p>
+	 * 该方法被 {@link #renameFile(File, String)} 调用。
+	 * 
+	 * @param file
+	 *            指定的文件。
+	 * @param newName
+	 *            指定的新名称。
+	 * @return 实际被重命名的文件，如果失败，则为 <code>null</code>。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract File renameFile_Sub(File file, String newName) throws UnsupportedOperationException;
+
+	/**
+	 * 即时保存的子方法。
+	 * <p>
+	 * 该方法被 {@link #save_Sub()} 调用。
+	 * 
+	 * @throws ProcessException
+	 *             过程失败。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract void save_Sub() throws ProcessException, UnsupportedOperationException;
 
 	/**
 	 * 通知文件被添加。

@@ -103,8 +103,6 @@ public interface ProjectProcessor extends Component {
 	 * @return 新建的工程。
 	 * @throws ProcessException
 	 *             过程异常。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
 	 * @throws UnsupportedOperationException
 	 *             不支持该操作。
 	 */
@@ -116,8 +114,6 @@ public interface ProjectProcessor extends Component {
 	 * @return 打开的工程。
 	 * @throws ProcessException
 	 *             过程异常。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
 	 * @throws UnsupportedOperationException
 	 *             不支持该操作。
 	 */

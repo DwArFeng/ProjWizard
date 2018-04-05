@@ -1,29 +1,20 @@
 package com.dwarfeng.projwiz.basic4.impl;
 
 import java.awt.Image;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
-import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.projwiz.basic4.model.eum.FileType;
 import com.dwarfeng.projwiz.basic4.model.eum.ImageKey;
-import com.dwarfeng.projwiz.basic4.model.eum.PermDemandKey;
 import com.dwarfeng.projwiz.basic4.model.struct.FofpConstantsProvider;
-import com.dwarfeng.projwiz.basic4.view.NewFolderFileDialog;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
-import com.dwarfeng.projwiz.core.view.eum.DialogOption;
 import com.dwarfeng.projwiz.raefrm.RaeFileProcessor;
 
 /**
@@ -99,68 +90,59 @@ public class FolderFileProcessor extends RaeFileProcessor {
 	}
 
 	@Override
-	public boolean isNewEditorSupported() {
+	protected Editor newEditor_Sub(Project editProject, File editFile)
+			throws ProcessException, UnsupportedOperationException {
 		// TODO Auto-generated method stub
-		return super.isNewEditorSupported();
+		return null;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isNewFileSupported() {
-		return true;
-	}
-
-	@Override
-	public Editor newEditor(Project editProject, File editFile) throws ProcessException {
-		// TODO Auto-generated method stub
-		return super.newEditor(editProject, editFile);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File newFile() throws ProcessException {
-		lock.writeLock().lock();
-		try {
-			requirePermKeyAvailable(PermDemandKey.FOFP_PROCESSOR_NEWFILE);
-
-			AtomicReference<NewFolderFileDialog> panelRef = new AtomicReference<NewFolderFileDialog>(null);
-
-			try {
-				SwingUtil.invokeAndWaitInEventQueue(() -> {
-					panelRef.set(NewFolderFileDialog.newInstance(this, labelI18nHandler));
-				});
-			} catch (InvocationTargetException | InterruptedException ignore) {
-				// 不会抛出该异常。
-			}
-
-			NewFolderFileDialog dialog = panelRef.get();
-			getToolkit().showExternalWindow(dialog);
-			try {
-				dialog.waitDispose();
-			} catch (InterruptedException ignore) {
-				// 中断也要按照基本法。
-			}
-
-			// 如果用户取消，则直接退出。
-			if (panelRef.get().getOption() != DialogOption.OK_YES) {
-				return null;
-			}
-
-			String name = dialog.getFileName() == null || dialog.getFileName().equals("")
-					? MyUtil.label(this, MyLabelStringKey.LABEL_FOFP_1) : dialog.getFileName();
-			String description = dialog.getFileDescription() == null ? "" : dialog.getFileDescription();
-
-			Map<String, ByteBuffer> buffers = new HashMap<>();
-			buffers.put(LABEL_DESCRIPTION, MyUtil.string2ByteBuffer(description));
-
-			return new CreatedFile(getKey(), true, name, buffers);
-		} finally {
-			lock.writeLock().unlock();
-		}
+	protected File newFile_Sub() throws ProcessException, UnsupportedOperationException {
+		// requirePermKeyAvailable(PermDemandKey.FOFP_PROCESSOR_NEWFILE);
+		//
+		// AtomicReference<NewFolderFileDialog> panelRef = new
+		// AtomicReference<NewFolderFileDialog>(null);
+		//
+		// try {
+		// SwingUtil.invokeAndWaitInEventQueue(() -> {
+		// panelRef.set(NewFolderFileDialog.newInstance(this,
+		// labelI18nHandler));
+		// });
+		// } catch (InvocationTargetException | InterruptedException ignore) {
+		// // 不会抛出该异常。
+		// }
+		//
+		// NewFolderFileDialog dialog = panelRef.get();
+		// getToolkit().showExternalWindow(dialog);
+		// try {
+		// dialog.waitDispose();
+		// } catch (InterruptedException ignore) {
+		// // 中断也要按照基本法。
+		// }
+		//
+		//
+		//
+		// // 如果用户取消，则直接退出。
+		// if (panelRef.get().getOption() != DialogOption.OK_YES) {
+		// return null;
+		// }
+		//
+		// String name = dialog.getFileName() == null ||
+		// dialog.getFileName().equals("")
+		// ? MyUtil.label(this, MyLabelStringKey.LABEL_FOFP_1) :
+		// dialog.getFileName();
+		// String description = dialog.getFileDescription() == null ? "" :
+		// dialog.getFileDescription();
+		//
+		// Map<String, ByteBuffer> buffers = new HashMap<>();
+		// buffers.put(LABEL_DESCRIPTION,
+		// MyUtil.string2ByteBuffer(description));
+		//
+		// return new CreatedFile(getKey(), true, name, buffers);
+		return null;
 	}
 
 }

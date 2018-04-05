@@ -24,7 +24,13 @@ public enum LabelStringKey implements Name {
 	MEPP_PROJECT_RENAMEFILE_0(new DefaultName("project.renamefile.0")), //
 	MEPP_PROJECT_RENAMEFILE_1(new DefaultName("project.renamefile.1")), //
 
-	MEPP_PROJECT_PROPUI_0(new DefaultName("project.propui.0")),//
+	MEPP_PROJECT_PROPUI_0(new DefaultName("project.propui.0")), //
+
+	FOFP_PROCESSOR_NEWFILE_0(new DefaultName("fofp.processor.newfile.0")), //
+	FOFP_PROCESSOR_NEWFILE_1(new DefaultName("fofp.processor.newfile.1")), //
+	FOFP_PROCESSOR_NEWFILE_2(new DefaultName("fofp.processor.newfile.2")), //
+	FOFP_PROCESSOR_NEWFILE_3(new DefaultName("fofp.processor.newfile.3")), //
+	FOFP_PROCESSOR_NEWFILE_4(new DefaultName("fofp.processor.newfile.4")), //
 
 	;
 

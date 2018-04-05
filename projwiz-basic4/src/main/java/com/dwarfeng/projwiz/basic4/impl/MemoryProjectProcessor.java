@@ -134,96 +134,90 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isNewProjectSupported() {
-		return true;
-	}
+	protected Project newProject_Sub() throws ProcessException, UnsupportedOperationException {
+		requirePermKeyAvailable(PermDemandKey.MEPP_PROCESSOR_NEWPROJECT);
+		// TODO 检查是否为测试环境。
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isOpenProjectSupported() {
-		return false;
-	}
+		String name = null;
+		boolean isNameAssign = coreConfigModel
+				.getParsedValue(MeppConfigEntry.PROCESSOR_PROJNAME_ISASSIGN.getConfigKey(), Boolean.class);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Project newProject() throws ProcessException {
-		lock.writeLock().lock();
-		try {
-			requirePermKeyAvailable(PermDemandKey.MEPP_PROCESSOR_NEWPROJECT);
-			// TODO 检查是否为测试环境。
+		int buffCapa = coreConfigModel.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_VALUE.getConfigKey(),
+				Integer.class);
+		boolean isAskSize = coreConfigModel
+				.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_ISASK.getConfigKey(), Boolean.class);
 
-			String name = null;
-			boolean isNameAssign = coreConfigModel
-					.getParsedValue(MeppConfigEntry.PROCESSOR_PROJNAME_ISASSIGN.getConfigKey(), Boolean.class);
+		if (isNameAssign) {
+			name = (String) getToolkit().showInputDialog(
+					new InputDialogSetting.Builder().setTitle(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_3))
+							.setMessage(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_4))
+							.setDialogMessage(DialogMessage.QUESTION_MESSAGE).build());
 
-			int buffCapa = coreConfigModel
-					.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_VALUE.getConfigKey(), Integer.class);
-			boolean isAskSize = coreConfigModel
-					.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_ISASK.getConfigKey(), Boolean.class);
+			while (!isValidName(name)) {
+				if (Objects.isNull(name)) {
+					return null;
+				}
 
-			if (isNameAssign) {
 				name = (String) getToolkit().showInputDialog(
 						new InputDialogSetting.Builder().setTitle(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_3))
-								.setMessage(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_4))
+								.setMessage(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_5))
 								.setDialogMessage(DialogMessage.QUESTION_MESSAGE).build());
-
-				while (!isValidName(name)) {
-					if (Objects.isNull(name)) {
-						return null;
-					}
-
-					name = (String) getToolkit().showInputDialog(
-							new InputDialogSetting.Builder().setTitle(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_3))
-									.setMessage(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_5))
-									.setDialogMessage(DialogMessage.QUESTION_MESSAGE).build());
-				}
-			} else {
-				name = UUID.randomUUID().toString();
 			}
+		} else {
+			name = UUID.randomUUID().toString();
+		}
 
-			if (isAskSize) {
-				String inputValue = null;
+		if (isAskSize) {
+			String inputValue = null;
+			inputValue = (String) getToolkit().showInputDialog(new InputDialogSetting.Builder()
+					.setTitle(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_0))
+					.setMessage(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_1))
+					.setDialogMessage(DialogMessage.QUESTION_MESSAGE).setInitialSelectionValue(buffCapa).build());
+
+			while (!isNotNegNumber(inputValue)) {
+				if (Objects.isNull(inputValue)) {
+					return null;
+				}
+
 				inputValue = (String) getToolkit().showInputDialog(new InputDialogSetting.Builder()
 						.setTitle(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_0))
-						.setMessage(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_1))
+						.setMessage(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_2))
 						.setDialogMessage(DialogMessage.QUESTION_MESSAGE).setInitialSelectionValue(buffCapa).build());
-
-				while (!isNotNegNumber(inputValue)) {
-					if (Objects.isNull(inputValue)) {
-						return null;
-					}
-
-					inputValue = (String) getToolkit().showInputDialog(
-							new InputDialogSetting.Builder().setTitle(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_0))
-									.setMessage(label(LabelStringKey.MEPP_PROCESSOR_NEWPROJECT_2))
-									.setDialogMessage(DialogMessage.QUESTION_MESSAGE).setInitialSelectionValue(buffCapa)
-									.build());
-				}
-
-				buffCapa = Integer.parseInt(inputValue);
-
-			} else {
-				buffCapa = coreConfigModel
-						.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_VALUE.getConfigKey(), Integer.class);
 			}
 
-			File rootFile = new MeppFile.Builder(true, new ProjProcToolkitImpl(), FileType.FOLDER, new HashMap<>())
-					.setBuffCapa(0).setReadSupported(false).setWriteSupported(false).build();
+			buffCapa = Integer.parseInt(inputValue);
 
-			Tree<File> fileTree = new MapTree<>();
-			fileTree.addRoot(rootFile);
-			Map<File, String> fileNameMap = new HashMap<>();
-			fileNameMap.put(rootFile, Constants.ROOT_FILE_NAME);
-
-			return new MeppProject.Builder(name, new ProjProcToolkitImpl(), fileTree, fileNameMap)
-					.setDefaultBuffCapa(buffCapa).build();
-		} finally {
-			lock.writeLock().unlock();
+		} else {
+			buffCapa = coreConfigModel.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_VALUE.getConfigKey(),
+					Integer.class);
 		}
+
+		File rootFile = new MeppFile.Builder(true, new ProjProcToolkitImpl(), FileType.FOLDER, new HashMap<>())
+				.setBuffCapa(0).setReadSupported(false).setWriteSupported(false).build();
+
+		Tree<File> fileTree = new MapTree<>();
+		fileTree.addRoot(rootFile);
+		Map<File, String> fileNameMap = new HashMap<>();
+		fileNameMap.put(rootFile, Constants.ROOT_FILE_NAME);
+
+		return new MeppProject.Builder(name, new ProjProcToolkitImpl(), fileTree, fileNameMap)
+				.setDefaultBuffCapa(buffCapa).build();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Project openProject_Sub() throws ProcessException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("openProject_Sub");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Project saveProject_Sub() throws ProcessException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("saveProject_Sub");
 	}
 
 	/**

@@ -59,34 +59,6 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObverser> {
 
 	/**
-	 * 返回该文件是否允许指定的文件作为其子文件。
-	 * <p>
-	 * 该方法仅针对于文件夹有效，非文件夹的文件将不会调用该方法。
-	 * 
-	 * @param file
-	 *            指定的文件。
-	 * @return 是否允许指定的文件作为其子文件。
-	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
-	 */
-	public boolean isAcceptSubFile(File file);
-
-	/**
-	 * 丢弃仓库中的某个标签（可选操作）。
-	 * <p>
-	 * 该操作将会将指定标签与其对应的文件断开映射关系，但不会立即删除文件，而是等待<code>gc</code>来回收。
-	 * 
-	 * @param label
-	 *            指定的标签。
-	 * @return 该操作是否对文件造成了改变（是否真正的移除了指定的标签）。
-	 * @throws IOException
-	 *             IO异常。
-	 * @throws UnsupportedOperationException
-	 *             不支持该操作。
-	 */
-	public boolean discardLabel(String label) throws IOException;
-
-	/**
 	 * 获取文件的访问时间。
 	 * 
 	 * <p>
@@ -198,6 +170,19 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	public Class<? extends FileProcessor> getProcessorClass();
 
 	/**
+	 * 返回该文件是否允许指定的文件作为其子文件。
+	 * <p>
+	 * 该方法仅针对于文件夹有效，非文件夹的文件将不会调用该方法。
+	 * 
+	 * @param file
+	 *            指定的文件。
+	 * @return 是否允许指定的文件作为其子文件。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	public boolean isAcceptSubFile(File file);
+
+	/**
 	 * 返回该文件是否为一个文件夹。
 	 * 
 	 * @return 该文件是否为一个文件夹。
@@ -236,6 +221,21 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	public boolean newLabel(String label) throws IOException;
 
 	/**
+	 * 丢弃仓库中的某个标签（可选操作）。
+	 * <p>
+	 * 该操作将会将指定标签与其对应的文件断开映射关系，但不会立即删除文件，而是等待<code>gc</code>来回收。
+	 * 
+	 * @param label
+	 *            指定的标签。
+	 * @return 该操作是否对文件造成了改变（是否真正的移除了指定的标签）。
+	 * @throws IOException
+	 *             IO异常。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	public boolean discardLabel(String label) throws IOException;
+
+	/**
 	 * 打开指定的标签对应的输入流（可选操作）。
 	 * 
 	 * @param label
@@ -270,6 +270,15 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	public OutputStream openOutputStream(String label) throws IOException;
 
 	/**
+	 * 设置管理该文档的文档处理器的类。
+	 * 
+	 * @param clazz
+	 *            指定的文档处理器的子类。
+	 * @return 该方法是否改变了文件本身（是否生效）。
+	 */
+	public boolean setProcessorClass(Class<? extends FileProcessor> clazz);
+
+	/**
 	 * 清除仓库中的所有内容。
 	 * 
 	 * @throws IOException
@@ -280,14 +289,5 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 			discardLabel(label);
 		}
 	}
-
-	/**
-	 * 设置管理该文档的文档处理器的类。
-	 * 
-	 * @param clazz
-	 *            指定的文档处理器的子类。
-	 * @return 该方法是否改变了文件本身（是否生效）。
-	 */
-	public boolean setProcessorClass(Class<? extends FileProcessor> clazz);
 
 }

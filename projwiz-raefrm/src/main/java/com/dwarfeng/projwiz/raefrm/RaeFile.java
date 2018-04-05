@@ -15,6 +15,7 @@ import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
+import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
@@ -449,10 +450,10 @@ public abstract class RaeFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void clearObverser() {
+	public boolean removeObverser(FileObverser obverser) {
 		lock.writeLock().lock();
 		try {
-			obversers.clear();
+			return obversers.remove(obverser);
 		} finally {
 			lock.writeLock().unlock();
 		}
@@ -462,8 +463,13 @@ public abstract class RaeFile implements File {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean discardLabel(String label) throws IOException {
-		throw new UnsupportedOperationException("discardLabel");
+	public void clearObverser() {
+		lock.writeLock().lock();
+		try {
+			obversers.clear();
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
@@ -612,7 +618,13 @@ public abstract class RaeFile implements File {
 	 */
 	@Override
 	public boolean isReadSupported() {
-		return false;
+		lock.readLock().lock();
+		try {
+			return projProcToolkit.getCoreConfigModel()
+					.getParsedValue(ProjCoreConfigEntry.FILE_SUPPORTED_READ.getConfigKey(), Boolean.class);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -620,41 +632,102 @@ public abstract class RaeFile implements File {
 	 */
 	@Override
 	public boolean isWriteSupported() {
-		return false;
+		lock.readLock().lock();
+		try {
+			return projProcToolkit.getCoreConfigModel()
+					.getParsedValue(ProjCoreConfigEntry.FILE_SUPPORTED_WRITE.getConfigKey(), Boolean.class);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isWriteSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #newLabel_Sub(String)}，返回要求的结果。
 	 */
 	@Override
 	public boolean newLabel(String label) throws IOException {
-		throw new UnsupportedOperationException("newLabel");
+		Objects.requireNonNull(label, "入口参数 label 不能为 null。");
+
+		lock.writeLock().lock();
+		try {
+			if (!isWriteSupported()) {
+				throw new UnsupportedOperationException("newLabel");
+			} else {
+				return newLabel_Sub(label);
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isWriteSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #discardLabel_Sub(String)}，返回要求的结果。
+	 */
+	@Override
+	public boolean discardLabel(String label) throws IOException {
+		Objects.requireNonNull(label, "入口参数 label 不能为 null。");
+
+		lock.writeLock().lock();
+		try {
+			if (!isWriteSupported()) {
+				throw new UnsupportedOperationException("discardLabel");
+			} else {
+				return discardLabel_Sub(label);
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isReadSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #openInputStream_Sub(String)}，返回要求的结果。
 	 */
 	@Override
 	public InputStream openInputStream(String label) throws IOException {
-		throw new UnsupportedOperationException("openInputStream");
+		Objects.requireNonNull(label, "入口参数 label 不能为 null。");
+
+		lock.writeLock().lock();
+		try {
+			if (!isReadSupported()) {
+				throw new UnsupportedOperationException("openInputStream");
+			} else {
+				return openInputStream_Sub(label);
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isWriteSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #openOutputStream_Sub(String)}，返回要求的结果。
 	 */
 	@Override
 	public OutputStream openOutputStream(String label) throws IOException {
-		throw new UnsupportedOperationException("openOutputStream");
-	}
+		Objects.requireNonNull(label, "入口参数 label 不能为 null。");
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean removeObverser(FileObverser obverser) {
 		lock.writeLock().lock();
 		try {
-			return obversers.remove(obverser);
+			if (!isWriteSupported()) {
+				throw new UnsupportedOperationException("openOutputStream");
+			} else {
+				return openOutputStream_Sub(label);
+			}
 		} finally {
 			lock.writeLock().unlock();
 		}
@@ -710,6 +783,78 @@ public abstract class RaeFile implements File {
 			lock.writeLock().unlock();
 		}
 	}
+
+	/**
+	 * 新建标签的子方法。
+	 * <p>
+	 * 该方法被 {@link #newLabel(String)} 调用。
+	 * 
+	 * @param label
+	 *            指定的标签。
+	 * @return 该操作是否对文件造成了改变（是否真正的开辟了指定的标签）。
+	 * @throws IllegalArgumentException
+	 *             仓库中已经存在指定的标签。
+	 * @throws IOException
+	 *             IO异常。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract boolean newLabel_Sub(String label) throws IOException, UnsupportedOperationException;
+
+	/**
+	 * 丢弃标签的子方法。
+	 * <p>
+	 * 该方法被 {@link #discardLabel(String)} 调用。
+	 * 
+	 * @param label
+	 *            指定的标签。
+	 * @return 该操作是否对文件造成了改变（是否真正的移除了指定的标签）。
+	 * @throws IOException
+	 *             IO异常。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract boolean discardLabel_Sub(String label) throws IOException, UnsupportedOperationException;
+
+	/**
+	 * 打开输入流的子方法。
+	 * <p>
+	 * 该方法被 {@link #openInputStream(String)} 调用。
+	 * 
+	 * @param label
+	 *            指定的标签。
+	 * @return 指定的标签对应的输入流。
+	 * @throws IllegalArgumentException
+	 *             指定的标签不存在。
+	 * @throws IOException
+	 *             IO异常。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract InputStream openInputStream_Sub(String label)
+			throws IOException, IllegalArgumentException, UnsupportedOperationException;
+
+	/**
+	 * 打开输出流的子方法。
+	 * <p>
+	 * 该方法被 {@link #openOutputStream_Sub(String)} 调用。
+	 * 
+	 * @param labe
+	 *            指定的标签。
+	 * @return 指定的标签对应的输出流。
+	 * @throws IllegalArgumentException
+	 *             指定的标签不存在。
+	 * @throws IOException
+	 *             IO异常。
+	 * @throws NullPointerException
+	 *             指定的入口参数为 <code> null </code>。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract OutputStream openOutputStream_Sub(String label)
+			throws IOException, IllegalArgumentException, UnsupportedOperationException;
 
 	/**
 	 * 通知访问时间发生改变。

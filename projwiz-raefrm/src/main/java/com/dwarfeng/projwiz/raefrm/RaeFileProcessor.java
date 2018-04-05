@@ -13,6 +13,7 @@ import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
+import com.dwarfeng.projwiz.raefrm.model.eum.FileCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.FileProcToolkit;
 
@@ -64,16 +65,6 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean canOpenFile(File file) {
-		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
-
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Image getFileIcon(File file) {
 		return null;
 	}
@@ -114,8 +105,23 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isNewEditorSupported() {
+	public boolean canOpenFile(File file) {
+		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isNewEditorSupported() {
+		lock.readLock().lock();
+		try {
+			return coreConfigModel.getParsedValue(FileCoreConfigEntry.PROCESSOR_SUPPORTED_NEW_EDITOR.getConfigKey(),
+					Boolean.class);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -123,23 +129,88 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	 */
 	@Override
 	public boolean isNewFileSupported() {
-		return false;
+		lock.readLock().lock();
+		try {
+			return coreConfigModel.getParsedValue(FileCoreConfigEntry.PROCESSOR_SUPPORTED_NEW_FILE.getConfigKey(),
+					Boolean.class);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isNewEditorSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #newEditor_Sub(Project, File)}，返回要求的结果。
 	 */
 	@Override
 	public Editor newEditor(Project editProject, File editFile) throws ProcessException {
-		throw new UnsupportedOperationException("newEditor");
+		lock.writeLock().lock();
+		try {
+			if (!isNewEditorSupported()) {
+				throw new UnsupportedOperationException("newEditor");
+			} else {
+				return newEditor_Sub(editProject, editFile);
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isNewFileSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #newFile_Sub()}，返回要求的结果。
 	 */
 	@Override
 	public File newFile() throws ProcessException {
-		throw new UnsupportedOperationException("newFile");
+		lock.writeLock().lock();
+		try {
+			if (!isNewEditorSupported()) {
+				throw new UnsupportedOperationException("newFile");
+			} else {
+				return newFile_Sub();
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
+
+	/**
+	 * 生成新编辑器的子方法。
+	 * <p>
+	 * 该方法被 {@link #newFile()} 调用。
+	 * 
+	 * @param editProject
+	 *            指定的编辑工程。
+	 * @param editFile
+	 *            指定的编辑文件。
+	 * @return 新的编辑器。
+	 * @throws ProcessException
+	 *             过程异常。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected abstract Editor newEditor_Sub(Project editProject, File editFile)
+			throws ProcessException, UnsupportedOperationException;
+
+	/**
+	 * 创建新文件的子方法。
+	 * <p>
+	 * 该方法被 {@link #newFile()} 调用。
+	 * 
+	 * @return 新的文件。
+	 * @throws ProcessException
+	 *             过程异常。
+	 * @throws UnsupportedOperationException
+	 *             操作不可用。
+	 * @throws NullPointerException
+	 *             入口参数为 <code>null</code>。
+	 */
+	protected abstract File newFile_Sub() throws ProcessException, UnsupportedOperationException;
 
 }

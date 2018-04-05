@@ -1,9 +1,9 @@
-package com.dwarfeng.projwiz.core.view.gui;
+package com.dwarfeng.projwiz.raefrm;
 
-import java.awt.Window;
 import java.util.Objects;
 
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
@@ -13,24 +13,23 @@ import com.dwarfeng.dutil.develop.i18n.obv.I18nAdapter;
 import com.dwarfeng.dutil.develop.i18n.obv.I18nObverser;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.util.Constants;
-import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 
 /**
- * 程序中的抽象对话框。
+ * Rae框架窗口。
+ * <p>
+ * 该窗口在 {@link JDialog} 的基础上自动托管了国际化接口。
  * 
  * @author DwArFeng
- * @since 0.0.1-alpha
+ * @since 0.0.3-alpha
  */
-public abstract class ProjWizDialog extends JDialog {
+public abstract class RaeFrame extends JFrame {
 
-	private static final long serialVersionUID = -5285278824537447184L;
+	private static final long serialVersionUID = 8082185557618935547L;
 
-	/** 抽象对话框中的 GUI 管理器。 */
-	protected final GuiManager guiManager;
-	/** 对话框的内容面板 */
+	/** 窗口的内容面板 */
 	protected final JPanel contentPane;
 
-	/** 抽象对话框中的国际化处理器。 */
+	/** 国际化处理器。 */
 	protected I18nHandler i18nHandler;
 
 	private final I18nObverser i18nObverser = new I18nAdapter() {
@@ -55,36 +54,17 @@ public abstract class ProjWizDialog extends JDialog {
 	/**
 	 * 新实例。
 	 */
-	public ProjWizDialog() {
-		this(null, null);
+	public RaeFrame() {
+		this(null);
 	}
 
 	/**
 	 * 新实例。
 	 * 
-	 * @param guiManager
-	 *            指定的界面管理器。
-	 * @param i18nHandler
-	 *            指定的国际化接口。
+	 * @param i18n
+	 *            国际化接口。
 	 */
-	public ProjWizDialog(GuiManager guiManager, I18nHandler i18nHandler) {
-		this(guiManager, i18nHandler, null);
-	}
-
-	/**
-	 * 新实例。
-	 * 
-	 * @param guiManager
-	 *            指定的界面管理器。
-	 * @param i18nHandler
-	 *            指定的国际化接口。
-	 * @param owner
-	 *            指定的窗口所有者。
-	 */
-	public ProjWizDialog(GuiManager guiManager, I18nHandler i18nHandler, Window owner) {
-		super(owner);
-
-		this.guiManager = guiManager == null ? Constants.DEFAULT_GUIMANAGER : guiManager;
+	public RaeFrame(I18nHandler i18nHandler) {
 		this.i18nHandler = i18nHandler;
 
 		this.contentPane = new JPanel();
@@ -106,45 +86,6 @@ public abstract class ProjWizDialog extends JDialog {
 		super.dispose();
 		if (Objects.nonNull(i18nHandler))
 			i18nHandler.removeObverser(i18nObverser);
-	}
-
-	/**
-	 * 获取国际化处理器。
-	 * 
-	 * @return the i18nHandler
-	 */
-	public I18nHandler getI18nHandler() {
-		return i18nHandler;
-	}
-
-	/**
-	 * 设置国际化处理器。
-	 * 
-	 * @param i18nHandler
-	 *            the i18nHandler to set
-	 */
-	public void setI18nHandler(I18nHandler i18nHandler) {
-		if (Objects.nonNull(this.i18nHandler)) {
-			this.i18nHandler.removeObverser(i18nObverser);
-		}
-
-		if (Objects.nonNull(i18nHandler)) {
-			i18nHandler.addObverser(i18nObverser);
-		}
-
-		this.i18nHandler = i18nHandler;
-
-		if (Objects.nonNull(this.i18nHandler)) {
-			this.i18nHandler.addObverser(i18nObverser);
-			ThreadUtil.readLockIfSync(this.i18nHandler);
-			try {
-				refreshLabels();
-			} finally {
-				ThreadUtil.readUnlockIfSync(this.i18nHandler);
-			}
-		} else {
-			refreshLabels();
-		}
 	}
 
 	/**

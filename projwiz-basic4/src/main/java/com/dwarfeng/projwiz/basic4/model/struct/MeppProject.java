@@ -12,6 +12,7 @@ import com.dwarfeng.dutil.basic.io.ByteBufferOutputStream;
 import com.dwarfeng.dutil.basic.io.IOUtil;
 import com.dwarfeng.dutil.basic.num.Interval;
 import com.dwarfeng.dutil.basic.num.NumberUtil;
+import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.projwiz.basic4.impl.MemoryProjectProcessor;
 import com.dwarfeng.projwiz.basic4.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.basic4.model.eum.LoggerStringKey;
@@ -166,94 +167,6 @@ public class MeppProject extends RaeProject {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isAddFileSupported(AddingSituation situation) {
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isRemoveFileSupported(RemovingSituation situation) {
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isRenameFileSupported() {
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File removeFile(File file, RemovingSituation situation) {
-		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
-		Objects.requireNonNull(situation, "入口参数 situation 不能为 null。");
-
-		lock.writeLock().lock();
-		try {
-			switch (situation) {
-			case BY_DELETE:
-				return removeFileByDelete(file);
-			case BY_MOVE:
-				return removeFileByMove(file);
-			case OTHER:
-				return removeFileByOther(file);
-			default:
-				throw new IllegalArgumentException("未知的移除文件情形: " + situation);
-			}
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File renameFile(File file, String newName) {
-		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
-		Objects.requireNonNull(newName, "入口参数 newName 不能为 null。");
-
-		lock.writeLock().lock();
-		try {
-			if (!fileTree.contains(file)) {
-				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_5, getName());
-				projProcToolkit.warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
-				projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2,
-						file.getProcessorClass().toString(), file.getClass().toString());
-				return null;
-			}
-
-			// 检查文件在同级中是否重名，有重名则报错。
-			if (isNameRepeat(fileTree.getParent(file), newName)) {
-				Toolkit toolkit = projProcToolkit.getToolkit();
-				toolkit.showMessageDialog(new MessageDialogSetting.Builder()
-						.setMessage(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_0))
-						.setTitle(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_1))
-						.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
-				return null;
-			}
-
-			String oldName = getFileName(file);
-			fileNameMap.put(file, newName);
-			Path<File> path = fileTree.getPath(file);
-			fireFileRenamed(path, file, oldName, newName);
-
-			return file;
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-
-	/**
 	 * 设置工程的默认的缓冲容量。
 	 * 
 	 * @param defaultBuffCapa
@@ -268,8 +181,88 @@ public class MeppProject extends RaeProject {
 	 */
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 		super.stop();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected File addFile_Sub(File parent, File file, String exceptName, AddingSituation situation)
+			throws UnsupportedOperationException {
+		file.getLock().writeLock().unlock();
+		try {
+			switch (situation) {
+			case BY_COPY:
+				return addFileByCopy(parent, file, exceptName);
+			case BY_MOVE:
+				return addFileByMove(parent, file, exceptName);
+			case BY_NEW:
+				return addFileByNew(parent, file, exceptName);
+			case OTHER:
+				return addFileByOther(parent, file, exceptName);
+			default:
+				throw new IllegalArgumentException("未知的添加文件情形: " + situation);
+			}
+		} finally {
+			file.getLock().writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected File removeFile_Sub(File file, RemovingSituation situation) throws UnsupportedOperationException {
+		switch (situation) {
+		case BY_DELETE:
+			return removeFileByDelete(file);
+		case BY_MOVE:
+			return removeFileByMove(file);
+		case OTHER:
+			return removeFileByOther(file);
+		default:
+			throw new IllegalArgumentException("未知的移除文件情形: " + situation);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected File renameFile_Sub(File file, String newName) throws UnsupportedOperationException {
+		if (!fileTree.contains(file)) {
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_5, getName());
+			projProcToolkit.warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2, file.getProcessorClass().toString(),
+					file.getClass().toString());
+			return null;
+		}
+
+		// 检查文件在同级中是否重名，有重名则报错。
+		if (isNameRepeat(fileTree.getParent(file), newName)) {
+			Toolkit toolkit = projProcToolkit.getToolkit();
+			toolkit.showMessageDialog(new MessageDialogSetting.Builder()
+					.setMessage(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_0))
+					.setTitle(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_1))
+					.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
+			return null;
+		}
+
+		String oldName = getFileName(file);
+		fileNameMap.put(file, newName);
+		Path<File> path = fileTree.getPath(file);
+		fireFileRenamed(path, file, oldName, newName);
+
+		return file;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void save_Sub() throws ProcessException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("save_Sub");
 	}
 
 	private File addFileByCopy(File parent, File file, String exceptName) {

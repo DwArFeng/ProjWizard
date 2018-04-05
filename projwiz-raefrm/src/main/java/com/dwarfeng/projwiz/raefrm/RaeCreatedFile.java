@@ -2,6 +2,7 @@ package com.dwarfeng.projwiz.raefrm;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
@@ -232,8 +233,42 @@ public class RaeCreatedFile extends RaeFile {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public InputStream openInputStream(String label) throws IOException {
+	public boolean isWriteSupported() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean newLabel_Sub(String label) throws IOException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("newLabel_Sub");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean discardLabel_Sub(String label) throws IOException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("discardLabel_Sub");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected InputStream openInputStream_Sub(String label)
+			throws IOException, IllegalArgumentException, UnsupportedOperationException {
 		return new ObversableInputStream(label, new ByteBufferInputStream(buffers.get(label)));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected OutputStream openOutputStream_Sub(String label)
+			throws IOException, IllegalArgumentException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("openOutputStream_Sub");
 	}
 
 }

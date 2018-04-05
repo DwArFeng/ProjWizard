@@ -1,6 +1,7 @@
 package com.dwarfeng.projwiz.raefrm;
 
 import java.awt.Image;
+import java.util.Objects;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
@@ -11,6 +12,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
+import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
@@ -113,15 +115,13 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 	 */
 	@Override
 	public boolean isNewProjectSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Project newProject() throws ProcessException {
-		throw new UnsupportedOperationException("newProject");
+		lock.readLock().lock();
+		try {
+			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.PROCESSOR_SUPPORTED_NEW_PROJECT.getConfigKey(),
+					Boolean.class);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -129,15 +129,13 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 	 */
 	@Override
 	public boolean isOpenProjectSupported() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Project openProject() throws ProcessException {
-		throw new UnsupportedOperationException("openProject");
+		lock.readLock().lock();
+		try {
+			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.PROCESSOR_SUPPORTED_OPEN_PROJECT.getConfigKey(),
+					Boolean.class);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -145,15 +143,117 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 	 */
 	@Override
 	public boolean isSaveProjectSupported() {
-		return false;
+		lock.readLock().lock();
+		try {
+			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.PROCESSOR_SUPPORTED_SAVE_PROJECT.getConfigKey(),
+					Boolean.class);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isNewProjectSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #newProject_Sub()}，返回要求的结果。
+	 */
+	@Override
+	public Project newProject() throws ProcessException {
+		lock.writeLock().lock();
+		try {
+			if (!isNewProjectSupported()) {
+				throw new UnsupportedOperationException("newProject");
+			} else {
+				return newProject_Sub();
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isOpenProjectSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #openProject_Sub()}，返回要求的结果。
+	 */
+	@Override
+	public Project openProject() throws ProcessException {
+		lock.writeLock().lock();
+		try {
+			if (!isOpenProjectSupported()) {
+				throw new UnsupportedOperationException("openProject");
+			} else {
+				return openProject_Sub();
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * 该方法首先检查 {@link #isSaveProjectSupported()} , 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用
+	 * {@link #saveProject_Sub()}，返回要求的结果。
 	 */
 	@Override
 	public Project saveProject(Project project) throws ProcessException {
-		throw new UnsupportedOperationException("saveProject");
+		Objects.requireNonNull(project, "入口参数 project 不能为 null。");
+
+		lock.writeLock().lock();
+		try {
+			if (!isSaveProjectSupported()) {
+				throw new UnsupportedOperationException("saveProject");
+			} else {
+				return saveProject_Sub();
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
+
+	/**
+	 * 新建工程的子方法。
+	 * <p>
+	 * 该方法被 {@link #newProject()} 调用。
+	 * 
+	 * @return 新建的工程。
+	 * @throws ProcessException
+	 *             过程异常。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract Project newProject_Sub() throws ProcessException, UnsupportedOperationException;
+
+	/**
+	 * 打开工程的子方法。
+	 * <p>
+	 * 该方法被 {@link #openProject()} 调用。
+	 * 
+	 * @return 打开的工程。
+	 * @throws ProcessException
+	 *             过程异常。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract Project openProject_Sub() throws ProcessException, UnsupportedOperationException;
+
+	/**
+	 * 保存工程的子方法。
+	 * <p>
+	 * 该方法被 {@link #saveProject(Project)} 调用。
+	 * 
+	 * @return 由指定的工程保存得到的新工程。
+	 * @throws ProcessException
+	 *             过程异常。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract Project saveProject_Sub() throws ProcessException, UnsupportedOperationException;
 
 }

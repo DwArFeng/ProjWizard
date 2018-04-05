@@ -192,9 +192,11 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	 *            指定的文件。
 	 * @param situation
 	 *            移除文件时的情景。
-	 * @return 被移除的文件。
+	 * @return 被移除的文件 ,如果失败，则为 <code>null</code>。。
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
 	 */
 	public File removeFile(File file, RemovingSituation situation);
 
@@ -216,7 +218,6 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	 * <p>
 	 * 快速的持久化该工程。
 	 * 
-	 * @return 是否存储成功。
 	 * @throws ProcessException
 	 *             过程失败。
 	 * @throws UnsupportedOperationException

@@ -4,7 +4,6 @@ import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -44,7 +43,6 @@ import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.cm.DelegatePermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
-import com.dwarfeng.projwiz.raefrm.model.eum.ConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.raefrm.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.raefrm.model.io.XmlPermDemandLoader;
@@ -512,6 +510,17 @@ public abstract class RaeComponent implements Component {
 
 	};
 
+	/**
+	 * 新实例。
+	 * 
+	 * @param toolkitRef
+	 *            指定的工具包引用。
+	 * @param metaDataStorage
+	 *            指定的元数据仓库。
+	 * @param constantsProvider
+	 *            指定的常量提供器。
+	 * @throws ProcessException
+	 */
 	protected RaeComponent(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
 			ConstantsProvider constantsProvider) throws ProcessException {
 		Objects.requireNonNull(toolkitRef, "入口参数 toolkitRef 不能为 null。");
@@ -1058,6 +1067,8 @@ public abstract class RaeComponent implements Component {
 	/**
 	 * 初始化Rae框架。
 	 * 
+	 * @param defaultEntries
+	 * 
 	 * @throws Exception
 	 *             异常。
 	 */
@@ -1101,8 +1112,7 @@ public abstract class RaeComponent implements Component {
 	 * 初始化配置模型入口。
 	 */
 	private void initConfigEntry() {
-		coreConfigModel.addAll(Arrays.asList(ConfigEntry.values()));
-		Collection<ExconfigEntry> configEntries = constantsProvider.getConfigEntries();
+		Collection<ExconfigEntry> configEntries = constantsProvider.getCoreConfigEntries();
 		if (Objects.nonNull(configEntries)) {
 			coreConfigModel.addAll(configEntries);
 		}

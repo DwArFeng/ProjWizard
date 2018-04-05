@@ -210,33 +210,6 @@ public class MeppFile extends RaeFile {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean discardLabel(String label) throws IOException {
-		lock.writeLock().lock();
-		try {
-			if (!writeSupported) {
-				throw new UnsupportedOperationException("discardLabel");
-			}
-
-			if (Objects.isNull(label)) {
-				return false;
-			}
-
-			if (!buffers.containsKey(label)) {
-				return false;
-			}
-
-			buffers.remove(label);
-			fireLabelRemoved(label);
-			return true;
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-
-	/**
 	 * 获取文件中的缓冲容量。
 	 * 
 	 * @return 文件的缓冲容量。
@@ -400,34 +373,6 @@ public class MeppFile extends RaeFile {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public OutputStream openOutputStream(String label) throws IOException {
-		lock.writeLock().lock();
-		try {
-			if (!writeSupported) {
-				throw new UnsupportedOperationException("openOutputStream");
-			}
-
-			if (!getLabels().contains(label)) {
-				throw new IOException("文件中不存在指定的标签: " + label);
-			}
-
-			ByteBuffer buffer = ByteBuffer.allocate(buffCapa);
-			buffers.put(label, buffer);
-
-			long currentTimeMillis = System.currentTimeMillis();
-			setAccessTime(currentTimeMillis);
-			setModifyTime(currentTimeMillis);
-			return new ObversableOutputStream(label, new ByteBufferOutputStream(buffer));
-		} finally {
-			lock.writeLock().unlock();
-		}
-
-	}
-
-	/**
 	 * 设置文件的缓冲容量。
 	 * 
 	 * @param buffCapa
@@ -455,6 +400,93 @@ public class MeppFile extends RaeFile {
 		} finally {
 			lock.writeLock().unlock();
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean newLabel_Sub(String label) throws IOException, UnsupportedOperationException {
+		if (!writeSupported) {
+			throw new UnsupportedOperationException("newLabel");
+		}
+
+		if (Objects.isNull(label)) {
+			return false;
+		}
+
+		if (buffers.containsKey(label)) {
+			return false;
+		}
+
+		ByteBuffer buffer = ByteBuffer.allocate(buffCapa);
+		buffers.put(label, buffer);
+
+		fireLabelAdded(label);
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean discardLabel_Sub(String label) throws IOException, UnsupportedOperationException {
+		if (!writeSupported) {
+			throw new UnsupportedOperationException("discardLabel");
+		}
+
+		if (Objects.isNull(label)) {
+			return false;
+		}
+
+		if (!buffers.containsKey(label)) {
+			return false;
+		}
+
+		buffers.remove(label);
+		fireLabelRemoved(label);
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected InputStream openInputStream_Sub(String label)
+			throws IOException, IllegalArgumentException, UnsupportedOperationException {
+		if (!readSupported) {
+			throw new UnsupportedOperationException("openInputStream");
+		}
+
+		ByteBuffer buffer = buffers.get(label);
+		if (Objects.isNull(buffer)) {
+			throw new IllegalArgumentException("文件中不存在指定的标签: " + label);
+		}
+		setAccessTime(System.currentTimeMillis());
+		return new ObversableInputStream(label, new ByteBufferInputStream(buffer));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected OutputStream openOutputStream_Sub(String label)
+			throws IOException, IllegalArgumentException, UnsupportedOperationException {
+		if (!writeSupported) {
+			throw new UnsupportedOperationException("openOutputStream");
+		}
+
+		if (!getLabels().contains(label)) {
+			throw new IOException("文件中不存在指定的标签: " + label);
+		}
+
+		ByteBuffer buffer = ByteBuffer.allocate(buffCapa);
+		buffers.put(label, buffer);
+
+		long currentTimeMillis = System.currentTimeMillis();
+		setAccessTime(currentTimeMillis);
+		setModifyTime(currentTimeMillis);
+		return new ObversableOutputStream(label, new ByteBufferOutputStream(buffer));
 	}
 
 	/**

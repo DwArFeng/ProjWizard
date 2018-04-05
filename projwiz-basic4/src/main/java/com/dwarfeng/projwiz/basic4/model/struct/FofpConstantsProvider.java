@@ -55,7 +55,7 @@ public class FofpConstantsProvider implements ConstantsProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<ExconfigEntry> getConfigEntries() {
+	public Collection<ExconfigEntry> getCoreConfigEntries() {
 		return Arrays.asList(FofpConfigEntry.values());
 	}
 
