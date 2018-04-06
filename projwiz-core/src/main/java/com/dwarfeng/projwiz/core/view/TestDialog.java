@@ -2,13 +2,12 @@ package com.dwarfeng.projwiz.core.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.Window.Type;
-import java.awt.Toolkit;
 
 public class TestDialog extends JDialog {
 

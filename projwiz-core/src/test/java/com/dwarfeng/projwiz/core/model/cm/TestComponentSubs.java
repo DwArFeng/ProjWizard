@@ -1,6 +1,6 @@
 package com.dwarfeng.projwiz.core.model.cm;
 
-import com.dwarfeng.projwiz.core.model.struct.TestSimpleComponent;
+import com.dwarfeng.projwiz.core.model.struct.TestSimpleModule;
 
 /**
  * 测试用简单组件_子类1。
@@ -8,7 +8,7 @@ import com.dwarfeng.projwiz.core.model.struct.TestSimpleComponent;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-class TestSimpleComponent_Sub1 extends TestSimpleComponent {
+class TestSimpleModule_Sub1 extends TestSimpleModule {
 
 	@Override
 	public String toString() {
@@ -23,7 +23,7 @@ class TestSimpleComponent_Sub1 extends TestSimpleComponent {
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-class TestSimpleComponent_Sub2 extends TestSimpleComponent {
+class TestSimpleModule_Sub2 extends TestSimpleModule {
 
 	@Override
 	public String toString() {
@@ -38,7 +38,7 @@ class TestSimpleComponent_Sub2 extends TestSimpleComponent {
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-class TestSimpleComponent_Sub3 extends TestSimpleComponent {
+class TestSimpleModule_Sub3 extends TestSimpleModule {
 
 	@Override
 	public String toString() {
@@ -53,7 +53,7 @@ class TestSimpleComponent_Sub3 extends TestSimpleComponent {
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-class TestSimpleComponent_Sub4 extends TestSimpleComponent {
+class TestSimpleModule_Sub4 extends TestSimpleModule {
 
 	@Override
 	public String toString() {
@@ -68,7 +68,7 @@ class TestSimpleComponent_Sub4 extends TestSimpleComponent {
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-class TestSimpleComponent_Sub5 extends TestSimpleComponent {
+class TestSimpleModule_Sub5 extends TestSimpleModule {
 
 	@Override
 	public String toString() {
@@ -83,7 +83,7 @@ class TestSimpleComponent_Sub5 extends TestSimpleComponent {
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-class TestSimpleComponent_Sub6 extends TestSimpleComponent {
+class TestSimpleModule_Sub6 extends TestSimpleModule {
 
 	@Override
 	public String toString() {

@@ -51,13 +51,13 @@ public enum ResourceKey implements Name {
 	TOOLKIT_PERM(Constants.CONFIGURATION_CLASSIFY_CORE, "toolkit.perm"),
 
 	/** 组件忽略设置。 */
-	CMPOENT_IGNORE(Constants.CONFIGURATION_CLASSIFY_CORE, "cmpoent.ignore"),
+	MODULE_IGNORE(Constants.CONFIGURATION_CLASSIFY_CORE, "module.ignore"),
 
 	/** 组件额外设置。 */
-	CMPOENT_EXTRA(Constants.CONFIGURATION_CLASSIFY_CORE, "cmpoent.extra"),
+	MODULE_EXTRA(Constants.CONFIGURATION_CLASSIFY_CORE, "module.extra"),
 
 	/** 组件工具包设置。 */
-	CMPOENT_TOOLKIT(Constants.CONFIGURATION_CLASSIFY_CORE, "cmpoent.toolkit"),
+	MODULE_TOOLKIT(Constants.CONFIGURATION_CLASSIFY_CORE, "module.toolkit"),
 
 	/** 标签国际化文本默认配置。 */
 	I18N_LABEL(Constants.CONFIGURATION_CLASSIFY_I18N, "label"),

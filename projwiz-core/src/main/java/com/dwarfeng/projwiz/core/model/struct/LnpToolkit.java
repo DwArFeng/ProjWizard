@@ -30,8 +30,8 @@ import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
@@ -42,7 +42,7 @@ import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.eum.DialogOption;
 import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
-import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
@@ -120,9 +120,9 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Component[] chooseComponent(ComponentChooserSetting setting) throws IllegalStateException {
-		checkPermissionAndState(Method.CHOOSECOMPONENT);
-		return standardToolkit.chooseComponent(setting);
+	public Module[] chooseModule(ModuleChooserSetting setting) throws IllegalStateException {
+		checkPermissionAndState(Method.CHOOSEMODULE);
+		return standardToolkit.chooseModule(setting);
 	}
 
 	/**
@@ -255,28 +255,10 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel()
+	public SyncMapModel<Class<? extends Module>, ReferenceModel<Toolkit>> getModuleToolkitModel()
 			throws IllegalStateException {
 		checkPermissionAndState(Method.WARN);
-		return standardToolkit.getCmpoentToolkitModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SyncComponentModel getComponentModel() throws IllegalStateException {
-		checkPermissionAndState(Method.GETCOMPONENTMODEL);
-		return standardToolkit.getComponentModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ComponentModel getComponentModelReadOnly() throws IllegalStateException {
-		checkPermissionAndState(Method.GETCOMPONENTMODELREADONLY);
-		return standardToolkit.getComponentModelReadOnly();
+		return standardToolkit.getModuleToolkitModel();
 	}
 
 	/**
@@ -511,6 +493,24 @@ public final class LnpToolkit implements Toolkit {
 	public MainFrame getMainFrame() throws IllegalStateException {
 		checkPermissionAndState(Method.GETMAINFRAME);
 		return standardToolkit.getMainFrame();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SyncModuleModel getModuleModel() throws IllegalStateException {
+		checkPermissionAndState(Method.GETMODULEMODEL);
+		return standardToolkit.getModuleModel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ModuleModel getModuleModelReadOnly() throws IllegalStateException {
+		checkPermissionAndState(Method.GETMODULEMODELREADONLY);
+		return standardToolkit.getModuleModelReadOnly();
 	}
 
 	/**

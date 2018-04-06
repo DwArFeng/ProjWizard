@@ -12,7 +12,7 @@ import org.dom4j.io.SAXReader;
 
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.basic.io.StreamLoader;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.util.IOUtil;
 
 /**
@@ -21,7 +21,7 @@ import com.dwarfeng.projwiz.core.util.IOUtil;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public final class IgnoredComponentLoader extends StreamLoader<Collection<Class<?>>> {
+public final class IgnoredModuleLoader extends StreamLoader<Collection<Class<?>>> {
 
 	private boolean readFlag = false;
 
@@ -33,7 +33,7 @@ public final class IgnoredComponentLoader extends StreamLoader<Collection<Class<
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public IgnoredComponentLoader(InputStream in) {
+	public IgnoredModuleLoader(InputStream in) {
 		super(in);
 	}
 
@@ -109,7 +109,7 @@ public final class IgnoredComponentLoader extends StreamLoader<Collection<Class<
 	}
 
 	private void load0(Collection<Class<?>> collection, Element info) throws LoadFailedException {
-		Class<? extends Component> clazz = IOUtil.parseClass(info);
+		Class<? extends Module> clazz = IOUtil.parseClass(info);
 		collection.add(clazz);
 	}
 

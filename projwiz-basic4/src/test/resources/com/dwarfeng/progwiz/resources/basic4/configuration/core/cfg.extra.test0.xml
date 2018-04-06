@@ -26,9 +26,9 @@
 		classify="com.dwarfeng.projwiz.basic4.mepp" filename="i18n.logger.resource.setting"
 		default="/com/dwarfeng/progwiz/resources/basic4/mepp/configuration/i18n.logger.resource.setting.xml" />
 
-	<info key="com.dwarfeng.projwiz.basic4.mepp.image.cmpoent"
-		classify="com.dwarfeng.projwiz.basic4.mepp" filename="cmpoent.icon.png"
-		default="/com/dwarfeng/progwiz/resources/basic4/mepp/configuration/cmpoent.icon.png" />
+	<info key="com.dwarfeng.projwiz.basic4.mepp.image.module"
+		classify="com.dwarfeng.projwiz.basic4.mepp" filename="module.icon.png"
+		default="/com/dwarfeng/progwiz/resources/basic4/mepp/configuration/module.icon.png" />
 
 
 	<info key="com.dwarfeng.projwiz.basic4.fofp.configuration.core"
@@ -55,8 +55,8 @@
 		classify="com.dwarfeng.projwiz.basic4.fofp" filename="i18n.logger.resource.setting"
 		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/i18n.logger.resource.setting.xml" />
 
-	<info key="com.dwarfeng.projwiz.basic4.fofp.image.cmpoent"
-		classify="com.dwarfeng.projwiz.basic4.fofp" filename="cmpoent.icon.png"
-		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/cmpoent.icon.png" />
+	<info key="com.dwarfeng.projwiz.basic4.fofp.image.module"
+		classify="com.dwarfeng.projwiz.basic4.fofp" filename="module.icon.png"
+		default="/com/dwarfeng/progwiz/resources/basic4/fofp/configuration/module.icon.png" />
 
 </root>

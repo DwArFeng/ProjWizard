@@ -38,7 +38,7 @@ final class ShowProjectAndFileMonitorTask extends ProjWizTask {
 						projWizard.getToolkit().getGuiManager(), projWizard.getToolkit().getLabelI18nHandler(),
 						projWizard.getToolkit().getAnchorFileModel(), projWizard.getToolkit().getFocusProjectModel(),
 						projWizard.getToolkit().getFocusFileModel(), projWizard.getToolkit().getHoldProjectModel(),
-						projWizard.getToolkit().getComponentModel());
+						projWizard.getToolkit().getModuleModel());
 				newDialogInstance.addWindowListener(new WindowAdapter() {
 
 					@Override
@@ -79,7 +79,7 @@ final class ShowEditorMonitorTask extends ProjWizTask {
 			SwingUtil.invokeAndWaitInEventQueue(() -> {
 				EditorMonitor newDialogInstance = new EditorMonitor(projWizard.getToolkit().getGuiManager(),
 						projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getFocusEditorModel(),
-						projWizard.getToolkit().getEditorModel(), projWizard.getToolkit().getComponentModel());
+						projWizard.getToolkit().getEditorModel(), projWizard.getToolkit().getModuleModel());
 				dialogRef.set(newDialogInstance);
 				newDialogInstance.addWindowListener(new WindowAdapter() {
 

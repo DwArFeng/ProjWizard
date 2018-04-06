@@ -4,11 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -29,7 +25,7 @@ import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.gui.swing.JAdjustableBorderPanel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
@@ -47,6 +43,8 @@ import com.dwarfeng.projwiz.core.view.struct.GuiManager;
  */
 public class EditorMonitor extends ProjWizDialog {
 
+	private static final long serialVersionUID = 9104311475866982468L;
+
 	private final JTable focusTable;
 	private final JTable mapTable;
 	private final JLabel label_1;
@@ -55,9 +53,11 @@ public class EditorMonitor extends ProjWizDialog {
 
 	private SyncMapModel<Project, Editor> focusEditorModel;
 	private SyncMapModel<ProjectFilePair, Editor> editorModel;
-	private SyncComponentModel componentModel;
+	private SyncModuleModel moduleModel;
 
 	private final DefaultTableModel focusTableModel = new DefaultTableModel() {
+
+		private static final long serialVersionUID = -7798822512172189454L;
 
 		/**
 		 * {@inheritDoc}
@@ -261,9 +261,6 @@ public class EditorMonitor extends ProjWizDialog {
 
 	};
 
-	private boolean disposeFlag = false;
-	private final Lock disposeLock = new ReentrantLock();
-
 	/**
 	 * 新实例。
 	 */
@@ -277,26 +274,13 @@ public class EditorMonitor extends ProjWizDialog {
 	 * @param i18nHandler
 	 * @param focusEditorModel
 	 * @param editorModel
-	 * @param componentModel
+	 * @param moduleModel
 	 */
 	public EditorMonitor(GuiManager guiManager, I18nHandler i18nHandler, SyncMapModel<Project, Editor> focusEditorModel,
-			SyncMapModel<ProjectFilePair, Editor> editorModel, SyncComponentModel componentModel) {
+			SyncMapModel<ProjectFilePair, Editor> editorModel, SyncModuleModel moduleModel) {
 		super(guiManager, i18nHandler);
 
 		editorIcon = new ImageIcon(ImageUtil.getInternalImage(ImageKey.EDITOR, ImageSize.ICON_SMALL));
-
-		addWindowListener(new WindowAdapter() {
-
-			@Override
-			public void windowClosed(WindowEvent e) {
-				disposeLock.lock();
-				try {
-					disposeFlag = true;
-				} finally {
-					disposeLock.unlock();
-				}
-			}
-		});
 
 		setAlwaysOnTop(true);
 		setTitle(label(LabelStringKey.EDITORDIA_1));
@@ -365,11 +349,11 @@ public class EditorMonitor extends ProjWizDialog {
 
 		this.focusEditorModel = focusEditorModel;
 		this.editorModel = editorModel;
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 
 		syncFocusEditorModel();
 		syncEditorModel();
-		syncComponentModel();
+		syncModuleModel();
 
 	}
 
@@ -378,28 +362,14 @@ public class EditorMonitor extends ProjWizDialog {
 	 */
 	@Override
 	public void dispose() {
-		disposeLock.lock();
-		try {
-			if (Objects.nonNull(this.focusEditorModel)) {
-				this.focusEditorModel.removeObverser(focusEditorObverser);
-			}
-			if (Objects.nonNull(this.editorModel)) {
-				this.editorModel.removeObverser(editorObverser);
-			}
-
-			super.dispose();
-		} finally {
-			disposeLock.unlock();
+		if (Objects.nonNull(this.focusEditorModel)) {
+			this.focusEditorModel.removeObverser(focusEditorObverser);
 		}
-	}
+		if (Objects.nonNull(this.editorModel)) {
+			this.editorModel.removeObverser(editorObverser);
+		}
 
-	/**
-	 * 返回面板中的组件模型。
-	 * 
-	 * @return 面板中的组件模型。
-	 */
-	public SyncComponentModel getComponentModel() {
-		return componentModel;
+		super.dispose();
 	}
 
 	/**
@@ -417,14 +387,12 @@ public class EditorMonitor extends ProjWizDialog {
 	}
 
 	/**
-	 * 设置面板文件中的组件模型。
+	 * 返回面板中的组件模型。
 	 * 
-	 * @param componentModel
-	 *            指定的组件模型。
+	 * @return 面板中的组件模型。
 	 */
-	public void setComponentModel(SyncComponentModel componentModel) {
-		this.componentModel = componentModel;
-		syncComponentModel();
+	public SyncModuleModel getModuleModel() {
+		return moduleModel;
 	}
 
 	/**
@@ -459,6 +427,17 @@ public class EditorMonitor extends ProjWizDialog {
 
 		this.focusEditorModel = focusEditorModel;
 		syncFocusEditorModel();
+	}
+
+	/**
+	 * 设置面板文件中的组件模型。
+	 * 
+	 * @param moduleModel
+	 *            指定的组件模型。
+	 */
+	public void setModuleModel(SyncModuleModel moduleModel) {
+		this.moduleModel = moduleModel;
+		syncModuleModel();
 	}
 
 	/**
@@ -503,8 +482,8 @@ public class EditorMonitor extends ProjWizDialog {
 		label.setText(project.getFileName(file));
 		label.setToolTipText(project.getFileName(file));
 		Image image = null;
-		if (Objects.nonNull(componentModel)) {
-			FileProcessor processor = componentModel.get(file.getProcessorClass());
+		if (Objects.nonNull(moduleModel)) {
+			FileProcessor processor = moduleModel.get(file.getProcessorClass());
 			if (Objects.nonNull(processor)) {
 				image = processor.getFileIcon(file);
 			}
@@ -528,8 +507,8 @@ public class EditorMonitor extends ProjWizDialog {
 		label.setText(project.getName());
 		label.setToolTipText(project.getName());
 		Image image = null;
-		if (Objects.nonNull(componentModel)) {
-			ProjectProcessor processor = componentModel.get(project.getProcessorClass());
+		if (Objects.nonNull(moduleModel)) {
+			ProjectProcessor processor = moduleModel.get(project.getProcessorClass());
 			if (Objects.nonNull(processor)) {
 				image = processor.getProjectIcon(project);
 			}
@@ -539,12 +518,6 @@ public class EditorMonitor extends ProjWizDialog {
 		} else {
 			label.setIcon(new ImageIcon(ImageUtil.scaleImage(image, ImageSize.ICON_SMALL)));
 		}
-	}
-
-	private void syncComponentModel() {
-		mapTable.repaint();
-		mapTable.repaint();
-		focusTable.repaint();
 	}
 
 	private void syncEditorModel() {
@@ -583,6 +556,12 @@ public class EditorMonitor extends ProjWizDialog {
 		} finally {
 			focusEditorModel.getLock().readLock().unlock();
 		}
+	}
+
+	private void syncModuleModel() {
+		mapTable.repaint();
+		mapTable.repaint();
+		focusTable.repaint();
 	}
 
 }

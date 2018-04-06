@@ -10,7 +10,7 @@
 	<perms>
 		<perm method="ADDCORECONFIGOBVERSER" pl="WRITE_LIMIT" />
 		<perm method="ADDPROGRAMOBVERSER" pl="FULL" />
-		<perm method="CHOOSECOMPONENT" pl="READ_ONLY" />
+		<perm method="CHOOSEMODULE" pl="READ_ONLY" />
 		<perm method="CHOOSEPROJECTFILE" pl="READ_ONLY" />
 		<perm method="CHOOSESYSTEMFILE" pl="READ_ONLY" />
 		<perm method="CLEARPROGRAMOBVERSER" pl="FULL" />
@@ -25,8 +25,6 @@
 		<perm method="GETBACKGROUNDREADONLY" pl="READ_ONLY" />
 		<perm method="GETCFGHANDLER" pl="FULL" />
 		<perm method="GETCFGHANDLERREADONLY" pl="READ_ONLY" />
-		<perm method="GETCMPOENTTOOLKITMODEL" pl="FULL" />
-		<perm method="GETCOMPONENTMODEL" pl="FULL" />
 		<perm method="GETCORECONFIGMODEL" pl="FULL" />
 		<perm method="GETCORECONFIGMODELREADONLY" pl="READ_ONLY" />
 		<perm method="GETEDITORMODEL" pl="FULL" />
@@ -53,6 +51,9 @@
 		<perm method="GETLOGGERI18NHANDLER" pl="FULL" />
 		<perm method="GETLOGGERI18NHANDLERREADONLY" pl="READ_ONLY" />
 		<perm method="GETMAINFRAME" pl="FULL" />
+		<perm method="GETMODULEMODEL" pl="FULL" />
+		<perm method="GETMODULEMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETMODULETOOLKITMODEL" pl="FULL" />
 		<perm method="GETPROGRAMOBVERSERS" pl="FULL" />
 		<perm method="GETPROJECTICONIMAGEMODEL" pl="FULL" />
 		<perm method="GETPROJECTICONIMAGEMODELREADONLY" pl="READ_ONLY" />

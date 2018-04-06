@@ -61,10 +61,10 @@ import com.dwarfeng.dutil.develop.resource.DelegateResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceUtil;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
-import com.dwarfeng.projwiz.core.model.cm.DefaultComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
+import com.dwarfeng.projwiz.core.model.cm.DefaultModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.DefaultToolkitPermModel;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
@@ -74,7 +74,7 @@ import com.dwarfeng.projwiz.core.model.io.DefaultPluginClassLoader;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
@@ -87,11 +87,11 @@ import com.dwarfeng.projwiz.core.view.eum.ChooseOption;
 import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.eum.DialogOption;
 import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
-import com.dwarfeng.projwiz.core.view.gui.ComponentChooser;
+import com.dwarfeng.projwiz.core.view.gui.ModuleChooser;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser;
 import com.dwarfeng.projwiz.core.view.gui.SystemFileChooser;
-import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.DefaultMainFrameVisibleModel;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
@@ -408,39 +408,39 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Component[] chooseComponent(ComponentChooserSetting setting) throws IllegalStateException {
+		public Module[] chooseModule(ModuleChooserSetting setting) throws IllegalStateException {
 			Objects.requireNonNull(setting, "入口参数 setting 不能为 null。");
 
-			ComponentChooser componentChooser = new ComponentChooser(guiManager, labelI18nHandler, componentModel);
-			componentChooser.setChooserDialogType(setting.getChooserDialogType());
-			componentChooser.setComponentFilter(setting.getComponentFilter());
+			ModuleChooser moduleChooser = new ModuleChooser(guiManager, labelI18nHandler, moduleModel);
+			moduleChooser.setChooserDialogType(setting.getChooserDialogType());
+			moduleChooser.setModuleFilter(setting.getModuleFilter());
 			// fileChooser.setFileSelectionMode(setting.getFileSelectionMode().getValue());
-			componentChooser.setControlButtonsAreShown(setting.isControlButtonsAreShown());
-			componentChooser.setMultiSelectionEnabled(setting.isMultiSelectionEnabled());
-			componentChooser.setLocale(labelI18nHandler.getCurrentLocale());
+			moduleChooser.setControlButtonsAreShown(setting.isControlButtonsAreShown());
+			moduleChooser.setMultiSelectionEnabled(setting.isMultiSelectionEnabled());
+			moduleChooser.setLocale(labelI18nHandler.getCurrentLocale());
 
-			ChooseOption chooseOption = componentChooser.showDialog(mainFrame);
+			ChooseOption chooseOption = moduleChooser.showDialog(mainFrame);
 
-			Component[] components;
+			Module[] modules;
 			switch (chooseOption) {
 			case APPROVE_OPTION:
 				if (setting.isMultiSelectionEnabled()) {
-					components = componentChooser.getSelectedComponents();
+					modules = moduleChooser.getSelectedModules();
 				} else {
-					components = new Component[] { componentChooser.getSelectedComponent() };
+					modules = new Module[] { moduleChooser.getSelectedModule() };
 				}
 				break;
 			case CANCEL_OPTION:
-				components = new Component[0];
+				modules = new Module[0];
 				break;
 			case ERROR_OPTION:
-				components = new Component[0];
+				modules = new Module[0];
 				break;
 			default:
-				components = new Component[0];
+				modules = new Module[0];
 				break;
 			}
-			return ArrayUtil.getNotNull(components, new Component[0]);
+			return ArrayUtil.getNotNull(modules, new Module[0]);
 		}
 
 		/**
@@ -451,7 +451,7 @@ public final class ProjWizard {
 			Objects.requireNonNull(setting, "入口参数 setting 不能为 null。");
 
 			ProjectFileChooser fileChooser = new ProjectFileChooser(guiManager, labelI18nHandler, holdProjectModel,
-					componentModel);
+					moduleModel);
 			fileChooser.setCurrentDirectory(setting.getCurrentDirectory());
 			fileChooser.setChooserDialogType(setting.getChooserDialogType());
 			fileChooser.setFileFilters(setting.getFileFilters());
@@ -722,25 +722,9 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel()
+		public SyncMapModel<Class<? extends Module>, ReferenceModel<Toolkit>> getModuleToolkitModel()
 				throws IllegalStateException {
-			return cmpoentToolkitModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public SyncComponentModel getComponentModel() throws IllegalStateException {
-			return componentModel;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public ComponentModel getComponentModelReadOnly() throws IllegalStateException {
-			return ModelUtil.unmodifiableComponentModel(componentModel);
+			return moduleToolkitModel;
 		}
 
 		/**
@@ -959,6 +943,22 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public SyncModuleModel getModuleModel() throws IllegalStateException {
+			return moduleModel;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ModuleModel getModuleModelReadOnly() throws IllegalStateException {
+			return ModelUtil.unmodifiableModuleModel(moduleModel);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public PluginClassLoader getPluginClassLoader() {
 			return pluginClassLoader;
 		}
@@ -1090,9 +1090,9 @@ public final class ProjWizard {
 
 				DefaultMainFrameVisibleModel mainFrameVisibleModel = new DefaultMainFrameVisibleModel();
 
-				mainFrame = new MainFrame(guiManager, labelI18nHandler, componentModel, editorModel,
-						mainFrameVisibleModel, anchorFileModel, focusProjectModel, focusFileModel, holdProjectModel,
-						focusEditorModel, coreConfigModel);
+				mainFrame = new MainFrame(guiManager, labelI18nHandler, moduleModel, editorModel, mainFrameVisibleModel,
+						anchorFileModel, focusProjectModel, focusFileModel, holdProjectModel, focusEditorModel,
+						coreConfigModel);
 				return true;
 			}
 		}
@@ -1432,11 +1432,11 @@ public final class ProjWizard {
 	private final SyncMapModel<File, FileObverser> fileIconObvModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
 	// 组件模型
-	private final SyncComponentModel componentModel = ModelUtil.syncComponentModel(new DefaultComponentModel());
+	private final SyncModuleModel moduleModel = ModelUtil.syncModuleModel(new DefaultModuleModel());
 	// 工具包权限模型
 	private final SyncToolkitPermModel toolkitPermModel = ModelUtil.syncToolkitPermModel(new DefaultToolkitPermModel());
 	// 组件-工具包引用模型
-	private final SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
+	private final SyncMapModel<Class<? extends Module>, ReferenceModel<Toolkit>> moduleToolkitModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil
 			.syncMapModel(new DelegateMapModel<>());
 	/** 外部窗口模型。 */
 	private final SyncSetModel<Window> externalWindowModel = com.dwarfeng.dutil.basic.cna.model.ModelUtil

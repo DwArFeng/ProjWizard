@@ -32,7 +32,7 @@ import com.dwarfeng.dutil.basic.gui.swing.JExconsole;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
@@ -53,8 +53,8 @@ import com.dwarfeng.projwiz.core.view.struct.MainFrameVisibleModel;
  */
 public class MainFrame extends ProjWizFrame {
 
-	private static final long serialVersionUID = -8731088722055469681L;
-
+	private static final long serialVersionUID = -972111665260066583L;
+	
 	private final JPanel contentPane;
 	private final MfPanel_01 mfPanel_01;
 	private final MfMenuBar_01 mfMenuBar_01;
@@ -77,7 +77,7 @@ public class MainFrame extends ProjWizFrame {
 	private SyncListModel<Project> holdProjectModel;
 	private SyncMapModel<Project, Editor> focusEditorModel;
 	private SyncExconfigModel coreConfigModel;
-	private SyncComponentModel componentModel;
+	private SyncModuleModel moduleModel;
 
 	private final MainFrameVisibleObverser visibleModelObverser = new MainFrameVisibleAdapter() {
 
@@ -150,7 +150,7 @@ public class MainFrame extends ProjWizFrame {
 	 * 
 	 * @param guiManager
 	 * @param i18nHandler
-	 * @param componentModel
+	 * @param moduleModel
 	 * @param editorModel
 	 * @param visibleModel
 	 * @param anchorFileModel
@@ -160,7 +160,7 @@ public class MainFrame extends ProjWizFrame {
 	 * @param focusEditorModel
 	 * @param coreConfigModel
 	 */
-	public MainFrame(GuiManager guiManager, I18nHandler i18nHandler, SyncComponentModel componentModel,
+	public MainFrame(GuiManager guiManager, I18nHandler i18nHandler, SyncModuleModel moduleModel,
 			SyncMapModel<ProjectFilePair, Editor> editorModel, MainFrameVisibleModel visibleModel,
 			SyncReferenceModel<File> anchorFileModel, SyncReferenceModel<Project> focusProjectModel,
 			SyncSetModel<File> focusFileModel, SyncListModel<Project> holdProjectModel,
@@ -216,11 +216,11 @@ public class MainFrame extends ProjWizFrame {
 		adjPanel_01.add(panel, BorderLayout.WEST);
 		panel.setLayout(new BorderLayout(0, 0));
 
-		mfPanel_01 = new MfPanel_01(guiManager, i18nHandler, focusProjectModel, holdProjectModel, componentModel);
+		mfPanel_01 = new MfPanel_01(guiManager, i18nHandler, focusProjectModel, holdProjectModel, moduleModel);
 		panel.add(mfPanel_01, BorderLayout.NORTH);
 
 		mfPanel_02 = new MfPanel_02(guiManager, i18nHandler, anchorFileModel, focusProjectModel, focusFileModel,
-				componentModel);
+				moduleModel);
 		panel.add(mfPanel_02, BorderLayout.CENTER);
 
 		JPanel panel_1 = new JPanel();
@@ -268,7 +268,7 @@ public class MainFrame extends ProjWizFrame {
 		this.holdProjectModel = holdProjectModel;
 		this.focusEditorModel = focusEditorModel;
 		this.coreConfigModel = coreConfigModel;
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 
 		syncVisibleModel();
 
@@ -302,13 +302,6 @@ public class MainFrame extends ProjWizFrame {
 	 */
 	public SyncReferenceModel<File> getAnchorFileModel() {
 		return anchorFileModel;
-	}
-
-	/**
-	 * @return the componentModel
-	 */
-	public SyncComponentModel getComponentModel() {
-		return componentModel;
 	}
 
 	/**
@@ -378,6 +371,13 @@ public class MainFrame extends ProjWizFrame {
 	}
 
 	/**
+	 * @return the moduleModel
+	 */
+	public SyncModuleModel getModuleModel() {
+		return moduleModel;
+	}
+
+	/**
 	 * 获取主界面的南方面板的表现尺寸。
 	 * 
 	 * @return 南方面板的表现尺寸。
@@ -416,16 +416,6 @@ public class MainFrame extends ProjWizFrame {
 		// /ProjWizard/src/projwiz/com/dwarfeng/projwiz/view/gui/MfMenu_02.java
 		this.anchorFileModel = anchorFileModel;
 
-	}
-
-	/**
-	 * @param componentModel
-	 *            the componentModel to set
-	 */
-	public void setComponentModel(SyncComponentModel componentModel) {
-		this.componentModel = componentModel;
-		mfPanel_01.setComponentModel(componentModel);
-		mfPanel_02.setComponentModel(componentModel);
 	}
 
 	/**
@@ -498,6 +488,16 @@ public class MainFrame extends ProjWizFrame {
 		// /ProjWizard/src/projwiz/com/dwarfeng/projwiz/view/gui/MfMenu_02.java
 		// /ProjWizard/src/projwiz/com/dwarfeng/projwiz/view/gui/MfDesktopPane_01.java
 		this.holdProjectModel = holdProjectModel;
+	}
+
+	/**
+	 * @param moduleModel
+	 *            the moduleModel to set
+	 */
+	public void setModuleModel(SyncModuleModel moduleModel) {
+		this.moduleModel = moduleModel;
+		mfPanel_01.setModuleModel(moduleModel);
+		mfPanel_02.setModuleModel(moduleModel);
 	}
 
 	/**

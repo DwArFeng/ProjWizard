@@ -8,7 +8,7 @@ import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
@@ -48,12 +48,12 @@ final class OpenFocusFileTask extends ProjWizTask {
 		}
 
 		SyncMapModel<ProjectFilePair, Editor> editorModel = projWizard.getToolkit().getEditorModel();
-		SyncComponentModel componentModel = projWizard.getToolkit().getComponentModel();
+		SyncModuleModel moduleModel = projWizard.getToolkit().getModuleModel();
 
 		Editor lastEditor = null;
 
 		bk: for (File file : focusFiles) {
-			FileProcessor fileProcessor = componentModel.get(file.getProcessorClass());
+			FileProcessor fileProcessor = moduleModel.get(file.getProcessorClass());
 			ProjectFilePair pair = new ProjectFilePair(focusProject, file);
 			boolean alreadyContainsFlag = editorModel.containsKey(pair);
 
@@ -132,9 +132,9 @@ final class OpenAnchorFileTask extends ProjWizTask {
 		}
 
 		SyncMapModel<ProjectFilePair, Editor> editorModel = projWizard.getToolkit().getEditorModel();
-		SyncComponentModel componentModel = projWizard.getToolkit().getComponentModel();
+		SyncModuleModel moduleModel = projWizard.getToolkit().getModuleModel();
 
-		FileProcessor fileProcessor = componentModel.get(anchorFile.getProcessorClass());
+		FileProcessor fileProcessor = moduleModel.get(anchorFile.getProcessorClass());
 
 		ProjectFilePair pair = new ProjectFilePair(focusProject, anchorFile);
 		boolean alreadyContainsFlag = editorModel.containsKey(pair);
@@ -200,9 +200,9 @@ final class OpenCertainFileTask extends ProjWizTask {
 		SyncMapModel<Project, Editor> focusEditorModel = projWizard.getToolkit().getFocusEditorModel();
 
 		SyncMapModel<ProjectFilePair, Editor> editorModel = projWizard.getToolkit().getEditorModel();
-		SyncComponentModel componentModel = projWizard.getToolkit().getComponentModel();
+		SyncModuleModel moduleModel = projWizard.getToolkit().getModuleModel();
 
-		FileProcessor fileProcessor = componentModel.get(file.getProcessorClass());
+		FileProcessor fileProcessor = moduleModel.get(file.getProcessorClass());
 
 		ProjectFilePair pair = new ProjectFilePair(project, file);
 		boolean alreadyContainsFlag = editorModel.containsKey(pair);

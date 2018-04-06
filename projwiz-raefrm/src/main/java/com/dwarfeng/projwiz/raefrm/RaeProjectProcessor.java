@@ -22,7 +22,7 @@ import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public abstract class RaeProjectProcessor extends RaeComponent implements ProjectProcessor {
+public abstract class RaeProjectProcessor extends RaeModule implements ProjectProcessor {
 
 	/**
 	 * 工程处理器工具包的内部实现。
@@ -30,7 +30,7 @@ public abstract class RaeProjectProcessor extends RaeComponent implements Projec
 	 * @author DwArFeng
 	 * @since 0.0.3-alpha
 	 */
-	protected final class ProjProcToolkitImpl extends ComponentToolkitImpl implements ProjProcToolkit {
+	protected final class ProjProcToolkitImpl extends ModuleToolkitImpl implements ProjProcToolkit {
 
 		/**
 		 * 新实例。

@@ -1,6 +1,6 @@
 package com.dwarfeng.projwiz.core.control;
 
-import com.dwarfeng.projwiz.core.view.gui.ComponentChooser;
+import com.dwarfeng.projwiz.core.view.gui.ModuleChooser;
 
 final class SuperSecretSettingsTask extends ProjWizTask {
 
@@ -13,8 +13,8 @@ final class SuperSecretSettingsTask extends ProjWizTask {
 	 */
 	@Override
 	protected void todo() throws Exception {
-		ComponentChooser chooser = new ComponentChooser(projWizard.getToolkit().getGuiManager(),
-				projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getComponentModel());
+		ModuleChooser chooser = new ModuleChooser(projWizard.getToolkit().getGuiManager(),
+				projWizard.getToolkit().getLabelI18nHandler(), projWizard.getToolkit().getModuleModel());
 		chooser.showDialog(null);
 	}
 }

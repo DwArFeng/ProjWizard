@@ -23,7 +23,7 @@ import com.dwarfeng.projwiz.raefrm.model.struct.FileProcToolkit;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public abstract class RaeFileProcessor extends RaeComponent implements FileProcessor {
+public abstract class RaeFileProcessor extends RaeModule implements FileProcessor {
 
 	/**
 	 * 文件处理器工具包的内部实现。
@@ -31,7 +31,7 @@ public abstract class RaeFileProcessor extends RaeComponent implements FileProce
 	 * @author DwArFeng
 	 * @since 0.0.3-alpha
 	 */
-	protected final class ProjProcToolkitImpl extends ComponentToolkitImpl implements FileProcToolkit {
+	protected final class ProjProcToolkitImpl extends ModuleToolkitImpl implements FileProcToolkit {
 
 		/**
 		 * 新实例。

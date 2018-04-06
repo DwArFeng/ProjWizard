@@ -16,12 +16,12 @@ import com.dwarfeng.projwiz.core.model.eum.IconVariability;
  * 组件的实现需要遵循以下的规则： <br>
  * <blockquote> 1. </blockquote>
  * 
- * TODO 完善Component的接口说明。
+ * TODO 完善Module的接口说明。
  * 
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public interface Component extends ExternalReadWriteThreadSafe, Tag {
+public interface Module extends ExternalReadWriteThreadSafe, Tag {
 
 	/**
 	 * 当结束组件时进行的调度。

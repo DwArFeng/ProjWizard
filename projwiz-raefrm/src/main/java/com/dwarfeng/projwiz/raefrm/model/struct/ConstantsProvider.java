@@ -38,7 +38,7 @@ public interface ConstantsProvider {
 		PERM_DEMAND_SETTING,
 
 		/** 组件图片所对应的键。 */
-		IMAGE_CMPOENT,
+		IMAGE_MODULE,
 
 		;
 	}

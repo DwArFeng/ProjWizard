@@ -6,13 +6,13 @@ import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
@@ -57,7 +57,7 @@ final class NewFileTask extends ProjWizTask {
 
 		boolean emptyFlag = true;
 
-		for (FileProcessor processor : projWizard.getToolkit().getComponentModel().getSubs(FileProcessor.class)) {
+		for (FileProcessor processor : projWizard.getToolkit().getModuleModel().getSubs(FileProcessor.class)) {
 			if (processor.isNewFileSupported()) {
 				emptyFlag = false;
 				break;
@@ -71,17 +71,17 @@ final class NewFileTask extends ProjWizTask {
 							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 		}
 
-		Component[] components = projWizard.getToolkit().chooseComponent(
-				new ComponentChooserSetting.Builder().setMultiSelectionEnabled(false).setComponentFilter(component -> {
-					if (!(component instanceof FileProcessor)) {
+		Module[] modules = projWizard.getToolkit().chooseModule(
+				new ModuleChooserSetting.Builder().setMultiSelectionEnabled(false).setModuleFilter(module -> {
+					if (!(module instanceof FileProcessor)) {
 						return false;
 					}
-					return ((FileProcessor) component).isNewFileSupported();
+					return ((FileProcessor) module).isNewFileSupported();
 				}).build());
-		if (components.length == 0) {
+		if (modules.length == 0) {
 			return;
 		}
-		FileProcessor processor = (FileProcessor) components[0];
+		FileProcessor processor = (FileProcessor) modules[0];
 
 		File newFile = processor.newFile();
 		if (Objects.isNull(newFile)) {

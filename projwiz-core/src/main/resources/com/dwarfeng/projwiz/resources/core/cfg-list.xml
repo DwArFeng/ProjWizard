@@ -38,21 +38,21 @@
 		filename="cfg.extra.xml"
 		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cfg.extra.xml" />
 
-	<info key="com.dwarfeng.projwiz.core.cmpoent.ignore" classify="com.dwarfeng.projwiz.core"
-		filename="cmpoent.ignore.xml"
-		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cmpoent.ignore.xml" />
+	<info key="com.dwarfeng.projwiz.core.module.ignore" classify="com.dwarfeng.projwiz.core"
+		filename="module.ignore.xml"
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/module.ignore.xml" />
 
-	<info key="com.dwarfeng.projwiz.core.cmpoent.extra" classify="com.dwarfeng.projwiz.core"
-		filename="cmpoent.extra.xml"
-		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cmpoent.extra.xml" />
+	<info key="com.dwarfeng.projwiz.core.module.extra" classify="com.dwarfeng.projwiz.core"
+		filename="module.extra.xml"
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/module.extra.xml" />
 
 	<info key="com.dwarfeng.projwiz.core.toolkit.perm" classify="com.dwarfeng.projwiz.core"
 		filename="toolkit.perm.xml"
 		default="/com/dwarfeng/projwiz/resources/core/configuration/core/toolkit.perm.xml" />
 
-	<info key="com.dwarfeng.projwiz.core.cmpoent.toolkit" classify="com.dwarfeng.projwiz.core"
-		filename="cmpoent.toolkit.xml"
-		default="/com/dwarfeng/projwiz/resources/core/configuration/core/cmpoent.toolkit.xml" />
+	<info key="com.dwarfeng.projwiz.core.module.toolkit" classify="com.dwarfeng.projwiz.core"
+		filename="module.toolkit.xml"
+		default="/com/dwarfeng/projwiz/resources/core/configuration/core/module.toolkit.xml" />
 
 	<info key="com.dwarfeng.projwiz.i18n.label" classify="com.dwarfeng.projwiz.core"
 		filename="label.properties"

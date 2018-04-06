@@ -19,7 +19,7 @@ import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.Url2RepoRresource;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.LnpToolkit;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
@@ -43,7 +43,7 @@ public final class IOUtil {
 	 * @throws NullPointerException。
 	 *             入口参数为 <code>null</code>。
 	 */
-	public static Class<? extends Component> parseClass(Element classElement) throws LoadFailedException {
+	public static Class<? extends Module> parseClass(Element classElement) throws LoadFailedException {
 		Objects.requireNonNull(classElement, "入口参数 classElement 不能为 null。");
 
 		String clazzString = classElement.attributeValue("class");
@@ -59,22 +59,22 @@ public final class IOUtil {
 			throw new LoadFailedException("解析类时发生异常。", e);
 		}
 
-		if (!Component.class.isAssignableFrom(clazz)) {
-			throw new LoadFailedException("类 " + clazz.toString() + " 不是 Component 的子类");
+		if (!Module.class.isAssignableFrom(clazz)) {
+			throw new LoadFailedException("类 " + clazz.toString() + " 不是 Module 的子类");
 		}
 
 		/**
-		 * 由于之前已经验证过 clazz 是 Component 的子类，因此此处转换类型安全。
+		 * 由于之前已经验证过 clazz 是 Module 的子类，因此此处转换类型安全。
 		 */
 		@SuppressWarnings("unchecked")
-		Class<? extends Component> clazz2 = (Class<? extends Component>) clazz;
+		Class<? extends Module> clazz2 = (Class<? extends Module>) clazz;
 		return clazz2;
 	}
 
 	/**
 	 * 根据指定的XML节点解析组件。
 	 * 
-	 * @param componentElement
+	 * @param moduleElement
 	 *            指定的节点。
 	 * @param pluginClassLoader
 	 *            指定的插件类加载器。
@@ -88,25 +88,25 @@ public final class IOUtil {
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public static Component parseComponent(Element componentElement, PluginClassLoader pluginClassLoader,
-			Toolkit toolkit, MetaDataStorage metaDataStorage) throws LoadFailedException {
-		Objects.requireNonNull(componentElement, "入口参数 componentElement 不能为 null。");
+	public static Module parseModule(Element moduleElement, PluginClassLoader pluginClassLoader, Toolkit toolkit,
+			MetaDataStorage metaDataStorage) throws LoadFailedException {
+		Objects.requireNonNull(moduleElement, "入口参数 moduleElement 不能为 null。");
 		Objects.requireNonNull(pluginClassLoader, "入口参数 pluginClassLoader 不能为 null。");
 		Objects.requireNonNull(toolkit, "入口参数 toolkit 不能为 null。");
 		Objects.requireNonNull(metaDataStorage, "入口参数 metaDataStorage 不能为 null。");
 
-		String classString = componentElement.attributeValue("class");
+		String classString = moduleElement.attributeValue("class");
 
 		if (Objects.isNull(classString)) {
 			throw new LoadFailedException("属性缺失。");
 		}
 
-		Component cmpoent = null;
+		Module module = null;
 		try {
 			Method method = pluginClassLoader.loadClass(classString).getMethod("newInstance", ReferenceModel.class,
 					MetaDataStorage.class);
-			cmpoent = (Component) method.invoke(null, new DefaultReferenceModel<>(toolkit), metaDataStorage);// TODO
-																												// 参数待完善。
+			module = (Module) method.invoke(null, new DefaultReferenceModel<>(toolkit), metaDataStorage);// TODO
+																											// 参数待完善。
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
 				| IllegalArgumentException e) {
 			throw new LoadFailedException("组件初始化失败", e);
@@ -114,11 +114,11 @@ public final class IOUtil {
 			throw new LoadFailedException("组件初始化失败", e.getCause());
 		}
 
-		if (Objects.isNull(cmpoent)) {
+		if (Objects.isNull(module)) {
 			throw new LoadFailedException("未知错误。");
 		}
 
-		return cmpoent;
+		return module;
 
 	}
 

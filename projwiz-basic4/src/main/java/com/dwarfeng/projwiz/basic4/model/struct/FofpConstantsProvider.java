@@ -44,8 +44,8 @@ public class FofpConstantsProvider implements ConstantsProvider {
 			return ResourceKey.FOFP_I18N_LOGGER_FILE_SETTING;
 		case I18N_LOGGER_RESOURCE_SETTING:
 			return ResourceKey.FOFP_I18N_LOGGER_RESOURCE_SETTING;
-		case IMAGE_CMPOENT:
-			return ResourceKey.FOFP_IMAGE_CMPOENT;
+		case IMAGE_MODULE:
+			return ResourceKey.FOFP_IMAGE_MODULE;
 		default:
 			return null;
 		}

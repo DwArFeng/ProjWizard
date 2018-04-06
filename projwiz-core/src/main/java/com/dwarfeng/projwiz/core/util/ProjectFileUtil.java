@@ -96,8 +96,8 @@ public class ProjectFileUtil {
 			+ "+^:^$^\\r^\\n]+:([^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+/)*[^;^\\*^%^&"
 			+ "^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+$";
 
-	private final static String FILE_NAME_REGEX = "^[^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+$";
-	private final static String PROJECT_NAME_REGEX = "^[^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n]+$";
+	private final static String FILE_NAME_REGEX = "^[^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n^\\.^,]+$";
+	private final static String PROJECT_NAME_REGEX = "^[^;^\\*^%^&^@^!^#^\\^^\\\\^/^+^:^$^\\r^\\n^\\.^,]+$";
 
 	/**
 	 * 返回指定的文件是否拥有指定名称的子文件。

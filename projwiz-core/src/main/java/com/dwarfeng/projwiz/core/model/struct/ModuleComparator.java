@@ -11,13 +11,13 @@ import java.util.Objects;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public class ComponentComparator implements Comparator<Component> {
+public class ModuleComparator implements Comparator<Module> {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int compare(Component o1, Component o2) {
+	public int compare(Module o1, Module o2) {
 		Objects.requireNonNull(o1, "入口参数 o1 不能为 null。");
 		Objects.requireNonNull(o2, "入口参数 o2 不能为 null。");
 

@@ -46,7 +46,7 @@ import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.backgr.AbstractTask;
 import com.dwarfeng.dutil.develop.backgr.Task;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
@@ -83,7 +83,7 @@ final class MfPanel_02 extends ProjWizPanel {
 	private final JMenuItem mi_07;
 	private final JMenuItem mi_08;
 
-	private SyncComponentModel componentModel;
+	private SyncModuleModel moduleModel;
 	private SyncReferenceModel<File> anchorFileModel;
 	private SyncReferenceModel<Project> focusProjectModel;
 	private SyncSetModel<File> focusFileModel;
@@ -110,8 +110,8 @@ final class MfPanel_02 extends ProjWizPanel {
 			// setText(file.getName());
 			setText(fileNameMap.get(file));
 			Image image = null;
-			if (Objects.nonNull(componentModel)) {
-				FileProcessor processor = componentModel.get(file.getProcessorClass());
+			if (Objects.nonNull(moduleModel)) {
+				FileProcessor processor = moduleModel.get(file.getProcessorClass());
 				if (Objects.nonNull(processor)) {
 					image = processor.getFileIcon(file);
 				}
@@ -547,11 +547,11 @@ final class MfPanel_02 extends ProjWizPanel {
 	 * @param anchorFileModel
 	 * @param focusProjectModel
 	 * @param focusFileModel
-	 * @param componentModel
+	 * @param moduleModel
 	 */
 	public MfPanel_02(GuiManager guiManager, I18nHandler i18nHandler, SyncReferenceModel<File> anchorFileModel,
 			SyncReferenceModel<Project> focusProjectModel, SyncSetModel<File> focusFileModel,
-			SyncComponentModel componentModel) {
+			SyncModuleModel moduleModel) {
 		super(guiManager, i18nHandler);
 
 		setLayout(new BorderLayout(0, 0));
@@ -734,13 +734,13 @@ final class MfPanel_02 extends ProjWizPanel {
 		}
 
 		// this.projectProcessorModel = projectProcessorModel;
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 		this.anchorFileModel = anchorFileModel;
 		this.focusProjectModel = focusProjectModel;
 		this.focusFileModel = focusFileModel;
 
 		syncModel();
-		syncComponentModel();
+		syncModuleModel();
 
 	}
 
@@ -783,10 +783,10 @@ final class MfPanel_02 extends ProjWizPanel {
 	}
 
 	/**
-	 * @return the componentModel
+	 * @return the moduleModel
 	 */
-	public SyncComponentModel getComponentModel() {
-		return componentModel;
+	public SyncModuleModel getModuleModel() {
+		return moduleModel;
 	}
 
 	/**
@@ -821,12 +821,12 @@ final class MfPanel_02 extends ProjWizPanel {
 	}
 
 	/**
-	 * @param componentModel
-	 *            the componentModel to set
+	 * @param moduleModel
+	 *            the moduleModel to set
 	 */
-	public void setComponentModel(SyncComponentModel componentModel) {
-		this.componentModel = componentModel;
-		syncComponentModel();
+	public void setModuleModel(SyncModuleModel moduleModel) {
+		this.moduleModel = moduleModel;
+		syncModuleModel();
 	}
 
 	/**
@@ -919,7 +919,7 @@ final class MfPanel_02 extends ProjWizPanel {
 		return (File) node.getUserObject();
 	}
 
-	private void syncComponentModel() {
+	private void syncModuleModel() {
 		adjustFlag = true;
 		try {
 			tree.repaint();

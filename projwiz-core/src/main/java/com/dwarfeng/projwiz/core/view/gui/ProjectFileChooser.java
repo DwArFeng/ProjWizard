@@ -54,7 +54,7 @@ import com.dwarfeng.dutil.basic.gui.swing.MuaListModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.prog.Filter;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
@@ -100,7 +100,7 @@ public final class ProjectFileChooser extends ProjWizChooser {
 	 * @author DwArFeng
 	 * @since 0.0.2-alpha
 	 */
-	private enum FocusComponent {
+	private enum FocusModule {
 		/** 代表文件选择列表。 */
 		LIST,
 		/** 代表文件路径输入框。 */
@@ -151,7 +151,7 @@ public final class ProjectFileChooser extends ProjWizChooser {
 	private JComboBox<FileFilter> comboBox_fileFilter;
 
 	private SyncListModel<Project> holdProjectModel;
-	private SyncComponentModel componentModel;
+	private SyncModuleModel moduleModel;
 
 	private final ReferenceModel<File> selectedFile = new DefaultReferenceModel<>();
 	private final List<File> selectedFiles = new ArrayList<>();
@@ -176,8 +176,8 @@ public final class ProjectFileChooser extends ProjWizChooser {
 				return this;
 			setText(project.getName());
 			Image image = null;
-			if (Objects.nonNull(componentModel)) {
-				ProjectProcessor processor = componentModel.get(project.getProcessorClass());
+			if (Objects.nonNull(moduleModel)) {
+				ProjectProcessor processor = moduleModel.get(project.getProcessorClass());
 				if (Objects.nonNull(processor)) {
 					image = processor.getProjectIcon(project);
 				}
@@ -207,8 +207,8 @@ public final class ProjectFileChooser extends ProjWizChooser {
 			// setText(file.getName());
 			setText(fileNameMap.get(file));
 			Image image = null;
-			if (Objects.nonNull(componentModel)) {
-				FileProcessor processor = componentModel.get(file.getProcessorClass());
+			if (Objects.nonNull(moduleModel)) {
+				FileProcessor processor = moduleModel.get(file.getProcessorClass());
 				if (Objects.nonNull(processor)) {
 					image = processor.getFileIcon(file);
 				}
@@ -324,7 +324,7 @@ public final class ProjectFileChooser extends ProjWizChooser {
 	private FileSelectionMode fileSelectionMode;
 	private boolean multiSelectionEnabled;
 	private ProjWizDialog currentDialog;
-	private FocusComponent focusComponent;
+	private FocusModule focusModule;
 
 	/**
 	 * 新实例。
@@ -342,7 +342,7 @@ public final class ProjectFileChooser extends ProjWizChooser {
 	 *            国际化接口。
 	 */
 	public ProjectFileChooser(GuiManager guiManager, I18nHandler i18nHandler, SyncListModel<Project> holdProjectModel,
-			SyncComponentModel componentModel) {
+			SyncModuleModel moduleModel) {
 		super(guiManager, i18nHandler, LabelStringKey.PROJFC_4);
 
 		setPreferredSize(new Dimension(500, 300));
@@ -352,7 +352,7 @@ public final class ProjectFileChooser extends ProjWizChooser {
 		}
 
 		this.holdProjectModel = holdProjectModel;
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 		setLayout(new BorderLayout(0, 0));
 
 		JPanel panel_1 = new JPanel();
@@ -471,7 +471,7 @@ public final class ProjectFileChooser extends ProjWizChooser {
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				focusComponent = FocusComponent.LIST;
+				focusModule = FocusModule.LIST;
 			}
 		});
 		list_file.addMouseMotionListener(new MouseMotionAdapter() {
@@ -587,7 +587,7 @@ public final class ProjectFileChooser extends ProjWizChooser {
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				focusComponent = FocusComponent.TEXT_FIELD;
+				focusModule = FocusModule.TEXT_FIELD;
 			}
 		});
 		GridBagConstraints gbc_textField_filePath = new GridBagConstraints();
@@ -631,7 +631,7 @@ public final class ProjectFileChooser extends ProjWizChooser {
 
 		syncSettings();
 		syncHoldProjectModel();
-		syncComponentModel();
+		syncModuleModel();
 
 	}
 
@@ -646,13 +646,6 @@ public final class ProjectFileChooser extends ProjWizChooser {
 
 		// 同步选择文件
 		syncSelectedFile();
-	}
-
-	/**
-	 * @return the componentModel
-	 */
-	public SyncComponentModel getComponentModel() {
-		return componentModel;
 	}
 
 	/**
@@ -681,6 +674,13 @@ public final class ProjectFileChooser extends ProjWizChooser {
 	 */
 	public SyncListModel<Project> getHoldProjectModel() {
 		return holdProjectModel;
+	}
+
+	/**
+	 * @return the moduleModel
+	 */
+	public SyncModuleModel getModuleModel() {
+		return moduleModel;
 	}
 
 	/**
@@ -744,15 +744,6 @@ public final class ProjectFileChooser extends ProjWizChooser {
 	 */
 	public void setAcceptAllFileFilterUsed(boolean acceptAllFileFilterUsed) {
 		this.acceptAllFileFilterUsed = acceptAllFileFilterUsed;
-	}
-
-	/**
-	 * @param componentModel
-	 *            the componentModel to set
-	 */
-	public void setComponentModel(SyncComponentModel componentModel) {
-		this.componentModel = componentModel;
-		syncComponentModel();
 	}
 
 	/**
@@ -823,6 +814,15 @@ public final class ProjectFileChooser extends ProjWizChooser {
 	}
 
 	/**
+	 * @param moduleModel
+	 *            the moduleModel to set
+	 */
+	public void setModuleModel(SyncModuleModel moduleModel) {
+		this.moduleModel = moduleModel;
+		syncModuleModel();
+	}
+
+	/**
 	 * @param multiSelectionEnabled
 	 *            the multiSelectionEnabled to set
 	 */
@@ -883,7 +883,7 @@ public final class ProjectFileChooser extends ProjWizChooser {
 		rootFileAdjustFlag = false;
 	}
 
-	private void syncComponentModel() {
+	private void syncModuleModel() {
 		comboBox_project.repaint();
 		list_file.repaint();
 	}

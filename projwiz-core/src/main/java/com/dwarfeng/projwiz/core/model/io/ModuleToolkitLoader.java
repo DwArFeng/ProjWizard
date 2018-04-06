@@ -17,7 +17,7 @@ import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.basic.io.StreamLoader;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.util.IOUtil;
 
@@ -27,8 +27,8 @@ import com.dwarfeng.projwiz.core.util.IOUtil;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public final class ComponentToolkitLoader
-		extends StreamLoader<MapModel<Class<? extends Component>, ReferenceModel<Toolkit>>> {
+public final class ModuleToolkitLoader
+		extends StreamLoader<MapModel<Class<? extends Module>, ReferenceModel<Toolkit>>> {
 
 	/** 工具包权限模型。 */
 	protected final ToolkitPermModel toolkitPermModel;
@@ -49,7 +49,7 @@ public final class ComponentToolkitLoader
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public ComponentToolkitLoader(InputStream in, ToolkitPermModel toolkitPermModel, Toolkit standardToolkit) {
+	public ModuleToolkitLoader(InputStream in, ToolkitPermModel toolkitPermModel, Toolkit standardToolkit) {
 		super(in);
 		Objects.requireNonNull(toolkitPermModel, "入口参数 toolkitPermModel 不能为 null。");
 		Objects.requireNonNull(standardToolkit, "入口参数 standardToolkit 不能为 null。");
@@ -63,12 +63,12 @@ public final class ComponentToolkitLoader
 	 */
 	@Override
 	public Set<LoadFailedException> countinuousLoad(
-			MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel)
+			MapModel<Class<? extends Module>, ReferenceModel<Toolkit>> moduleToolkitModel)
 			throws IllegalStateException {
 		if (readFlag)
 			throw new IllegalStateException("读取器已经使用过了。");
 
-		Objects.requireNonNull(cmpoentToolkitModel, "入口参数 cmpoentToolkitModel 不能为 null。");
+		Objects.requireNonNull(moduleToolkitModel, "入口参数 moduleToolkitModel 不能为 null。");
 
 		final Set<LoadFailedException> exceptions = new LinkedHashSet<>();
 		try {
@@ -84,7 +84,7 @@ public final class ComponentToolkitLoader
 			List<Element> infos = (List<Element>) root.elements("info");
 			for (Element info : infos) {
 				try {
-					load0(cmpoentToolkitModel, info);
+					load0(moduleToolkitModel, info);
 				} catch (Exception e) {
 					exceptions.add(new LoadFailedException("无法读取指定组件数据。", e));
 				}
@@ -102,13 +102,13 @@ public final class ComponentToolkitLoader
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void load(MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel)
+	public void load(MapModel<Class<? extends Module>, ReferenceModel<Toolkit>> moduleToolkitModel)
 			throws LoadFailedException, IllegalStateException {
 
 		if (readFlag)
 			throw new IllegalStateException("读取器已经使用过了。");
 
-		Objects.requireNonNull(cmpoentToolkitModel, "入口参数 cmpoentToolkitModel 不能为 null。");
+		Objects.requireNonNull(moduleToolkitModel, "入口参数 moduleToolkitModel 不能为 null。");
 
 		try {
 			readFlag = true;
@@ -122,7 +122,7 @@ public final class ComponentToolkitLoader
 			@SuppressWarnings("unchecked")
 			List<Element> infos = (List<Element>) root.elements("info");
 			for (Element info : infos) {
-				load0(cmpoentToolkitModel, info);
+				load0(moduleToolkitModel, info);
 			}
 
 		} catch (Exception e) {
@@ -131,12 +131,12 @@ public final class ComponentToolkitLoader
 
 	}
 
-	private void load0(Map<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel, Element info)
+	private void load0(Map<Class<? extends Module>, ReferenceModel<Toolkit>> moduleToolkitModel, Element info)
 			throws LoadFailedException {
-		Class<? extends Component> clazz = IOUtil.parseClass(info);
+		Class<? extends Module> clazz = IOUtil.parseClass(info);
 
-		if (!Component.class.isAssignableFrom(clazz)) {
-			throw new LoadFailedException("类 " + clazz.toString() + " 不是 Component 的子类");
+		if (!Module.class.isAssignableFrom(clazz)) {
+			throw new LoadFailedException("类 " + clazz.toString() + " 不是 Module 的子类");
 		}
 
 		Element toolkitElement = info.element("toolkit");
@@ -146,7 +146,7 @@ public final class ComponentToolkitLoader
 
 		Toolkit toolkit = IOUtil.parseToolkit(toolkitElement, toolkitPermModel, standardToolkit);
 
-		cmpoentToolkitModel.put(clazz, ModelUtil.syncReferenceModel(new DefaultReferenceModel<>(toolkit)));
+		moduleToolkitModel.put(clazz, ModelUtil.syncReferenceModel(new DefaultReferenceModel<>(toolkit)));
 	}
 
 }

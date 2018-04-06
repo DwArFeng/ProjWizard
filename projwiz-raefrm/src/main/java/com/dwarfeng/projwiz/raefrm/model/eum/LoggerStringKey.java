@@ -12,38 +12,37 @@ import com.dwarfeng.dutil.basic.str.Name;
 public enum LoggerStringKey implements Name {
 
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_0(new DefaultName("rae.cmpoent.init.0")),
+	RAE_MODULE_INIT_0(new DefaultName("rae.module.init.0")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_1(new DefaultName("rae.cmpoent.init.1")),
+	RAE_MODULE_INIT_1(new DefaultName("rae.module.init.1")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_2(new DefaultName("rae.cmpoent.init.2")),
+	RAE_MODULE_INIT_2(new DefaultName("rae.module.init.2")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_3(new DefaultName("rae.cmpoent.init.3")),
+	RAE_MODULE_INIT_3(new DefaultName("rae.module.init.3")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_4(new DefaultName("rae.cmpoent.init.4")),
+	RAE_MODULE_INIT_4(new DefaultName("rae.module.init.4")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_5(new DefaultName("rae.cmpoent.init.5")),
+	RAE_MODULE_INIT_5(new DefaultName("rae.module.init.5")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_6(new DefaultName("rae.cmpoent.init.6")),
+	RAE_MODULE_INIT_6(new DefaultName("rae.module.init.6")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_7(new DefaultName("rae.cmpoent.init.7")),
+	RAE_MODULE_INIT_7(new DefaultName("rae.module.init.7")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_8(new DefaultName("rae.cmpoent.init.8")),
+	RAE_MODULE_INIT_8(new DefaultName("rae.module.init.8")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_9(new DefaultName("rae.cmpoent.init.9")),
+	RAE_MODULE_INIT_9(new DefaultName("rae.module.init.9")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_10(new DefaultName("rae.cmpoent.init.10")),
+	RAE_MODULE_INIT_10(new DefaultName("rae.module.init.10")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_11(new DefaultName("rae.cmpoent.init.11")),
+	RAE_MODULE_INIT_11(new DefaultName("rae.module.init.11")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_12(new DefaultName("rae.cmpoent.init.12")),
+	RAE_MODULE_INIT_12(new DefaultName("rae.module.init.12")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_13(new DefaultName("rae.cmpoent.init.13")),
+	RAE_MODULE_INIT_13(new DefaultName("rae.module.init.13")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_14(new DefaultName("rae.cmpoent.init.14")),
+	RAE_MODULE_INIT_14(new DefaultName("rae.module.init.14")),
 	/** 初始化所需要的文本字段。 */
-	RAE_CMPOENT_INIT_15(new DefaultName("rae.cmpoent.init.15")),
-	;
+	RAE_MODULE_INIT_15(new DefaultName("rae.module.init.15")),;
 
 	private Name name;
 

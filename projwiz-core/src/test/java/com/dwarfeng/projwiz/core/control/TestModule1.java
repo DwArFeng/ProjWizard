@@ -5,7 +5,7 @@ import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 
-public class TestComonent3 extends TestComponent {
+public class TestModule1 extends TestModule {
 
 	/**
 	 * 
@@ -15,12 +15,12 @@ public class TestComonent3 extends TestComponent {
 	 * @return
 	 * @throws ProcessException
 	 */
-	public static TestComonent3 newInstance(ReferenceModel<Toolkit> toolkitRef, MetaDataStorage metaDataStorage)
+	public static TestModule1 newInstance(ReferenceModel<Toolkit> toolkitRef, MetaDataStorage metaDataStorage)
 			throws ProcessException {
-		return new TestComonent3(toolkitRef, metaDataStorage);
+		return new TestModule1(toolkitRef, metaDataStorage);
 	}
 
-	protected TestComonent3(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage) {
+	protected TestModule1(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage) {
 		super(toolkitRef, metaDataStorage);
 		// TODO Auto-generated constructor stub
 	}

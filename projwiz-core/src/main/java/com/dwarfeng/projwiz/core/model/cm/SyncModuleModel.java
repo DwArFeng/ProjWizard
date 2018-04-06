@@ -8,6 +8,6 @@ import com.dwarfeng.dutil.basic.threads.ExternalReadWriteThreadSafe;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public interface SyncComponentModel extends ComponentModel, ExternalReadWriteThreadSafe {
+public interface SyncModuleModel extends ModuleModel, ExternalReadWriteThreadSafe {
 
 }

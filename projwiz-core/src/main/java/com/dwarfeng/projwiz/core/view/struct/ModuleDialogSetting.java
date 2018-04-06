@@ -13,7 +13,7 @@ import com.dwarfeng.dutil.basic.prog.Buildable;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public final class ComponentDialogSetting {
+public final class ModuleDialogSetting {
 
 	/**
 	 * 组件对话框设置构造器。
@@ -21,7 +21,7 @@ public final class ComponentDialogSetting {
 	 * @author DwArFeng
 	 * @since 0.0.3-alpha
 	 */
-	public static final class Builder implements Buildable<ComponentDialogSetting> {
+	public static final class Builder implements Buildable<ModuleDialogSetting> {
 
 		private String title;
 		private Image iconImage;
@@ -33,8 +33,8 @@ public final class ComponentDialogSetting {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public ComponentDialogSetting build() {
-			return new ComponentDialogSetting(title, iconImage, resizeable, undecorated, type);
+		public ModuleDialogSetting build() {
+			return new ModuleDialogSetting(title, iconImage, resizeable, undecorated, type);
 		}
 
 		/**
@@ -105,7 +105,7 @@ public final class ComponentDialogSetting {
 	private final boolean undecorated;
 	private final Window.Type type;
 
-	private ComponentDialogSetting(String title, Image iconImage, boolean resizeable, boolean undecorated,
+	private ModuleDialogSetting(String title, Image iconImage, boolean resizeable, boolean undecorated,
 			Window.Type type) {
 		this.title = title;
 		this.iconImage = iconImage;
@@ -185,7 +185,7 @@ public final class ComponentDialogSetting {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ComponentDialogSetting other = (ComponentDialogSetting) obj;
+		ModuleDialogSetting other = (ModuleDialogSetting) obj;
 		if (iconImage == null) {
 			if (other.iconImage != null)
 				return false;
@@ -210,7 +210,7 @@ public final class ComponentDialogSetting {
 	 */
 	@Override
 	public String toString() {
-		return "ComponentDialogSetting [title=" + title + ", iconImage=" + iconImage + ", resizeable=" + resizeable
+		return "ModuleDialogSetting [title=" + title + ", iconImage=" + iconImage + ", resizeable=" + resizeable
 				+ ", undecorated=" + undecorated + ", type=" + type + "]";
 	}
 

@@ -27,8 +27,8 @@ import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
@@ -39,7 +39,7 @@ import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.eum.DialogOption;
 import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
-import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
@@ -71,7 +71,7 @@ public interface Toolkit {
 	public enum Method {
 		ADDCORECONFIGOBVERSER, //
 		ADDPROGRAMOBVERSER, //
-		CHOOSECOMPONENT, //
+		CHOOSEMODULE, //
 		CHOOSEPROJECTFILE, //
 		CHOOSESYSTEMFILE, //
 		CLEARPROGRAMOBVERSER, //
@@ -86,9 +86,6 @@ public interface Toolkit {
 		GETBACKGROUNDREADONLY, //
 		GETCFGHANDLER, //
 		GETCFGHANDLERREADONLY, //
-		GETCMPOENTTOOLKITMODEL, //
-		GETCOMPONENTMODEL, //
-		GETCOMPONENTMODELREADONLY, //
 		GETCORECONFIGMODEL, //
 		GETCORECONFIGMODELREADONLY, //
 		GETEDITORMODEL, //
@@ -115,6 +112,9 @@ public interface Toolkit {
 		GETLOGGERI18NHANDLER, //
 		GETLOGGERI18NHANDLERREADONLY, //
 		GETMAINFRAME, //
+		GETMODULEMODEL, //
+		GETMODULEMODELREADONLY, //
+		GETMODULETOOLKITMODEL, //
 		GETPLUGINCLASSLOADER, //
 		GETPROGRAMOBVERSERS, //
 		GETPROJECTICONIMAGEMODEL, //
@@ -183,7 +183,7 @@ public interface Toolkit {
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public Component[] chooseComponent(ComponentChooserSetting setting) throws IllegalStateException;
+	public Module[] chooseModule(ModuleChooserSetting setting) throws IllegalStateException;
 
 	/**
 	 * 选择一个工程文件。
@@ -347,37 +347,6 @@ public interface Toolkit {
 	public ResourceHandler getCfgHandlerReadOnly() throws IllegalStateException;
 
 	/**
-	 * 获取程序中的组件-映射模型。
-	 * 
-	 * @return 程序中的组件-映射模型。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel()
-			throws IllegalStateException;
-
-	/**
-	 * 获取组件模型。
-	 * 
-	 * @return 组件模型。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public SyncComponentModel getComponentModel() throws IllegalStateException;
-
-	/**
-	 * 获取组件模型。
-	 * 
-	 * <p>
-	 * 组件模型是只读的。
-	 * 
-	 * @return 组件模型。
-	 * @throws IllegalStateException
-	 *             因为没有执行权限而抛出的异常。
-	 */
-	public ComponentModel getComponentModelReadOnly() throws IllegalStateException;
-
-	/**
 	 * 获取程序中的核心配置模型。
 	 * 
 	 * @return 程序中的核心配置模型。
@@ -425,29 +394,6 @@ public interface Toolkit {
 	 */
 	public int getExitCode() throws IllegalStateException;
 
-	// /**
-	// * 获取外部窗口模型。
-	// *
-	// * @return 外部窗口模型。
-	// * @throws IllegalStateException
-	// * 因为没有权限而抛出的异常。
-	// */
-	// public SyncKeySetModel<String, WindowSuppiler> getExternalWindowModel()
-	// throws IllegalStateException;
-	//
-	// /**
-	// * 获取外部窗口模型。
-	// *
-	// * <p>
-	// * 外部窗口模型是只读的。
-	// *
-	// * @return 外部窗口模型。
-	// * @throws IllegalStateException
-	// * 因为没有权限而抛出的异常。
-	// */
-	// public KeySetModel<String, WindowSuppiler>
-	// getExternalWindowModelReadOnly() throws IllegalStateException;
-
 	/**
 	 * 获取外部窗口模型。
 	 * 
@@ -476,6 +422,29 @@ public interface Toolkit {
 	 *             因为没有权限而抛出的异常。
 	 */
 	public SyncMapModel<File, Image> getFileIconImageModel() throws IllegalStateException;
+
+	// /**
+	// * 获取外部窗口模型。
+	// *
+	// * @return 外部窗口模型。
+	// * @throws IllegalStateException
+	// * 因为没有权限而抛出的异常。
+	// */
+	// public SyncKeySetModel<String, WindowSuppiler> getExternalWindowModel()
+	// throws IllegalStateException;
+	//
+	// /**
+	// * 获取外部窗口模型。
+	// *
+	// * <p>
+	// * 外部窗口模型是只读的。
+	// *
+	// * @return 外部窗口模型。
+	// * @throws IllegalStateException
+	// * 因为没有权限而抛出的异常。
+	// */
+	// public KeySetModel<String, WindowSuppiler>
+	// getExternalWindowModelReadOnly() throws IllegalStateException;
 
 	/**
 	 * 获取图片图标图片模型。
@@ -659,6 +628,37 @@ public interface Toolkit {
 	 *             因为没有执行权限而抛出的异常。
 	 */
 	public MainFrame getMainFrame() throws IllegalStateException;
+
+	/**
+	 * 获取组件模型。
+	 * 
+	 * @return 组件模型。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public SyncModuleModel getModuleModel() throws IllegalStateException;
+
+	/**
+	 * 获取组件模型。
+	 * 
+	 * <p>
+	 * 组件模型是只读的。
+	 * 
+	 * @return 组件模型。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public ModuleModel getModuleModelReadOnly() throws IllegalStateException;
+
+	/**
+	 * 获取程序中的组件-映射模型。
+	 * 
+	 * @return 程序中的组件-映射模型。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public SyncMapModel<Class<? extends Module>, ReferenceModel<Toolkit>> getModuleToolkitModel()
+			throws IllegalStateException;
 
 	/**
 	 * 获取接口中的插件类加载器。

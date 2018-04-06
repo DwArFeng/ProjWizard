@@ -14,7 +14,7 @@ import com.dwarfeng.projwiz.core.model.eum.IconVariability;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public interface FileProcessor extends Component {
+public interface FileProcessor extends Module {
 
 	/**
 	 * 返回文件处理器是否能打开指定的文件。

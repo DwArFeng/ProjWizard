@@ -20,7 +20,7 @@ import com.dwarfeng.projwiz.core.model.struct.LnpToolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
 
-public final class ComponentToolkitSaver extends StreamSaver<MapModel<String, ReferenceModel<Toolkit>>> {
+public final class ModuleToolkitSaver extends StreamSaver<MapModel<String, ReferenceModel<Toolkit>>> {
 
 	private boolean saveFlag;
 
@@ -32,7 +32,7 @@ public final class ComponentToolkitSaver extends StreamSaver<MapModel<String, Re
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public ComponentToolkitSaver(OutputStream out) {
+	public ModuleToolkitSaver(OutputStream out) {
 		super(out);
 	}
 
@@ -40,19 +40,19 @@ public final class ComponentToolkitSaver extends StreamSaver<MapModel<String, Re
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void save(MapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel)
+	public void save(MapModel<String, ReferenceModel<Toolkit>> moduleToolkitModel)
 			throws SaveFailedException, IllegalStateException {
 		if (saveFlag)
 			throw new IllegalStateException("该存储器已经使用过了");
 
-		Objects.requireNonNull(cmpoentToolkitModel, "入口参数 cmpoentToolkitModel 不能为 null。");
+		Objects.requireNonNull(moduleToolkitModel, "入口参数 moduleToolkitModel 不能为 null。");
 
 		try {
 			saveFlag = true;
 
 			Element root = DocumentHelper.createElement("root");
 
-			for (Map.Entry<String, ReferenceModel<Toolkit>> entry : cmpoentToolkitModel.entrySet()) {
+			for (Map.Entry<String, ReferenceModel<Toolkit>> entry : moduleToolkitModel.entrySet()) {
 				Element info = DocumentHelper.createElement("info");
 				info.addAttribute("key", entry.getKey());
 
@@ -108,12 +108,12 @@ public final class ComponentToolkitSaver extends StreamSaver<MapModel<String, Re
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<SaveFailedException> countinuousSave(MapModel<String, ReferenceModel<Toolkit>> cmpoentToolkitModel)
+	public Set<SaveFailedException> countinuousSave(MapModel<String, ReferenceModel<Toolkit>> moduleToolkitModel)
 			throws IllegalStateException {
 		if (saveFlag)
 			throw new IllegalStateException("该存储器已经使用过了");
 
-		Objects.requireNonNull(cmpoentToolkitModel, "入口参数 cmpoentToolkitModel 不能为 null。");
+		Objects.requireNonNull(moduleToolkitModel, "入口参数 moduleToolkitModel 不能为 null。");
 
 		final Set<SaveFailedException> exceptions = new LinkedHashSet<>();
 		try {
@@ -121,7 +121,7 @@ public final class ComponentToolkitSaver extends StreamSaver<MapModel<String, Re
 
 			Element root = DocumentHelper.createElement("root");
 
-			for (Map.Entry<String, ReferenceModel<Toolkit>> entry : cmpoentToolkitModel.entrySet()) {
+			for (Map.Entry<String, ReferenceModel<Toolkit>> entry : moduleToolkitModel.entrySet()) {
 				Element info = DocumentHelper.createElement("info");
 				info.addAttribute("key", entry.getKey());
 

@@ -4,7 +4,7 @@ import java.awt.Image;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 
 /**
  * 测试用简单组件。
@@ -15,7 +15,7 @@ import com.dwarfeng.projwiz.core.model.struct.Component;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public class TestSimpleComponent implements Component {
+public class TestSimpleModule implements Module {
 
 	/**
 	 * {@inheritDoc}

@@ -49,17 +49,17 @@ buildNumber.properties
 ## ProjWizard
 #################
 /projwiz-core/configuration/
-/projwiz-core/components/
+/projwiz-core/modules/
 /projwiz-core/plugins/
 /projwiz-core/logs/
 /projwiz-core/metadata/
 /projwiz-launch/configuration/
-/projwiz-launch/components/
+/projwiz-launch/modules/
 /projwiz-launch/plugins/
 /projwiz-launch/logs/
 /projwiz-launch/metadata/
 /projwiz-basic4/configuration/
-/projwiz-basic4/components/
+/projwiz-basic4/modules/
 /projwiz-basic4/plugins/
 /projwiz-basic4/logs/
 /projwiz-basic4/metadata/

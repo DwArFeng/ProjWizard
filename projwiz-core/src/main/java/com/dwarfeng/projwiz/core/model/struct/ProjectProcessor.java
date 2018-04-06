@@ -14,7 +14,7 @@ import com.dwarfeng.projwiz.core.model.eum.IconVariability;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public interface ProjectProcessor extends Component {
+public interface ProjectProcessor extends Module {
 
 	/**
 	 * 获取文件处理器指定的文件对应的属性用户接口。

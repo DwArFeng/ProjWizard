@@ -23,7 +23,7 @@ public enum ResourceKey implements Name {
 	/** 内存工程管理器的记录器国际化处理器资源设置的资源键。 */
 	MEPP_I18N_LOGGER_RESOURCE_SETTING(Constants.CONFIGURATION_MEPP_CLASSIFY, "i18n.logger.resource.setting"),
 	/** 内存工程管理器的组件图片所对应的键。 */
-	MEPP_IMAGE_CMPOENT(Constants.CONFIGURATION_MEPP_CLASSIFY, "image.cmpoent"),
+	MEPP_IMAGE_MODULE(Constants.CONFIGURATION_MEPP_CLASSIFY, "image.module"),
 
 	/** 文件夹文件管理器的组件的核心配置。 */
 	FOFP_CONFIGURATION_CORE(Constants.CONFIGURATION_FOFP_CLASSIFY, "configuration.core"),
@@ -38,7 +38,7 @@ public enum ResourceKey implements Name {
 	/** 文件夹文件管理器的记录器国际化处理器资源设置的资源键。 */
 	FOFP_I18N_LOGGER_RESOURCE_SETTING(Constants.CONFIGURATION_FOFP_CLASSIFY, "i18n.logger.resource.setting"),
 	/** 文件夹文件管理器的组件图片所对应的键。 */
-	FOFP_IMAGE_CMPOENT(Constants.CONFIGURATION_FOFP_CLASSIFY, "image.cmpoent"),
+	FOFP_IMAGE_MODULE(Constants.CONFIGURATION_FOFP_CLASSIFY, "image.module"),
 
 	;
 

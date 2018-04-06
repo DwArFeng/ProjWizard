@@ -12,7 +12,7 @@ import java.util.WeakHashMap;
 
 import com.dwarfeng.dutil.basic.cna.model.AbstractSetModel;
 import com.dwarfeng.dutil.basic.cna.model.obv.SetObverser;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 
 /**
  * 默认组件模型。
@@ -23,34 +23,33 @@ import com.dwarfeng.projwiz.core.model.struct.Component;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public final class DefaultComponentModel extends AbstractSetModel<Component> implements ComponentModel {
+public final class DefaultModuleModel extends AbstractSetModel<Module> implements ModuleModel {
 
 	/** 组件映射。 */
-	private final Map<Class<? extends Component>, Component> componentMap;
+	private final Map<Class<? extends Module>, Module> moduleMap;
 
 	/**
 	 * 新实例。
 	 */
-	public DefaultComponentModel() {
+	public DefaultModuleModel() {
 		this(new HashMap<>(), Collections.newSetFromMap(new WeakHashMap<>()));
 	}
 
 	/**
 	 * 新实例。
 	 * 
-	 * @param componentMap
+	 * @param moduleMap
 	 *            指定的组件映射。
 	 * @param obversers
 	 *            指定的侦听器集合。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public DefaultComponentModel(Map<Class<? extends Component>, Component> componentMap,
-			Set<SetObverser<Component>> obversers) {
+	public DefaultModuleModel(Map<Class<? extends Module>, Module> moduleMap, Set<SetObverser<Module>> obversers) {
 		super(obversers);
 
-		Objects.requireNonNull(componentMap, "入口参数 componentMap 不能为 null。");
-		this.componentMap = componentMap;
+		Objects.requireNonNull(moduleMap, "入口参数 moduleMap 不能为 null。");
+		this.moduleMap = moduleMap;
 	}
 
 	/**
@@ -58,7 +57,7 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 */
 	@Override
 	public int size() {
-		return componentMap.size();
+		return moduleMap.size();
 	}
 
 	/**
@@ -66,7 +65,7 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 */
 	@Override
 	public boolean isEmpty() {
-		return componentMap.isEmpty();
+		return moduleMap.isEmpty();
 	}
 
 	/**
@@ -74,23 +73,23 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 */
 	@Override
 	public boolean contains(Object o) {
-		return componentMap.containsValue(o);
+		return moduleMap.containsValue(o);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterator<Component> iterator() {
-		return new InnerIterator(componentMap.values().iterator());
+	public Iterator<Module> iterator() {
+		return new InnerIterator(moduleMap.values().iterator());
 	}
 
-	private class InnerIterator implements Iterator<Component> {
+	private class InnerIterator implements Iterator<Module> {
 
-		private final Iterator<Component> itr;
-		private Component cursor = null;
+		private final Iterator<Module> itr;
+		private Module cursor = null;
 
-		public InnerIterator(Iterator<Component> itr) {
+		public InnerIterator(Iterator<Module> itr) {
 			this.itr = itr;
 		}
 
@@ -106,7 +105,7 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Component next() {
+		public Module next() {
 			cursor = itr.next();
 			return cursor;
 		}
@@ -128,7 +127,7 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 */
 	@Override
 	public Object[] toArray() {
-		return componentMap.values().toArray();
+		return moduleMap.values().toArray();
 	}
 
 	/**
@@ -136,23 +135,23 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 */
 	@Override
 	public <T> T[] toArray(T[] a) {
-		return componentMap.values().toArray(a);
+		return moduleMap.values().toArray(a);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean add(Component e) {
+	public boolean add(Module e) {
 		Objects.requireNonNull(e, "入口参数 e 不能为 null。");
 
-		Class<? extends Component> clazz = e.getClass();
+		Class<? extends Module> clazz = e.getClass();
 
-		if (componentMap.containsKey(clazz)) {
+		if (moduleMap.containsKey(clazz)) {
 			return false;
 		}
 
-		componentMap.put(clazz, e);
+		moduleMap.put(clazz, e);
 		fireAdded(e);
 
 		return true;
@@ -167,7 +166,7 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 			return false;
 		}
 
-		if (!(o instanceof Component)) {
+		if (!(o instanceof Module)) {
 			return false;
 		}
 
@@ -175,13 +174,13 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 		 * 由于之前已经判定该对象属于组件，因此该转换类型安全。
 		 */
 		@SuppressWarnings("unchecked")
-		Class<? extends Component> clazz = (Class<? extends Component>) o.getClass();
+		Class<? extends Module> clazz = (Class<? extends Module>) o.getClass();
 
-		if (Objects.isNull(componentMap.remove(clazz))) {
+		if (Objects.isNull(moduleMap.remove(clazz))) {
 			return false;
 		}
 
-		fireRemoved((Component) o);
+		fireRemoved((Module) o);
 		return true;
 	}
 
@@ -191,19 +190,19 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	@Override
 	public boolean containsAll(Collection<?> c) {
 		Objects.requireNonNull(c, "入口参数 c 不能为 null。");
-		return componentMap.values().containsAll(c);
+		return moduleMap.values().containsAll(c);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean addAll(Collection<? extends Component> c) {
+	public boolean addAll(Collection<? extends Module> c) {
 		Objects.requireNonNull(c, "入口参数 c 不能为 null。");
 
 		boolean result = false;
-		for (Component component : c) {
-			if (add(component)) {
+		for (Module module : c) {
+			if (add(module)) {
 				result = true;
 			}
 		}
@@ -232,10 +231,10 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	private boolean batchRemove(Collection<?> c, boolean aFlag) {
 		boolean result = false;
 
-		for (Iterator<Component> i = iterator(); i.hasNext();) {
-			Component component = i.next();
+		for (Iterator<Module> i = iterator(); i.hasNext();) {
+			Module module = i.next();
 
-			if (c.contains(component) == aFlag) {
+			if (c.contains(module) == aFlag) {
 				i.remove();
 				result = true;
 			}
@@ -249,7 +248,7 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 */
 	@Override
 	public void clear() {
-		componentMap.clear();
+		moduleMap.clear();
 		fireCleared();
 	}
 
@@ -257,15 +256,15 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <T extends Component> T get(Class<T> clazz) {
+	public <T extends Module> T get(Class<T> clazz) {
 		if (Objects.isNull(clazz)) {
 			return null;
 		}
 
-		for (Iterator<Component> i = iterator(); i.hasNext();) {
-			Component component = i.next();
-			if (component.getClass().equals(clazz)) {
-				return clazz.cast(component);
+		for (Iterator<Module> i = iterator(); i.hasNext();) {
+			Module module = i.next();
+			if (module.getClass().equals(clazz)) {
+				return clazz.cast(module);
 			}
 		}
 		return null;
@@ -275,20 +274,20 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <T extends Component> Collection<T> getSubs(Class<T> clazz) {
-		Collection<T> components = new HashSet<>();
+	public <T extends Module> Collection<T> getSubs(Class<T> clazz) {
+		Collection<T> modules = new HashSet<>();
 
 		if (Objects.isNull(clazz)) {
-			return components;
+			return modules;
 		}
 
-		for (Iterator<Component> i = iterator(); i.hasNext();) {
-			Component component = i.next();
-			if (clazz.isInstance(component)) {
-				components.add(clazz.cast(component));
+		for (Iterator<Module> i = iterator(); i.hasNext();) {
+			Module module = i.next();
+			if (clazz.isInstance(module)) {
+				modules.add(clazz.cast(module));
 			}
 		}
-		return components;
+		return modules;
 	}
 
 	/**
@@ -296,7 +295,7 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 */
 	@Override
 	public boolean containsClass(Class<?> clazz) {
-		return componentMap.containsKey(clazz);
+		return moduleMap.containsKey(clazz);
 	}
 
 	/**
@@ -307,7 +306,7 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 		Objects.requireNonNull(c, "入口参数 c 不能为 null。");
 
 		for (Class<?> clazz : c) {
-			if (!componentMap.containsKey(clazz)) {
+			if (!moduleMap.containsKey(clazz)) {
 				return false;
 			}
 		}
@@ -323,14 +322,14 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 			return false;
 		}
 
-		if (!componentMap.containsKey(clazz)) {
+		if (!moduleMap.containsKey(clazz)) {
 			return false;
 		}
 
-		Component component = componentMap.get(clazz);
-		componentMap.remove(clazz);
+		Module module = moduleMap.get(clazz);
+		moduleMap.remove(clazz);
 
-		fireRemoved(component);
+		fireRemoved(module);
 		return true;
 	}
 
@@ -355,8 +354,8 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	private boolean batchRemoveClass(Collection<?> c, boolean aFlag) {
 		boolean result = false;
 
-		for (Iterator<Component> i = iterator(); i.hasNext();) {
-			Class<? extends Component> clazz = i.next().getClass();
+		for (Iterator<Module> i = iterator(); i.hasNext();) {
+			Class<? extends Module> clazz = i.next().getClass();
 
 			if (c.contains(clazz) == aFlag) {
 				i.remove();
@@ -395,11 +394,11 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	@Override
 	public int hashCode() {
 		int h = 0;
-		Iterator<Component> i = iterator();
+		Iterator<Module> i = iterator();
 		while (i.hasNext()) {
-			Component component = i.next();
-			if (component != null)
-				h += component.hashCode();
+			Module module = i.next();
+			if (module != null)
+				h += module.hashCode();
 		}
 		return h;
 	}
@@ -409,7 +408,7 @@ public final class DefaultComponentModel extends AbstractSetModel<Component> imp
 	 */
 	@Override
 	public String toString() {
-		Iterator<Component> it = iterator();
+		Iterator<Module> it = iterator();
 		if (!it.hasNext())
 			return "[]";
 

@@ -33,14 +33,14 @@ import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
@@ -50,7 +50,7 @@ import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.eum.DialogOption;
 import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
-import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
@@ -215,8 +215,8 @@ public final class Constants {
 		}
 
 		@Override
-		public Component[] chooseComponent(ComponentChooserSetting setting) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: chooseComponent");
+		public Module[] chooseModule(ModuleChooserSetting setting) throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: chooseModule");
 		}
 
 		@Override
@@ -287,23 +287,6 @@ public final class Constants {
 		@Override
 		public ResourceHandler getCfgHandlerReadOnly() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getResourceHandlerReadOnly");
-		}
-
-		@Override
-		public SyncMapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel()
-				throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getCmpoentToolkitModel");
-
-		}
-
-		@Override
-		public SyncComponentModel getComponentModel() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getComponentModel");
-		}
-
-		@Override
-		public SyncComponentModel getComponentModelReadOnly() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getComponentModelReadOnly");
 		}
 
 		@Override
@@ -452,6 +435,23 @@ public final class Constants {
 		@Override
 		public MainFrame getMainFrame() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getMainFrame");
+		}
+
+		@Override
+		public SyncModuleModel getModuleModel() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getModuleModel");
+		}
+
+		@Override
+		public SyncModuleModel getModuleModelReadOnly() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getModuleModelReadOnly");
+		}
+
+		@Override
+		public SyncMapModel<Class<? extends Module>, ReferenceModel<Toolkit>> getModuleToolkitModel()
+				throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getModuleToolkitModel");
+
 		}
 
 		@Override
@@ -613,7 +613,6 @@ public final class Constants {
 
 	}
 
-	/***/
 	/** 默认的，不执行任何动作的 GUI 管理器 */
 	public final static GuiManager DEFAULT_GUIMANAGER = new NonActionGuiManager();
 	/** 处理器默认的，没有权限的工具包。 */
@@ -625,7 +624,7 @@ public final class Constants {
 	/** Jar包内配置列表的文件路径。 */
 	public final static String CFG_LIST_PATH = "cfg-list.xml";
 	/** Jar包内组件列表文件路径。 */
-	public final static String CMPOENT_LIST_PATH = "cmpoent-list.xml";
+	public final static String MODULE_LIST_PATH = "module-list.xml";
 
 	/** 默认记录器国际化文件所在的位置 */
 	public final static String RESOURCE_I18N_LOGGER_PATH = "/com/dwarfeng/projwiz/resources/core/configuration/i18n/logger.properties";
@@ -652,7 +651,7 @@ public final class Constants {
 		init0.put(ProjWizProperty.TEMP_PATH, "temp");
 		init0.put(ProjWizProperty.CFGREPO_PATH, "configuration");
 		init0.put(ProjWizProperty.CFG_LISTS, "");
-		init0.put(ProjWizProperty.COMPONENT_PATH, "components");
+		init0.put(ProjWizProperty.MODULE_PATH, "modules");
 		init0.put(ProjWizProperty.METADATA_PATH, "metadata");
 		init0.put(ProjWizProperty.TEST_CASE, "false");
 		init0.put(ProjWizProperty.CFG_LIST_PATH, "/com/dwarfeng/projwiz/resources/core/cfg-list.xml");

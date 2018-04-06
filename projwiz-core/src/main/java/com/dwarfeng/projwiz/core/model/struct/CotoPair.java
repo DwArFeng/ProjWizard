@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.dwarfeng.dutil.basic.cna.model.MapModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
-import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
 
 /**
  * 组件模型和组件-工具包引用模型对。
@@ -14,40 +14,40 @@ import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
  */
 public final class CotoPair {
 
-	private final ComponentModel componentModel;
-	private final MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel;
+	private final ModuleModel moduleModel;
+	private final MapModel<Class<? extends Module>, ReferenceModel<Toolkit>> moduleToolkitModel;
 
 	/**
 	 * 新实例。
 	 * 
-	 * @param componentModel
+	 * @param moduleModel
 	 *            指定的组件模型。
-	 * @param cmpoentToolkitModel
+	 * @param moduleToolkitModel
 	 *            指定的组件-工具包引用模型。
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public CotoPair(ComponentModel componentModel,
-			MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> cmpoentToolkitModel) {
-		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
-		Objects.requireNonNull(cmpoentToolkitModel, "入口参数 cmpoentToolkitModel 不能为 null。");
+	public CotoPair(ModuleModel moduleModel,
+			MapModel<Class<? extends Module>, ReferenceModel<Toolkit>> moduleToolkitModel) {
+		Objects.requireNonNull(moduleModel, "入口参数 moduleModel 不能为 null。");
+		Objects.requireNonNull(moduleToolkitModel, "入口参数 moduleToolkitModel 不能为 null。");
 
-		this.componentModel = componentModel;
-		this.cmpoentToolkitModel = cmpoentToolkitModel;
+		this.moduleModel = moduleModel;
+		this.moduleToolkitModel = moduleToolkitModel;
 	}
 
 	/**
-	 * @return the componentModel.
+	 * @return the moduleModel.
 	 */
-	public ComponentModel getComponentModel() {
-		return componentModel;
+	public ModuleModel getModuleModel() {
+		return moduleModel;
 	}
 
 	/**
-	 * @return the cmpoentToolkitModel.
+	 * @return the moduleToolkitModel.
 	 */
-	public MapModel<Class<? extends Component>, ReferenceModel<Toolkit>> getCmpoentToolkitModel() {
-		return cmpoentToolkitModel;
+	public MapModel<Class<? extends Module>, ReferenceModel<Toolkit>> getModuleToolkitModel() {
+		return moduleToolkitModel;
 	}
 
 	/**
@@ -57,8 +57,8 @@ public final class CotoPair {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((cmpoentToolkitModel == null) ? 0 : cmpoentToolkitModel.hashCode());
-		result = prime * result + ((componentModel == null) ? 0 : componentModel.hashCode());
+		result = prime * result + ((moduleToolkitModel == null) ? 0 : moduleToolkitModel.hashCode());
+		result = prime * result + ((moduleModel == null) ? 0 : moduleModel.hashCode());
 		return result;
 	}
 
@@ -74,15 +74,15 @@ public final class CotoPair {
 		if (getClass() != obj.getClass())
 			return false;
 		CotoPair other = (CotoPair) obj;
-		if (cmpoentToolkitModel == null) {
-			if (other.cmpoentToolkitModel != null)
+		if (moduleToolkitModel == null) {
+			if (other.moduleToolkitModel != null)
 				return false;
-		} else if (!cmpoentToolkitModel.equals(other.cmpoentToolkitModel))
+		} else if (!moduleToolkitModel.equals(other.moduleToolkitModel))
 			return false;
-		if (componentModel == null) {
-			if (other.componentModel != null)
+		if (moduleModel == null) {
+			if (other.moduleModel != null)
 				return false;
-		} else if (!componentModel.equals(other.componentModel))
+		} else if (!moduleModel.equals(other.moduleModel))
 			return false;
 		return true;
 	}
@@ -92,7 +92,7 @@ public final class CotoPair {
 	 */
 	@Override
 	public String toString() {
-		return "CotoPair [componentModel=" + componentModel + ", cmpoentToolkitModel=" + cmpoentToolkitModel + "]";
+		return "CotoPair [moduleModel=" + moduleModel + ", moduleToolkitModel=" + moduleToolkitModel + "]";
 	}
 
 }

@@ -38,7 +38,7 @@ import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.cm.DelegatePermDemandModel;
@@ -46,7 +46,7 @@ import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.raefrm.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.raefrm.model.io.XmlPermDemandLoader;
-import com.dwarfeng.projwiz.raefrm.model.struct.ComponentToolkit;
+import com.dwarfeng.projwiz.raefrm.model.struct.ModuleToolkit;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider.ResourceKeyType;
 import com.dwarfeng.projwiz.raefrm.util.Constants;
@@ -58,7 +58,7 @@ import com.dwarfeng.projwiz.raefrm.util.ModelUtil;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public abstract class RaeComponent implements Component {
+public abstract class RaeModule implements Module {
 
 	/**
 	 * 组件理器工具包的内部实现。
@@ -66,12 +66,12 @@ public abstract class RaeComponent implements Component {
 	 * @author DwArFeng
 	 * @since 0.0.3-alpha
 	 */
-	protected class ComponentToolkitImpl implements ComponentToolkit {
+	protected class ModuleToolkitImpl implements ModuleToolkit {
 
 		/**
 		 * 新实例。
 		 */
-		public ComponentToolkitImpl() {
+		public ModuleToolkitImpl() {
 
 		}
 
@@ -82,7 +82,7 @@ public abstract class RaeComponent implements Component {
 		public void debug(Name name) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.debug(name);
+				RaeModule.this.debug(name);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -95,7 +95,7 @@ public abstract class RaeComponent implements Component {
 		public void error(Name name, Throwable e) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.error(name, e);
+				RaeModule.this.error(name, e);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -108,7 +108,7 @@ public abstract class RaeComponent implements Component {
 		public void fatal(Name name, Throwable e) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.fatal(name, e);
+				RaeModule.this.fatal(name, e);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -121,7 +121,7 @@ public abstract class RaeComponent implements Component {
 		public void formatDebug(Name name, Object... args) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.formatDebug(name, args);
+				RaeModule.this.formatDebug(name, args);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -134,7 +134,7 @@ public abstract class RaeComponent implements Component {
 		public void formatError(Name name, Throwable e, Object... args) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.formatError(name, e, args);
+				RaeModule.this.formatError(name, e, args);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -147,7 +147,7 @@ public abstract class RaeComponent implements Component {
 		public void formatFatal(Name name, Throwable e, Object... args) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.formatFatal(name, e, args);
+				RaeModule.this.formatFatal(name, e, args);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -160,7 +160,7 @@ public abstract class RaeComponent implements Component {
 		public void formatInfo(Name name, Object... args) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.formatInfo(name, args);
+				RaeModule.this.formatInfo(name, args);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -173,7 +173,7 @@ public abstract class RaeComponent implements Component {
 		public String formatLabel(Name name, Object... args) {
 			lock.readLock().lock();
 			try {
-				return RaeComponent.this.formatLabel(name, args);
+				return RaeModule.this.formatLabel(name, args);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -186,7 +186,7 @@ public abstract class RaeComponent implements Component {
 		public void formatTrace(Name name, Object... args) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.formatTrace(name, args);
+				RaeModule.this.formatTrace(name, args);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -199,7 +199,7 @@ public abstract class RaeComponent implements Component {
 		public void formatWarn(Name name, Object... args) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.formatWarn(name, args);
+				RaeModule.this.formatWarn(name, args);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -212,7 +212,7 @@ public abstract class RaeComponent implements Component {
 		public void formatWarn(Name name, Throwable e, Object... args) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.formatWarn(name, e, args);
+				RaeModule.this.formatWarn(name, e, args);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -311,7 +311,7 @@ public abstract class RaeComponent implements Component {
 		public void info(Name name) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.info(name);
+				RaeModule.this.info(name);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -324,7 +324,7 @@ public abstract class RaeComponent implements Component {
 		public boolean isNotPermKeyAvaliable(Name permKey) {
 			lock.readLock().lock();
 			try {
-				return RaeComponent.this.isNotPermKeyAvaliable(permKey);
+				return RaeModule.this.isNotPermKeyAvaliable(permKey);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -337,7 +337,7 @@ public abstract class RaeComponent implements Component {
 		public boolean isPermKeyAvailable(Name permKey) {
 			lock.readLock().lock();
 			try {
-				return RaeComponent.this.isPermKeyAvailable(permKey);
+				return RaeModule.this.isPermKeyAvailable(permKey);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -350,7 +350,7 @@ public abstract class RaeComponent implements Component {
 		public String label(Name name) {
 			lock.readLock().lock();
 			try {
-				return RaeComponent.this.label(name);
+				return RaeModule.this.label(name);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -363,7 +363,7 @@ public abstract class RaeComponent implements Component {
 		public InputStream openResource(Name resourceKey) throws IOException {
 			lock.writeLock().lock();
 			try {
-				return RaeComponent.this.openResource(resourceKey);
+				return RaeModule.this.openResource(resourceKey);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -376,7 +376,7 @@ public abstract class RaeComponent implements Component {
 		public InputStream openResource(Name resourceKey, boolean autoReset) throws IOException {
 			lock.writeLock().lock();
 			try {
-				return RaeComponent.this.openResource(resourceKey, autoReset);
+				return RaeModule.this.openResource(resourceKey, autoReset);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -389,7 +389,7 @@ public abstract class RaeComponent implements Component {
 		public void requirePermKeyAvailable(Name permKey) throws IllegalStateException {
 			lock.readLock().lock();
 			try {
-				RaeComponent.this.requirePermKeyAvailable(permKey);
+				RaeModule.this.requirePermKeyAvailable(permKey);
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -402,7 +402,7 @@ public abstract class RaeComponent implements Component {
 		public void trace(Name name) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.trace(name);
+				RaeModule.this.trace(name);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -415,7 +415,7 @@ public abstract class RaeComponent implements Component {
 		public void warn(Name name) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.warn(name);
+				RaeModule.this.warn(name);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -428,7 +428,7 @@ public abstract class RaeComponent implements Component {
 		public void warn(Name name, Throwable e) {
 			lock.writeLock().lock();
 			try {
-				RaeComponent.this.warn(name, e);
+				RaeModule.this.warn(name, e);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -441,7 +441,7 @@ public abstract class RaeComponent implements Component {
 		public OutputStream writeResource(Name resourceKey) throws IOException {
 			lock.writeLock().lock();
 			try {
-				return RaeComponent.this.writeResource(resourceKey);
+				return RaeModule.this.writeResource(resourceKey);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -454,7 +454,7 @@ public abstract class RaeComponent implements Component {
 		public OutputStream writeResource(Name resourceKey, boolean autoReset) throws IOException {
 			lock.writeLock().lock();
 			try {
-				return RaeComponent.this.writeResource(resourceKey, autoReset);
+				return RaeModule.this.writeResource(resourceKey, autoReset);
 			} finally {
 				lock.writeLock().unlock();
 			}
@@ -521,7 +521,7 @@ public abstract class RaeComponent implements Component {
 	 *            指定的常量提供器。
 	 * @throws ProcessException
 	 */
-	protected RaeComponent(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
+	protected RaeModule(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage,
 			ConstantsProvider constantsProvider) throws ProcessException {
 		Objects.requireNonNull(toolkitRef, "入口参数 toolkitRef 不能为 null。");
 		Objects.requireNonNull(metaDataStorage, "入口参数 metaDataStorage 不能为 null。");
@@ -564,7 +564,7 @@ public abstract class RaeComponent implements Component {
 	 */
 	@Override
 	public String getDescription() {
-		return labelI18nHandler.getStringOrDefault(LabelStringKey.RAEFRM_CMPOENT_DESCRIPTION,
+		return labelI18nHandler.getStringOrDefault(LabelStringKey.RAEFRM_MODULE_DESCRIPTION,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL);
 	}
 
@@ -575,7 +575,7 @@ public abstract class RaeComponent implements Component {
 	public Image getIcon() {
 		Image icon = null;
 		try {
-			icon = ImageIO.read(openResource(constantsProvider.getResourceKey(ResourceKeyType.IMAGE_CMPOENT)));
+			icon = ImageIO.read(openResource(constantsProvider.getResourceKey(ResourceKeyType.IMAGE_MODULE)));
 		} catch (Exception e) {
 			icon = null;
 		}
@@ -608,7 +608,7 @@ public abstract class RaeComponent implements Component {
 	 */
 	@Override
 	public String getName() {
-		return labelI18nHandler.getStringOrDefault(LabelStringKey.RAEFRM_CMPOENT_NAME,
+		return labelI18nHandler.getStringOrDefault(LabelStringKey.RAEFRM_MODULE_NAME,
 				com.dwarfeng.projwiz.core.util.Constants.MISSING_LABEL);
 	}
 
@@ -1083,7 +1083,7 @@ public abstract class RaeComponent implements Component {
 		getToolkit().addCoreConfigObverser(coreConfigObverser);
 
 		// 输出初始化信息。
-		getToolkit().info(loggerI18nHandler.getString(LoggerStringKey.RAE_CMPOENT_INIT_0));
+		getToolkit().info(loggerI18nHandler.getString(LoggerStringKey.RAE_MODULE_INIT_0));
 
 		// 加载记录器国际化文件配置。
 		loadLoggerI18nFile();
@@ -1123,7 +1123,7 @@ public abstract class RaeComponent implements Component {
 	 */
 	private void initModel() {
 		PropUrlI18nInfo defaultI18nInfo = new PropUrlI18nInfo(null, "初始化用国际化配置",
-				RaeComponent.class.getResource(constantsProvider.getDefaultLoggerI18nPath()));
+				RaeModule.class.getResource(constantsProvider.getDefaultLoggerI18nPath()));
 
 		loggerI18nHandler.add(defaultI18nInfo);
 		loggerI18nHandler.setCurrentLocale(null);
@@ -1136,7 +1136,7 @@ public abstract class RaeComponent implements Component {
 	 *             IO异常。
 	 */
 	private void loadCoreConfigModel() throws IOException {
-		info(LoggerStringKey.RAE_CMPOENT_INIT_1);
+		info(LoggerStringKey.RAE_MODULE_INIT_1);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
 		PropConfigLoader loader = null;
@@ -1152,7 +1152,7 @@ public abstract class RaeComponent implements Component {
 		}
 
 		for (LoadFailedException e : eptSet) {
-			warn(LoggerStringKey.RAE_CMPOENT_INIT_12, e);
+			warn(LoggerStringKey.RAE_MODULE_INIT_12, e);
 		}
 		eptSet = null;
 		loader = null;
@@ -1165,7 +1165,7 @@ public abstract class RaeComponent implements Component {
 	 *             IO异常。
 	 */
 	private void loadLabelI18nFile() throws IOException {
-		info(LoggerStringKey.RAE_CMPOENT_INIT_6);
+		info(LoggerStringKey.RAE_MODULE_INIT_6);
 
 		Set<LoadFailedException> eptSet0 = new LinkedHashSet<>();
 		XmlPropFileI18nLoader loader0 = null;
@@ -1181,7 +1181,7 @@ public abstract class RaeComponent implements Component {
 		}
 
 		for (LoadFailedException e : eptSet0) {
-			warn(LoggerStringKey.RAE_CMPOENT_INIT_7, e);
+			warn(LoggerStringKey.RAE_MODULE_INIT_7, e);
 		}
 		eptSet0 = null;
 		loader0 = null;
@@ -1195,7 +1195,7 @@ public abstract class RaeComponent implements Component {
 	 *             IO异常。
 	 */
 	private void loadLabelI18nResource() throws IOException {
-		info(LoggerStringKey.RAE_CMPOENT_INIT_8);
+		info(LoggerStringKey.RAE_MODULE_INIT_8);
 
 		Set<LoadFailedException> eptSet1 = new LinkedHashSet<>();
 		XmlPropResourceI18nLoader loader1 = null;
@@ -1211,7 +1211,7 @@ public abstract class RaeComponent implements Component {
 		}
 
 		for (LoadFailedException e : eptSet1) {
-			warn(LoggerStringKey.RAE_CMPOENT_INIT_9, e);
+			warn(LoggerStringKey.RAE_MODULE_INIT_9, e);
 		}
 		eptSet1 = null;
 		loader1 = null;
@@ -1227,7 +1227,7 @@ public abstract class RaeComponent implements Component {
 	 * @throws IOException
 	 */
 	private void loadLoggerI18nFile() throws IOException {
-		info(LoggerStringKey.RAE_CMPOENT_INIT_2);
+		info(LoggerStringKey.RAE_MODULE_INIT_2);
 
 		loggerI18nHandler.removeKey(null);
 		loggerI18nHandler.setCurrentLocale(null);
@@ -1245,7 +1245,7 @@ public abstract class RaeComponent implements Component {
 		}
 
 		for (LoadFailedException e : eptSet) {
-			warn(LoggerStringKey.RAE_CMPOENT_INIT_3, e);
+			warn(LoggerStringKey.RAE_MODULE_INIT_3, e);
 		}
 		eptSet = null;
 		loader = null;
@@ -1258,7 +1258,7 @@ public abstract class RaeComponent implements Component {
 	 *             IO异常。
 	 */
 	private void loadLoggerI18nResource() throws IOException {
-		info(LoggerStringKey.RAE_CMPOENT_INIT_4);
+		info(LoggerStringKey.RAE_MODULE_INIT_4);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
 		XmlPropResourceI18nLoader loader = null;
@@ -1273,7 +1273,7 @@ public abstract class RaeComponent implements Component {
 		}
 
 		for (LoadFailedException e : eptSet) {
-			warn(LoggerStringKey.RAE_CMPOENT_INIT_5, e);
+			warn(LoggerStringKey.RAE_MODULE_INIT_5, e);
 		}
 		eptSet = null;
 		loader = null;
@@ -1290,7 +1290,7 @@ public abstract class RaeComponent implements Component {
 	 *             IO异常。
 	 */
 	private void loadPermDemandModel() throws IOException {
-		info(LoggerStringKey.RAE_CMPOENT_INIT_10);
+		info(LoggerStringKey.RAE_MODULE_INIT_10);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
 		XmlPermDemandLoader loader = null;
@@ -1305,7 +1305,7 @@ public abstract class RaeComponent implements Component {
 		}
 
 		for (LoadFailedException e : eptSet) {
-			warn(LoggerStringKey.RAE_CMPOENT_INIT_11, e);
+			warn(LoggerStringKey.RAE_MODULE_INIT_11, e);
 		}
 		eptSet = null;
 		loader = null;
@@ -1322,14 +1322,14 @@ public abstract class RaeComponent implements Component {
 	 */
 	private void saveCoreConfigModel() {
 		try {
-			info(LoggerStringKey.RAE_CMPOENT_INIT_13);
+			info(LoggerStringKey.RAE_MODULE_INIT_13);
 			PropConfigSaver viewConfigSaver = null;
 			try {
 				viewConfigSaver = new PropConfigSaver(
 						writeResource(constantsProvider.getResourceKey(ResourceKeyType.CONFIGURATION_CORE)));
 				Set<SaveFailedException> saveFailedExceptions = viewConfigSaver.countinuousSave(coreConfigModel);
 				for (SaveFailedException e : saveFailedExceptions) {
-					warn(LoggerStringKey.RAE_CMPOENT_INIT_14, e);
+					warn(LoggerStringKey.RAE_MODULE_INIT_14, e);
 				}
 			} finally {
 				if (Objects.nonNull(viewConfigSaver)) {
@@ -1337,7 +1337,7 @@ public abstract class RaeComponent implements Component {
 				}
 			}
 		} catch (IOException e) {
-			warn(LoggerStringKey.RAE_CMPOENT_INIT_15, e);
+			warn(LoggerStringKey.RAE_MODULE_INIT_15, e);
 		}
 	}
 

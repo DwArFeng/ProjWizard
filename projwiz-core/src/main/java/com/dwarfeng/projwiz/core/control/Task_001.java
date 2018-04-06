@@ -32,10 +32,10 @@ import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
 import com.dwarfeng.projwiz.core.model.eum.ViewConfigEntry;
-import com.dwarfeng.projwiz.core.model.io.ComponentLoader;
-import com.dwarfeng.projwiz.core.model.io.ComponentToolkitLoader;
+import com.dwarfeng.projwiz.core.model.io.ModuleLoader;
+import com.dwarfeng.projwiz.core.model.io.ModuleToolkitLoader;
 import com.dwarfeng.projwiz.core.model.io.ConfigurationLoader;
-import com.dwarfeng.projwiz.core.model.io.IgnoredComponentLoader;
+import com.dwarfeng.projwiz.core.model.io.IgnoredModuleLoader;
 import com.dwarfeng.projwiz.core.model.io.IgnoredConfigurationLoader;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.io.ToolkitPermLoader;
@@ -60,12 +60,12 @@ final class PoseTask extends ProjWizTask {
 	@Override
 	protected void todo() throws Exception {
 		// 定义变量
-		File cmpoent_dir;
-		File[] cmpoent_jars;
+		File module_dir;
+		File[] module_jars;
 		File plugin_dir;
 		File[] plugin_jars;
 		Collection<String> ignoredCfgKeys;
-		Collection<Class<?>> ignoredCmpoentClazzes;
+		Collection<Class<?>> ignoredModuleClazzes;
 		File metaDataFileDir;
 		boolean isTestCase;
 		boolean isForceRestCfg;
@@ -116,25 +116,25 @@ final class PoseTask extends ProjWizTask {
 		loadToolkitPerm();
 
 		// 加载组件-工具包引用模型。
-		loadCmpoentToolkit();
+		loadModuleToolkit();
 
 		// 加载配置忽略清单。
 		ignoredCfgKeys = new HashSet<>();
 		loadCfgIgnore(ignoredCfgKeys);
 
 		// 加载组件忽略清单。
-		ignoredCmpoentClazzes = new HashSet<>();
-		loadCmpoentIgnore(ignoredCmpoentClazzes);
+		ignoredModuleClazzes = new HashSet<>();
+		loadModuleIgnore(ignoredModuleClazzes);
 
 		// 获取元数据目录。
 		metaDataFileDir = new File(projWizard.getToolkit().getProperty(ProjWizProperty.METADATA_PATH));
 		FileUtil.createDirIfNotExists(metaDataFileDir);
 
 		// 加载组件文件夹下jar包。
-		formatInfo(LoggerStringKey.TASK_POSE_13, projWizard.getToolkit().getProperty(ProjWizProperty.COMPONENT_PATH));
-		cmpoent_dir = new File(projWizard.getToolkit().getProperty(ProjWizProperty.COMPONENT_PATH));
-		FileUtil.createDirIfNotExists(cmpoent_dir);
-		cmpoent_jars = FileUtil.listAllFile(cmpoent_dir, file -> {
+		formatInfo(LoggerStringKey.TASK_POSE_13, projWizard.getToolkit().getProperty(ProjWizProperty.MODULE_PATH));
+		module_dir = new File(projWizard.getToolkit().getProperty(ProjWizProperty.MODULE_PATH));
+		FileUtil.createDirIfNotExists(module_dir);
+		module_jars = FileUtil.listAllFile(module_dir, file -> {
 			if (file.getName().endsWith(".jar"))
 				return true;
 			return false;
@@ -151,13 +151,13 @@ final class PoseTask extends ProjWizTask {
 		});
 
 		// 读取组件文件夹下的Jar包。
-		loadJars(cmpoent_jars);
+		loadJars(module_jars);
 
 		// 读取插件文件夹下的Jar包。
 		loadJars(plugin_jars);
 
 		// 解析组件文件夹下的jar包中的配置。
-		loadJarsCfg(cmpoent_jars, ignoredCfgKeys, isForceRestCfg);
+		loadJarsCfg(module_jars, ignoredCfgKeys, isForceRestCfg);
 
 		// 解析插件文件夹下的jar包中的配置。
 		loadJarsCfg(plugin_jars, ignoredCfgKeys, isForceRestCfg);
@@ -166,13 +166,13 @@ final class PoseTask extends ProjWizTask {
 		loadExtraCfg(ignoredCfgKeys, isForceRestCfg);
 
 		// 解析并实例化组件文件夹下的jar包中的组件。
-		loadJarsCmpoent(cmpoent_jars, ignoredCmpoentClazzes, metaDataFileDir);
+		loadJarsModule(module_jars, ignoredModuleClazzes, metaDataFileDir);
 
 		// 解析并实例化插件文件夹下的jar包中的组件。
-		loadJarsCmpoent(plugin_jars, ignoredCmpoentClazzes, metaDataFileDir);
+		loadJarsModule(plugin_jars, ignoredModuleClazzes, metaDataFileDir);
 
 		// 解析并实例化额外组件文件中的组件。
-		loadExtraCmpoent(ignoredCmpoentClazzes, metaDataFileDir);
+		loadExtraModule(ignoredModuleClazzes, metaDataFileDir);
 
 		// 测试情形下并不加载界面，因此没必要加载界面
 		if (!isTestCase) {
@@ -358,15 +358,15 @@ final class PoseTask extends ProjWizTask {
 		loader = null;
 	}
 
-	private void loadCmpoent0(InputStream inputStream, PluginClassLoader pluginClassLoader,
-			Collection<Class<?>> ignoredCmpoentClazzes, File metaDataFileDir) throws IOException {
+	private void loadModule0(InputStream inputStream, PluginClassLoader pluginClassLoader,
+			Collection<Class<?>> ignoredModuleClazzes, File metaDataFileDir) throws IOException {
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
-		ComponentLoader loader = null;
+		ModuleLoader loader = null;
 		try {
-			loader = new ComponentLoader(inputStream, ignoredCmpoentClazzes, pluginClassLoader,
+			loader = new ModuleLoader(inputStream, ignoredModuleClazzes, pluginClassLoader,
 					projWizard.getToolkit().getToolkitPermModel(), projWizard.getToolkit(), metaDataFileDir);
-			eptSet.addAll(loader.countinuousLoad(new CotoPair(projWizard.getToolkit().getComponentModel(),
-					projWizard.getToolkit().getCmpoentToolkitModel())));
+			eptSet.addAll(loader.countinuousLoad(new CotoPair(projWizard.getToolkit().getModuleModel(),
+					projWizard.getToolkit().getModuleToolkitModel())));
 		} finally {
 			if (Objects.nonNull(loader)) {
 				loader.close();
@@ -380,15 +380,15 @@ final class PoseTask extends ProjWizTask {
 		loader = null;
 	}
 
-	private void loadCmpoentIgnore(Collection<Class<?>> ignoredCmpoentClazzes) throws IOException {
+	private void loadModuleIgnore(Collection<Class<?>> ignoredModuleClazzes) throws IOException {
 		info(LoggerStringKey.TASK_POSE_38);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
-		IgnoredComponentLoader loader = null;
+		IgnoredModuleLoader loader = null;
 
 		try {
-			loader = new IgnoredComponentLoader(openResource(ResourceKey.CMPOENT_IGNORE, LoggerStringKey.TASK_POSE_0));
-			eptSet.addAll(loader.countinuousLoad(ignoredCmpoentClazzes));
+			loader = new IgnoredModuleLoader(openResource(ResourceKey.MODULE_IGNORE, LoggerStringKey.TASK_POSE_0));
+			eptSet.addAll(loader.countinuousLoad(ignoredModuleClazzes));
 		} finally {
 			if (Objects.nonNull(loader)) {
 				loader.close();
@@ -408,16 +408,16 @@ final class PoseTask extends ProjWizTask {
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadCmpoentToolkit() throws IOException {
+	private void loadModuleToolkit() throws IOException {
 		info(LoggerStringKey.TASK_POSE_44);
 
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
-		ComponentToolkitLoader loader = null;
+		ModuleToolkitLoader loader = null;
 
 		try {
-			loader = new ComponentToolkitLoader(openResource(ResourceKey.CMPOENT_TOOLKIT, LoggerStringKey.TASK_POSE_0),
+			loader = new ModuleToolkitLoader(openResource(ResourceKey.MODULE_TOOLKIT, LoggerStringKey.TASK_POSE_0),
 					projWizard.getToolkit().getToolkitPermModel(), projWizard.getToolkit());
-			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getCmpoentToolkitModel()));
+			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getModuleToolkitModel()));
 		} finally {
 			if (Objects.nonNull(loader)) {
 				loader.close();
@@ -478,19 +478,19 @@ final class PoseTask extends ProjWizTask {
 	/**
 	 * 解析并实例化额外组件文件中的组件。
 	 * 
-	 * @param ignoredCmpoentClazzes
+	 * @param ignoredModuleClazzes
 	 *            组件的忽略清单。
 	 * @param metaDataFileDir
 	 *            元数据的根目录。
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadExtraCmpoent(Collection<Class<?>> ignoredCmpoentClazzes, File metaDataFileDir)
+	private void loadExtraModule(Collection<Class<?>> ignoredModuleClazzes, File metaDataFileDir)
 			throws IllegalStateException, IOException {
 		info(LoggerStringKey.TASK_POSE_47);
 
-		loadCmpoent0(openResource(ResourceKey.CMPOENT_EXTRA, LoggerStringKey.TASK_POSE_0),
-				projWizard.getToolkit().getPluginClassLoader(), ignoredCmpoentClazzes, metaDataFileDir);
+		loadModule0(openResource(ResourceKey.MODULE_EXTRA, LoggerStringKey.TASK_POSE_0),
+				projWizard.getToolkit().getPluginClassLoader(), ignoredModuleClazzes, metaDataFileDir);
 	}
 
 	/**
@@ -555,14 +555,14 @@ final class PoseTask extends ProjWizTask {
 	 * 
 	 * @param jars
 	 *            指定的jar包组成的数组。
-	 * @param ignoredCmpoentClazzes
+	 * @param ignoredModuleClazzes
 	 *            组件的忽略清单。
 	 * @param metaDataFileDir
 	 *            元数据的根目录。
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadJarsCmpoent(File[] jars, Collection<Class<?>> ignoredCmpoentClazzes, File metaDataFileDir)
+	private void loadJarsModule(File[] jars, Collection<Class<?>> ignoredModuleClazzes, File metaDataFileDir)
 			throws IOException {
 		info(LoggerStringKey.TASK_POSE_40);
 
@@ -572,10 +572,10 @@ final class PoseTask extends ProjWizTask {
 			JarFile jarFile = null;
 			try {
 				jarFile = new JarFile(jar);
-				ZipEntry entry = jarFile.getEntry(Constants.CMPOENT_LIST_PATH);
+				ZipEntry entry = jarFile.getEntry(Constants.MODULE_LIST_PATH);
 				if (Objects.nonNull(entry)) {
-					loadCmpoent0(jarFile.getInputStream(entry), projWizard.getToolkit().getPluginClassLoader(),
-							ignoredCmpoentClazzes, metaDataFileDir);
+					loadModule0(jarFile.getInputStream(entry), projWizard.getToolkit().getPluginClassLoader(),
+							ignoredModuleClazzes, metaDataFileDir);
 				}
 			} catch (IllegalStateException | MalformedURLException e) {
 				warn(LoggerStringKey.TASK_POSE_24, e);

@@ -2,14 +2,14 @@ package com.dwarfeng.projwiz.core.view.struct;
 
 import com.dwarfeng.dutil.basic.prog.Buildable;
 import com.dwarfeng.dutil.basic.prog.Filter;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.view.eum.ChooserDialogType;
 
 /**
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public final class ComponentChooserSetting {
+public final class ModuleChooserSetting {
 
 	/**
 	 * 组件选择设置构造器。
@@ -17,19 +17,19 @@ public final class ComponentChooserSetting {
 	 * @author DwArFeng
 	 * @since 0.0.1-alpha
 	 */
-	public final static class Builder implements Buildable<ComponentChooserSetting> {
+	public final static class Builder implements Buildable<ModuleChooserSetting> {
 
 		private boolean controlButtonsAreShown;
 		private ChooserDialogType chooserDialogType;
-		private Filter<Component> componentFilter;
+		private Filter<Module> moduleFilter;
 		private boolean multiSelectionEnabled;
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public ComponentChooserSetting build() {
-			return new ComponentChooserSetting(controlButtonsAreShown, chooserDialogType, componentFilter,
+		public ModuleChooserSetting build() {
+			return new ModuleChooserSetting(controlButtonsAreShown, chooserDialogType, moduleFilter,
 					multiSelectionEnabled);
 		}
 
@@ -50,11 +50,11 @@ public final class ComponentChooserSetting {
 		/**
 		 * 获取当前的组件过滤器。
 		 * 
-		 * @param componentFilter
+		 * @param moduleFilter
 		 *            指定的组件过滤器。
 		 */
-		public Builder setComponentFilter(Filter<Component> componentFilter) {
-			this.componentFilter = componentFilter;
+		public Builder setModuleFilter(Filter<Module> moduleFilter) {
+			this.moduleFilter = moduleFilter;
 			return this;
 		}
 
@@ -86,14 +86,14 @@ public final class ComponentChooserSetting {
 
 	private final boolean controlButtonsAreShown;
 	private final ChooserDialogType chooserDialogType;
-	private final Filter<Component> componentFilter;
+	private final Filter<Module> moduleFilter;
 	private final boolean multiSelectionEnabled;
 
-	private ComponentChooserSetting(boolean controlButtonsAreShown, ChooserDialogType chooserDialogType,
-			Filter<Component> componentFilter, boolean multiSelectionEnabled) {
+	private ModuleChooserSetting(boolean controlButtonsAreShown, ChooserDialogType chooserDialogType,
+			Filter<Module> moduleFilter, boolean multiSelectionEnabled) {
 		this.controlButtonsAreShown = controlButtonsAreShown;
 		this.chooserDialogType = chooserDialogType;
-		this.componentFilter = componentFilter;
+		this.moduleFilter = moduleFilter;
 		this.multiSelectionEnabled = multiSelectionEnabled;
 	}
 
@@ -108,13 +108,13 @@ public final class ComponentChooserSetting {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ComponentChooserSetting other = (ComponentChooserSetting) obj;
+		ModuleChooserSetting other = (ModuleChooserSetting) obj;
 		if (chooserDialogType != other.chooserDialogType)
 			return false;
-		if (componentFilter == null) {
-			if (other.componentFilter != null)
+		if (moduleFilter == null) {
+			if (other.moduleFilter != null)
 				return false;
-		} else if (!componentFilter.equals(other.componentFilter))
+		} else if (!moduleFilter.equals(other.moduleFilter))
 			return false;
 		if (controlButtonsAreShown != other.controlButtonsAreShown)
 			return false;
@@ -137,8 +137,8 @@ public final class ComponentChooserSetting {
 	 * 
 	 * @return 组件过滤器。
 	 */
-	public Filter<Component> getComponentFilter() {
-		return componentFilter;
+	public Filter<Module> getModuleFilter() {
+		return moduleFilter;
 	}
 
 	/**
@@ -149,7 +149,7 @@ public final class ComponentChooserSetting {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((chooserDialogType == null) ? 0 : chooserDialogType.hashCode());
-		result = prime * result + ((componentFilter == null) ? 0 : componentFilter.hashCode());
+		result = prime * result + ((moduleFilter == null) ? 0 : moduleFilter.hashCode());
 		result = prime * result + (controlButtonsAreShown ? 1231 : 1237);
 		result = prime * result + (multiSelectionEnabled ? 1231 : 1237);
 		return result;
@@ -178,8 +178,8 @@ public final class ComponentChooserSetting {
 	 */
 	@Override
 	public String toString() {
-		return "ComponentChooserSetting [controlButtonsAreShown=" + controlButtonsAreShown + ", chooserDialogType="
-				+ chooserDialogType + ", componentFilter=" + componentFilter + ", multiSelectionEnabled="
+		return "ModuleChooserSetting [controlButtonsAreShown=" + controlButtonsAreShown + ", chooserDialogType="
+				+ chooserDialogType + ", moduleFilter=" + moduleFilter + ", multiSelectionEnabled="
 				+ multiSelectionEnabled + "]";
 	}
 

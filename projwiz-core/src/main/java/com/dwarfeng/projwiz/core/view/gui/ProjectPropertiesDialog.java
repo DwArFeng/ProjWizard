@@ -31,7 +31,7 @@ import javax.swing.border.SoftBevelBorder;
 
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.obv.ProjectAdapter;
@@ -61,7 +61,7 @@ public class ProjectPropertiesDialog extends ProjWizDialog {
 	private final JPanel fromProjectProcessor;
 
 	private Project project;
-	private SyncComponentModel componentModel;
+	private SyncModuleModel moduleModel;
 
 	private final Lock disposeLock = new ReentrantLock();
 	private final Condition disposeCondition = disposeLock.newCondition();
@@ -117,11 +117,11 @@ public class ProjectPropertiesDialog extends ProjWizDialog {
 	 * @param guiManager
 	 * @param i18nHandler
 	 * @param owner
-	 * @param componentModel
+	 * @param moduleModel
 	 * @param project
 	 */
 	public ProjectPropertiesDialog(GuiManager guiManager, I18nHandler i18nHandler, Window owner,
-			SyncComponentModel componentModel, Project project) {
+			SyncModuleModel moduleModel, Project project) {
 		super(guiManager, i18nHandler, owner);
 
 		addWindowListener(new WindowAdapter() {
@@ -298,11 +298,20 @@ public class ProjectPropertiesDialog extends ProjWizDialog {
 			project.addObverser(projectObverser);
 		}
 
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 		this.project = project;
 
 		syncModel();
 
+	}
+
+	/**
+	 * 获取当前对话框的组件模型。
+	 * 
+	 * @return 当前对话框的组件模型。
+	 */
+	public SyncModuleModel getModuleModel() {
+		return moduleModel;
 	}
 
 	/**
@@ -315,12 +324,14 @@ public class ProjectPropertiesDialog extends ProjWizDialog {
 	}
 
 	/**
-	 * 获取当前对话框的组件模型。
+	 * 设置当前对话框的组件模型。
 	 * 
-	 * @return 当前对话框的组件模型。
+	 * @param moduleModel
+	 *            指定的组件模型。
 	 */
-	public SyncComponentModel getComponentModel() {
-		return componentModel;
+	public void setModuleModel(SyncModuleModel moduleModel) {
+		this.moduleModel = moduleModel;
+		syncModel();
 	}
 
 	/**
@@ -340,17 +351,6 @@ public class ProjectPropertiesDialog extends ProjWizDialog {
 
 		this.project = project;
 
-		syncModel();
-	}
-
-	/**
-	 * 设置当前对话框的组件模型。
-	 * 
-	 * @param componentModel
-	 *            指定的组件模型。
-	 */
-	public void setComponentModel(SyncComponentModel componentModel) {
-		this.componentModel = componentModel;
 		syncModel();
 	}
 
@@ -433,12 +433,12 @@ public class ProjectPropertiesDialog extends ProjWizDialog {
 			project.getLock().readLock().unlock();
 		}
 
-		if (Objects.isNull(componentModel) || Objects.isNull(project))
+		if (Objects.isNull(moduleModel) || Objects.isNull(project))
 			return;
 
-		componentModel.getLock().readLock().lock();
+		moduleModel.getLock().readLock().lock();
 		try {
-			ProjectProcessor processor = componentModel.get(project.getProcessorClass());
+			ProjectProcessor processor = moduleModel.get(project.getProcessorClass());
 			if (Objects.nonNull(processor) && Objects.nonNull((propUI = processor.getProjectPropUI(project)))) {
 				Component component = null;
 				if (Objects.nonNull(component = propUI.getComponent())) {
@@ -449,7 +449,7 @@ public class ProjectPropertiesDialog extends ProjWizDialog {
 			}
 
 		} finally {
-			componentModel.getLock().readLock().unlock();
+			moduleModel.getLock().readLock().unlock();
 		}
 
 	}

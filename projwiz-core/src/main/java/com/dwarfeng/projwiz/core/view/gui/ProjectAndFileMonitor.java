@@ -36,7 +36,7 @@ import com.dwarfeng.dutil.basic.gui.swing.JAdjustableBorderPanel;
 import com.dwarfeng.dutil.basic.gui.swing.MuaListModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.struct.File;
@@ -52,8 +52,8 @@ import com.dwarfeng.projwiz.core.view.struct.GuiManager;
  */
 public class ProjectAndFileMonitor extends ProjWizDialog {
 
-	private static final long serialVersionUID = 776225679594600238L;
-
+	private static final long serialVersionUID = -5248687618763902919L;
+	
 	private final JLabel label_1;
 	private final JLabel label_2;
 	private final JLabel label_3;
@@ -67,7 +67,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 	private SyncReferenceModel<Project> focusProjectModel;
 	private SyncSetModel<File> focusFileModel;
 	private SyncListModel<Project> holdProjectModel;
-	private SyncComponentModel componentModel;
+	private SyncModuleModel moduleModel;
 
 	// 将文件与名称存放在映射中，以向渲染器提供文件的名称。
 	private final Map<File, Project> fileProjectMap = new HashMap<>();
@@ -87,8 +87,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 				return this;
 			setText(project.getName());
 			Image image = null;
-			if (Objects.nonNull(componentModel)) {
-				ProjectProcessor processor = componentModel.get(project.getProcessorClass());
+			if (Objects.nonNull(moduleModel)) {
+				ProjectProcessor processor = moduleModel.get(project.getProcessorClass());
 				if (Objects.nonNull(processor)) {
 					image = processor.getProjectIcon(project);
 				}
@@ -115,8 +115,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 				return this;
 			setText(fileProjectMap.get(file).getFileName(file));
 			Image image = null;
-			if (Objects.nonNull(componentModel)) {
-				FileProcessor processor = componentModel.get(file.getProcessorClass());
+			if (Objects.nonNull(moduleModel)) {
+				FileProcessor processor = moduleModel.get(file.getProcessorClass());
 				if (Objects.nonNull(processor)) {
 					image = processor.getFileIcon(file);
 				}
@@ -153,8 +153,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 					label_6.setIcon(null);
 					label_6.setText("null");
 				} else {
-					FileProcessor processor = Objects.isNull(componentModel) ? null
-							: componentModel.get(newValue.getProcessorClass());
+					FileProcessor processor = Objects.isNull(moduleModel) ? null
+							: moduleModel.get(newValue.getProcessorClass());
 					Image image = Objects.isNull(processor) ? null : processor.getFileIcon(newValue);
 					if (Objects.isNull(image)) {
 						label_6.setIcon(new ImageIcon(
@@ -224,8 +224,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 					label_5.setIcon(null);
 					label_5.setText("null");
 				} else {
-					ProjectProcessor processor = Objects.isNull(componentModel) ? null
-							: componentModel.get(newValue.getProcessorClass());
+					ProjectProcessor processor = Objects.isNull(moduleModel) ? null
+							: moduleModel.get(newValue.getProcessorClass());
 					Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(newValue);
 					if (Objects.isNull(image)) {
 						label_5.setIcon(new ImageIcon(
@@ -324,8 +324,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 	 */
 	public ProjectAndFileMonitor(GuiManager guiManager, I18nHandler i18nHandler,
 			SyncReferenceModel<File> anchorFileModel, SyncReferenceModel<Project> focusProjectModel,
-			SyncSetModel<File> focusFileModel, SyncListModel<Project> holdProjectModel,
-			SyncComponentModel componentModel) {
+			SyncSetModel<File> focusFileModel, SyncListModel<Project> holdProjectModel, SyncModuleModel moduleModel) {
 		super(guiManager, i18nHandler);
 
 		setAlwaysOnTop(true);
@@ -431,11 +430,11 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 		this.focusProjectModel = focusProjectModel;
 		this.focusFileModel = focusFileModel;
 		this.holdProjectModel = holdProjectModel;
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 
 		// TODO 此处的处理不是特别好，有几个步骤是重复的。
 		syncOpenedAndFocusModel();
-		syncComponentModel();
+		syncModuleModel();
 	}
 
 	/**
@@ -467,15 +466,6 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 	}
 
 	/**
-	 * 获取面板的组件模型。
-	 * 
-	 * @return 面板的组件模型。
-	 */
-	public SyncComponentModel getComponentModel() {
-		return componentModel;
-	}
-
-	/**
 	 * @return the focusFileModel
 	 */
 	public SyncSetModel<File> getFocusFileModel() {
@@ -497,6 +487,15 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 	}
 
 	/**
+	 * 获取面板的组件模型。
+	 * 
+	 * @return 面板的组件模型。
+	 */
+	public SyncModuleModel getModuleModel() {
+		return moduleModel;
+	}
+
+	/**
 	 * @param anchorFileModel
 	 *            the anchorFileModel to set
 	 */
@@ -511,17 +510,6 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 
 		this.anchorFileModel = anchorFileModel;
 		syncAnchorFileModel();
-	}
-
-	/**
-	 * 设置面板的组件模型。
-	 * 
-	 * @param componentModel
-	 *            指定的面板组件模型。
-	 */
-	public void setComponentModel(SyncComponentModel componentModel) {
-		this.componentModel = componentModel;
-		syncComponentModel();
 	}
 
 	/**
@@ -576,6 +564,17 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 	}
 
 	/**
+	 * 设置面板的组件模型。
+	 * 
+	 * @param moduleModel
+	 *            指定的面板组件模型。
+	 */
+	public void setModuleModel(SyncModuleModel moduleModel) {
+		this.moduleModel = moduleModel;
+		syncModuleModel();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -595,7 +594,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 			return;
 		}
 
-		if (Objects.isNull(componentModel)) {
+		if (Objects.isNull(moduleModel)) {
 			return;
 		}
 
@@ -604,8 +603,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 		try {
 			File anchorFile = anchorFileModel.get();
 			if (Objects.nonNull(anchorFile)) {
-				FileProcessor processor = Objects.isNull(componentModel) ? null
-						: componentModel.get(anchorFile.getProcessorClass());
+				FileProcessor processor = Objects.isNull(moduleModel) ? null
+						: moduleModel.get(anchorFile.getProcessorClass());
 				Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFile);
 				if (Objects.isNull(image)) {
 					label_6.setIcon(new ImageIcon(
@@ -618,11 +617,6 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 		} finally {
 			anchorFileModel.getLock().readLock().unlock();
 		}
-	}
-
-	private void syncComponentModel() {
-		syncFileProcessor();
-		syncProjectProcessor();
 	}
 
 	private void syncFileProcessor() {
@@ -640,17 +634,17 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 			return;
 		}
 
-		if (Objects.isNull(componentModel)) {
+		if (Objects.isNull(moduleModel)) {
 			return;
 		}
 
 		// TODO 此处对于projectProcessorModel的处理不是太好。
-		componentModel.getLock().readLock().lock();
+		moduleModel.getLock().readLock().lock();
 		try {
 			projectList.repaint();
 
-			FileProcessor processor = Objects.isNull(componentModel) ? null
-					: componentModel.get(anchorFile.getProcessorClass());
+			FileProcessor processor = Objects.isNull(moduleModel) ? null
+					: moduleModel.get(anchorFile.getProcessorClass());
 			Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFile);
 			if (Objects.isNull(image)) {
 				label_6.setIcon(
@@ -660,7 +654,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 			}
 			label_6.setText(fileProjectMap.get(anchorFile).getFileName(anchorFile));
 		} finally {
-			componentModel.getLock().readLock().unlock();
+			moduleModel.getLock().readLock().unlock();
 		}
 	}
 
@@ -689,16 +683,16 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 			return;
 		}
 
-		if (Objects.isNull(componentModel)) {
+		if (Objects.isNull(moduleModel)) {
 			return;
 		}
 
 		focusProjectModel.getLock().readLock().lock();
-		componentModel.getLock().readLock().lock();
+		moduleModel.getLock().readLock().lock();
 		try {
 			if (Objects.nonNull(focusProjectModel.get())) {
-				ProjectProcessor processor = Objects.isNull(componentModel) ? null
-						: componentModel.get(focusProjectModel.get().getProcessorClass());
+				ProjectProcessor processor = Objects.isNull(moduleModel) ? null
+						: moduleModel.get(focusProjectModel.get().getProcessorClass());
 				Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(focusProjectModel.get());
 				if (Objects.isNull(image)) {
 					label_5.setIcon(new ImageIcon(
@@ -709,7 +703,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 				label_5.setText(focusProjectModel.get().getName());
 			}
 		} finally {
-			componentModel.getLock().readLock().unlock();
+			moduleModel.getLock().readLock().unlock();
 			focusProjectModel.getLock().readLock().unlock();
 		}
 	}
@@ -735,6 +729,11 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 		}
 	}
 
+	private void syncModuleModel() {
+		syncFileProcessor();
+		syncProjectProcessor();
+	}
+
 	private void syncOpenedAndFocusModel() {
 		focusFiles.clear();
 		holdProjects.clear();
@@ -756,7 +755,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 		if (Objects.isNull(holdProjectModel)) {
 			return;
 		}
-		if (Objects.isNull(componentModel)) {
+		if (Objects.isNull(moduleModel)) {
 			return;
 		}
 
@@ -764,13 +763,13 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 		focusProjectModel.getLock().readLock().lock();
 		focusFileModel.getLock().readLock().lock();
 		holdProjectModel.getLock().readLock().lock();
-		componentModel.getLock().readLock().lock();
+		moduleModel.getLock().readLock().lock();
 		try {
 
 			Project focusProject = focusProjectModel.get();
 			if (Objects.nonNull(focusProject)) {
-				ProjectProcessor processor = Objects.isNull(componentModel) ? null
-						: componentModel.get(focusProject.getProcessorClass());
+				ProjectProcessor processor = Objects.isNull(moduleModel) ? null
+						: moduleModel.get(focusProject.getProcessorClass());
 				Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(focusProject);
 				if (Objects.isNull(image)) {
 					label_5.setIcon(new ImageIcon(
@@ -783,8 +782,8 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 
 			File anchorFile = anchorFileModel.get();
 			if (Objects.nonNull(anchorFile)) {
-				FileProcessor processor = Objects.isNull(componentModel) ? null
-						: componentModel.get(anchorFile.getProcessorClass());
+				FileProcessor processor = Objects.isNull(moduleModel) ? null
+						: moduleModel.get(anchorFile.getProcessorClass());
 				Image image = Objects.isNull(processor) ? null : processor.getFileIcon(anchorFile);
 				if (Objects.isNull(image)) {
 					label_6.setIcon(new ImageIcon(
@@ -808,7 +807,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 			}
 
 		} finally {
-			componentModel.getLock().readLock().unlock();
+			moduleModel.getLock().readLock().unlock();
 			holdProjectModel.getLock().readLock().unlock();
 			focusFileModel.getLock().readLock().unlock();
 			focusProjectModel.getLock().readLock().unlock();
@@ -830,16 +829,16 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 			return;
 		}
 
-		if (Objects.isNull(componentModel)) {
+		if (Objects.isNull(moduleModel)) {
 			return;
 		}
 
-		componentModel.getLock().readLock().lock();
+		moduleModel.getLock().readLock().lock();
 		try {
 			projectList.repaint();
 
-			ProjectProcessor processor = Objects.isNull(componentModel) ? null
-					: componentModel.get(focusProjectModel.get().getProcessorClass());
+			ProjectProcessor processor = Objects.isNull(moduleModel) ? null
+					: moduleModel.get(focusProjectModel.get().getProcessorClass());
 			Image image = Objects.isNull(processor) ? null : processor.getProjectIcon(focusProjectModel.get());
 			if (Objects.isNull(image)) {
 				label_5.setIcon(
@@ -849,7 +848,7 @@ public class ProjectAndFileMonitor extends ProjWizDialog {
 			}
 			label_5.setText(focusProjectModel.get().getName());
 		} finally {
-			componentModel.getLock().readLock().unlock();
+			moduleModel.getLock().readLock().unlock();
 		}
 
 	}

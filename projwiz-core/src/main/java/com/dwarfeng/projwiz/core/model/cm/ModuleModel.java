@@ -3,7 +3,7 @@ package com.dwarfeng.projwiz.core.model.cm;
 import java.util.Collection;
 
 import com.dwarfeng.dutil.basic.cna.model.SetModel;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 
 /**
  * 组件模型。
@@ -11,7 +11,7 @@ import com.dwarfeng.projwiz.core.model.struct.Component;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public interface ComponentModel extends SetModel<Component> {
+public interface ModuleModel extends SetModel<Module> {
 
 	/**
 	 * 获取指定类对应的组件。
@@ -23,7 +23,7 @@ public interface ComponentModel extends SetModel<Component> {
 	 *            指定的类。
 	 * @return 指定的类对应的组件。
 	 */
-	public <T extends Component> T get(Class<T> clazz);
+	public <T extends Module> T get(Class<T> clazz);
 
 	/**
 	 * 获取属于指定类的所有组件。
@@ -35,7 +35,7 @@ public interface ComponentModel extends SetModel<Component> {
 	 *            指定的类。
 	 * @return 属于指定类的所有组件组成的集合。
 	 */
-	public <T extends Component> Collection<T> getSubs(Class<T> clazz);
+	public <T extends Module> Collection<T> getSubs(Class<T> clazz);
 
 	/**
 	 * 判断模型中是否含有类为指定类的组件。

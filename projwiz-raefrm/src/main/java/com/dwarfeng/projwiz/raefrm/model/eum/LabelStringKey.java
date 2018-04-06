@@ -12,9 +12,9 @@ import com.dwarfeng.dutil.basic.str.Name;
 public enum LabelStringKey implements Name {
 
 	/** 组件的名称。 */
-	RAEFRM_CMPOENT_NAME(new DefaultName("raefrm.cmpoent.name")),
+	RAEFRM_MODULE_NAME(new DefaultName("raefrm.module.name")),
 	/** 组件的描述。 */
-	RAEFRM_CMPOENT_DESCRIPTION(new DefaultName("raefrm.cmpoent.description")),
+	RAEFRM_MODULE_DESCRIPTION(new DefaultName("raefrm.module.description")),
 
 	;
 

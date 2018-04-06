@@ -9,13 +9,13 @@ import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.view.struct.ComponentChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
 
 final class SaveAsFocusProjectTask extends ProjWizTask {
@@ -38,7 +38,7 @@ final class SaveAsFocusProjectTask extends ProjWizTask {
 		// 选择指定的工程处理器。
 		boolean emptyFlag = true;
 
-		for (ProjectProcessor processor : projWizard.getToolkit().getComponentModel().getSubs(ProjectProcessor.class)) {
+		for (ProjectProcessor processor : projWizard.getToolkit().getModuleModel().getSubs(ProjectProcessor.class)) {
 			if (processor.isSaveProjectSupported()) {
 				emptyFlag = false;
 				break;
@@ -52,17 +52,17 @@ final class SaveAsFocusProjectTask extends ProjWizTask {
 							.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
 		}
 
-		Component[] components = projWizard.getToolkit().chooseComponent(
-				new ComponentChooserSetting.Builder().setMultiSelectionEnabled(false).setComponentFilter(component -> {
-					if (!(component instanceof ProjectProcessor)) {
+		Module[] modules = projWizard.getToolkit().chooseModule(
+				new ModuleChooserSetting.Builder().setMultiSelectionEnabled(false).setModuleFilter(module -> {
+					if (!(module instanceof ProjectProcessor)) {
 						return false;
 					}
-					return ((ProjectProcessor) component).isSaveProjectSupported();
+					return ((ProjectProcessor) module).isSaveProjectSupported();
 				}).build());
-		if (components.length == 0) {
+		if (modules.length == 0) {
 			return;
 		}
-		ProjectProcessor processor = (ProjectProcessor) components[0];
+		ProjectProcessor processor = (ProjectProcessor) modules[0];
 
 		final Project focusProject;
 

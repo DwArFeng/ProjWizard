@@ -6,6 +6,6 @@ package com.dwarfeng.projwiz.raefrm.model.struct;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public interface FileProcToolkit extends ComponentToolkit {
+public interface FileProcToolkit extends ModuleToolkit {
 
 }

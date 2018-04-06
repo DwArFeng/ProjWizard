@@ -16,13 +16,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import com.dwarfeng.dutil.basic.cna.CollectionUtil;
 import com.dwarfeng.dutil.basic.cna.model.obv.MapObverser;
 import com.dwarfeng.dutil.basic.cna.model.obv.SetObverser;
-import com.dwarfeng.projwiz.core.model.cm.ComponentModel;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
 
 /**
@@ -33,13 +33,13 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit.Method;
  */
 public final class ModelUtil {
 
-	private static final class SyncComponentModelImpl implements SyncComponentModel {
+	private static final class SyncModuleModelImpl implements SyncModuleModel {
 
 		private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-		private final ComponentModel delegate;
+		private final ModuleModel delegate;
 
-		private SyncComponentModelImpl(ComponentModel delegate) {
+		private SyncModuleModelImpl(ModuleModel delegate) {
 			this.delegate = delegate;
 		}
 
@@ -47,7 +47,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean add(Component e) {
+		public boolean add(Module e) {
 			lock.writeLock().lock();
 			try {
 				return delegate.add(e);
@@ -60,7 +60,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean addAll(Collection<? extends Component> c) {
+		public boolean addAll(Collection<? extends Module> c) {
 			lock.writeLock().lock();
 			try {
 				return delegate.addAll(c);
@@ -73,7 +73,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean addObverser(SetObverser<Component> obverser) {
+		public boolean addObverser(SetObverser<Module> obverser) {
 			lock.writeLock().lock();
 			try {
 				return delegate.addObverser(obverser);
@@ -182,7 +182,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public <T extends Component> T get(Class<T> clazz) {
+		public <T extends Module> T get(Class<T> clazz) {
 			lock.readLock().lock();
 			try {
 				return delegate.get(clazz);
@@ -203,7 +203,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Set<SetObverser<Component>> getObversers() {
+		public Set<SetObverser<Module>> getObversers() {
 			lock.readLock().lock();
 			try {
 				return delegate.getObversers();
@@ -216,7 +216,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public <T extends Component> Collection<T> getSubs(Class<T> clazz) {
+		public <T extends Module> Collection<T> getSubs(Class<T> clazz) {
 			lock.readLock().lock();
 			try {
 				return delegate.getSubs(clazz);
@@ -256,7 +256,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Iterator<Component> iterator() {
+		public Iterator<Module> iterator() {
 			lock.readLock().lock();
 			try {
 				return delegate.iterator();
@@ -321,7 +321,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean removeObverser(SetObverser<Component> obverser) {
+		public boolean removeObverser(SetObverser<Module> obverser) {
 			lock.writeLock().lock();
 			try {
 				return delegate.removeObverser(obverser);
@@ -721,11 +721,11 @@ public final class ModelUtil {
 
 	}
 
-	private static final class UnmodifiableComponentModel implements ComponentModel {
+	private static final class UnmodifiableModuleModel implements ModuleModel {
 
-		private final ComponentModel delegate;
+		private final ModuleModel delegate;
 
-		public UnmodifiableComponentModel(ComponentModel delegate) {
+		public UnmodifiableModuleModel(ModuleModel delegate) {
 			this.delegate = delegate;
 		}
 
@@ -733,7 +733,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean add(Component e) {
+		public boolean add(Module e) {
 			throw new UnsupportedOperationException("add");
 		}
 
@@ -741,7 +741,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean addAll(Collection<? extends Component> c) {
+		public boolean addAll(Collection<? extends Module> c) {
 			throw new UnsupportedOperationException("addAll");
 		}
 
@@ -749,7 +749,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean addObverser(SetObverser<Component> obverser) {
+		public boolean addObverser(SetObverser<Module> obverser) {
 			throw new UnsupportedOperationException("addObverser");
 		}
 
@@ -818,7 +818,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public <T extends Component> T get(Class<T> clazz) {
+		public <T extends Module> T get(Class<T> clazz) {
 			return delegate.get(clazz);
 		}
 
@@ -826,7 +826,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Set<SetObverser<Component>> getObversers() {
+		public Set<SetObverser<Module>> getObversers() {
 			return delegate.getObversers();
 		}
 
@@ -834,7 +834,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public <T extends Component> Collection<T> getSubs(Class<T> clazz) {
+		public <T extends Module> Collection<T> getSubs(Class<T> clazz) {
 			return delegate.getSubs(clazz);
 		}
 
@@ -858,7 +858,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Iterator<Component> iterator() {
+		public Iterator<Module> iterator() {
 			return CollectionUtil.unmodifiableIterator(delegate.iterator());
 		}
 
@@ -898,7 +898,7 @@ public final class ModelUtil {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean removeObverser(SetObverser<Component> obverser) {
+		public boolean removeObverser(SetObverser<Module> obverser) {
 			throw new UnsupportedOperationException("removeObverser");
 		}
 
@@ -1496,15 +1496,15 @@ public final class ModelUtil {
 	/**
 	 * 根据指定的组件模型生成一个线程安全的组件模型。
 	 * 
-	 * @param componentModel
+	 * @param moduleModel
 	 *            指定的组件模型。
 	 * @return 由指定的组件模型生成的线程安全的组件模型。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public static SyncComponentModel syncComponentModel(ComponentModel componentModel) {
-		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
-		return new SyncComponentModelImpl(componentModel);
+	public static SyncModuleModel syncModuleModel(ModuleModel moduleModel) {
+		Objects.requireNonNull(moduleModel, "入口参数 moduleModel 不能为 null。");
+		return new SyncModuleModelImpl(moduleModel);
 	}
 
 	/**
@@ -1536,15 +1536,15 @@ public final class ModelUtil {
 	/**
 	 * 根据指定的组件模型生成一个不可编辑的组件模型。
 	 * 
-	 * @param componentModel
+	 * @param moduleModel
 	 *            指定的组件模型。
 	 * @return 由指定的组件模型生成的不可编辑的组件模型。
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	public static ComponentModel unmodifiableComponentModel(ComponentModel componentModel) {
-		Objects.requireNonNull(componentModel, "入口参数 componentModel 不能为 null。");
-		return new UnmodifiableComponentModel(componentModel);
+	public static ModuleModel unmodifiableModuleModel(ModuleModel moduleModel) {
+		Objects.requireNonNull(moduleModel, "入口参数 moduleModel 不能为 null。");
+		return new UnmodifiableModuleModel(moduleModel);
 	}
 
 	/**

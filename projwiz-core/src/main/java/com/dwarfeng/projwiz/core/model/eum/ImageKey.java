@@ -58,7 +58,7 @@ public enum ImageKey implements Name {
 	/** 主页 */
 	FRONTPAGE("frontpage.png"),
 	/** 组件 */
-	COMPONENT("component.png"),;
+	MODULE("module.png"),;
 
 	private String name;
 

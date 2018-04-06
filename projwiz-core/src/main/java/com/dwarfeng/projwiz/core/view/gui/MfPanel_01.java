@@ -28,7 +28,7 @@ import com.dwarfeng.dutil.basic.gui.awt.ImageSize;
 import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
@@ -44,7 +44,7 @@ class MfPanel_01 extends ProjWizPanel {
 	private static final String DF_FOCUSPROJECTMODEL_FIRECHANGED = "E";
 	private static final String DF_FOCUSPROJECTMODEL_FIRECLEARED = "F";
 
-	private SyncComponentModel componentModel;
+	private SyncModuleModel moduleModel;
 	private SyncReferenceModel<Project> focusProjectModel;
 	private SyncListModel<Project> holdProjectModel;
 	private final JComboBox<Project> comboBox;
@@ -64,8 +64,8 @@ class MfPanel_01 extends ProjWizPanel {
 				return this;
 			setText(project.getName());
 			Image image = null;
-			if (Objects.nonNull(componentModel)) {
-				ProjectProcessor processor = componentModel.get(project.getProcessorClass());
+			if (Objects.nonNull(moduleModel)) {
+				ProjectProcessor processor = moduleModel.get(project.getProcessorClass());
 				if (Objects.nonNull(processor)) {
 					image = processor.getProjectIcon(project);
 				}
@@ -245,10 +245,10 @@ class MfPanel_01 extends ProjWizPanel {
 	 * @param i18nHandler
 	 * @param focusProjectModel
 	 * @param holdProjectModel
-	 * @param componentModel
+	 * @param moduleModel
 	 */
 	public MfPanel_01(GuiManager guiManager, I18nHandler i18nHandler, SyncReferenceModel<Project> focusProjectModel,
-			SyncListModel<Project> holdProjectModel, SyncComponentModel componentModel) {
+			SyncListModel<Project> holdProjectModel, SyncModuleModel moduleModel) {
 		super(guiManager, i18nHandler);
 
 		setLayout(new BorderLayout(0, 0));
@@ -290,10 +290,10 @@ class MfPanel_01 extends ProjWizPanel {
 
 		this.focusProjectModel = focusProjectModel;
 		this.holdProjectModel = holdProjectModel;
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 
 		syncProjectModel();
-		syncComponentModel();
+		syncModuleModel();
 
 	}
 
@@ -328,10 +328,10 @@ class MfPanel_01 extends ProjWizPanel {
 	/**
 	 * 获取该面板的组件处理器模型。
 	 * 
-	 * @return the componentModel 该面板的组件处理器模型。
+	 * @return the moduleModel 该面板的组件处理器模型。
 	 */
-	public SyncComponentModel getComponentModel() {
-		return componentModel;
+	public SyncModuleModel getModuleModel() {
+		return moduleModel;
 	}
 
 	/**
@@ -354,9 +354,9 @@ class MfPanel_01 extends ProjWizPanel {
 	 * @param projectProcessorModel
 	 *            该面板的组件处理器模型。
 	 */
-	public void setComponentModel(SyncComponentModel componentModel) {
-		this.componentModel = componentModel;
-		syncComponentModel();
+	public void setModuleModel(SyncModuleModel moduleModel) {
+		this.moduleModel = moduleModel;
+		syncModuleModel();
 	}
 
 	/**
@@ -415,7 +415,7 @@ class MfPanel_01 extends ProjWizPanel {
 		}
 	}
 
-	private void syncComponentModel() {
+	private void syncModuleModel() {
 		adjustFlagLock.lock();
 		try {
 			adjustFlag = true;

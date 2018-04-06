@@ -37,28 +37,28 @@ import com.dwarfeng.dutil.basic.gui.swing.MuaListModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.prog.Filter;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
-import com.dwarfeng.projwiz.core.model.struct.Component;
-import com.dwarfeng.projwiz.core.model.struct.ComponentComparator;
+import com.dwarfeng.projwiz.core.model.struct.Module;
+import com.dwarfeng.projwiz.core.model.struct.ModuleComparator;
 import com.dwarfeng.projwiz.core.view.eum.ChooseOption;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.JListMouseListener4Selection;
 import com.dwarfeng.projwiz.core.view.struct.JListMouseMotionListener4Selection;
 
-public final class ComponentChooser extends ProjWizChooser {
+public final class ModuleChooser extends ProjWizChooser {
 
 	private final JTextArea textArea;
-	private final JList<Component> componentList;
+	private final JList<Module> moduleList;
 
-	private SyncComponentModel componentModel;
+	private SyncModuleModel moduleModel;
 
-	private final ReferenceModel<Component> selectedComponent = new DefaultReferenceModel<>();
-	private final List<Component> selectedComponents = new ArrayList<>();
-	private final ListSelectionModel componentListSelectionModel = new DefaultListSelectionModel();
+	private final ReferenceModel<Module> selectedModule = new DefaultReferenceModel<>();
+	private final List<Module> selectedModules = new ArrayList<>();
+	private final ListSelectionModel moduleListSelectionModel = new DefaultListSelectionModel();
 
-	private final MuaListModel<Component> componentListModel = new MuaListModel<>();
-	private final ListCellRenderer<Object> componentListRenderer = new DefaultListCellRenderer() {
+	private final MuaListModel<Module> moduleListModel = new MuaListModel<>();
+	private final ListCellRenderer<Object> moduleListRenderer = new DefaultListCellRenderer() {
 
 		@Override
 		public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index,
@@ -70,25 +70,25 @@ public final class ComponentChooser extends ProjWizChooser {
 			setVerticalTextPosition(JLabel.BOTTOM);
 
 			setText(null);
-			if (Objects.nonNull(((Component) value).getIcon())) {
-				setIcon(new ImageIcon(ImageUtil.scaleImage(((Component) value).getIcon(), ImageSize.ICON_MEDIUM)));
+			if (Objects.nonNull(((Module) value).getIcon())) {
+				setIcon(new ImageIcon(ImageUtil.scaleImage(((Module) value).getIcon(), ImageSize.ICON_MEDIUM)));
 			} else {
 				setIcon(new ImageIcon(ImageUtil.getInternalImage(CommonIconLib.UNKNOWN_BLUE, ImageSize.ICON_MEDIUM)));
 			}
-			setToolTipText(((Component) value).getName());
+			setToolTipText(((Module) value).getName());
 			return this;
 		};
 	};
-	private final SetObverser<Component> listObverser = new SetAdapter<Component>() {
+	private final SetObverser<Module> listObverser = new SetAdapter<Module>() {
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void fireAdded(Component element) {
+		public void fireAdded(Module element) {
 			SwingUtil.invokeInEventQueue(() -> {
-				if (Objects.isNull(componentFilter) || componentFilter.accept(element)) {
-					CollectionUtil.insertByOrder(componentListModel, element, new ComponentComparator());
+				if (Objects.isNull(moduleFilter) || moduleFilter.accept(element)) {
+					CollectionUtil.insertByOrder(moduleListModel, element, new ModuleComparator());
 				}
 			});
 		}
@@ -99,7 +99,7 @@ public final class ComponentChooser extends ProjWizChooser {
 		@Override
 		public void fireCleared() {
 			SwingUtil.invokeInEventQueue(() -> {
-				componentListModel.clear();
+				moduleListModel.clear();
 			});
 		}
 
@@ -107,21 +107,21 @@ public final class ComponentChooser extends ProjWizChooser {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void fireRemoved(Component element) {
+		public void fireRemoved(Module element) {
 			SwingUtil.invokeInEventQueue(() -> {
-				componentListModel.remove(element);
+				moduleListModel.remove(element);
 			});
 		}
 	};
-	private Filter<Component> componentFilter;
-	private Component currentComponent;
+	private Filter<Module> moduleFilter;
+	private Module currentModule;
 	private boolean controlButtonsAreShown;
 	private boolean multiSelectionEnabled;
 
 	/**
 	 * 新实例。
 	 */
-	public ComponentChooser() {
+	public ModuleChooser() {
 		this(null, null, null);
 	}
 
@@ -129,9 +129,9 @@ public final class ComponentChooser extends ProjWizChooser {
 	 * 
 	 * @param guiManager
 	 * @param i18nHandler
-	 * @param componentModel
+	 * @param moduleModel
 	 */
-	public ComponentChooser(GuiManager guiManager, I18nHandler i18nHandler, SyncComponentModel componentModel) {
+	public ModuleChooser(GuiManager guiManager, I18nHandler i18nHandler, SyncModuleModel moduleModel) {
 		super(guiManager, i18nHandler, LabelStringKey.COMPCHOOSER_1);
 
 		setPreferredSize(new Dimension(450, 300));
@@ -159,41 +159,41 @@ public final class ComponentChooser extends ProjWizChooser {
 		scrollPane_1.setDoubleBuffered(true);
 		scrollPane_1.getViewport().setBackground(new Color(UIManager.getColor("List.background").getRGB()));
 
-		componentList = new JList<>();
-		componentList.setVisibleRowCount(0);
-		componentList.setDoubleBuffered(true);
-		componentList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		componentList.addListSelectionListener(new ListSelectionListener() {
+		moduleList = new JList<>();
+		moduleList.setVisibleRowCount(0);
+		moduleList.setDoubleBuffered(true);
+		moduleList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		moduleList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
-					currentComponent = componentList.getSelectedValue();
-					if (Objects.nonNull(currentComponent)) {
-						textArea.setText(currentComponent.getDescription());
+					currentModule = moduleList.getSelectedValue();
+					if (Objects.nonNull(currentModule)) {
+						textArea.setText(currentModule.getDescription());
 					} else {
 						textArea.setText(null);
 					}
-					componentList.requestFocus();
+					moduleList.requestFocus();
 				}
 			}
 		});
-		componentList.setModel(componentListModel);
-		componentList.setSelectionModel(componentListSelectionModel);
-		componentList.setCellRenderer(componentListRenderer);
-		componentList.addMouseMotionListener(new JListMouseMotionListener4Selection(componentList));
-		componentList.addMouseListener(new JListMouseListener4Selection(componentList));
-		componentList.addMouseListener(new MouseAdapter() {
+		moduleList.setModel(moduleListModel);
+		moduleList.setSelectionModel(moduleListSelectionModel);
+		moduleList.setCellRenderer(moduleListRenderer);
+		moduleList.addMouseMotionListener(new JListMouseMotionListener4Selection(moduleList));
+		moduleList.addMouseListener(new JListMouseListener4Selection(moduleList));
+		moduleList.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2 && Objects.nonNull(componentList.getSelectedValue())) {
+				if (e.getClickCount() == 2 && Objects.nonNull(moduleList.getSelectedValue())) {
 					disposeCurrentDialog(ChooseOption.APPROVE_OPTION);
 				}
 			}
 		});
-		componentList.requestFocus();
-		scrollPane_1.setViewportView(componentList);
+		moduleList.requestFocus();
+		scrollPane_1.setViewportView(moduleList);
 
 		JPanel panel_1 = new JPanel();
 		FlowLayout fl_panel_1 = (FlowLayout) panel_1.getLayout();
@@ -203,23 +203,23 @@ public final class ComponentChooser extends ProjWizChooser {
 		panel_1.add(button_approve);
 		panel_1.add(button_cancel);
 
-		if (Objects.nonNull(componentModel)) {
-			componentModel.addObverser(listObverser);
+		if (Objects.nonNull(moduleModel)) {
+			moduleModel.addObverser(listObverser);
 		}
 
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 
 		syncInit();
 	}
 
 	@Override
 	public void dispose() {
-		if (Objects.nonNull(componentModel)) {
-			componentModel.removeObverser(listObverser);
+		if (Objects.nonNull(moduleModel)) {
+			moduleModel.removeObverser(listObverser);
 		}
 
 		// 同步选择组件
-		syncSelectedComponent();
+		syncSelectedModule();
 
 		super.dispose();
 	}
@@ -229,8 +229,8 @@ public final class ComponentChooser extends ProjWizChooser {
 	 * 
 	 * @return 该面板中当前的文件过滤器。
 	 */
-	public Filter<Component> getComponentFilter() {
-		return componentFilter;
+	public Filter<Module> getModuleFilter() {
+		return moduleFilter;
 	}
 
 	/**
@@ -238,8 +238,8 @@ public final class ComponentChooser extends ProjWizChooser {
 	 * 
 	 * @return 该免肝的组件处理器模型。
 	 */
-	public SyncComponentModel getComponentModel() {
-		return componentModel;
+	public SyncModuleModel getModuleModel() {
+		return moduleModel;
 	}
 
 	/**
@@ -251,9 +251,9 @@ public final class ComponentChooser extends ProjWizChooser {
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
-	public <T extends Component> T getCurrentComponent(Class<T> clas) {
+	public <T extends Module> T getCurrentModule(Class<T> clas) {
 		Objects.requireNonNull(clas, "入口参数 clas 不能为 null。");
-		return clas.cast(currentComponent);
+		return clas.cast(currentModule);
 	}
 
 	/**
@@ -261,8 +261,8 @@ public final class ComponentChooser extends ProjWizChooser {
 	 * 
 	 * @return 选择的组件。
 	 */
-	public Component getSelectedComponent() {
-		return selectedComponent.get();
+	public Module getSelectedModule() {
+		return selectedModule.get();
 	}
 
 	/**
@@ -270,8 +270,8 @@ public final class ComponentChooser extends ProjWizChooser {
 	 * 
 	 * @return 选择的组件。
 	 */
-	public Component[] getSelectedComponents() {
-		return selectedComponents.toArray(new Component[0]);
+	public Module[] getSelectedModules() {
+		return selectedModules.toArray(new Module[0]);
 	}
 
 	/**
@@ -298,29 +298,29 @@ public final class ComponentChooser extends ProjWizChooser {
 	 * @param componnetFilter
 	 *            面板中当前的文件过滤器。
 	 */
-	public void setComponentFilter(Filter<Component> componnetFilter) {
-		this.componentFilter = componnetFilter;
+	public void setModuleFilter(Filter<Module> componnetFilter) {
+		this.moduleFilter = componnetFilter;
 		syncFiliter();
 	}
 
 	/**
 	 * 设置该面板的组件处理器模型。
 	 * 
-	 * @param componentModel
+	 * @param moduleModel
 	 *            指定的组件处理器模型。
 	 */
-	public void setComponentModel(SyncComponentModel componentModel) {
-		if (Objects.nonNull(this.componentModel)) {
-			this.componentModel.removeObverser(listObverser);
+	public void setModuleModel(SyncModuleModel moduleModel) {
+		if (Objects.nonNull(this.moduleModel)) {
+			this.moduleModel.removeObverser(listObverser);
 		}
 
-		if (Objects.nonNull(componentModel)) {
-			componentModel.addObverser(listObverser);
+		if (Objects.nonNull(moduleModel)) {
+			moduleModel.addObverser(listObverser);
 		}
 
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 
-		syncComponentModel();
+		syncModuleModel();
 	}
 
 	/**
@@ -342,111 +342,111 @@ public final class ComponentChooser extends ProjWizChooser {
 	public void setMultiSelectionEnabled(boolean multiSelectionEnabled) {
 		this.multiSelectionEnabled = multiSelectionEnabled;
 		if (multiSelectionEnabled) {
-			componentList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			moduleList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		} else {
-			componentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			moduleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		}
 	}
 
-	private void syncComponentModel() {
-		componentListModel.clear();
+	private void syncModuleModel() {
+		moduleListModel.clear();
 		textArea.setText(null);
 
-		if (Objects.isNull(this.componentModel)) {
+		if (Objects.isNull(this.moduleModel)) {
 			return;
 		}
 
-		Comparator<Component> c = new ComponentComparator();
+		Comparator<Module> c = new ModuleComparator();
 
-		this.componentModel.getLock().readLock().lock();
+		this.moduleModel.getLock().readLock().lock();
 		try {
-			this.componentModel.forEach(component -> {
-				if (Objects.isNull(componentFilter) || componentFilter.accept(component)) {
-					CollectionUtil.insertByOrder(componentListModel, component, c);
+			this.moduleModel.forEach(module -> {
+				if (Objects.isNull(moduleFilter) || moduleFilter.accept(module)) {
+					CollectionUtil.insertByOrder(moduleListModel, module, c);
 				}
 			});
 		} finally {
-			this.componentModel.getLock().readLock().unlock();
+			this.moduleModel.getLock().readLock().unlock();
 		}
 
-		if (componentListModel.size() > 0) {
-			componentList.getSelectionModel().setSelectionInterval(0, 0);
-			componentList.getSelectionModel().setAnchorSelectionIndex(0);
-			componentList.getSelectionModel().setLeadSelectionIndex(0);
+		if (moduleListModel.size() > 0) {
+			moduleList.getSelectionModel().setSelectionInterval(0, 0);
+			moduleList.getSelectionModel().setAnchorSelectionIndex(0);
+			moduleList.getSelectionModel().setLeadSelectionIndex(0);
 		}
 
 	}
 
 	private void syncFiliter() {
-		componentListModel.clear();
+		moduleListModel.clear();
 		textArea.setText(null);
 
-		if (Objects.isNull(this.componentModel)) {
+		if (Objects.isNull(this.moduleModel)) {
 			return;
 		}
 
-		Comparator<Component> c = new ComponentComparator();
+		Comparator<Module> c = new ModuleComparator();
 
-		this.componentModel.getLock().readLock().lock();
+		this.moduleModel.getLock().readLock().lock();
 		try {
-			this.componentModel.forEach(component -> {
-				if (Objects.isNull(componentFilter) || componentFilter.accept(component)) {
-					CollectionUtil.insertByOrder(componentListModel, component, c);
+			this.moduleModel.forEach(module -> {
+				if (Objects.isNull(moduleFilter) || moduleFilter.accept(module)) {
+					CollectionUtil.insertByOrder(moduleListModel, module, c);
 				}
 			});
 		} finally {
-			this.componentModel.getLock().readLock().unlock();
+			this.moduleModel.getLock().readLock().unlock();
 		}
 
-		if (componentListModel.size() > 0) {
-			componentList.getSelectionModel().setSelectionInterval(0, 0);
-			componentList.getSelectionModel().setAnchorSelectionIndex(0);
-			componentList.getSelectionModel().setLeadSelectionIndex(0);
+		if (moduleListModel.size() > 0) {
+			moduleList.getSelectionModel().setSelectionInterval(0, 0);
+			moduleList.getSelectionModel().setAnchorSelectionIndex(0);
+			moduleList.getSelectionModel().setLeadSelectionIndex(0);
 		}
 
 	}
 
 	private void syncInit() {
-		componentListModel.clear();
+		moduleListModel.clear();
 		textArea.setText(null);
 
-		if (Objects.isNull(this.componentModel)) {
+		if (Objects.isNull(this.moduleModel)) {
 			return;
 		}
 
-		Comparator<Component> c = new ComponentComparator();
+		Comparator<Module> c = new ModuleComparator();
 
-		this.componentModel.getLock().readLock().lock();
+		this.moduleModel.getLock().readLock().lock();
 		try {
-			this.componentModel.forEach(component -> {
-				if (Objects.isNull(componentFilter) || componentFilter.accept(component)) {
-					CollectionUtil.insertByOrder(componentListModel, component, c);
+			this.moduleModel.forEach(module -> {
+				if (Objects.isNull(moduleFilter) || moduleFilter.accept(module)) {
+					CollectionUtil.insertByOrder(moduleListModel, module, c);
 				}
 			});
 		} finally {
-			this.componentModel.getLock().readLock().unlock();
+			this.moduleModel.getLock().readLock().unlock();
 		}
 
-		if (componentListModel.size() > 0) {
-			componentList.getSelectionModel().setSelectionInterval(0, 0);
-			componentList.getSelectionModel().setAnchorSelectionIndex(0);
-			componentList.getSelectionModel().setLeadSelectionIndex(0);
+		if (moduleListModel.size() > 0) {
+			moduleList.getSelectionModel().setSelectionInterval(0, 0);
+			moduleList.getSelectionModel().setAnchorSelectionIndex(0);
+			moduleList.getSelectionModel().setLeadSelectionIndex(0);
 		}
 	}
 
-	private void syncSelectedComponent() {
-		selectedComponents.clear();
-		selectedComponent.set(null);
+	private void syncSelectedModule() {
+		selectedModules.clear();
+		selectedModule.set(null);
 
 		switch (chooseOption) {
 		case APPROVE_OPTION:
-			for (int i = 0; i < componentListModel.size(); i++) {
-				if (componentListSelectionModel.isSelectedIndex(i)) {
-					selectedComponents.add(componentListModel.get(i));
+			for (int i = 0; i < moduleListModel.size(); i++) {
+				if (moduleListSelectionModel.isSelectedIndex(i)) {
+					selectedModules.add(moduleListModel.get(i));
 				}
 			}
-			if (!componentModel.isEmpty() && componentListSelectionModel.getMinSelectionIndex() >= 0) {
-				selectedComponent.set(componentListModel.get(componentListSelectionModel.getAnchorSelectionIndex()));
+			if (!moduleModel.isEmpty() && moduleListSelectionModel.getMinSelectionIndex() >= 0) {
+				selectedModule.set(moduleListModel.get(moduleListSelectionModel.getAnchorSelectionIndex()));
 			}
 			break;
 		default:

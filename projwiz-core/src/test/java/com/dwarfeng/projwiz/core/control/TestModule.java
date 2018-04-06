@@ -5,9 +5,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
-import com.dwarfeng.projwiz.core.model.struct.Component;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
-import com.dwarfeng.projwiz.core.model.struct.TestSimpleComponent;
+import com.dwarfeng.projwiz.core.model.struct.TestSimpleModule;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 
 /**
@@ -16,7 +16,7 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public abstract class TestComponent extends TestSimpleComponent implements Component {
+public abstract class TestModule extends TestSimpleModule implements Module {
 
 	/** 该组件使用的工具包引用。 */
 	protected final ReferenceModel<? extends Toolkit> toolkitRef;
@@ -36,7 +36,7 @@ public abstract class TestComponent extends TestSimpleComponent implements Compo
 	 * @throws NullPointerException
 	 *             指定的入口参数为 <code> null </code>。
 	 */
-	protected TestComponent(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage) {
+	protected TestModule(ReferenceModel<? extends Toolkit> toolkitRef, MetaDataStorage metaDataStorage) {
 		Objects.requireNonNull(toolkitRef, "入口参数 toolkitRef 不能为 null。");
 		Objects.requireNonNull(metaDataStorage, "入口参数 metaDataStorage 不能为 null。");
 

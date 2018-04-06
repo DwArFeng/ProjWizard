@@ -34,7 +34,7 @@ import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.num.NumberUtil;
 import com.dwarfeng.dutil.basic.num.unit.DataSize;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.cm.SyncComponentModel;
+import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.obv.FileAdapter;
@@ -77,7 +77,7 @@ public class FilePropertiesDialog extends ProjWizDialog {
 
 	private Project project;
 	private File file;
-	private SyncComponentModel componentModel;
+	private SyncModuleModel moduleModel;
 
 	private final Lock disposeLock = new ReentrantLock();
 	private final Condition disposeCondition = disposeLock.newCondition();
@@ -236,7 +236,7 @@ public class FilePropertiesDialog extends ProjWizDialog {
 	 *             入口参数为 <code>null</code>。
 	 */
 	public FilePropertiesDialog(GuiManager guiManager, I18nHandler i18nHandler, Window owner,
-			SyncComponentModel componentModel, Project project, File file) {
+			SyncModuleModel moduleModel, Project project, File file) {
 		super(guiManager, i18nHandler, owner);
 
 		addWindowListener(new WindowAdapter() {
@@ -507,7 +507,7 @@ public class FilePropertiesDialog extends ProjWizDialog {
 			file.addObverser(fileObverser);
 		}
 
-		this.componentModel = componentModel;
+		this.moduleModel = moduleModel;
 		this.project = project;
 		this.file = file;
 
@@ -515,6 +515,9 @@ public class FilePropertiesDialog extends ProjWizDialog {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void dispose() {
 		if (Objects.nonNull(project)) {
@@ -528,15 +531,6 @@ public class FilePropertiesDialog extends ProjWizDialog {
 	}
 
 	/**
-	 * 获取当前对话框的组件模型。
-	 * 
-	 * @return 当前对话框的组件模型。
-	 */
-	public SyncComponentModel getComponentModel() {
-		return componentModel;
-	}
-
-	/**
 	 * 获取面板中的文件。
 	 * 
 	 * @return 面板中的文件。
@@ -546,23 +540,21 @@ public class FilePropertiesDialog extends ProjWizDialog {
 	}
 
 	/**
+	 * 获取当前对话框的组件模型。
+	 * 
+	 * @return 当前对话框的组件模型。
+	 */
+	public SyncModuleModel getModuleModel() {
+		return moduleModel;
+	}
+
+	/**
 	 * 获取当前的工程。
 	 * 
 	 * @return 当前的工程。
 	 */
 	public Project getProject() {
 		return project;
-	}
-
-	/**
-	 * 设置当前对话框的组件模型。
-	 * 
-	 * @param componentModel
-	 *            指定的组件模型。
-	 */
-	public void setComponentModel(SyncComponentModel componentModel) {
-		this.componentModel = componentModel;
-		syncModel();
 	}
 
 	/**
@@ -582,6 +574,17 @@ public class FilePropertiesDialog extends ProjWizDialog {
 
 		this.file = file;
 
+		syncModel();
+	}
+
+	/**
+	 * 设置当前对话框的组件模型。
+	 * 
+	 * @param moduleModel
+	 *            指定的组件模型。
+	 */
+	public void setModuleModel(SyncModuleModel moduleModel) {
+		this.moduleModel = moduleModel;
 		syncModel();
 	}
 
@@ -722,12 +725,12 @@ public class FilePropertiesDialog extends ProjWizDialog {
 			project.getLock().readLock().unlock();
 		}
 
-		if (Objects.isNull(componentModel) || Objects.isNull(project) || !projectFitFlag)
+		if (Objects.isNull(moduleModel) || Objects.isNull(project) || !projectFitFlag)
 			return;
 
-		componentModel.getLock().readLock().lock();
+		moduleModel.getLock().readLock().lock();
 		try {
-			ProjectProcessor processor = componentModel.get(project.getProcessorClass());
+			ProjectProcessor processor = moduleModel.get(project.getProcessorClass());
 			if (Objects.nonNull(processor)
 					&& Objects.nonNull((propUIFromProject = processor.getFilePropUI(project, file)))) {
 				Component component = null;
@@ -739,12 +742,12 @@ public class FilePropertiesDialog extends ProjWizDialog {
 			}
 
 		} finally {
-			componentModel.getLock().readLock().unlock();
+			moduleModel.getLock().readLock().unlock();
 		}
 
-		componentModel.getLock().readLock().lock();
+		moduleModel.getLock().readLock().lock();
 		try {
-			FileProcessor processor = componentModel.get(file.getProcessorClass());
+			FileProcessor processor = moduleModel.get(file.getProcessorClass());
 			if (Objects.nonNull(processor) && Objects.nonNull((propUIFromFile = processor.getPropUI(file)))) {
 				Component component = null;
 				if (Objects.nonNull(component = propUIFromFile.getComponent())) {
@@ -755,7 +758,7 @@ public class FilePropertiesDialog extends ProjWizDialog {
 			}
 
 		} finally {
-			componentModel.getLock().readLock().unlock();
+			moduleModel.getLock().readLock().unlock();
 		}
 
 	}

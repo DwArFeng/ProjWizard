@@ -17,7 +17,7 @@ import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public interface ComponentToolkit extends ExternalReadWriteThreadSafe{
+public interface ModuleToolkit extends ExternalReadWriteThreadSafe{
 
 	/**
 	 * 向记录器中输出一条调试。

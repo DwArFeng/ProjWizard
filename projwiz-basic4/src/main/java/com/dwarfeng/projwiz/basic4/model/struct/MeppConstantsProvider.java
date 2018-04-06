@@ -46,8 +46,8 @@ public class MeppConstantsProvider implements ConstantsProvider {
 			return ResourceKey.MEPP_I18N_LOGGER_FILE_SETTING;
 		case I18N_LOGGER_RESOURCE_SETTING:
 			return ResourceKey.MEPP_I18N_LOGGER_RESOURCE_SETTING;
-		case IMAGE_CMPOENT:
-			return ResourceKey.MEPP_IMAGE_CMPOENT;
+		case IMAGE_MODULE:
+			return ResourceKey.MEPP_IMAGE_MODULE;
 		default:
 			return null;
 		}
