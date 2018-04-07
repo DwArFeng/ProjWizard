@@ -17,7 +17,6 @@ import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 import java.util.concurrent.Executors;
 
-import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -62,9 +61,9 @@ import com.dwarfeng.dutil.develop.resource.DelegateResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceUtil;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
-import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.DefaultModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.DefaultToolkitPermModel;
+import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
@@ -75,9 +74,9 @@ import com.dwarfeng.projwiz.core.model.io.DefaultPluginClassLoader;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
-import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
@@ -85,19 +84,18 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 import com.dwarfeng.projwiz.core.util.Constants;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.core.view.eum.ChooseOption;
-import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.eum.DialogOption;
-import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
-import com.dwarfeng.projwiz.core.view.gui.ModuleChooser;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
+import com.dwarfeng.projwiz.core.view.gui.ModuleChooser;
 import com.dwarfeng.projwiz.core.view.gui.ProjectFileChooser;
 import com.dwarfeng.projwiz.core.view.gui.SystemFileChooser;
-import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.DefaultMainFrameVisibleModel;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.OptionDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
 
@@ -1196,8 +1194,12 @@ public final class ProjWizard {
 					// 抛异常也要按照基本法。
 				}
 
-				window.requestFocus();
+				// 必须在本线程中将窗口设置为可见，这是考虑到窗口为对话框的情况下，可能会依赖阻塞当前线程的手段进行编程。
 				window.setVisible(true);
+
+				SwingUtil.invokeInEventQueue(() -> {
+					window.requestFocus();
+				});
 
 				externalWindowModel.add(window);
 			} finally {
@@ -1222,6 +1224,8 @@ public final class ProjWizard {
 		 */
 		@Override
 		public void showMessageDialog(MessageDialogSetting setting) throws IllegalStateException {
+			Objects.requireNonNull(setting, "入口参数 setting 不能为 null。");
+
 			JOptionPane.showMessageDialog(getMainFrame(), setting.getMessage(), setting.getTitle(),
 					setting.getDialogMessage().getValue(), setting.getIcon());
 		}
@@ -1230,10 +1234,12 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public int showOptionDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-				DialogMessage dialogMessage, Icon icon, Object[] options, Object initialValue) {
-			return JOptionPane.showOptionDialog(getMainFrame(), dialogMessage, title, dialogOptionCombo.getValue(),
-					dialogMessage.getValue(), icon, options, initialValue);
+		public int showOptionDialog(OptionDialogSetting setting) throws IllegalStateException {
+			Objects.requireNonNull(setting, "入口参数 setting 不能为 null。");
+
+			return JOptionPane.showOptionDialog(getMainFrame(), setting.getMessage(), setting.getTitle(),
+					setting.getDialogOptionCombo().getValue(), setting.getDialogMessage().getValue(), setting.getIcon(),
+					setting.getOptions(), setting.getInitialValue());
 		}
 
 		/**

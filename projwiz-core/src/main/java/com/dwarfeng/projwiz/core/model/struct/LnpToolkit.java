@@ -7,8 +7,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.swing.Icon;
-
 import com.dwarfeng.dutil.basic.cna.model.ListModel;
 import com.dwarfeng.dutil.basic.cna.model.MapModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
@@ -38,15 +36,14 @@ import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
-import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.eum.DialogOption;
-import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
-import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.OptionDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
 
@@ -751,12 +748,9 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int showOptionDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-			DialogMessage dialogMessage, Icon icon, Object[] options, Object initialValue)
-			throws IllegalStateException {
+	public int showOptionDialog(OptionDialogSetting setting) throws IllegalStateException {
 		checkPermissionAndState(Method.SHOWOPTIONDIALOG);
-		return standardToolkit.showOptionDialog(message, title, dialogOptionCombo, dialogMessage, icon, options,
-				initialValue);
+		return standardToolkit.showOptionDialog(setting);
 	}
 
 	/**

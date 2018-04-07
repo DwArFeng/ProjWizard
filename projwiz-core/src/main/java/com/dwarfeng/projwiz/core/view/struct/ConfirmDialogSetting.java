@@ -29,6 +29,9 @@ public final class ConfirmDialogSetting {
 		private Object message = null;
 		private String title = UIManager.getString("OptionPane.titleText");
 
+		/**
+		 * 新实例。
+		 */
 		public Builder() {
 		}
 

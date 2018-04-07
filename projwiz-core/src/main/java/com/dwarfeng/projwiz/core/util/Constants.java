@@ -7,8 +7,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.Icon;
-
 import com.dwarfeng.dutil.basic.cna.model.ListModel;
 import com.dwarfeng.dutil.basic.cna.model.MapModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
@@ -40,21 +38,20 @@ import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
-import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
-import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.eum.DialogOption;
-import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
-import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.OptionDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
 
@@ -575,9 +572,7 @@ public final class Constants {
 		}
 
 		@Override
-		public int showOptionDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-				DialogMessage dialogMessage, Icon icon, Object[] options, Object initialValue)
-				throws IllegalStateException {
+		public int showOptionDialog(OptionDialogSetting setting) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: addCoreConfigObverser");
 		}
 

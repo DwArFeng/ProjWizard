@@ -4,8 +4,6 @@ import java.awt.Image;
 import java.awt.Window;
 import java.util.Set;
 
-import javax.swing.Icon;
-
 import com.dwarfeng.dutil.basic.cna.model.ListModel;
 import com.dwarfeng.dutil.basic.cna.model.MapModel;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
@@ -35,15 +33,14 @@ import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
-import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
 import com.dwarfeng.projwiz.core.view.eum.DialogOption;
-import com.dwarfeng.projwiz.core.view.eum.DialogOptionCombo;
 import com.dwarfeng.projwiz.core.view.gui.MainFrame;
-import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.ConfirmDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
+import com.dwarfeng.projwiz.core.view.struct.OptionDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.ProjectFileChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.SystemFileChooserSetting;
 
@@ -884,38 +881,6 @@ public interface Toolkit {
 	 */
 	public DialogOption showConfirmDialog(ConfirmDialogSetting setting) throws IllegalStateException;
 
-	// /**
-	// * 展示一个外部窗口。
-	// *
-	// * <p>
-	// * 该方法会在程序的外部窗口模型中查找具有指定键的窗口提供器， 如果找到了， 则将该提供器设为可见的；
-	// * 如果在外部窗口模型中找不到指定的键，则什么也不做。
-	// *
-	// * @param key
-	// * 指定的键。
-	// * @throws NullPointerException
-	// * 入口参数为 <code>null</code>。
-	// */
-	// public void showExternalWindow(String key);
-	//
-	// /**
-	// * 展示一个外部的窗口。
-	// *
-	// * <p>
-	// * 该方法会在程序的外部窗口模型中查找具有与指定的窗口提供器键相同的窗口提供器，
-	// 如果找不到，则按照流程向模型中添加该提供器，并显示提供器中的窗口；
-	// * 如果在模型中找到了相同的键的提供器，则对比两个提供器是否严格相等， 如果严格相等，则显示该提供器的窗口；
-	// * 如果不是严格相等，则用该窗口提供器替换掉眼线的窗口提供器。
-	// *
-	// * @param suppiler
-	// * 窗口提供器。
-	// * @throws IllegalStateException
-	// * 因为没有执行权限而抛出的异常。
-	// * @throws NullPointerException
-	// * 入口参数为 <code>null</code>。
-	// */
-	// public void showExternalWindow(WindowSuppiler suppiler);
-
 	/**
 	 * 展示一个外部窗口。
 	 * <p>
@@ -960,26 +925,13 @@ public interface Toolkit {
 	/**
 	 * 在前台显示一个选项对话框。
 	 * 
-	 * @param message
-	 *            指定的信息。
-	 * @param title
-	 *            指定的标题。
-	 * @param dialogOptionCobo
-	 *            指定的组合选项。
-	 * @param dialogMessage
-	 *            指定的信息类型。
-	 * @param icon
-	 *            指定的图标。
-	 * @param options
-	 *            指定的选项组成的数组。
-	 * @param initialValue
-	 *            指定的初始值。
-	 * @return 用户选择的选项的序号。
+	 * @param setting
+	 *            选项对话框的设置。
+	 * @return 用户选择的选项的序号，或 <code>-1</code> （没有选择任何值或按下取消）。
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
 	 */
-	public int showOptionDialog(Object message, String title, DialogOptionCombo dialogOptionCombo,
-			DialogMessage dialogMessage, Icon icon, Object[] options, Object initialValue) throws IllegalStateException;
+	public int showOptionDialog(OptionDialogSetting setting) throws IllegalStateException;
 
 	/**
 	 * 启动程序。
