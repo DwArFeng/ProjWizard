@@ -9,12 +9,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.dwarfeng.dutil.basic.io.ByteBufferInputStream;
+import com.dwarfeng.dutil.basic.prog.Buildable;
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
+import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
-import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
  * 被创造的文件。
@@ -24,7 +27,7 @@ import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
  * @author DwArFeng
  * @since 0.0.1-alpha
  */
-public class RaeCreatedFile extends RaeFile {
+public class RaeCreatedFile implements File {
 
 	/**
 	 * 被创造文件的构造器。
@@ -32,39 +35,41 @@ public class RaeCreatedFile extends RaeFile {
 	 * @author DwArFeng
 	 * @since 0.0.3-alpha
 	 */
-	public static class Builder extends RaeFileBuilder {
+	public static class Builder implements Buildable<RaeCreatedFile> {
 
+		/** 文件是否为文件夹。 */
+		protected final boolean isFolder;
+		/** 文件的类型。 */
+		protected final Name fileType;
+		/** 文件的处理器类。 */
+		protected Class<? extends FileProcessor> processorClass = null;
 		/** 标签-数据映射。 */
 		protected Map<String, ByteBuffer> buffers = new HashMap<>();
 
-		public Builder(boolean isFolder, ProjProcToolkit projProcToolkit, Name fileType) {
-			super(isFolder, projProcToolkit, fileType);
-		}
-
 		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public RaeCreatedFile build() {
-			return new RaeCreatedFile(buffers, isFolder, projProcToolkit, fileType, processorClass, accessTime,
-					modifyTime, obversers);
-		}
-
-		/**
-		 * 获取文件的标签-数据映射。
+		 * 新实例。
 		 * 
-		 * @return 标签-数据映射。
+		 * @param isFolder
+		 *            是否是文件夹。
+		 * @param fileType
+		 *            文件的类型。
 		 */
-		public Map<String, ByteBuffer> getBuffers() {
-			return buffers;
+		public Builder(boolean isFolder, Name fileType) {
+			Objects.requireNonNull(fileType, "入口参数 fileType 不能为 null。");
+
+			this.isFolder = isFolder;
+			this.fileType = fileType;
 		}
 
 		/**
-		 * {@inheritDoc}
+		 * 设置文件的处理器类。
+		 * 
+		 * @param processorClass
+		 *            指定的处理器类。
+		 * @return 构造器自身。
 		 */
-		@Override
-		public Builder setAccessTime(long accessTime) {
-			super.setAccessTime(accessTime);
+		public Builder setProcessorClass(Class<? extends FileProcessor> processorClass) {
+			this.processorClass = processorClass;
 			return this;
 		}
 
@@ -84,31 +89,21 @@ public class RaeCreatedFile extends RaeFile {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Builder setModifyTime(long modifyTime) {
-			super.setModifyTime(modifyTime);
-			return this;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Builder setObversers(Set<FileObverser> obversers) {
-			super.setObversers(obversers);
-			return this;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Builder setProcessorClass(Class<? extends FileProcessor> processorClass) {
-			super.setProcessorClass(processorClass);
-			return this;
+		public RaeCreatedFile build() {
+			return new RaeCreatedFile(isFolder, fileType, processorClass, buffers);
 		}
 
 	}
 
+	/** 同步读写锁。 */
+	protected final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+	/** 文件是否为文件夹。 */
+	protected final boolean isFolder;
+	/** 文件的类型。 */
+	protected final Name fileType;
+	/** 文件的处理器类。 */
+	protected final Class<? extends FileProcessor> processorClass;
 	/** 标签-数据映射。 */
 	protected final Map<String, ByteBuffer> buffers;
 
@@ -140,13 +135,87 @@ public class RaeCreatedFile extends RaeFile {
 	 * @throws NullPointerException
 	 *             入口参数为 <code>null</code>。
 	 */
-	protected RaeCreatedFile(Map<String, ByteBuffer> buffers, boolean isFolder, ProjProcToolkit projProcToolkit,
-			Name fileType, Class<? extends FileProcessor> processorClass, long accessTime, long modifyTime,
-			Set<FileObverser> obversers) {
-		super(isFolder, projProcToolkit, fileType, processorClass, accessTime, modifyTime, obversers);
-
+	protected RaeCreatedFile(boolean isFolder, Name fileType, Class<? extends FileProcessor> processorClass,
+			Map<String, ByteBuffer> buffers) {
+		Objects.requireNonNull(fileType, "入口参数 fileType 不能为 null。");
 		Objects.requireNonNull(buffers, "入口参数 buffers 不能为 null。");
+
+		this.isFolder = isFolder;
+		this.fileType = fileType;
 		this.buffers = buffers;
+		this.processorClass = processorClass;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<FileObverser> getObversers() {
+		return Collections.emptySet();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean addObverser(FileObverser obverser) {
+		throw new UnsupportedOperationException("addObverser");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean removeObverser(FileObverser obverser) {
+		throw new UnsupportedOperationException("removeObverser");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void clearObverser() {
+		throw new UnsupportedOperationException("clearObverser");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ReadWriteLock getLock() {
+		return lock;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getAccessTime() {
+		return -1;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getModifyTime() {
+		return -1;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getCreateTime() {
+		return -1;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Name getFileType() {
+		return fileType;
 	}
 
 	/**
@@ -225,6 +294,35 @@ public class RaeCreatedFile extends RaeFile {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Class<? extends FileProcessor> getProcessorClass() {
+		lock.readLock().lock();
+		try {
+			return processorClass;
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isAcceptSubFile(File file) {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isFolder() {
+		return isFolder;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean isReadSupported() {
 		return true;
 	}
@@ -241,34 +339,56 @@ public class RaeCreatedFile extends RaeFile {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected boolean newLabel_Sub(String label) throws IOException, UnsupportedOperationException {
-		throw new UnsupportedOperationException("newLabel_Sub");
+	public boolean newLabel(String label) throws IOException {
+		throw new UnsupportedOperationException("newLabel");
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected boolean discardLabel_Sub(String label) throws IOException, UnsupportedOperationException {
-		throw new UnsupportedOperationException("discardLabel_Sub");
+	public boolean discardLabel(String label) throws IOException {
+		throw new UnsupportedOperationException("discardLabel");
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected InputStream openInputStream_Sub(String label)
-			throws IOException, IllegalArgumentException, UnsupportedOperationException {
-		return new ObversableInputStream(label, new ByteBufferInputStream(buffers.get(label)));
+	public InputStream openInputStream(String label) throws IOException {
+		return new ByteBufferInputStream(buffers.get(label));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected OutputStream openOutputStream_Sub(String label)
-			throws IOException, IllegalArgumentException, UnsupportedOperationException {
-		throw new UnsupportedOperationException("openOutputStream_Sub");
+	public OutputStream openOutputStream(String label) throws IOException {
+		throw new UnsupportedOperationException("openOutputStream");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setAccessTime(long time) {
+		throw new UnsupportedOperationException("setAccessTime");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setModifyTime(long time) {
+		throw new UnsupportedOperationException("setModifyTime");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean setProcessorClass(Class<? extends FileProcessor> clazz) {
+		throw new UnsupportedOperationException("setProcessorClass");
 	}
 
 }

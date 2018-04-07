@@ -127,37 +127,6 @@ public class MeppProject extends RaeProject {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public File addFile(File parent, File file, String exceptName, AddingSituation situation) {
-		Objects.requireNonNull(parent, "入口参数 parent 不能为 null。");
-		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
-		Objects.requireNonNull(situation, "入口参数 situation 不能为 null。");
-
-		lock.writeLock().lock();
-		file.getLock().writeLock().unlock();
-		try {
-			switch (situation) {
-			case BY_COPY:
-				return addFileByCopy(parent, file, exceptName);
-			case BY_MOVE:
-				return addFileByMove(parent, file, exceptName);
-			case BY_NEW:
-				return addFileByNew(parent, file, exceptName);
-			case OTHER:
-				return addFileByOther(parent, file, exceptName);
-			default:
-				throw new IllegalArgumentException("未知的添加文件情形: " + situation);
-			}
-
-		} finally {
-			file.getLock().writeLock().unlock();
-			lock.writeLock().unlock();
-		}
-	}
-
-	/**
 	 * 获取工程的默认缓冲容量。
 	 * 
 	 * @return 工程的默认缓冲容量。
@@ -184,98 +153,17 @@ public class MeppProject extends RaeProject {
 		super.stop();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	protected File addFile_Sub(File parent, File file, String exceptName, AddingSituation situation)
-			throws UnsupportedOperationException {
-		file.getLock().writeLock().unlock();
-		try {
-			switch (situation) {
-			case BY_COPY:
-				return addFileByCopy(parent, file, exceptName);
-			case BY_MOVE:
-				return addFileByMove(parent, file, exceptName);
-			case BY_NEW:
-				return addFileByNew(parent, file, exceptName);
-			case OTHER:
-				return addFileByOther(parent, file, exceptName);
-			default:
-				throw new IllegalArgumentException("未知的添加文件情形: " + situation);
-			}
-		} finally {
-			file.getLock().writeLock().unlock();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected File removeFile_Sub(File file, RemovingSituation situation) throws UnsupportedOperationException {
-		switch (situation) {
-		case BY_DELETE:
-			return removeFileByDelete(file);
-		case BY_MOVE:
-			return removeFileByMove(file);
-		case OTHER:
-			return removeFileByOther(file);
-		default:
-			throw new IllegalArgumentException("未知的移除文件情形: " + situation);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected File renameFile_Sub(File file, String newName) throws UnsupportedOperationException {
-		if (!fileTree.contains(file)) {
-			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_5, getName());
-			projProcToolkit.warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
-			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2, file.getProcessorClass().toString(),
-					file.getClass().toString());
-			return null;
-		}
-
-		// 检查文件在同级中是否重名，有重名则报错。
-		if (isNameRepeat(fileTree.getParent(file), newName)) {
-			Toolkit toolkit = projProcToolkit.getToolkit();
-			toolkit.showMessageDialog(new MessageDialogSetting.Builder()
-					.setMessage(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_0))
-					.setTitle(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_1))
-					.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
-			return null;
-		}
-
-		String oldName = getFileName(file);
-		fileNameMap.put(file, newName);
-		Path<File> path = fileTree.getPath(file);
-		fireFileRenamed(path, file, oldName, newName);
-
-		return file;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void save_Sub() throws ProcessException, UnsupportedOperationException {
-		throw new UnsupportedOperationException("save_Sub");
-	}
-
-	private File addFileByCopy(File parent, File file, String exceptName) {
+	protected File addFileByOther_Sub(File parent, File file, String exceptName) throws UnsupportedOperationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private File addFileByMove(File parent, File file, String exceptName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private File addFileByNew(File parent, File file, String exceptName) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected File addFileByNew_Sub(File parent, File file, String exceptName) throws UnsupportedOperationException {
 		// 检查文件树是否含有父文件，不包含父文件则报错。
 		if (!fileTree.contains(parent)) {
 			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_ADDFILE_0, getName());
@@ -373,8 +261,8 @@ public class MeppProject extends RaeProject {
 		}
 
 		MeppFile actualAddedFile = new MeppFile.Builder(file.isFolder(), projProcToolkit, file.getFileType(), buffers)
-				.setAccessTime(file.getAccessTime()).setModifyTime(file.getModifyTime()).setBuffCapa(defaultBuffCapa)
-				.build();
+				.setProcessorClass(file.getProcessorClass()).setAccessTime(file.getAccessTime())
+				.setModifyTime(file.getModifyTime()).setBuffCapa(defaultBuffCapa).build();
 
 		fileTree.add(parent, actualAddedFile);
 		fileNameMap.put(actualAddedFile, actualFileName);
@@ -383,25 +271,32 @@ public class MeppProject extends RaeProject {
 		return actualAddedFile;
 	}
 
-	private File addFileByOther(File parent, File file, String exceptName) {
+	@Override
+	protected File addFileByMove_Sub(File parent, File file, String exceptName) throws UnsupportedOperationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private String indexFileName(String fileName, int index) {
-		return String.format(fileName + "(%d)", index);
+	@Override
+	protected File addFileByCopy_Sub(File parent, File file, String exceptName) throws UnsupportedOperationException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	private boolean isNameRepeat(File parent, String fileName) {
-		for (File checkFile : fileTree.getChilds(parent)) {
-			if (Objects.equals(getFileName(checkFile), fileName)) {
-				return true;
-			}
-		}
-		return false;
+	@Override
+	protected File removeFileByOther_Sub(File file) throws UnsupportedOperationException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	private File removeFileByDelete(File file) {
+	@Override
+	protected File removeFileByMove_Sub(File file) throws UnsupportedOperationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected File removeFileByDelete_Sub(File file) throws UnsupportedOperationException {
 		Objects.requireNonNull(file, "入口参数 file 不能为 null。");
 
 		lock.writeLock().lock();
@@ -442,14 +337,56 @@ public class MeppProject extends RaeProject {
 		}
 	}
 
-	private File removeFileByMove(File file) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected File renameFile_Sub(File file, String newName) throws UnsupportedOperationException {
+		if (!fileTree.contains(file)) {
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_5, getName());
+			projProcToolkit.warn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_1);
+			projProcToolkit.formatWarn(LoggerStringKey.MEPP_PROJECT_REMOVEFILE_2, file.getProcessorClass().toString(),
+					file.getClass().toString());
+			return null;
+		}
+
+		// 检查文件在同级中是否重名，有重名则报错。
+		if (isNameRepeat(fileTree.getParent(file), newName)) {
+			Toolkit toolkit = projProcToolkit.getToolkit();
+			toolkit.showMessageDialog(new MessageDialogSetting.Builder()
+					.setMessage(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_0))
+					.setTitle(projProcToolkit.label(LabelStringKey.MEPP_PROJECT_RENAMEFILE_1))
+					.setDialogMessage(DialogMessage.INFORMATION_MESSAGE).build());
+			return null;
+		}
+
+		String oldName = getFileName(file);
+		fileNameMap.put(file, newName);
+		Path<File> path = fileTree.getPath(file);
+		fireFileRenamed(path, file, oldName, newName);
+
+		return file;
 	}
 
-	private File removeFileByOther(File file) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void save_Sub() throws ProcessException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("save_Sub");
+	}
+
+	private String indexFileName(String fileName, int index) {
+		return String.format(fileName + "(%d)", index);
+	}
+
+	private boolean isNameRepeat(File parent, String fileName) {
+		for (File checkFile : fileTree.getChilds(parent)) {
+			if (Objects.equals(getFileName(checkFile), fileName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -463,7 +463,7 @@ public class MeppFile extends RaeFile {
 			throw new IllegalArgumentException("文件中不存在指定的标签: " + label);
 		}
 		setAccessTime(System.currentTimeMillis());
-		return new ObversableInputStream(label, new ByteBufferInputStream(buffer));
+		return new ByteBufferInputStream(buffer);
 	}
 
 	/**
@@ -486,7 +486,7 @@ public class MeppFile extends RaeFile {
 		long currentTimeMillis = System.currentTimeMillis();
 		setAccessTime(currentTimeMillis);
 		setModifyTime(currentTimeMillis);
-		return new ObversableOutputStream(label, new ByteBufferOutputStream(buffer));
+		return new ByteBufferOutputStream(buffer);
 	}
 
 	/**

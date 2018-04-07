@@ -17,6 +17,7 @@ import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
+import com.dwarfeng.projwiz.raefrm.model.eum.PermDemandKey;
 import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
@@ -268,16 +269,16 @@ public abstract class RaeProject implements Project {
 			switch (situation) {
 			case BY_COPY:
 				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.PROJECT_SUPPORTED_ADDING_BYCOPY.getConfigKey(), Boolean.class);
+						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_ADDING_BYCOPY.getConfigKey(), Boolean.class);
 			case BY_MOVE:
 				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.PROJECT_SUPPORTED_ADDING_BYMOVE.getConfigKey(), Boolean.class);
+						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_ADDING_BYMOVE.getConfigKey(), Boolean.class);
 			case BY_NEW:
 				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.PROJECT_SUPPORTED_ADDING_BYNEW.getConfigKey(), Boolean.class);
+						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_ADDING_BYNEW.getConfigKey(), Boolean.class);
 			case OTHER:
 				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.PROJECT_SUPPORTED_ADDING_BYOTHER.getConfigKey(), Boolean.class);
+						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_ADDING_BYOTHER.getConfigKey(), Boolean.class);
 			default:
 				return false;
 			}
@@ -298,13 +299,13 @@ public abstract class RaeProject implements Project {
 			switch (situation) {
 			case BY_DELETE:
 				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.PROJECT_SUPPORTED_REMOVING_BYDELETE.getConfigKey(), Boolean.class);
+						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_REMOVING_BYDELETE.getConfigKey(), Boolean.class);
 			case BY_MOVE:
 				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.PROJECT_SUPPORTED_REMOVING_BYMOVE.getConfigKey(), Boolean.class);
+						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_REMOVING_BYMOVE.getConfigKey(), Boolean.class);
 			case OTHER:
 				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.PROJECT_SUPPORTED_REMOVING_BYOTHER.getConfigKey(), Boolean.class);
+						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_REMOVING_BYOTHER.getConfigKey(), Boolean.class);
 			default:
 				return false;
 			}
@@ -320,8 +321,8 @@ public abstract class RaeProject implements Project {
 	public boolean isRenameFileSupported() {
 		lock.readLock().lock();
 		try {
-			return projProcToolkit.getCoreConfigModel()
-					.getParsedValue(ProjCoreConfigEntry.PROJECT_SUPPORTED_RENAME_FILE.getConfigKey(), Boolean.class);
+			return projProcToolkit.getCoreConfigModel().getParsedValue(
+					ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_RENAME_FILE.getConfigKey(), Boolean.class);
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -335,7 +336,7 @@ public abstract class RaeProject implements Project {
 		lock.readLock().lock();
 		try {
 			return projProcToolkit.getCoreConfigModel()
-					.getParsedValue(ProjCoreConfigEntry.PROJECT_SUPPORTED_SAVE.getConfigKey(), Boolean.class);
+					.getParsedValue(ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_SAVE.getConfigKey(), Boolean.class);
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -353,8 +354,8 @@ public abstract class RaeProject implements Project {
 	 * {@inheritDoc}
 	 * <p>
 	 * 该方法首先检查 {@link #isAddFileSupported(AddingSituation)} ,
-	 * 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出 {@link UnsupportedOperationException}；否则，调用
-	 * {@link #addFile_Sub(File, File, String, AddingSituation)}，返回要求的结果。
+	 * 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用相应子方法，返回要求的结果。
 	 */
 	@Override
 	public File addFile(File parent, File file, String exceptName, AddingSituation situation) {
@@ -368,7 +369,22 @@ public abstract class RaeProject implements Project {
 			if (!isAddFileSupported(situation)) {
 				throw new UnsupportedOperationException("addFile");
 			} else {
-				return addFile_Sub(parent, file, exceptName, situation);
+				switch (situation) {
+				case BY_COPY:
+					projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_PROJECT_ADDFILE_BYCOPY);
+					return addFileByCopy_Sub(parent, file, exceptName);
+				case BY_MOVE:
+					projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_PROJECT_ADDFILE_BYMOVE);
+					return addFileByMove_Sub(parent, file, exceptName);
+				case BY_NEW:
+					projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_PROJECT_ADDFILE_BYNEW);
+					return addFileByNew_Sub(parent, file, exceptName);
+				case OTHER:
+					projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_PROJECT_ADDFILE_BYOTHER);
+					return addFileByOther_Sub(parent, file, exceptName);
+				default:
+					throw new IllegalArgumentException("非法的参数 situation: " + situation);
+				}
 			}
 		} finally {
 			lock.writeLock().unlock();
@@ -379,8 +395,8 @@ public abstract class RaeProject implements Project {
 	 * {@inheritDoc}
 	 * <p>
 	 * 该方法首先检查 {@link #removeFile(File, RemovingSituation)} ,
-	 * 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出 {@link UnsupportedOperationException}；否则，调用
-	 * {@link #removeFile_Sub(File, RemovingSituation)}，返回要求的结果。
+	 * 确认该工程处理器是否允许新建工程，如果不允许，则直接抛出
+	 * {@link UnsupportedOperationException}；否则，调用相应子方法，返回要求的结果。
 	 */
 	@Override
 	public File removeFile(File file, RemovingSituation situation) {
@@ -392,7 +408,19 @@ public abstract class RaeProject implements Project {
 			if (!isRemoveFileSupported(situation)) {
 				throw new UnsupportedOperationException("removeFile");
 			} else {
-				return removeFile_Sub(file, situation);
+				switch (situation) {
+				case BY_DELETE:
+					projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_PROJECT_REMOVEFILE_BYDELETE);
+					return removeFileByDelete_Sub(file);
+				case BY_MOVE:
+					projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_PROJECT_REMOVEFILE_BYMOVE);
+					return removeFileByMove_Sub(file);
+				case OTHER:
+					projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_PROJECT_ADDFILE_BYOTHER);
+					return removeFileByOther_Sub(file);
+				default:
+					throw new IllegalArgumentException("非法的参数 situation: " + situation);
+				}
 			}
 		} finally {
 			lock.writeLock().unlock();
@@ -457,7 +485,7 @@ public abstract class RaeProject implements Project {
 	}
 
 	/**
-	 * 添加文件的子方法。
+	 * 通过其它方式添加文件的子方法。
 	 * <p>
 	 * 该方法被 {@link #addFile(File, File, String, AddingSituation)} 调用。
 	 * 
@@ -467,29 +495,105 @@ public abstract class RaeProject implements Project {
 	 *            指定的文件。
 	 * @param exceptName
 	 *            该文件的期望名称。
-	 * @param situation
-	 *            添加文件时的情景。
 	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
 	 * @throws UnsupportedOperationException
 	 *             不支持的操作。
 	 */
-	protected abstract File addFile_Sub(File parent, File file, String exceptName, AddingSituation situation)
+	protected abstract File addFileByOther_Sub(File parent, File file, String exceptName)
 			throws UnsupportedOperationException;
 
 	/**
-	 * 移除文件的子方法。
+	 * 通过新建方式添加文件的子方法。
+	 * <p>
+	 * 该方法被 {@link #addFile(File, File, String, AddingSituation)} 调用。
+	 * 
+	 * @param parent
+	 *            指定文件的父节点。
+	 * @param file
+	 *            指定的文件。
+	 * @param exceptName
+	 *            该文件的期望名称。
+	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
+	 * @throws UnsupportedOperationException
+	 *             不支持的操作。
+	 */
+	protected abstract File addFileByNew_Sub(File parent, File file, String exceptName)
+			throws UnsupportedOperationException;
+
+	/**
+	 * 通过移动方式添加文件的子方法。
+	 * <p>
+	 * 该方法被 {@link #addFile(File, File, String, AddingSituation)} 调用。
+	 * 
+	 * @param parent
+	 *            指定文件的父节点。
+	 * @param file
+	 *            指定的文件。
+	 * @param exceptName
+	 *            该文件的期望名称。
+	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
+	 * @throws UnsupportedOperationException
+	 *             不支持的操作。
+	 */
+	protected abstract File addFileByMove_Sub(File parent, File file, String exceptName)
+			throws UnsupportedOperationException;
+
+	/**
+	 * 通过复制方式添加文件的子方法。
+	 * <p>
+	 * 该方法被 {@link #addFile(File, File, String, AddingSituation)} 调用。
+	 * 
+	 * @param parent
+	 *            指定文件的父节点。
+	 * @param file
+	 *            指定的文件。
+	 * @param exceptName
+	 *            该文件的期望名称。
+	 * @return 实际被添加进工程中的文件，如果失败，则为 <code>null</code>。
+	 * @throws UnsupportedOperationException
+	 *             不支持的操作。
+	 */
+	protected abstract File addFileByCopy_Sub(File parent, File file, String exceptName)
+			throws UnsupportedOperationException;
+
+	/**
+	 * 通过其它方式移除文件的子方法。
 	 * <p>
 	 * 该方法被 {@link #removeFile(File, RemovingSituation)} 调用。
 	 * 
 	 * @param file
 	 *            指定的文件。
-	 * @param situation
-	 *            移除文件时的情景。
 	 * @return 被移除的文件 ,如果失败，则为 <code>null</code>。。
 	 * @throws UnsupportedOperationException
 	 *             不支持该操作。
 	 */
-	protected abstract File removeFile_Sub(File file, RemovingSituation situation) throws UnsupportedOperationException;
+	protected abstract File removeFileByOther_Sub(File file) throws UnsupportedOperationException;
+
+	/**
+	 * 通过移动方式移除文件的子方法。
+	 * <p>
+	 * 该方法被 {@link #removeFile(File, RemovingSituation)} 调用。
+	 * 
+	 * @param file
+	 *            指定的文件。
+	 * @return 被移除的文件 ,如果失败，则为 <code>null</code>。。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract File removeFileByMove_Sub(File file) throws UnsupportedOperationException;
+
+	/**
+	 * 通过删除方式移除文件的子方法。
+	 * <p>
+	 * 该方法被 {@link #removeFile(File, RemovingSituation)} 调用。
+	 * 
+	 * @param file
+	 *            指定的文件。
+	 * @return 被移除的文件 ,如果失败，则为 <code>null</code>。。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	protected abstract File removeFileByDelete_Sub(File file) throws UnsupportedOperationException;
 
 	/**
 	 * 重命名文件的子方法。

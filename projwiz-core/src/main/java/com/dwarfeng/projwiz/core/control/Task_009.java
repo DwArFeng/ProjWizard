@@ -6,15 +6,15 @@ import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
-import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.util.ProjectFileUtil;
 import com.dwarfeng.projwiz.core.view.eum.DialogMessage;
-import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 import com.dwarfeng.projwiz.core.view.struct.InputDialogSetting;
 import com.dwarfeng.projwiz.core.view.struct.MessageDialogSetting;
+import com.dwarfeng.projwiz.core.view.struct.ModuleChooserSetting;
 
 final class NewFileTask extends ProjWizTask {
 
@@ -83,11 +83,6 @@ final class NewFileTask extends ProjWizTask {
 		}
 		FileProcessor processor = (FileProcessor) modules[0];
 
-		File newFile = processor.newFile();
-		if (Objects.isNull(newFile)) {
-			return;
-		}
-
 		// 询问该文件的名称。
 		String exceptName = null;
 		exceptName = (String) projWizard.getToolkit()
@@ -104,6 +99,12 @@ final class NewFileTask extends ProjWizTask {
 					.showInputDialog(new InputDialogSetting.Builder().setTitle(label(LabelStringKey.INPUTDIA_3))
 							.setMessage(label(LabelStringKey.INPUTDIA_5))
 							.setDialogMessage(DialogMessage.QUESTION_MESSAGE).build());
+		}
+
+		// 通过处理器生成新文件。
+		File newFile = processor.newFile();
+		if (Objects.isNull(newFile)) {
+			return;
 		}
 
 		File parentFile;

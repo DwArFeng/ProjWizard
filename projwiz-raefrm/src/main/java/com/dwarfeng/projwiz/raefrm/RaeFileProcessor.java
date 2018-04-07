@@ -14,6 +14,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.eum.FileCoreConfigEntry;
+import com.dwarfeng.projwiz.raefrm.model.eum.PermDemandKey;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.FileProcToolkit;
 
@@ -117,7 +118,7 @@ public abstract class RaeFileProcessor extends RaeModule implements FileProcesso
 	public boolean isNewEditorSupported() {
 		lock.readLock().lock();
 		try {
-			return coreConfigModel.getParsedValue(FileCoreConfigEntry.PROCESSOR_SUPPORTED_NEW_EDITOR.getConfigKey(),
+			return coreConfigModel.getParsedValue(FileCoreConfigEntry.RAE_PROCESSOR_SUPPORTED_NEW_EDITOR.getConfigKey(),
 					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
@@ -131,7 +132,7 @@ public abstract class RaeFileProcessor extends RaeModule implements FileProcesso
 	public boolean isNewFileSupported() {
 		lock.readLock().lock();
 		try {
-			return coreConfigModel.getParsedValue(FileCoreConfigEntry.PROCESSOR_SUPPORTED_NEW_FILE.getConfigKey(),
+			return coreConfigModel.getParsedValue(FileCoreConfigEntry.RAE_PROCESSOR_SUPPORTED_NEW_FILE.getConfigKey(),
 					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
@@ -152,6 +153,7 @@ public abstract class RaeFileProcessor extends RaeModule implements FileProcesso
 			if (!isNewEditorSupported()) {
 				throw new UnsupportedOperationException("newEditor");
 			} else {
+				requirePermKeyAvailable(PermDemandKey.RAE_PROCESSOR_NEWEDITOR);
 				return newEditor_Sub(editProject, editFile);
 			}
 		} finally {
@@ -170,9 +172,10 @@ public abstract class RaeFileProcessor extends RaeModule implements FileProcesso
 	public File newFile() throws ProcessException {
 		lock.writeLock().lock();
 		try {
-			if (!isNewEditorSupported()) {
+			if (!isNewFileSupported()) {
 				throw new UnsupportedOperationException("newFile");
 			} else {
+				requirePermKeyAvailable(PermDemandKey.RAE_PROCESSOR_NEWFILE);
 				return newFile_Sub();
 			}
 		} finally {

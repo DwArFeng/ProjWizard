@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <root>
+	<info key="rae.processor.newproject">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.processor.openproject">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.processor.saveproject">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.project.addfile.bycopy">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.project.addfile.bymove">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.project.addfile.bynew">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.project.addfile.byother">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.project.removefile.bydelete">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.project.removefile.bymove">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.project.removefile.byother">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.file.newlabel">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.file.discardlabel">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.file.openinputstream">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
+	<info key="rae.file.openoutputstream">
+		<!--<demand value="METHOD_NAME" /> -->
+	</info>
 	<info key="processor.newproject">
 		<demand value="SHOWINPUTDIALOG" />
 		<demand value="SHOWMESSAGEDIALOG" />

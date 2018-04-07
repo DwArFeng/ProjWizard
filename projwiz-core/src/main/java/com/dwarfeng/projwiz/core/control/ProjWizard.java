@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -1177,21 +1178,26 @@ public final class ProjWizard {
 					return;
 				}
 
-				SwingUtil.invokeInEventQueue(() -> {
-					window.addWindowListener(new WindowAdapter() {
+				try {
+					SwingUtil.invokeAndWaitInEventQueue(() -> {
+						window.addWindowListener(new WindowAdapter() {
 
-						@Override
-						public void windowClosed(WindowEvent e) {
-							if (externalWindowModel.contains(window)) {
-								externalWindowModel.remove(window);
+							@Override
+							public void windowClosed(WindowEvent e) {
+								if (externalWindowModel.contains(window)) {
+									externalWindowModel.remove(window);
+								}
 							}
-						}
-					});
+						});
 
-					window.setLocationRelativeTo(mainFrame);
-					window.setVisible(true);
-					window.requestFocus();
-				});
+						window.setLocationRelativeTo(mainFrame);
+					});
+				} catch (InvocationTargetException | InterruptedException ignore) {
+					// 抛异常也要按照基本法。
+				}
+
+				window.requestFocus();
+				window.setVisible(true);
 
 				externalWindowModel.add(window);
 			} finally {

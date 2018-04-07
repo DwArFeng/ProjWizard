@@ -12,6 +12,7 @@ import com.dwarfeng.dutil.develop.cfg.ExconfigModel;
 import com.dwarfeng.dutil.develop.cfg.io.PropConfigSaver;
 import com.dwarfeng.projwiz.basic4.model.eum.FofpConfigEntry;
 import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigEntry;
+import com.dwarfeng.projwiz.raefrm.model.eum.FileCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
 
 public class ConfigEntrySaver {
@@ -42,6 +43,7 @@ public class ConfigEntrySaver {
 		// ------------------------------------------------------------------------------------------------------------
 		CT.trace("保存fofp配置文件...");
 		ExconfigModel fofpModel = new DefaultExconfigModel();
+		fofpModel.addAll(Arrays.asList(FileCoreConfigEntry.values()));
 		fofpModel.addAll(Arrays.asList(FofpConfigEntry.values()));
 
 		File fofpFile = new File("target" + File.separator + "fofp" + File.separator + "cfg.core.properties");

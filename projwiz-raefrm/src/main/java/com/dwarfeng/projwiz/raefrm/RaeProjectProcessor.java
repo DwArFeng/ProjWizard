@@ -12,6 +12,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
+import com.dwarfeng.projwiz.raefrm.model.eum.PermDemandKey;
 import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
@@ -117,7 +118,7 @@ public abstract class RaeProjectProcessor extends RaeModule implements ProjectPr
 	public boolean isNewProjectSupported() {
 		lock.readLock().lock();
 		try {
-			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.PROCESSOR_SUPPORTED_NEW_PROJECT.getConfigKey(),
+			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.RAE_PROCESSOR_SUPPORTED_NEW_PROJECT.getConfigKey(),
 					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
@@ -131,7 +132,7 @@ public abstract class RaeProjectProcessor extends RaeModule implements ProjectPr
 	public boolean isOpenProjectSupported() {
 		lock.readLock().lock();
 		try {
-			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.PROCESSOR_SUPPORTED_OPEN_PROJECT.getConfigKey(),
+			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.RAE_PROCESSOR_SUPPORTED_OPEN_PROJECT.getConfigKey(),
 					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
@@ -145,7 +146,7 @@ public abstract class RaeProjectProcessor extends RaeModule implements ProjectPr
 	public boolean isSaveProjectSupported() {
 		lock.readLock().lock();
 		try {
-			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.PROCESSOR_SUPPORTED_SAVE_PROJECT.getConfigKey(),
+			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.RAE_PROCESSOR_SUPPORTED_SAVE_PROJECT.getConfigKey(),
 					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
@@ -166,6 +167,7 @@ public abstract class RaeProjectProcessor extends RaeModule implements ProjectPr
 			if (!isNewProjectSupported()) {
 				throw new UnsupportedOperationException("newProject");
 			} else {
+				requirePermKeyAvailable(PermDemandKey.RAE_PROCESSOR_NEWPROJECT);
 				return newProject_Sub();
 			}
 		} finally {
@@ -187,6 +189,7 @@ public abstract class RaeProjectProcessor extends RaeModule implements ProjectPr
 			if (!isOpenProjectSupported()) {
 				throw new UnsupportedOperationException("openProject");
 			} else {
+				requirePermKeyAvailable(PermDemandKey.RAE_PROCESSOR_OPENPROJECT);
 				return openProject_Sub();
 			}
 		} finally {
@@ -210,6 +213,7 @@ public abstract class RaeProjectProcessor extends RaeModule implements ProjectPr
 			if (!isSaveProjectSupported()) {
 				throw new UnsupportedOperationException("saveProject");
 			} else {
+				requirePermKeyAvailable(PermDemandKey.RAE_PROCESSOR_SAVEPROJECT);
 				return saveProject_Sub();
 			}
 		} finally {

@@ -197,6 +197,8 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	 *             指定的入口参数为 <code> null </code>。
 	 * @throws UnsupportedOperationException
 	 *             不支持该操作。
+	 * @throws IllegalArgumentException
+	 *             参数 <code>situation</code> 不合法。
 	 */
 	public File removeFile(File file, RemovingSituation situation);
 
@@ -210,6 +212,8 @@ public interface Project extends ObverserSet<ProjectObverser>, ExternalReadWrite
 	 * @return 实际被重命名的文件，如果失败，则为 <code>null</code>。
 	 * @throws UnsupportedOperationException
 	 *             不支持该操作。
+	 * @throws IllegalArgumentException
+	 *             参数 <code>situation</code> 不合法。
 	 */
 	public File renameFile(File file, String newName);
 

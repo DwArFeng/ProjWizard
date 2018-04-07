@@ -2,12 +2,14 @@ package com.dwarfeng.projwiz.basic4.model.struct;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
 import com.dwarfeng.projwiz.basic4.model.eum.FofpConfigEntry;
 import com.dwarfeng.projwiz.basic4.model.eum.ResourceKey;
 import com.dwarfeng.projwiz.basic4.util.Constants;
+import com.dwarfeng.projwiz.raefrm.model.eum.FileCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 
 /**
@@ -56,7 +58,10 @@ public class FofpConstantsProvider implements ConstantsProvider {
 	 */
 	@Override
 	public Collection<ExconfigEntry> getCoreConfigEntries() {
-		return Arrays.asList(FofpConfigEntry.values());
+		Collection<ExconfigEntry> entries = new HashSet<>();
+		entries.addAll(Arrays.asList(FileCoreConfigEntry.values()));
+		entries.addAll(Arrays.asList(FofpConfigEntry.values()));
+		return entries;
 	}
 
 }

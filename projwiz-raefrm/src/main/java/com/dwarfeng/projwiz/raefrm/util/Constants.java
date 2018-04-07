@@ -13,8 +13,6 @@ import com.dwarfeng.projwiz.core.model.struct.Toolkit;
  * @since 0.0.3-alpha
  */
 public final class Constants {
-	
-	/***/
 
 	/** 运行框架所需要的最基本权限。 */
 	public final static Collection<Toolkit.Method> BASIC_PERMS = Collections

@@ -69,17 +69,6 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	public long getAccessTime();
 
 	/**
-	 * 设置文件的访问时间。
-	 * 
-	 * <p>
-	 * 访问时间小于0，代表文件从未访问或不可用。
-	 * 
-	 * @param time
-	 *            指定的访问时间。
-	 */
-	public void setAccessTime(long time);
-
-	/**
 	 * 获取文件的创建时间。
 	 * 
 	 * <p>
@@ -88,6 +77,13 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	 * @return 文件的创建时间。
 	 */
 	public long getCreateTime();
+
+	/**
+	 * 获取文件的类型。
+	 * 
+	 * @return 文件的类型。
+	 */
+	public Name getFileType();
 
 	/**
 	 * 获取仓库中的所有标签。
@@ -132,17 +128,6 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	public long getModifyTime();
 
 	/**
-	 * 设置文件的编辑时间。
-	 * 
-	 * <p>
-	 * 编辑时间小于0，代表文件从未编辑或不可用。
-	 * 
-	 * @param time
-	 *            指定的编辑时间。
-	 */
-	public void setModifyTime(long time);
-
-	/**
 	 * 返回文件的占用大小。
 	 * 
 	 * <p>
@@ -154,13 +139,6 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	 * @return 文件的占用大小。
 	 */
 	public long getOccupiedSize();
-
-	/**
-	 * 获取文件的类型。
-	 * 
-	 * @return 文件的类型。
-	 */
-	public Name getFileType();
 
 	/**
 	 * 获取管理该文档的文档处理器的类。
@@ -270,13 +248,41 @@ public interface File extends ExternalReadWriteThreadSafe, ObverserSet<FileObver
 	public OutputStream openOutputStream(String label) throws IOException;
 
 	/**
-	 * 设置管理该文档的文档处理器的类。
+	 * 设置文件的访问时间（可选操作）。
+	 * 
+	 * <p>
+	 * 访问时间小于0，代表文件从未访问或不可用。
+	 * 
+	 * @param time
+	 *            指定的访问时间。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	public void setAccessTime(long time) throws UnsupportedOperationException;
+
+	/**
+	 * 设置文件的编辑时间。
+	 * 
+	 * <p>
+	 * 编辑时间小于0，代表文件从未编辑或不可用。
+	 * 
+	 * @param time
+	 *            指定的编辑时间。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
+	 */
+	public void setModifyTime(long time) throws UnsupportedOperationException;
+
+	/**
+	 * 设置管理该文档的文档处理器的类（可选操作）。
 	 * 
 	 * @param clazz
 	 *            指定的文档处理器的子类。
 	 * @return 该方法是否改变了文件本身（是否生效）。
+	 * @throws UnsupportedOperationException
+	 *             不支持该操作。
 	 */
-	public boolean setProcessorClass(Class<? extends FileProcessor> clazz);
+	public boolean setProcessorClass(Class<? extends FileProcessor> clazz) throws UnsupportedOperationException;
 
 	/**
 	 * 清除仓库中的所有内容。

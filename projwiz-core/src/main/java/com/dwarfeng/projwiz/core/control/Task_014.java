@@ -91,6 +91,7 @@ final class OpenFocusFileTask extends ProjWizTask {
 			lastEditor = editor2Add;
 		}
 
+		// 只有当所有的编辑器全部打开失败时， lastEditor 才为 null，根据此判据提示用户所有文件全部打开失败。
 		if (Objects.isNull(lastEditor)) {
 			projWizard.getToolkit()
 					.showMessageDialog(new MessageDialogSetting.Builder().setMessage(label(LabelStringKey.MSGDIA_16))

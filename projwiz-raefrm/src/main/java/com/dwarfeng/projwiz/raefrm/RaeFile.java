@@ -15,6 +15,7 @@ import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
+import com.dwarfeng.projwiz.raefrm.model.eum.PermDemandKey;
 import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
@@ -383,6 +384,7 @@ public abstract class RaeFile implements File {
 	protected final ProjProcToolkit projProcToolkit;
 	/** 文件的类型。 */
 	protected final Name fileType;
+
 	/** 文件的创建时间。 */
 	protected final long createTime;
 
@@ -404,8 +406,6 @@ public abstract class RaeFile implements File {
 	 *            文件的类型。
 	 * @param processorClass
 	 *            文件的处理器类。
-	 * @param name
-	 *            文件的名称。
 	 * @param accessTime
 	 *            文件的接触时间。
 	 * @param modifyTime
@@ -413,7 +413,7 @@ public abstract class RaeFile implements File {
 	 * @param obversers
 	 *            文件的观察器集合。
 	 * @throws NullPointerException
-	 *             入口参数为 <code>null</code>。
+	 *             指定的入口参数为 <code> null </code>。
 	 */
 	protected RaeFile(boolean isFolder, ProjProcToolkit projProcToolkit, Name fileType,
 			Class<? extends FileProcessor> processorClass, long accessTime, long modifyTime,
@@ -621,7 +621,7 @@ public abstract class RaeFile implements File {
 		lock.readLock().lock();
 		try {
 			return projProcToolkit.getCoreConfigModel()
-					.getParsedValue(ProjCoreConfigEntry.FILE_SUPPORTED_READ.getConfigKey(), Boolean.class);
+					.getParsedValue(ProjCoreConfigEntry.RAE_FILE_SUPPORTED_READ.getConfigKey(), Boolean.class);
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -635,7 +635,7 @@ public abstract class RaeFile implements File {
 		lock.readLock().lock();
 		try {
 			return projProcToolkit.getCoreConfigModel()
-					.getParsedValue(ProjCoreConfigEntry.FILE_SUPPORTED_WRITE.getConfigKey(), Boolean.class);
+					.getParsedValue(ProjCoreConfigEntry.RAE_FILE_SUPPORTED_WRITE.getConfigKey(), Boolean.class);
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -657,6 +657,7 @@ public abstract class RaeFile implements File {
 			if (!isWriteSupported()) {
 				throw new UnsupportedOperationException("newLabel");
 			} else {
+				projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_FILE_NEWLABEL);
 				return newLabel_Sub(label);
 			}
 		} finally {
@@ -680,6 +681,7 @@ public abstract class RaeFile implements File {
 			if (!isWriteSupported()) {
 				throw new UnsupportedOperationException("discardLabel");
 			} else {
+				projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_FILE_DISCARDLABEL);
 				return discardLabel_Sub(label);
 			}
 		} finally {
@@ -703,7 +705,9 @@ public abstract class RaeFile implements File {
 			if (!isReadSupported()) {
 				throw new UnsupportedOperationException("openInputStream");
 			} else {
-				return openInputStream_Sub(label);
+				projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_FILE_OPENINPUTSTREAM);
+				InputStream in = openInputStream_Sub(label);
+				return Objects.isNull(in) ? in : new ObversableInputStream(label, in);
 			}
 		} finally {
 			lock.writeLock().unlock();
@@ -726,7 +730,9 @@ public abstract class RaeFile implements File {
 			if (!isWriteSupported()) {
 				throw new UnsupportedOperationException("openOutputStream");
 			} else {
-				return openOutputStream_Sub(label);
+				projProcToolkit.requirePermKeyAvailable(PermDemandKey.RAE_FILE_OPENOUTPUTSTREAM);
+				OutputStream out = openOutputStream_Sub(label);
+				return Objects.isNull(out) ? out : new ObversableOutputStream(label, out);
 			}
 		} finally {
 			lock.writeLock().unlock();

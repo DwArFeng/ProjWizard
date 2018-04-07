@@ -5,6 +5,6 @@
 		<!--<demand value="METHOD_NAME" /> -->
 	</info>
 	<info key="rae.processor.newfile">
-		<demand value="SHOWEXTERNALWINDOW" />
+		<!--<demand value="METHOD_NAME" /> -->
 	</info>
 </root>

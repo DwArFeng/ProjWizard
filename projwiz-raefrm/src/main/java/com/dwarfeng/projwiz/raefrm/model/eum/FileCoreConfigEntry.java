@@ -18,9 +18,9 @@ import com.dwarfeng.dutil.develop.cfg.struct.ValueParser;
 public enum FileCoreConfigEntry implements ExconfigEntry {
 
 	/** 处理器是否支持新建工程。 */
-	PROCESSOR_SUPPORTED_NEW_EDITOR("processor.supported.new.editor", "false", new BooleanConfigChecker(), new BooleanValueParser()), //
+	RAE_PROCESSOR_SUPPORTED_NEW_EDITOR("rae.processor.supported.new.editor", "false", new BooleanConfigChecker(), new BooleanValueParser()), //
 	/** 处理器是否支持打开工程。 */
-	PROCESSOR_SUPPORTED_NEW_FILE("processor.supported.new.file", "false", new BooleanConfigChecker(), new BooleanValueParser()), //
+	RAE_PROCESSOR_SUPPORTED_NEW_FILE("rae.processor.supported.new.file", "false", new BooleanConfigChecker(), new BooleanValueParser()), //
 
 	;
 
