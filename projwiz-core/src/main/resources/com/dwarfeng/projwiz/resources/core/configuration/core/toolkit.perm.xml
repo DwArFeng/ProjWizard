@@ -8,7 +8,7 @@
 		<define key="FULL" value="1000" />
 	</defines>
 	<perms>
-		<perm method="ADDCORECONFIGOBVERSER" pl="WRITE_LIMIT" />
+		<perm method="ADDCORESETTINGOBVERSER" pl="WRITE_LIMIT" />
 		<perm method="ADDPROGRAMOBVERSER" pl="FULL" />
 		<perm method="CHOOSEMODULE" pl="READ_ONLY" />
 		<perm method="CHOOSEPROJECTFILE" pl="READ_ONLY" />
@@ -25,8 +25,8 @@
 		<perm method="GETBACKGROUNDREADONLY" pl="READ_ONLY" />
 		<perm method="GETCFGHANDLER" pl="FULL" />
 		<perm method="GETCFGHANDLERREADONLY" pl="READ_ONLY" />
-		<perm method="GETCORECONFIGMODEL" pl="FULL" />
-		<perm method="GETCORECONFIGMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETCORESETTINGHANDLER" pl="FULL" />
+		<perm method="GETCORESETTINGHANDLERREADONLY" pl="READ_ONLY" />
 		<perm method="GETEDITORMODEL" pl="FULL" />
 		<perm method="GETEDITORMODELREADONLY" pl="READ_ONLY" />
 		<perm method="GETEXITCODE" pl="READ_ONLY" />
@@ -63,13 +63,13 @@
 		<perm method="GETRUNTIMESTATE" pl="READ_ONLY" />
 		<perm method="GETTOOLKITPERMMODEL" pl="FULL" />
 		<perm method="GETTOOLKITPERMMODELREADONLY" pl="READ_ONLY" />
-		<perm method="GETVIEWCONFIGMODEL" pl="FULL" />
-		<perm method="GETVIEWCONFIGMODELREADONLY" pl="READ_ONLY" />
+		<perm method="GETVIEWSETTINGHANDLER" pl="FULL" />
+		<perm method="GETVIEWSETTINGHANDLERREADONLY" pl="READ_ONLY" />
 		<perm method="INFO" pl="WRITE_LIMIT" />
 		<perm method="ISMAINFRAMEVISIBLE" pl="READ_ONLY" />
 		<perm method="NEWMAINFRAME" pl="FULL" />
 		<perm method="OPENFILE" pl="WRITE_LIMIT" />
-		<perm method="REMOVECORECONFIGOBVERSER" pl="WRITE_LIMIT" />
+		<perm method="REMOVECORESETTINGOBVERSER" pl="WRITE_LIMIT" />
 		<perm method="REMOVEPROGRAMOBVERSER" pl="FULL" />
 		<perm method="SETRUNTIMESTATE" pl="FULL" />
 		<perm method="SHOWCONFIRMDIALOG" pl="WRITE_LIMIT" />

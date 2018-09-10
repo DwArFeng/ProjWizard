@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import com.dwarfeng.dutil.basic.str.Name;
-import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
-import com.dwarfeng.projwiz.basic4.model.eum.FofpConfigEntry;
+import com.dwarfeng.dutil.develop.setting.SettingEnumItem;
+import com.dwarfeng.projwiz.basic4.model.eum.FofpConfigItem;
 import com.dwarfeng.projwiz.basic4.model.eum.ResourceKey;
 import com.dwarfeng.projwiz.basic4.util.Constants;
-import com.dwarfeng.projwiz.raefrm.model.eum.FileCoreConfigEntry;
+import com.dwarfeng.projwiz.raefrm.model.eum.FileCoreConfigItem;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 
 /**
@@ -57,10 +57,10 @@ public class FofpConstantsProvider implements ConstantsProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<ExconfigEntry> getCoreConfigEntries() {
-		Collection<ExconfigEntry> entries = new HashSet<>();
-		entries.addAll(Arrays.asList(FileCoreConfigEntry.values()));
-		entries.addAll(Arrays.asList(FofpConfigEntry.values()));
+	public Collection<SettingEnumItem> getSettingEnumItems() {
+		Collection<SettingEnumItem> entries = new HashSet<>();
+		entries.addAll(Arrays.asList(FileCoreConfigItem.values()));
+		entries.addAll(Arrays.asList(FofpConfigItem.values()));
 		return entries;
 	}
 

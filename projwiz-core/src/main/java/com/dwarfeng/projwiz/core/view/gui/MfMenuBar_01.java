@@ -3,8 +3,8 @@ package com.dwarfeng.projwiz.core.view.gui;
 import com.dwarfeng.dutil.basic.cna.model.SyncMapModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncSetModel;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.Project;
@@ -21,7 +21,7 @@ import com.dwarfeng.projwiz.core.view.struct.MainFrameVisibleModel;
 public final class MfMenuBar_01 extends ProjWizMenuBar {
 
 	private static final long serialVersionUID = 8000675370807395012L;
-	
+
 	private final MfMenu_01 menu_01;
 	private final MfMenu_02 menu_02;
 	private final MfMenu_03 menu_03;
@@ -33,7 +33,7 @@ public final class MfMenuBar_01 extends ProjWizMenuBar {
 	private SyncReferenceModel<Project> focusProjectModel;
 	private SyncSetModel<File> focusFileModel;
 	private SyncMapModel<Project, Editor> focusEditorModel;
-	private SyncExconfigModel coreConfigModel;
+	private SyncSettingHandler coreSettingHandler;
 
 	/**
 	 * 新实例。
@@ -51,13 +51,13 @@ public final class MfMenuBar_01 extends ProjWizMenuBar {
 	 * @param focusFileModel
 	 * @param focusEditorModel
 	 * @param editorModel
-	 * @param coreConfigModel
+	 * @param coreSettingHandler
 	 * @param mainFrameVisibleModel
 	 */
 	public MfMenuBar_01(GuiManager guiManager, I18nHandler i18nHandler, SyncReferenceModel<File> anchorFileModel,
 			SyncReferenceModel<Project> focusProjectModel, SyncSetModel<File> focusFileModel,
 			SyncMapModel<Project, Editor> focusEditorModel, SyncMapModel<ProjectFilePair, Editor> editorModel,
-			SyncExconfigModel coreConfigModel, MainFrameVisibleModel mainFrameVisibleModel) {
+			SyncSettingHandler coreSettingHandler, MainFrameVisibleModel mainFrameVisibleModel) {
 		super(guiManager, i18nHandler);
 
 		menu_01 = new MfMenu_01(guiManager, i18nHandler, focusProjectModel);
@@ -76,14 +76,14 @@ public final class MfMenuBar_01 extends ProjWizMenuBar {
 		menu_05 = new MfMenu_05(guiManager, i18nHandler);
 		add(menu_05);
 
-		menu_06 = new MfMenu_06(guiManager, i18nHandler, coreConfigModel);
+		menu_06 = new MfMenu_06(guiManager, i18nHandler, coreSettingHandler);
 		add(menu_06);
 
 		this.anchorFileModel = anchorFileModel;
 		this.focusProjectModel = focusProjectModel;
 		this.focusFileModel = focusFileModel;
 		this.focusEditorModel = focusEditorModel;
-		this.coreConfigModel = coreConfigModel;
+		this.coreSettingHandler = coreSettingHandler;
 
 	}
 
@@ -95,10 +95,10 @@ public final class MfMenuBar_01 extends ProjWizMenuBar {
 	}
 
 	/**
-	 * @return the coreConfigModel
+	 * @return the coreSettingHandler
 	 */
-	public SyncExconfigModel getCoreConfigModel() {
-		return coreConfigModel;
+	public SyncSettingHandler getCoreSettingHandler() {
+		return coreSettingHandler;
 	}
 
 	/**
@@ -132,12 +132,12 @@ public final class MfMenuBar_01 extends ProjWizMenuBar {
 	}
 
 	/**
-	 * @param coreConfigModel
-	 *            the coreConfigModel to set
+	 * @param coreSettingHandler
+	 *            the coreSettingHandler to set
 	 */
-	public void setCoreConfigModel(SyncExconfigModel coreConfigModel) {
-		this.coreConfigModel = coreConfigModel;
-		this.menu_06.setCoreConfigModel(coreConfigModel);
+	public void setCoreSettingHandler(SyncSettingHandler coreSettingHandler) {
+		this.coreSettingHandler = coreSettingHandler;
+		this.menu_06.setCoreSettingHandler(coreSettingHandler);
 	}
 
 	/**

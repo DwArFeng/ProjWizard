@@ -18,7 +18,7 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.util.ModelUtil;
 import com.dwarfeng.projwiz.raefrm.model.eum.PermDemandKey;
-import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
+import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigItem;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
@@ -268,17 +268,17 @@ public abstract class RaeProject implements Project {
 		try {
 			switch (situation) {
 			case BY_COPY:
-				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_ADDING_BYCOPY.getConfigKey(), Boolean.class);
+				return projProcToolkit.getCoreSettingHandler()
+						.getParsedValue(ProjCoreConfigItem.RAE_PROJECT_SUPPORTED_ADDING_BYCOPY, Boolean.class);
 			case BY_MOVE:
-				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_ADDING_BYMOVE.getConfigKey(), Boolean.class);
+				return projProcToolkit.getCoreSettingHandler()
+						.getParsedValue(ProjCoreConfigItem.RAE_PROJECT_SUPPORTED_ADDING_BYMOVE, Boolean.class);
 			case BY_NEW:
-				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_ADDING_BYNEW.getConfigKey(), Boolean.class);
+				return projProcToolkit.getCoreSettingHandler()
+						.getParsedValue(ProjCoreConfigItem.RAE_PROJECT_SUPPORTED_ADDING_BYNEW, Boolean.class);
 			case OTHER:
-				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_ADDING_BYOTHER.getConfigKey(), Boolean.class);
+				return projProcToolkit.getCoreSettingHandler()
+						.getParsedValue(ProjCoreConfigItem.RAE_PROJECT_SUPPORTED_ADDING_BYOTHER, Boolean.class);
 			default:
 				return false;
 			}
@@ -298,14 +298,14 @@ public abstract class RaeProject implements Project {
 		try {
 			switch (situation) {
 			case BY_DELETE:
-				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_REMOVING_BYDELETE.getConfigKey(), Boolean.class);
+				return projProcToolkit.getCoreSettingHandler()
+						.getParsedValue(ProjCoreConfigItem.RAE_PROJECT_SUPPORTED_REMOVING_BYDELETE, Boolean.class);
 			case BY_MOVE:
-				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_REMOVING_BYMOVE.getConfigKey(), Boolean.class);
+				return projProcToolkit.getCoreSettingHandler()
+						.getParsedValue(ProjCoreConfigItem.RAE_PROJECT_SUPPORTED_REMOVING_BYMOVE, Boolean.class);
 			case OTHER:
-				return projProcToolkit.getCoreConfigModel().getParsedValue(
-						ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_REMOVING_BYOTHER.getConfigKey(), Boolean.class);
+				return projProcToolkit.getCoreSettingHandler()
+						.getParsedValue(ProjCoreConfigItem.RAE_PROJECT_SUPPORTED_REMOVING_BYOTHER, Boolean.class);
 			default:
 				return false;
 			}
@@ -321,8 +321,8 @@ public abstract class RaeProject implements Project {
 	public boolean isRenameFileSupported() {
 		lock.readLock().lock();
 		try {
-			return projProcToolkit.getCoreConfigModel().getParsedValue(
-					ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_RENAME_FILE.getConfigKey(), Boolean.class);
+			return projProcToolkit.getCoreSettingHandler()
+					.getParsedValue(ProjCoreConfigItem.RAE_PROJECT_SUPPORTED_RENAME_FILE, Boolean.class);
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -335,8 +335,8 @@ public abstract class RaeProject implements Project {
 	public boolean isSaveSupported() {
 		lock.readLock().lock();
 		try {
-			return projProcToolkit.getCoreConfigModel()
-					.getParsedValue(ProjCoreConfigEntry.RAE_PROJECT_SUPPORTED_SAVE.getConfigKey(), Boolean.class);
+			return projProcToolkit.getCoreSettingHandler().getParsedValue(ProjCoreConfigItem.RAE_PROJECT_SUPPORTED_SAVE,
+					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
 		}

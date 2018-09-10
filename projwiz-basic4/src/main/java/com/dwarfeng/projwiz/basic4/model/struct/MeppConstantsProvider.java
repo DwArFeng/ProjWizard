@@ -6,10 +6,11 @@ import java.util.HashSet;
 
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
-import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigEntry;
+import com.dwarfeng.dutil.develop.setting.SettingEnumItem;
+import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigItem;
 import com.dwarfeng.projwiz.basic4.model.eum.ResourceKey;
 import com.dwarfeng.projwiz.basic4.util.Constants;
-import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
+import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigItem;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 
 /**
@@ -57,10 +58,10 @@ public class MeppConstantsProvider implements ConstantsProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<ExconfigEntry> getCoreConfigEntries() {
-		Collection<ExconfigEntry> entries = new HashSet<>();
-		entries.addAll(Arrays.asList(ProjCoreConfigEntry.values()));
-		entries.addAll(Arrays.asList(MeppConfigEntry.values()));
+	public Collection<SettingEnumItem> getSettingEnumItems() {
+		Collection<SettingEnumItem> entries = new HashSet<>();
+		entries.addAll(Arrays.asList(ProjCoreConfigItem.values()));
+		entries.addAll(Arrays.asList(MeppConfigItem.values()));
 		return entries;
 	}
 

@@ -30,8 +30,8 @@ import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.gui.swing.JAdjustableBorderPanel;
 import com.dwarfeng.dutil.basic.gui.swing.JExconsole;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
@@ -54,7 +54,7 @@ import com.dwarfeng.projwiz.core.view.struct.MainFrameVisibleModel;
 public class MainFrame extends ProjWizFrame {
 
 	private static final long serialVersionUID = -972111665260066583L;
-	
+
 	private final JPanel contentPane;
 	private final MfPanel_01 mfPanel_01;
 	private final MfMenuBar_01 mfMenuBar_01;
@@ -76,7 +76,7 @@ public class MainFrame extends ProjWizFrame {
 	private SyncSetModel<File> focusFileModel;
 	private SyncListModel<Project> holdProjectModel;
 	private SyncMapModel<Project, Editor> focusEditorModel;
-	private SyncExconfigModel coreConfigModel;
+	private SyncSettingHandler coreSettingHandler;
 	private SyncModuleModel moduleModel;
 
 	private final MainFrameVisibleObverser visibleModelObverser = new MainFrameVisibleAdapter() {
@@ -158,13 +158,13 @@ public class MainFrame extends ProjWizFrame {
 	 * @param focusFileModel
 	 * @param holdProjectModel
 	 * @param focusEditorModel
-	 * @param coreConfigModel
+	 * @param coreSettingHandler
 	 */
 	public MainFrame(GuiManager guiManager, I18nHandler i18nHandler, SyncModuleModel moduleModel,
 			SyncMapModel<ProjectFilePair, Editor> editorModel, MainFrameVisibleModel visibleModel,
 			SyncReferenceModel<File> anchorFileModel, SyncReferenceModel<Project> focusProjectModel,
 			SyncSetModel<File> focusFileModel, SyncListModel<Project> holdProjectModel,
-			SyncMapModel<Project, Editor> focusEditorModel, SyncExconfigModel coreConfigModel) {
+			SyncMapModel<Project, Editor> focusEditorModel, SyncSettingHandler coreSettingHandler) {
 		super(guiManager, i18nHandler);
 
 		sysIn = System.in;
@@ -197,7 +197,7 @@ public class MainFrame extends ProjWizFrame {
 		setBounds(100, 100, 800, 600);
 
 		mfMenuBar_01 = new MfMenuBar_01(guiManager, i18nHandler, anchorFileModel, focusProjectModel, focusFileModel,
-				focusEditorModel, editorModel, coreConfigModel, visibleModel);
+				focusEditorModel, editorModel, coreSettingHandler, visibleModel);
 		setJMenuBar(mfMenuBar_01);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -267,7 +267,7 @@ public class MainFrame extends ProjWizFrame {
 		this.focusFileModel = focusFileModel;
 		this.holdProjectModel = holdProjectModel;
 		this.focusEditorModel = focusEditorModel;
-		this.coreConfigModel = coreConfigModel;
+		this.coreSettingHandler = coreSettingHandler;
 		this.moduleModel = moduleModel;
 
 		syncVisibleModel();
@@ -305,10 +305,10 @@ public class MainFrame extends ProjWizFrame {
 	}
 
 	/**
-	 * @return the coreConfigModel
+	 * @return the coreSettingHandler
 	 */
-	public SyncExconfigModel getCoreConfigModel() {
-		return coreConfigModel;
+	public SyncSettingHandler getCoreSettingHandler() {
+		return coreSettingHandler;
 	}
 
 	/**
@@ -419,12 +419,12 @@ public class MainFrame extends ProjWizFrame {
 	}
 
 	/**
-	 * @param coreConfigModel
-	 *            the coreConfigModel to set
+	 * @param coreSettingHandler
+	 *            the coreSettingHandler to set
 	 */
-	public void setCoreConfigModel(SyncExconfigModel coreConfigModel) {
-		this.coreConfigModel = coreConfigModel;
-		mfMenuBar_01.setCoreConfigModel(coreConfigModel);
+	public void setCoreSettingHandler(SyncSettingHandler coreSettingHandler) {
+		this.coreSettingHandler = coreSettingHandler;
+		mfMenuBar_01.setCoreSettingHandler(coreSettingHandler);
 	}
 
 	/**

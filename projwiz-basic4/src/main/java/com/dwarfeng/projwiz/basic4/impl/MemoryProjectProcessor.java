@@ -12,7 +12,7 @@ import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.projwiz.basic4.model.eum.FileType;
 import com.dwarfeng.projwiz.basic4.model.eum.ImageKey;
 import com.dwarfeng.projwiz.basic4.model.eum.LabelStringKey;
-import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigEntry;
+import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigItem;
 import com.dwarfeng.projwiz.basic4.model.eum.PermDemandKey;
 import com.dwarfeng.projwiz.basic4.model.struct.MeppConstantsProvider;
 import com.dwarfeng.projwiz.basic4.model.struct.MeppFile;
@@ -139,13 +139,12 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 		// TODO 检查是否为测试环境。
 
 		String name = null;
-		boolean isNameAssign = coreConfigModel
-				.getParsedValue(MeppConfigEntry.PROCESSOR_PROJNAME_ISASSIGN.getConfigKey(), Boolean.class);
+		boolean isNameAssign = coreSettingHandler.getParsedValue(MeppConfigItem.PROCESSOR_PROJNAME_ISASSIGN,
+				Boolean.class);
 
-		int buffCapa = coreConfigModel.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_VALUE.getConfigKey(),
-				Integer.class);
-		boolean isAskSize = coreConfigModel
-				.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_ISASK.getConfigKey(), Boolean.class);
+		int buffCapa = coreSettingHandler.getParsedValue(MeppConfigItem.PROCESSOR_DEFAULTBUFFCAPA_VALUE, Integer.class);
+		boolean isAskSize = coreSettingHandler.getParsedValue(MeppConfigItem.PROCESSOR_DEFAULTBUFFCAPA_ISASK,
+				Boolean.class);
 
 		if (isNameAssign) {
 			name = (String) getToolkit().showInputDialog(
@@ -188,8 +187,7 @@ public class MemoryProjectProcessor extends RaeProjectProcessor {
 			buffCapa = Integer.parseInt(inputValue);
 
 		} else {
-			buffCapa = coreConfigModel.getParsedValue(MeppConfigEntry.PROCESSOR_DEFAULTBUFFCAPA_VALUE.getConfigKey(),
-					Integer.class);
+			buffCapa = coreSettingHandler.getParsedValue(MeppConfigItem.PROCESSOR_DEFAULTBUFFCAPA_VALUE, Integer.class);
 		}
 
 		File rootFile = new MeppFile.Builder(true, new ProjProcToolkitImpl(), FileType.FOLDER, new HashMap<>())

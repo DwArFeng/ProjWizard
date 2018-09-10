@@ -13,7 +13,7 @@ import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.projwiz.basic4.model.eum.FileType;
-import com.dwarfeng.projwiz.basic4.model.eum.FofpConfigEntry;
+import com.dwarfeng.projwiz.basic4.model.eum.FofpConfigItem;
 import com.dwarfeng.projwiz.basic4.model.eum.ImageKey;
 import com.dwarfeng.projwiz.basic4.model.struct.FofpConstantsProvider;
 import com.dwarfeng.projwiz.basic4.view.FofpNewFileDialog;
@@ -133,8 +133,8 @@ public class FolderFileProcessor extends RaeFileProcessor {
 		description = Objects.isNull(dialogRef.get().getFileDescription()) ? "" : dialogRef.get().getFileDescription();
 
 		Map<String, ByteBuffer> buffers = new HashMap<>();
-		buffers.put(coreConfigModel.getParsedValue(FofpConfigEntry.FILE_DEFINE_LABEL_DESCRIPTION.getConfigKey(),
-				String.class), string2ByteBuffer(description));
+		buffers.put(coreSettingHandler.getParsedValue(FofpConfigItem.FILE_DEFINE_LABEL_DESCRIPTION, String.class),
+				string2ByteBuffer(description));
 
 		return new RaeCreatedFile.Builder(true, FileType.FOLDER).setProcessorClass(FolderFileProcessor.class)
 				.setBuffers(buffers).build();

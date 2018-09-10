@@ -5,7 +5,6 @@ import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -44,11 +43,6 @@ import com.dwarfeng.dutil.develop.backgr.BackgroundUtil;
 import com.dwarfeng.dutil.develop.backgr.ExecutorServiceBackground;
 import com.dwarfeng.dutil.develop.backgr.Task;
 import com.dwarfeng.dutil.develop.backgr.obv.BackgroundObverser;
-import com.dwarfeng.dutil.develop.cfg.ConfigUtil;
-import com.dwarfeng.dutil.develop.cfg.DefaultExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.ExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.obv.ExconfigObverser;
 import com.dwarfeng.dutil.develop.i18n.DelegateI18nHandler;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
 import com.dwarfeng.dutil.develop.i18n.I18nUtil;
@@ -61,15 +55,18 @@ import com.dwarfeng.dutil.develop.resource.DelegateResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceUtil;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
+import com.dwarfeng.dutil.develop.setting.DefaultSettingHandler;
+import com.dwarfeng.dutil.develop.setting.SettingHandler;
+import com.dwarfeng.dutil.develop.setting.SettingUtil;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
 import com.dwarfeng.projwiz.core.model.cm.DefaultModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.DefaultToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
-import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
-import com.dwarfeng.projwiz.core.model.eum.ViewConfigEntry;
 import com.dwarfeng.projwiz.core.model.io.DefaultPluginClassLoader;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.obv.FileObverser;
@@ -389,8 +386,8 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean addCoreConfigObverser(ExconfigObverser coreConfigObverser) {
-			return coreConfigModel.addObverser(coreConfigObverser);
+		public boolean addCoreSettingObverser(SettingObverser coreSettingObverser) {
+			return coreSettingHandler.addObverser(coreSettingObverser);
 		}
 
 		/**
@@ -730,16 +727,16 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncExconfigModel getCoreConfigModel() {
-			return coreConfigModel;
+		public SyncSettingHandler getCoreSettingHandlerl() {
+			return coreSettingHandler;
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public ExconfigModel getCoreConfigModelReadOnly() {
-			return ConfigUtil.unmodifiableExconfigModel(coreConfigModel);
+		public SettingHandler getCoreSettingHandlerReadOnly() {
+			return SettingUtil.unmodifiableSettingHandler(coreSettingHandler);
 		}
 
 		/**
@@ -1036,16 +1033,16 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncExconfigModel getViewConfigModel() {
-			return viewConfigModel;
+		public SyncSettingHandler getViewSettingHandler() {
+			return viewSettingHandler;
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public ExconfigModel getViewConfigModelReadOnly() {
-			return ConfigUtil.unmodifiableExconfigModel(viewConfigModel);
+		public SettingHandler getViewSettingHandlerReadOnly() {
+			return SettingUtil.unmodifiableSettingHandler(viewSettingHandler);
 		}
 
 		/**
@@ -1091,7 +1088,7 @@ public final class ProjWizard {
 
 				mainFrame = new MainFrame(guiManager, labelI18nHandler, moduleModel, editorModel, mainFrameVisibleModel,
 						anchorFileModel, focusProjectModel, focusFileModel, holdProjectModel, focusEditorModel,
-						coreConfigModel);
+						coreSettingHandler);
 				return true;
 			}
 		}
@@ -1113,8 +1110,8 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) {
-			return coreConfigModel.removeObverser(coreConfigObverser);
+		public boolean removeCoreSettingObverser(SettingObverser coreSettingObverser) {
+			return coreSettingHandler.removeObverser(coreSettingObverser);
 		}
 
 		/**
@@ -1399,8 +1396,7 @@ public final class ProjWizard {
 			Executors.newSingleThreadExecutor(ExecutorServiceBackground.THREAD_FACTORY),
 			Collections.newSetFromMap(new WeakHashMap<>()));
 	/** 核心配置模型。 */
-	private final SyncExconfigModel coreConfigModel = ConfigUtil
-			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(CoreConfigEntry.values())));
+	private final SyncSettingHandler coreSettingHandler = SettingUtil.syncSettingHandler(new DefaultSettingHandler());
 	/** 标签国际化处理器。 */
 	private final SyncI18nHandler labelI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	// 记录器接口
@@ -1408,8 +1404,7 @@ public final class ProjWizard {
 	// 记录器国际化处理器
 	private final SyncI18nHandler loggerI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	// 视图配置模型
-	private final SyncExconfigModel viewConfigModel = ConfigUtil
-			.syncExconfigModel(new DefaultExconfigModel(Arrays.asList(ViewConfigEntry.values())));
+	private final SyncSettingHandler viewSettingHandler = SettingUtil.syncSettingHandler(new DefaultSettingHandler());
 	// 配置处理器
 	private final SyncResourceHandler configurationHandler = ResourceUtil
 			.syncResourceHandler(new DelegateResourceHandler());

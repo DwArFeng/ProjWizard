@@ -6,8 +6,8 @@ import java.io.OutputStream;
 
 import com.dwarfeng.dutil.basic.str.Name;
 import com.dwarfeng.dutil.basic.threads.ExternalReadWriteThreadSafe;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
 import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 
@@ -17,7 +17,7 @@ import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
  * @author DwArFeng
  * @since 0.0.3-alpha
  */
-public interface ModuleToolkit extends ExternalReadWriteThreadSafe{
+public interface ModuleToolkit extends ExternalReadWriteThreadSafe {
 
 	/**
 	 * 向记录器中输出一条调试。
@@ -168,7 +168,7 @@ public interface ModuleToolkit extends ExternalReadWriteThreadSafe{
 	 * 
 	 * @return 组件中的核心配置处理器。
 	 */
-	public SyncExconfigModel getCoreConfigModel();
+	public SyncSettingHandler getCoreSettingHandler();
 
 	/**
 	 * 获取组件中的标签国际化处理器。

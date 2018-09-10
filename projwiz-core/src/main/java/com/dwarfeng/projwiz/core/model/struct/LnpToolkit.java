@@ -19,15 +19,15 @@ import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
 import com.dwarfeng.dutil.develop.backgr.Background;
 import com.dwarfeng.dutil.develop.backgr.Task;
-import com.dwarfeng.dutil.develop.cfg.ExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.obv.ExconfigObverser;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
 import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
+import com.dwarfeng.dutil.develop.setting.SettingHandler;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
 import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
@@ -99,9 +99,9 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean addCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
-		checkPermissionAndState(Method.ADDCORECONFIGOBVERSER);
-		return standardToolkit.addCoreConfigObverser(coreConfigObverser);
+	public boolean addCoreSettingObverser(SettingObverser coreSettingObverser) throws IllegalStateException {
+		checkPermissionAndState(Method.ADDCORESETTINGOBVERSER);
+		return standardToolkit.addCoreSettingObverser(coreSettingObverser);
 	}
 
 	/**
@@ -252,28 +252,18 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncMapModel<Class<? extends Module>, ReferenceModel<Toolkit>> getModuleToolkitModel()
-			throws IllegalStateException {
-		checkPermissionAndState(Method.WARN);
-		return standardToolkit.getModuleToolkitModel();
+	public SyncSettingHandler getCoreSettingHandlerl() throws IllegalStateException {
+		checkPermissionAndState(Method.GETCORESETTINGHANDLER);
+		return standardToolkit.getCoreSettingHandlerl();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncExconfigModel getCoreConfigModel() throws IllegalStateException {
-		checkPermissionAndState(Method.GETCORECONFIGMODEL);
-		return standardToolkit.getCoreConfigModel();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ExconfigModel getCoreConfigModelReadOnly() throws IllegalStateException {
-		checkPermissionAndState(Method.GETCORECONFIGMODELREADONLY);
-		return standardToolkit.getCoreConfigModelReadOnly();
+	public SettingHandler getCoreSettingHandlerReadOnly() throws IllegalStateException {
+		checkPermissionAndState(Method.GETCORESETTINGHANDLERREADONLY);
+		return standardToolkit.getCoreSettingHandlerReadOnly();
 	}
 
 	/**
@@ -511,6 +501,16 @@ public final class LnpToolkit implements Toolkit {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SyncMapModel<Class<? extends Module>, ReferenceModel<Toolkit>> getModuleToolkitModel()
+			throws IllegalStateException {
+		checkPermissionAndState(Method.WARN);
+		return standardToolkit.getModuleToolkitModel();
+	}
+
+	/**
 	 * 获取工具包的权限等级。
 	 * 
 	 * @return 工具包的权限等级。
@@ -613,18 +613,18 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SyncExconfigModel getViewConfigModel() throws IllegalStateException {
-		checkPermissionAndState(Method.GETVIEWCONFIGMODEL);
-		return standardToolkit.getViewConfigModel();
+	public SyncSettingHandler getViewSettingHandler() throws IllegalStateException {
+		checkPermissionAndState(Method.GETVIEWSETTINGHANDLER);
+		return standardToolkit.getViewSettingHandler();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ExconfigModel getViewConfigModelReadOnly() throws IllegalStateException {
-		checkPermissionAndState(Method.GETVIEWCONFIGMODELREADONLY);
-		return standardToolkit.getViewConfigModelReadOnly();
+	public SettingHandler getViewSettingHandlerReadOnly() throws IllegalStateException {
+		checkPermissionAndState(Method.GETVIEWSETTINGHANDLERREADONLY);
+		return standardToolkit.getViewSettingHandlerReadOnly();
 	}
 
 	/**
@@ -676,9 +676,9 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
-		checkPermissionAndState(Method.REMOVECORECONFIGOBVERSER);
-		return standardToolkit.removeCoreConfigObverser(coreConfigObverser);
+	public boolean removeCoreSettingObverser(SettingObverser coreSettingObverser) throws IllegalStateException {
+		checkPermissionAndState(Method.REMOVECORESETTINGOBVERSER);
+		return standardToolkit.removeCoreSettingObverser(coreSettingObverser);
 	}
 
 	/**

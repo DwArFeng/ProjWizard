@@ -7,17 +7,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.io.SaveFailedException;
-import com.dwarfeng.dutil.develop.cfg.io.PropConfigSaver;
 import com.dwarfeng.dutil.develop.resource.Resource;
+import com.dwarfeng.dutil.develop.setting.io.PropSettingValueSaver;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
-import com.dwarfeng.projwiz.core.model.eum.ViewConfigEntry;
+import com.dwarfeng.projwiz.core.model.eum.ViewConfigItem;
 import com.dwarfeng.projwiz.core.model.struct.Editor;
 import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
@@ -125,49 +124,43 @@ final class DisposeTask extends ProjWizTask {
 		} catch (InterruptedException | InvocationTargetException ignore) {
 			// 中断也要按照基本法。
 		}
-		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelVisible);
-		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelVisible);
-		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfigEntry.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), viewGetter.northPanelVisible);
-		projWizard.getToolkit().getViewConfigModel().setParsedValue(
-				ViewConfigEntry.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), viewGetter.southPanelVisible);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_VISIBLE_MAINFRAME_WEST,
+				viewGetter.westPanelVisible);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_VISIBLE_MAINFRAME_EAST,
+				viewGetter.eastPanelVisible);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_VISIBLE_MAINFRAME_NORTH,
+				viewGetter.northPanelVisible);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_VISIBLE_MAINFRAME_SOUTH,
+				viewGetter.southPanelVisible);
 
-		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfigEntry.GUI_MAXIMUM_MAINFRAME.getConfigKey(), viewGetter.maximum);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_MAXIMUM_MAINFRAME,
+				viewGetter.maximum);
 
-		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_WEST.getConfigKey(), viewGetter.westPanelSize);
-		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_EAST.getConfigKey(), viewGetter.eastPanelSize);
-		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(), viewGetter.southPanelSize);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_WEST,
+				viewGetter.westPanelSize);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_EAST,
+				viewGetter.eastPanelSize);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_SOUTH,
+				viewGetter.southPanelSize);
 
-		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(), viewGetter.frameWidth);
-		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(), viewGetter.frameHeight);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_WIDTH,
+				viewGetter.frameWidth);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_HEIGHT,
+				viewGetter.frameHeight);
 
-		projWizard.getToolkit().getViewConfigModel()
-				.setParsedValue(ViewConfigEntry.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(), viewGetter.extendedState);
+		projWizard.getToolkit().getViewSettingHandler().setParsedValue(ViewConfigItem.GUI_STATE_MAINFRAME_EXTENDED,
+				viewGetter.extendedState);
 
 		info(LoggerStringKey.TASK_DISPOSE_3);
-		PropConfigSaver viewConfigSaver = null;
-		try {
-			viewConfigSaver = new PropConfigSaver(
-					forceOpenOutputStream(ResourceKey.CFG_VIEW, LoggerStringKey.TASK_DISPOSE_4));
-			Set<SaveFailedException> saveFailedExceptions = viewConfigSaver
-					.countinuousSave(projWizard.getToolkit().getViewConfigModel());
+		try (PropSettingValueSaver saver = new PropSettingValueSaver(
+				forceOpenOutputStream(ResourceKey.CFG_VIEW, LoggerStringKey.TASK_DISPOSE_4), true)) {
+			Set<SaveFailedException> saveFailedExceptions = saver
+					.countinuousSave(projWizard.getToolkit().getViewSettingHandler());
 			for (SaveFailedException e : saveFailedExceptions) {
 				warn(LoggerStringKey.TASK_DISPOSE_5, e);
 			}
 			if (!saveFailedExceptions.isEmpty()) {
 				viewConfigMask = VIEW_CONFIG_TASK;
-			}
-		} finally {
-			if (Objects.nonNull(viewConfigSaver)) {
-				viewConfigSaver.close();
 			}
 		}
 

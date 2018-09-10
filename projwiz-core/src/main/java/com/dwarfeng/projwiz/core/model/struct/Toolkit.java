@@ -16,15 +16,15 @@ import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
 import com.dwarfeng.dutil.develop.backgr.Background;
 import com.dwarfeng.dutil.develop.backgr.Task;
-import com.dwarfeng.dutil.develop.cfg.ExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.obv.ExconfigObverser;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
 import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
+import com.dwarfeng.dutil.develop.setting.SettingHandler;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
 import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
@@ -66,7 +66,7 @@ public interface Toolkit {
 	}
 
 	public enum Method {
-		ADDCORECONFIGOBVERSER, //
+		ADDCORESETTINGOBVERSER, //
 		ADDPROGRAMOBVERSER, //
 		CHOOSEMODULE, //
 		CHOOSEPROJECTFILE, //
@@ -83,8 +83,8 @@ public interface Toolkit {
 		GETBACKGROUNDREADONLY, //
 		GETCFGHANDLER, //
 		GETCFGHANDLERREADONLY, //
-		GETCORECONFIGMODEL, //
-		GETCORECONFIGMODELREADONLY, //
+		GETCORESETTINGHANDLER, //
+		GETCORESETTINGHANDLERREADONLY, //
 		GETEDITORMODEL, //
 		GETEDITORMODELREADONLY, //
 		GETEXITCODE, //
@@ -121,13 +121,13 @@ public interface Toolkit {
 		GETRUNTIMESTATE, //
 		GETTOOLKITPERMMODEL, //
 		GETTOOLKITPERMMODELREADONLY, //
-		GETVIEWCONFIGMODEL, //
-		GETVIEWCONFIGMODELREADONLY, //
+		GETVIEWSETTINGHANDLER, //
+		GETVIEWSETTINGHANDLERREADONLY, //
 		INFO, //
 		ISMAINFRAMEVISIBLE, //
 		NEWMAINFRAME, //
 		OPENFILE, //
-		REMOVECORECONFIGOBVERSER, //
+		REMOVECORESETTINGOBVERSER, //
 		REMOVEPROGRAMOBVERSER, //
 		SETEXITCODE, //
 		SETRUNTIMESTATE, //
@@ -147,13 +147,13 @@ public interface Toolkit {
 	/**
 	 * 向程序中添加一个核心配置观察器。
 	 * 
-	 * @param coreConfigObverser
+	 * @param coreSettingObverser
 	 *            指定的核心配置观察器。
 	 * @return 是否添加成功。
 	 * @throws IllegalStateException
 	 *             因为没有执行权限而抛出的异常。
 	 */
-	public boolean addCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException;
+	public boolean addCoreSettingObverser(SettingObverser coreSettingObverser) throws IllegalStateException;
 
 	/**
 	 * 移除指定的程序观察器。
@@ -350,7 +350,7 @@ public interface Toolkit {
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
 	 */
-	public SyncExconfigModel getCoreConfigModel() throws IllegalStateException;
+	public SyncSettingHandler getCoreSettingHandlerl() throws IllegalStateException;
 
 	/**
 	 * 获取程序中的核心配置模型。
@@ -359,7 +359,7 @@ public interface Toolkit {
 	 * 
 	 * @return 程序中的核心配置模型。
 	 */
-	public ExconfigModel getCoreConfigModelReadOnly() throws IllegalStateException;
+	public SettingHandler getCoreSettingHandlerReadOnly() throws IllegalStateException;
 
 	/**
 	 * 获取编辑器模型。
@@ -752,7 +752,7 @@ public interface Toolkit {
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
 	 */
-	public SyncExconfigModel getViewConfigModel() throws IllegalStateException;
+	public SyncSettingHandler getViewSettingHandler() throws IllegalStateException;
 
 	/**
 	 * 获取程序中的视图配置模型。
@@ -764,7 +764,7 @@ public interface Toolkit {
 	 * @throws IllegalStateException
 	 *             因为没有权限而抛出的异常。
 	 */
-	public ExconfigModel getViewConfigModelReadOnly() throws IllegalStateException;
+	public SettingHandler getViewSettingHandlerReadOnly() throws IllegalStateException;
 
 	/**
 	 * 返回工具包是否拥有权限执行指定的方法。
@@ -833,13 +833,13 @@ public interface Toolkit {
 	/**
 	 * 向程序中移除一个核心配置观察器。
 	 * 
-	 * @param coreConfigObverser
+	 * @param coreSettingObverser
 	 *            指定的核心配置观察器。
 	 * @return 是否移除成功。
 	 * @throws IllegalStateException
 	 *             因为没有执行权限而抛出的异常。
 	 */
-	public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException;
+	public boolean removeCoreSettingObverser(SettingObverser coreSettingObverser) throws IllegalStateException;
 
 	/**
 	 * 移除指定的程序观察器。

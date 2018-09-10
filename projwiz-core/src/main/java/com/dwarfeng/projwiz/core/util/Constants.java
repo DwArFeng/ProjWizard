@@ -22,15 +22,15 @@ import com.dwarfeng.dutil.basic.prog.ProgramObverser;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
 import com.dwarfeng.dutil.develop.backgr.Background;
 import com.dwarfeng.dutil.develop.backgr.Task;
-import com.dwarfeng.dutil.develop.cfg.ExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.obv.ExconfigObverser;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
 import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.dutil.develop.logger.LoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
+import com.dwarfeng.dutil.develop.setting.SettingHandler;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
 import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
@@ -202,8 +202,8 @@ public final class Constants {
 	private static final class NonPermissionToolkit implements Toolkit {
 
 		@Override
-		public boolean addCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: addCoreConfigObverser");
+		public boolean addCoreSettingObverser(SettingObverser coreSettingObverser) throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: addCoreSettingObverser");
 		}
 
 		@Override
@@ -287,13 +287,13 @@ public final class Constants {
 		}
 
 		@Override
-		public SyncExconfigModel getCoreConfigModel() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getCoreConfigModel");
+		public SyncSettingHandler getCoreSettingHandlerl() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getCoreSettingHandlerl");
 		}
 
 		@Override
-		public ExconfigModel getCoreConfigModelReadOnly() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getCoreConfigModelReadOnly");
+		public SettingHandler getCoreSettingHandlerReadOnly() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getCoreSettingHandlerReadOnly");
 		}
 
 		@Override
@@ -497,13 +497,13 @@ public final class Constants {
 		}
 
 		@Override
-		public SyncExconfigModel getViewConfigModel() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getViewConfigModel");
+		public SyncSettingHandler getViewSettingHandler() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getViewSettingHandler");
 		}
 
 		@Override
-		public ExconfigModel getViewConfigModelReadOnly() throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: getViewConfigModelReadOnly");
+		public SettingHandler getViewSettingHandlerReadOnly() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getViewSettingHandlerReadOnly");
 		}
 
 		@Override
@@ -532,8 +532,8 @@ public final class Constants {
 		}
 
 		@Override
-		public boolean removeCoreConfigObverser(ExconfigObverser coreConfigObverser) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: removeCoreConfigObverser");
+		public boolean removeCoreSettingObverser(SettingObverser coreSettingObverser) throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: removeCoreSettingObverser");
 		}
 
 		@Override
@@ -573,7 +573,7 @@ public final class Constants {
 
 		@Override
 		public int showOptionDialog(OptionDialogSetting setting) throws IllegalStateException {
-			throw new IllegalStateException("没有权限运行方法: addCoreConfigObverser");
+			throw new IllegalStateException("没有权限运行方法: showOptionDialog");
 		}
 
 		@Override

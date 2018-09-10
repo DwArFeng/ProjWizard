@@ -10,12 +10,11 @@ import com.dwarfeng.dutil.basic.gui.awt.ImageSize;
 import com.dwarfeng.dutil.basic.gui.awt.ImageUtil;
 import com.dwarfeng.dutil.basic.gui.swing.JMenuItemAction;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
-import com.dwarfeng.dutil.develop.cfg.ConfigKey;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.obv.ExconfigAdapter;
-import com.dwarfeng.dutil.develop.cfg.obv.ExconfigObverser;
 import com.dwarfeng.dutil.develop.i18n.I18nHandler;
-import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.dutil.develop.setting.obv.SettingAdapter;
+import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
+import com.dwarfeng.projwiz.core.model.eum.CoreConfigItem;
 import com.dwarfeng.projwiz.core.model.eum.ImageKey;
 import com.dwarfeng.projwiz.core.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.core.view.struct.GuiManager;
@@ -36,19 +35,19 @@ public class MfMenu_06 extends ProjWizMenu {
 	private final JMenuItem mi_05;
 	private final JSeparator separator_01;
 
-	private SyncExconfigModel coreConfigModel;
+	private SyncSettingHandler coreSettingHandler;
 
-	private final ExconfigObverser coreConfigObverser = new ExconfigAdapter() {
+	private final SettingObverser coreSettingObverser = new SettingAdapter() {
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void fireCurrentValueChanged(ConfigKey configKey, String oldValue, String newValue, String validValue) {
+		public void fireCurrentValueChanged(String key, String oldValue, String newValue) {
 			SwingUtil.invokeInEventQueue(() -> {
-				if (Objects.equals(configKey, CoreConfigEntry.SUPER_SECRET_SETTINGS_ENABLED.getConfigKey())) {
-					if ((boolean) CoreConfigEntry.SUPER_SECRET_SETTINGS_ENABLED.getValueParser()
-							.parseValue(newValue)) {
+				if (Objects.equals(key, CoreConfigItem.SUPER_SECRET_SETTINGS_ENABLED.getName())) {
+					if (coreSettingHandler.getParsedValidValue(CoreConfigItem.SUPER_SECRET_SETTINGS_ENABLED,
+							Boolean.class)) {
 						showSuperSecretSettingsMenu();
 					} else {
 						hideSuperSecretSettingsMenu();
@@ -74,7 +73,7 @@ public class MfMenu_06 extends ProjWizMenu {
 	 * @param i18n
 	 *            国际化接口。
 	 */
-	public MfMenu_06(GuiManager guiManager, I18nHandler i18nHandler, SyncExconfigModel coreConfigModel) {
+	public MfMenu_06(GuiManager guiManager, I18nHandler i18nHandler, SyncSettingHandler coreSettingHandler) {
 		super(guiManager, i18nHandler);
 
 		setText(label(LabelStringKey.MFMENU_6_1));
@@ -106,13 +105,13 @@ public class MfMenu_06 extends ProjWizMenu {
 			MfMenu_06.this.guiManager.superSecretSettings(ExecType.CONCURRENT);
 		}).build());
 
-		if (Objects.nonNull(coreConfigModel)) {
-			coreConfigModel.addObverser(coreConfigObverser);
+		if (Objects.nonNull(coreSettingHandler)) {
+			coreSettingHandler.addObverser(coreSettingObverser);
 		}
 
-		this.coreConfigModel = coreConfigModel;
+		this.coreSettingHandler = coreSettingHandler;
 
-		syncCoreConfigModel();
+		syncCoreSettingHandler();
 
 	}
 
@@ -123,35 +122,35 @@ public class MfMenu_06 extends ProjWizMenu {
 	public void dispose() {
 		hideSuperSecretSettingsMenu();
 
-		if (Objects.nonNull(coreConfigModel)) {
-			coreConfigModel.removeObverser(coreConfigObverser);
+		if (Objects.nonNull(coreSettingHandler)) {
+			coreSettingHandler.removeObverser(coreSettingObverser);
 		}
 
 		super.dispose();
 	}
 
 	/**
-	 * @return the coreConfigModel
+	 * @return the coreSettingHandler
 	 */
-	public SyncExconfigModel getCoreConfigModel() {
-		return coreConfigModel;
+	public SyncSettingHandler getCoreSettingHandler() {
+		return coreSettingHandler;
 	}
 
 	/**
-	 * @param coreConfigModel
-	 *            the coreConfigModel to set
+	 * @param coreSettingHandler
+	 *            the coreSettingHandler to set
 	 */
-	public void setCoreConfigModel(SyncExconfigModel coreConfigModel) {
-		if (Objects.nonNull(this.coreConfigModel)) {
-			this.coreConfigModel.removeObverser(coreConfigObverser);
+	public void setCoreSettingHandler(SyncSettingHandler coreSettingHandler) {
+		if (Objects.nonNull(this.coreSettingHandler)) {
+			this.coreSettingHandler.removeObverser(coreSettingObverser);
 		}
 
-		if (Objects.nonNull(coreConfigModel)) {
-			coreConfigModel.addObverser(coreConfigObverser);
+		if (Objects.nonNull(coreSettingHandler)) {
+			coreSettingHandler.addObverser(coreSettingObverser);
 		}
 
-		this.coreConfigModel = coreConfigModel;
-		syncCoreConfigModel();
+		this.coreSettingHandler = coreSettingHandler;
+		syncCoreSettingHandler();
 	}
 
 	/**
@@ -175,21 +174,20 @@ public class MfMenu_06 extends ProjWizMenu {
 		mi_05.setVisible(true);
 	}
 
-	private void syncCoreConfigModel() {
+	private void syncCoreSettingHandler() {
 		hideSuperSecretSettingsMenu();
 
-		if (Objects.isNull(coreConfigModel)) {
+		if (Objects.isNull(coreSettingHandler)) {
 			return;
 		}
 
-		coreConfigModel.getLock().readLock().lock();
+		coreSettingHandler.getLock().readLock().lock();
 		try {
-			if ((boolean) coreConfigModel
-					.getParsedValue(CoreConfigEntry.SUPER_SECRET_SETTINGS_ENABLED.getConfigKey())) {
+			if ((boolean) coreSettingHandler.getParsedValue(CoreConfigItem.SUPER_SECRET_SETTINGS_ENABLED)) {
 				showSuperSecretSettingsMenu();
 			}
 		} finally {
-			coreConfigModel.getLock().readLock().unlock();
+			coreSettingHandler.getLock().readLock().unlock();
 		}
 	}
 

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -19,15 +20,6 @@ import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.basic.io.SaveFailedException;
 import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.dutil.basic.str.Name;
-import com.dwarfeng.dutil.develop.cfg.ConfigKey;
-import com.dwarfeng.dutil.develop.cfg.ConfigUtil;
-import com.dwarfeng.dutil.develop.cfg.DefaultExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.SyncExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.io.PropConfigLoader;
-import com.dwarfeng.dutil.develop.cfg.io.PropConfigSaver;
-import com.dwarfeng.dutil.develop.cfg.obv.ExconfigAdapter;
-import com.dwarfeng.dutil.develop.cfg.obv.ExconfigObverser;
-import com.dwarfeng.dutil.develop.cfg.struct.ExconfigEntry;
 import com.dwarfeng.dutil.develop.i18n.DelegateI18nHandler;
 import com.dwarfeng.dutil.develop.i18n.I18nUtil;
 import com.dwarfeng.dutil.develop.i18n.PropUrlI18nInfo;
@@ -36,19 +28,27 @@ import com.dwarfeng.dutil.develop.i18n.io.XmlPropFileI18nLoader;
 import com.dwarfeng.dutil.develop.i18n.io.XmlPropResourceI18nLoader;
 import com.dwarfeng.dutil.develop.resource.Resource;
 import com.dwarfeng.dutil.develop.resource.ResourceHandler;
-import com.dwarfeng.projwiz.core.model.eum.CoreConfigEntry;
+import com.dwarfeng.dutil.develop.setting.DefaultSettingHandler;
+import com.dwarfeng.dutil.develop.setting.SettingEnumItem;
+import com.dwarfeng.dutil.develop.setting.SettingUtil;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.dutil.develop.setting.io.PropSettingValueLoader;
+import com.dwarfeng.dutil.develop.setting.io.PropSettingValueSaver;
+import com.dwarfeng.dutil.develop.setting.obv.SettingAdapter;
+import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
+import com.dwarfeng.projwiz.core.model.eum.CoreConfigItem;
 import com.dwarfeng.projwiz.core.model.eum.IconVariability;
-import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.MetaDataStorage;
+import com.dwarfeng.projwiz.core.model.struct.Module;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.cm.DelegatePermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.cm.SyncPermDemandModel;
 import com.dwarfeng.projwiz.raefrm.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.raefrm.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.raefrm.model.io.XmlPermDemandLoader;
-import com.dwarfeng.projwiz.raefrm.model.struct.ModuleToolkit;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider.ResourceKeyType;
+import com.dwarfeng.projwiz.raefrm.model.struct.ModuleToolkit;
 import com.dwarfeng.projwiz.raefrm.util.Constants;
 import com.dwarfeng.projwiz.raefrm.util.ModelUtil;
 
@@ -235,10 +235,10 @@ public abstract class RaeModule implements Module {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public SyncExconfigModel getCoreConfigModel() {
+		public SyncSettingHandler getCoreSettingHandler() {
 			lock.readLock().lock();
 			try {
-				return coreConfigModel;
+				return coreSettingHandler;
 			} finally {
 				lock.readLock().unlock();
 			}
@@ -478,34 +478,34 @@ public abstract class RaeModule implements Module {
 	/** 标签国际化处理器。 */
 	protected final SyncI18nHandler labelI18nHandler = I18nUtil.syncI18nHandler(new DelegateI18nHandler());
 	/** 核心配置处模型。 */
-	protected final SyncExconfigModel coreConfigModel = ConfigUtil.syncExconfigModel(new DefaultExconfigModel());
+	protected final SyncSettingHandler coreSettingHandler = SettingUtil.syncSettingHandler(new DefaultSettingHandler());
 	/** 权限需求模型。 */
 	protected final SyncPermDemandModel permDemandModel = ModelUtil.syncPermDemandModel(new DelegatePermDemandModel());
 
-	private final ExconfigObverser coreConfigObverser = new ExconfigAdapter() {
+	private final SettingObverser coreSettingObverser = new SettingAdapter() {
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void fireCurrentValueChanged(ConfigKey configKey, String oldValue, String newValue, String validValue) {
-			if (Objects.equals(configKey, CoreConfigEntry.I18N_LOGGER.getConfigKey())) {
-				chg_I18N_LOGGER(oldValue, newValue, validValue);
+		public void fireCurrentValueChanged(String key, String oldValue, String newValue) {
+			if (Objects.equals(key, CoreConfigItem.I18N_LOGGER.getName())) {
+				chg_I18N_LOGGER(oldValue, newValue);
 			}
 
-			if (Objects.equals(configKey, CoreConfigEntry.I18N_LABEL.getConfigKey())) {
-				chg_I18N_LABEL(oldValue, newValue, validValue);
+			if (Objects.equals(key, CoreConfigItem.I18N_LABEL.getName())) {
+				chg_I18N_LABEL(oldValue, newValue);
 			}
 		}
 
-		private void chg_I18N_LABEL(String oldValue, String newValue, String validValue) {
-			labelI18nHandler.setCurrentLocale(getToolkit().getCoreConfigModelReadOnly()
-					.getParsedValue(CoreConfigEntry.I18N_LABEL.getConfigKey(), Locale.class));
+		private void chg_I18N_LABEL(String oldValue, String newValue) {
+			labelI18nHandler.setCurrentLocale(getToolkit().getCoreSettingHandlerReadOnly()
+					.getParsedValue(CoreConfigItem.I18N_LABEL.getName(), Locale.class));
 		}
 
-		private void chg_I18N_LOGGER(String oldValue, String newValue, String validValue) {
-			loggerI18nHandler.setCurrentLocale((Locale) getToolkit().getCoreConfigModelReadOnly()
-					.getParsedValue(CoreConfigEntry.I18N_LOGGER.getConfigKey()));
+		private void chg_I18N_LOGGER(String oldValue, String newValue) {
+			loggerI18nHandler.setCurrentLocale((Locale) getToolkit().getCoreSettingHandlerReadOnly()
+					.getParsedValue(CoreConfigItem.I18N_LOGGER.getName()));
 		}
 
 	};
@@ -546,13 +546,15 @@ public abstract class RaeModule implements Module {
 	public void dispose() {
 		lock.writeLock().lock();
 		try {
-			// TODO 保存配置文件。
-			saveCoreConfigModel();
-
-			getToolkit().removeCoreConfigObverser(coreConfigObverser);
+			try {
+				saveCoreSettingHandler();
+			} catch (IOException e) {
+				warn(LoggerStringKey.RAE_MODULE_INIT_15, e);
+			}
+			getToolkit().removeCoreSettingObverser(coreSettingObverser);
 			loggerI18nHandler.clear();
 			labelI18nHandler.clear();
-			coreConfigModel.clear();
+			coreSettingHandler.clear();
 			permDemandModel.clear();
 		} finally {
 			lock.writeLock().unlock();
@@ -1080,7 +1082,7 @@ public abstract class RaeModule implements Module {
 		checkBasicPerm();
 
 		// 注册核心配置侦听
-		getToolkit().addCoreConfigObverser(coreConfigObverser);
+		getToolkit().addCoreSettingObverser(coreSettingObverser);
 
 		// 输出初始化信息。
 		getToolkit().info(loggerI18nHandler.getString(LoggerStringKey.RAE_MODULE_INIT_0));
@@ -1095,7 +1097,7 @@ public abstract class RaeModule implements Module {
 		initConfigEntry();
 
 		// 加载核心配置模型。
-		loadCoreConfigModel();
+		loadCoreSettingHandler();
 
 		// 读取权限需求表。
 		loadPermDemandModel();
@@ -1112,10 +1114,10 @@ public abstract class RaeModule implements Module {
 	 * 初始化配置模型入口。
 	 */
 	private void initConfigEntry() {
-		Collection<ExconfigEntry> configEntries = constantsProvider.getCoreConfigEntries();
-		if (Objects.nonNull(configEntries)) {
-			coreConfigModel.addAll(configEntries);
-		}
+		Collection<SettingEnumItem> items = constantsProvider.getSettingEnumItems();
+		Optional.ofNullable(items).ifPresent(i -> {
+			SettingUtil.putEnumItems(i, coreSettingHandler);
+		});
 	}
 
 	/**
@@ -1135,27 +1137,16 @@ public abstract class RaeModule implements Module {
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void loadCoreConfigModel() throws IOException {
+	private void loadCoreSettingHandler() throws IOException {
 		info(LoggerStringKey.RAE_MODULE_INIT_1);
-
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
-		PropConfigLoader loader = null;
-
-		try {
-			loader = new PropConfigLoader(
-					openResource(constantsProvider.getResourceKey(ResourceKeyType.CONFIGURATION_CORE)));
-			eptSet.addAll(loader.countinuousLoad(coreConfigModel));
-		} finally {
-			if (Objects.nonNull(loader)) {
-				loader.close();
-			}
+		try (PropSettingValueLoader loader = new PropSettingValueLoader(
+				openResource(constantsProvider.getResourceKey(ResourceKeyType.CONFIGURATION_CORE)))) {
+			eptSet.addAll(loader.countinuousLoad(coreSettingHandler));
 		}
-
 		for (LoadFailedException e : eptSet) {
 			warn(LoggerStringKey.RAE_MODULE_INIT_12, e);
 		}
-		eptSet = null;
-		loader = null;
 	}
 
 	/**
@@ -1217,8 +1208,8 @@ public abstract class RaeModule implements Module {
 		loader1 = null;
 
 		labelI18nHandler.setCurrentLocale(null);
-		labelI18nHandler.setCurrentLocale(getToolkit().getCoreConfigModelReadOnly()
-				.getParsedValue(CoreConfigEntry.I18N_LABEL.getConfigKey(), Locale.class));
+		labelI18nHandler.setCurrentLocale(
+				getToolkit().getCoreSettingHandlerReadOnly().getParsedValue(CoreConfigItem.I18N_LABEL, Locale.class));
 	}
 
 	/**
@@ -1279,8 +1270,8 @@ public abstract class RaeModule implements Module {
 		loader = null;
 
 		loggerI18nHandler.setCurrentLocale(null);
-		loggerI18nHandler.setCurrentLocale(getToolkit().getCoreConfigModelReadOnly()
-				.getParsedValue(CoreConfigEntry.I18N_LOGGER.getConfigKey(), Locale.class));
+		loggerI18nHandler.setCurrentLocale(
+				getToolkit().getCoreSettingHandlerReadOnly().getParsedValue(CoreConfigItem.I18N_LOGGER, Locale.class));
 	}
 
 	/**
@@ -1310,8 +1301,8 @@ public abstract class RaeModule implements Module {
 		eptSet = null;
 		loader = null;
 
-		loggerI18nHandler.setCurrentLocale(getToolkit().getCoreConfigModelReadOnly()
-				.getParsedValue(CoreConfigEntry.I18N_LOGGER.getConfigKey(), Locale.class));
+		loggerI18nHandler.setCurrentLocale(
+				getToolkit().getCoreSettingHandlerReadOnly().getParsedValue(CoreConfigItem.I18N_LOGGER, Locale.class));
 	}
 
 	/**
@@ -1320,24 +1311,15 @@ public abstract class RaeModule implements Module {
 	 * @throws IOException
 	 *             IO异常。
 	 */
-	private void saveCoreConfigModel() {
-		try {
-			info(LoggerStringKey.RAE_MODULE_INIT_13);
-			PropConfigSaver viewConfigSaver = null;
-			try {
-				viewConfigSaver = new PropConfigSaver(
-						writeResource(constantsProvider.getResourceKey(ResourceKeyType.CONFIGURATION_CORE)));
-				Set<SaveFailedException> saveFailedExceptions = viewConfigSaver.countinuousSave(coreConfigModel);
-				for (SaveFailedException e : saveFailedExceptions) {
-					warn(LoggerStringKey.RAE_MODULE_INIT_14, e);
-				}
-			} finally {
-				if (Objects.nonNull(viewConfigSaver)) {
-					viewConfigSaver.close();
-				}
-			}
-		} catch (IOException e) {
-			warn(LoggerStringKey.RAE_MODULE_INIT_15, e);
+	private void saveCoreSettingHandler() throws IOException {
+		info(LoggerStringKey.RAE_MODULE_INIT_13);
+		Set<SaveFailedException> saveFailedExceptions = new LinkedHashSet<>();
+		try (PropSettingValueSaver saver = new PropSettingValueSaver(
+				writeResource(constantsProvider.getResourceKey(ResourceKeyType.CONFIGURATION_CORE)), true)) {
+			saveFailedExceptions.addAll(saver.countinuousSave(coreSettingHandler));
+		}
+		for (SaveFailedException e : saveFailedExceptions) {
+			warn(LoggerStringKey.RAE_MODULE_INIT_14, e);
 		}
 	}
 

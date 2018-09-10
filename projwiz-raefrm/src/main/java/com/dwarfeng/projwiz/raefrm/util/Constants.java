@@ -18,8 +18,8 @@ public final class Constants {
 	public final static Collection<Toolkit.Method> BASIC_PERMS = Collections
 			.unmodifiableCollection(Arrays.asList(new Toolkit.Method[] { Toolkit.Method.GETCFGHANDLERREADONLY,
 					Toolkit.Method.TRACE, Toolkit.Method.DEBUG, Toolkit.Method.INFO, Toolkit.Method.WARN,
-					Toolkit.Method.ERROR, Toolkit.Method.FATAL, Toolkit.Method.ADDCORECONFIGOBVERSER,
-					Toolkit.Method.REMOVECORECONFIGOBVERSER, Toolkit.Method.GETCORECONFIGMODELREADONLY }));
+					Toolkit.Method.ERROR, Toolkit.Method.FATAL, Toolkit.Method.ADDCORESETTINGOBVERSER,
+					Toolkit.Method.REMOVECORESETTINGOBVERSER, Toolkit.Method.GETCORESETTINGHANDLERREADONLY }));
 
 	// 禁止外部实例化。
 	private Constants() {

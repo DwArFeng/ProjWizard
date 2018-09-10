@@ -16,7 +16,7 @@ import com.dwarfeng.projwiz.core.model.obv.FileObverser;
 import com.dwarfeng.projwiz.core.model.struct.File;
 import com.dwarfeng.projwiz.core.model.struct.FileProcessor;
 import com.dwarfeng.projwiz.raefrm.model.eum.PermDemandKey;
-import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
+import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigItem;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
 /**
@@ -620,8 +620,8 @@ public abstract class RaeFile implements File {
 	public boolean isReadSupported() {
 		lock.readLock().lock();
 		try {
-			return projProcToolkit.getCoreConfigModel()
-					.getParsedValue(ProjCoreConfigEntry.RAE_FILE_SUPPORTED_READ.getConfigKey(), Boolean.class);
+			return projProcToolkit.getCoreSettingHandler().getParsedValue(ProjCoreConfigItem.RAE_FILE_SUPPORTED_READ,
+					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -634,8 +634,8 @@ public abstract class RaeFile implements File {
 	public boolean isWriteSupported() {
 		lock.readLock().lock();
 		try {
-			return projProcToolkit.getCoreConfigModel()
-					.getParsedValue(ProjCoreConfigEntry.RAE_FILE_SUPPORTED_WRITE.getConfigKey(), Boolean.class);
+			return projProcToolkit.getCoreSettingHandler().getParsedValue(ProjCoreConfigItem.RAE_FILE_SUPPORTED_WRITE,
+					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
 		}

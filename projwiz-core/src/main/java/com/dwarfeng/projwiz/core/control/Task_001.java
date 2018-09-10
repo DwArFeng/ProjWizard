@@ -18,8 +18,6 @@ import java.util.zip.ZipEntry;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.io.FileUtil;
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
-import com.dwarfeng.dutil.develop.cfg.ExconfigModel;
-import com.dwarfeng.dutil.develop.cfg.io.PropConfigLoader;
 import com.dwarfeng.dutil.develop.i18n.PropUrlI18nInfo;
 import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.dutil.develop.i18n.io.XmlPropFileI18nLoader;
@@ -28,15 +26,19 @@ import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.logger.SysOutLoggerInfo;
 import com.dwarfeng.dutil.develop.logger.io.Log4jLoggerLoader;
 import com.dwarfeng.dutil.develop.resource.Resource;
+import com.dwarfeng.dutil.develop.setting.SettingUtil;
+import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.dutil.develop.setting.io.PropSettingValueLoader;
+import com.dwarfeng.projwiz.core.model.eum.CoreConfigItem;
 import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.model.eum.ProjWizProperty;
 import com.dwarfeng.projwiz.core.model.eum.ResourceKey;
-import com.dwarfeng.projwiz.core.model.eum.ViewConfigEntry;
+import com.dwarfeng.projwiz.core.model.eum.ViewConfigItem;
+import com.dwarfeng.projwiz.core.model.io.ConfigurationLoader;
+import com.dwarfeng.projwiz.core.model.io.IgnoredConfigurationLoader;
+import com.dwarfeng.projwiz.core.model.io.IgnoredModuleLoader;
 import com.dwarfeng.projwiz.core.model.io.ModuleLoader;
 import com.dwarfeng.projwiz.core.model.io.ModuleToolkitLoader;
-import com.dwarfeng.projwiz.core.model.io.ConfigurationLoader;
-import com.dwarfeng.projwiz.core.model.io.IgnoredModuleLoader;
-import com.dwarfeng.projwiz.core.model.io.IgnoredConfigurationLoader;
 import com.dwarfeng.projwiz.core.model.io.PluginClassLoader;
 import com.dwarfeng.projwiz.core.model.io.ToolkitPermLoader;
 import com.dwarfeng.projwiz.core.model.struct.CotoPair;
@@ -201,34 +203,27 @@ final class PoseTask extends ProjWizTask {
 	private void initGui() {
 		try {
 			SwingUtil.invokeAndWaitInEventQueue(() -> {
-				final ExconfigModel c = projWizard.getToolkit().getViewConfigModel();
+				final SyncSettingHandler c = projWizard.getToolkit().getViewSettingHandler();
 
-				final boolean westPanelVisible = c
-						.getParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_WEST.getConfigKey(), Boolean.class);
-				final boolean eastPanelVisible = c
-						.getParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_EAST.getConfigKey(), Boolean.class);
-				final boolean northPanelVisible = c
-						.getParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_NORTH.getConfigKey(), Boolean.class);
-				final boolean southPanelVisible = c
-						.getParsedValue(ViewConfigEntry.GUI_VISIBLE_MAINFRAME_SOUTH.getConfigKey(), Boolean.class);
-
-				final boolean maximum = c.getParsedValue(ViewConfigEntry.GUI_MAXIMUM_MAINFRAME.getConfigKey(),
+				final boolean westPanelVisible = c.getParsedValue(ViewConfigItem.GUI_VISIBLE_MAINFRAME_WEST,
+						Boolean.class);
+				final boolean eastPanelVisible = c.getParsedValue(ViewConfigItem.GUI_VISIBLE_MAINFRAME_EAST,
+						Boolean.class);
+				final boolean northPanelVisible = c.getParsedValue(ViewConfigItem.GUI_VISIBLE_MAINFRAME_NORTH,
+						Boolean.class);
+				final boolean southPanelVisible = c.getParsedValue(ViewConfigItem.GUI_VISIBLE_MAINFRAME_SOUTH,
 						Boolean.class);
 
-				final int westPanelSize = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_WEST.getConfigKey(),
-						Integer.class);
-				final int eastPanelSize = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_EAST.getConfigKey(),
-						Integer.class);
-				final int southPanelSize = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_SOUTH.getConfigKey(),
-						Integer.class);
+				final boolean maximum = c.getParsedValue(ViewConfigItem.GUI_MAXIMUM_MAINFRAME, Boolean.class);
 
-				final int frameWidth = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_WIDTH.getConfigKey(),
-						Integer.class);
-				final int frameHeight = c.getParsedValue(ViewConfigEntry.GUI_SIZE_MAINFRAME_HEIGHT.getConfigKey(),
-						Integer.class);
+				final int westPanelSize = c.getParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_WEST, Integer.class);
+				final int eastPanelSize = c.getParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_EAST, Integer.class);
+				final int southPanelSize = c.getParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_SOUTH, Integer.class);
 
-				final int extendedState = c.getParsedValue(ViewConfigEntry.GUI_STATE_MAINFRAME_EXTENDED.getConfigKey(),
-						Integer.class);
+				final int frameWidth = c.getParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_WIDTH, Integer.class);
+				final int frameHeight = c.getParsedValue(ViewConfigItem.GUI_SIZE_MAINFRAME_HEIGHT, Integer.class);
+
+				final int extendedState = c.getParsedValue(ViewConfigItem.GUI_STATE_MAINFRAME_EXTENDED, Integer.class);
 
 				projWizard.getToolkit().newMainFrame();
 
@@ -440,23 +435,16 @@ final class PoseTask extends ProjWizTask {
 	private void loadCoreConfig() throws IOException {
 		info(LoggerStringKey.TASK_POSE_11);
 
+		SettingUtil.putEnumItems(CoreConfigItem.class, projWizard.getToolkit().getCoreSettingHandlerl());
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
-		PropConfigLoader loader = null;
-
-		try {
-			loader = new PropConfigLoader(openResource(ResourceKey.CFG_CORE, LoggerStringKey.TASK_POSE_0));
-			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getCoreConfigModel()));
-		} finally {
-			if (Objects.nonNull(loader)) {
-				loader.close();
-			}
+		try (PropSettingValueLoader loader = new PropSettingValueLoader(
+				openResource(ResourceKey.CFG_CORE, LoggerStringKey.TASK_POSE_0), true)) {
+			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getCoreSettingHandlerl()));
 		}
 
 		for (LoadFailedException e : eptSet) {
 			warn(LoggerStringKey.TASK_POSE_3, e);
 		}
-		eptSet = null;
-		loader = null;
 	}
 
 	/**
@@ -791,23 +779,16 @@ final class PoseTask extends ProjWizTask {
 	private void loadViewConfig() throws IOException {
 		info(LoggerStringKey.TASK_POSE_12);
 
+		SettingUtil.putEnumItems(ViewConfigItem.class, projWizard.getToolkit().getViewSettingHandler());
 		Set<LoadFailedException> eptSet = new LinkedHashSet<>();
-		PropConfigLoader loader = null;
-
-		try {
-			loader = new PropConfigLoader(openResource(ResourceKey.CFG_VIEW, LoggerStringKey.TASK_POSE_0));
-			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getViewConfigModel()));
-		} finally {
-			if (Objects.nonNull(loader)) {
-				loader.close();
-			}
+		try (PropSettingValueLoader loader = new PropSettingValueLoader(
+				openResource(ResourceKey.CFG_VIEW, LoggerStringKey.TASK_POSE_0), true)) {
+			eptSet.addAll(loader.countinuousLoad(projWizard.getToolkit().getViewSettingHandler()));
 		}
 
 		for (LoadFailedException e : eptSet) {
 			warn(LoggerStringKey.TASK_POSE_4, e);
 		}
-		eptSet = null;
-		loader = null;
 	}
 
 	private InputStream openResource(ResourceKey resourceKey, LoggerStringKey loggerStringKey) throws IOException {

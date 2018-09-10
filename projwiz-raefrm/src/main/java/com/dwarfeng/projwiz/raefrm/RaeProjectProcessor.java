@@ -13,7 +13,7 @@ import com.dwarfeng.projwiz.core.model.struct.ProjectProcessor;
 import com.dwarfeng.projwiz.core.model.struct.PropUI;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit;
 import com.dwarfeng.projwiz.raefrm.model.eum.PermDemandKey;
-import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigEntry;
+import com.dwarfeng.projwiz.raefrm.model.eum.ProjCoreConfigItem;
 import com.dwarfeng.projwiz.raefrm.model.struct.ConstantsProvider;
 import com.dwarfeng.projwiz.raefrm.model.struct.ProjProcToolkit;
 
@@ -118,7 +118,7 @@ public abstract class RaeProjectProcessor extends RaeModule implements ProjectPr
 	public boolean isNewProjectSupported() {
 		lock.readLock().lock();
 		try {
-			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.RAE_PROCESSOR_SUPPORTED_NEW_PROJECT.getConfigKey(),
+			return coreSettingHandler.getParsedValue(ProjCoreConfigItem.RAE_PROCESSOR_SUPPORTED_NEW_PROJECT,
 					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
@@ -132,7 +132,7 @@ public abstract class RaeProjectProcessor extends RaeModule implements ProjectPr
 	public boolean isOpenProjectSupported() {
 		lock.readLock().lock();
 		try {
-			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.RAE_PROCESSOR_SUPPORTED_OPEN_PROJECT.getConfigKey(),
+			return coreSettingHandler.getParsedValue(ProjCoreConfigItem.RAE_PROCESSOR_SUPPORTED_OPEN_PROJECT,
 					Boolean.class);
 		} finally {
 			lock.readLock().unlock();
@@ -146,7 +146,7 @@ public abstract class RaeProjectProcessor extends RaeModule implements ProjectPr
 	public boolean isSaveProjectSupported() {
 		lock.readLock().lock();
 		try {
-			return coreConfigModel.getParsedValue(ProjCoreConfigEntry.RAE_PROCESSOR_SUPPORTED_SAVE_PROJECT.getConfigKey(),
+			return coreSettingHandler.getParsedValue(ProjCoreConfigItem.RAE_PROCESSOR_SUPPORTED_SAVE_PROJECT,
 					Boolean.class);
 		} finally {
 			lock.readLock().unlock();

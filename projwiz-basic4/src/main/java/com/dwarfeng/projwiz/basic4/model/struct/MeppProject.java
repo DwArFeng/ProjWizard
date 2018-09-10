@@ -16,7 +16,7 @@ import com.dwarfeng.dutil.basic.prog.ProcessException;
 import com.dwarfeng.projwiz.basic4.impl.MemoryProjectProcessor;
 import com.dwarfeng.projwiz.basic4.model.eum.LabelStringKey;
 import com.dwarfeng.projwiz.basic4.model.eum.LoggerStringKey;
-import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigEntry;
+import com.dwarfeng.projwiz.basic4.model.eum.MeppConfigItem;
 import com.dwarfeng.projwiz.core.model.cm.Tree;
 import com.dwarfeng.projwiz.core.model.cm.Tree.Path;
 import com.dwarfeng.projwiz.core.model.obv.ProjectObverser;
@@ -187,8 +187,8 @@ public class MeppProject extends RaeProject {
 		// 进行文件名称的进一步处理
 		if (Objects.isNull(exceptName)) {
 			// 将名称设置为默认的名称，必要时加上序号。
-			String fileName = projProcToolkit.getCoreConfigModel()
-					.getParsedValue(MeppConfigEntry.PROJECT_NEWFILE_NAME_DEFAULT.getConfigKey(), String.class);
+			String fileName = projProcToolkit.getCoreSettingHandler()
+					.getParsedValue(MeppConfigItem.PROJECT_NEWFILE_NAME_DEFAULT, String.class);
 
 			if (!isNameRepeat(parent, fileName)) {
 				actualFileName = fileName;
@@ -218,8 +218,8 @@ public class MeppProject extends RaeProject {
 		Map<String, ByteBuffer> buffers = new HashMap<>();
 
 		// 复制指定文件的数据。
-		int transBufferSize = projProcToolkit.getCoreConfigModel()
-				.getParsedValue(MeppConfigEntry.PROJECT_BUFFER_DATATRANS.getConfigKey(), Integer.class);
+		int transBufferSize = projProcToolkit.getCoreSettingHandler()
+				.getParsedValue(MeppConfigItem.PROJECT_BUFFER_DATATRANS, Integer.class);
 
 		if (file.isReadSupported()) {
 			for (String label : file.getLabels()) {
