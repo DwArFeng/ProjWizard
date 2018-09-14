@@ -28,6 +28,8 @@ import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.dutil.develop.setting.SettingHandler;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
+import com.dwarfeng.dutil.develop.timer.Plain;
+import com.dwarfeng.dutil.develop.timer.Timer;
 import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
@@ -595,6 +597,24 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Timer getTimer() throws IllegalStateException {
+		checkPermissionAndState(Method.GETTIMER);
+		return standardToolkit.getTimer();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Timer getTimerReadOnly() throws IllegalStateException {
+		checkPermissionAndState(Method.GETTIMERREADONLY);
+		return standardToolkit.getTimerReadOnly();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public SyncToolkitPermModel getToolkitPermModel() throws IllegalStateException {
 		checkPermissionAndState(Method.WARN);
 		return standardToolkit.getToolkitPermModel();
@@ -685,9 +705,27 @@ public final class LnpToolkit implements Toolkit {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public boolean removePlain(Plain plain) throws IllegalStateException {
+		checkPermissionAndState(Method.REMOVEPLAIN);
+		return standardToolkit.removePlain(plain);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean removeProgramObverser(ProgramObverser obverser) throws IllegalStateException {
 		checkPermissionAndState(Method.REMOVEPROGRAMOBVERSER);
 		return standardToolkit.removeProgramObverser(obverser);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean schedulePlain(Plain plain) throws IllegalStateException {
+		checkPermissionAndState(Method.SCHEDULEPLAIN);
+		return standardToolkit.schedulePlain(plain);
 	}
 
 	/**

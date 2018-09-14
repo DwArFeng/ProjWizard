@@ -25,6 +25,8 @@ import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.dutil.develop.setting.SettingHandler;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
+import com.dwarfeng.dutil.develop.timer.Plain;
+import com.dwarfeng.dutil.develop.timer.Timer;
 import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
@@ -67,8 +69,8 @@ public interface Toolkit {
 
 	public enum Method {
 		ADDCORESETTINGOBVERSER, //
-		ADDPROGRAMOBVERSER, //
-		CHOOSEMODULE, //
+		ADDPROGRAMOBVERSER,//
+		CHOOSEMODULE,//
 		CHOOSEPROJECTFILE, //
 		CHOOSESYSTEMFILE, //
 		CLEARPROGRAMOBVERSER, //
@@ -119,6 +121,8 @@ public interface Toolkit {
 		GETPROJECTICONOBVMODEL, //
 		GETPROPERTY, //
 		GETRUNTIMESTATE, //
+		GETTIMER, //
+		GETTIMERREADONLY, //
 		GETTOOLKITPERMMODEL, //
 		GETTOOLKITPERMMODELREADONLY, //
 		GETVIEWSETTINGHANDLER, //
@@ -128,7 +132,9 @@ public interface Toolkit {
 		NEWMAINFRAME, //
 		OPENFILE, //
 		REMOVECORESETTINGOBVERSER, //
+		REMOVEPLAIN, //
 		REMOVEPROGRAMOBVERSER, //
+		SCHEDULEPLAIN, //
 		SETEXITCODE, //
 		SETRUNTIMESTATE, //
 		SHOWCONFIRMDIALOG, //
@@ -726,6 +732,27 @@ public interface Toolkit {
 	public RuntimeState getRuntimeState() throws IllegalStateException;
 
 	/**
+	 * 获取程序中的计时器。
+	 * 
+	 * @return 程序中的计时器。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public Timer getTimer() throws IllegalStateException;
+
+	/**
+	 * 获取程序中的计时器。
+	 * 
+	 * <p>
+	 * 计时器是只读的。
+	 * 
+	 * @return 程序中的计时器。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public Timer getTimerReadOnly() throws IllegalStateException;
+
+	/**
 	 * 获取程序中的工具包权限模型。
 	 * 
 	 * @return 程序中的工具包权限模型。
@@ -842,6 +869,17 @@ public interface Toolkit {
 	public boolean removeCoreSettingObverser(SettingObverser coreSettingObverser) throws IllegalStateException;
 
 	/**
+	 * 从计时器中移除指定的计划。
+	 * 
+	 * @param plain
+	 *            指定的计划。
+	 * @return 该操作是否移除成功。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public boolean removePlain(Plain plain) throws IllegalStateException;
+
+	/**
 	 * 移除指定的程序观察器。
 	 * 
 	 * @param obverser
@@ -849,6 +887,17 @@ public interface Toolkit {
 	 * @return 是否移除成功。
 	 */
 	public boolean removeProgramObverser(ProgramObverser obverser) throws IllegalStateException;
+
+	/**
+	 * 向计时器中添加一条计划。
+	 * 
+	 * @param plain
+	 *            指定的计划。
+	 * @return 该计划是否添加成功。
+	 * @throws IllegalStateException
+	 *             因为没有执行权限而抛出的异常。
+	 */
+	public boolean schedulePlain(Plain plain) throws IllegalStateException;
 
 	/**
 	 * 设置程序的退出代码。

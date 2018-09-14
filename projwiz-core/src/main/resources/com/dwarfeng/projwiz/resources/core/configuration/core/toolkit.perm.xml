@@ -61,6 +61,8 @@
 		<perm method="GETPLUGINCLASSLOADER" pl="FULL" />
 		<perm method="GETPROPERTY" pl="READ_ONLY" />
 		<perm method="GETRUNTIMESTATE" pl="READ_ONLY" />
+		<perm method="GETTIMER" pl="FULL" />
+		<perm method="GETTIMERREADONLY" pl="READ_ONLY" />
 		<perm method="GETTOOLKITPERMMODEL" pl="FULL" />
 		<perm method="GETTOOLKITPERMMODELREADONLY" pl="READ_ONLY" />
 		<perm method="GETVIEWSETTINGHANDLER" pl="FULL" />
@@ -70,7 +72,9 @@
 		<perm method="NEWMAINFRAME" pl="FULL" />
 		<perm method="OPENFILE" pl="WRITE_LIMIT" />
 		<perm method="REMOVECORESETTINGOBVERSER" pl="WRITE_LIMIT" />
+		<perm method="REMOVEPLAIN" pl="WRITE_LIMIT" />
 		<perm method="REMOVEPROGRAMOBVERSER" pl="FULL" />
+		<perm method="SCHEDULEPLAIN" pl="WRITE_LIMIT" />
 		<perm method="SETRUNTIMESTATE" pl="FULL" />
 		<perm method="SHOWCONFIRMDIALOG" pl="WRITE_LIMIT" />
 		<perm method="SHOWDIALOG" pl="WRITE_LIMIT" />

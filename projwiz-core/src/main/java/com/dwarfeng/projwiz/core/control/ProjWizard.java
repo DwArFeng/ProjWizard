@@ -60,6 +60,10 @@ import com.dwarfeng.dutil.develop.setting.SettingHandler;
 import com.dwarfeng.dutil.develop.setting.SettingUtil;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
+import com.dwarfeng.dutil.develop.timer.ListTimer;
+import com.dwarfeng.dutil.develop.timer.Plain;
+import com.dwarfeng.dutil.develop.timer.Timer;
+import com.dwarfeng.dutil.develop.timer.TimerUtil;
 import com.dwarfeng.projwiz.core.model.cm.DefaultModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.DefaultToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ModuleModel;
@@ -1017,6 +1021,22 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public Timer getTimer() throws IllegalStateException {
+			return timer;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Timer getTimerReadOnly() throws IllegalStateException {
+			return TimerUtil.unmodifiableTimer(timer);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public SyncToolkitPermModel getToolkitPermModel() throws IllegalStateException {
 			return toolkitPermModel;
 		}
@@ -1118,10 +1138,26 @@ public final class ProjWizard {
 		 * {@inheritDoc}
 		 */
 		@Override
+		public boolean removePlain(Plain plain) throws IllegalStateException {
+			return timer.schedule(plain);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		public boolean removeProgramObverser(ProgramObverser obverser) {
 			synchronized (programObversers) {
 				return programObversers.remove(obverser);
 			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean schedulePlain(Plain plain) throws IllegalStateException {
+			return timer.schedule(plain);
 		}
 
 		/**
@@ -1395,6 +1431,8 @@ public final class ProjWizard {
 	private final Background queueBackground = new ExecutorServiceBackground(
 			Executors.newSingleThreadExecutor(ExecutorServiceBackground.THREAD_FACTORY),
 			Collections.newSetFromMap(new WeakHashMap<>()));
+	/** 计时器后台。 */
+	private final Timer timer = new ListTimer();
 	/** 核心配置模型。 */
 	private final SyncSettingHandler coreSettingHandler = SettingUtil.syncSettingHandler(new DefaultSettingHandler());
 	/** 标签国际化处理器。 */

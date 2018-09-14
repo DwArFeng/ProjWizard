@@ -31,6 +31,8 @@ import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.dutil.develop.setting.SettingHandler;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.dutil.develop.setting.obv.SettingObverser;
+import com.dwarfeng.dutil.develop.timer.Plain;
+import com.dwarfeng.dutil.develop.timer.Timer;
 import com.dwarfeng.projwiz.core.model.cm.SyncModuleModel;
 import com.dwarfeng.projwiz.core.model.cm.SyncToolkitPermModel;
 import com.dwarfeng.projwiz.core.model.cm.ToolkitPermModel;
@@ -487,6 +489,16 @@ public final class Constants {
 		}
 
 		@Override
+		public Timer getTimer() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getTimer");
+		}
+
+		@Override
+		public Timer getTimerReadOnly() throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: getTimerReadOnly");
+		}
+
+		@Override
 		public SyncToolkitPermModel getToolkitPermModel() throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: getToolkitPermModel");
 		}
@@ -537,8 +549,18 @@ public final class Constants {
 		}
 
 		@Override
+		public boolean removePlain(Plain plain) throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: removePlain");
+		}
+
+		@Override
 		public boolean removeProgramObverser(ProgramObverser obverser) throws IllegalStateException {
 			throw new IllegalStateException("没有权限运行方法: removeProgramObverser");
+		}
+
+		@Override
+		public boolean schedulePlain(Plain plain) throws IllegalStateException {
+			throw new IllegalStateException("没有权限运行方法: schedulePlain");
 		}
 
 		@Override
