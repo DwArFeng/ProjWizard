@@ -4,15 +4,13 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
-import com.dwarfeng.projwiz.launch.SingletonLauncher;
-
 /**
  * 对程序的单例启动器进行最小化启动测试。
  * 
  * @author DwArFeng
  * @since 1.8
  */
-public class Test_SingletonLauncher {
+public class Test_BasicLauncher {
 
 	public static void main(String[] args) {
 		try {
@@ -22,9 +20,10 @@ public class Test_SingletonLauncher {
 		}
 
 		try {
-			SingletonLauncher.INSTANCE.launch();
-			SingletonLauncher.INSTANCE.awaitFinish();
-			System.exit(SingletonLauncher.INSTANCE.getExitCode());
+			BasicLauncher launcher = new BasicLauncher("test_case=false", "cfg_force_reset=true");
+			launcher.launch();
+			launcher.awaitFinish();
+			System.exit(launcher.getExitCode());
 		} catch (InterruptedException ignore) {
 			// 中断也要按照基本法。
 		}

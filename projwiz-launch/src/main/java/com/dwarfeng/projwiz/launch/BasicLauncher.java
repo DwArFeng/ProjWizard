@@ -1,5 +1,6 @@
 package com.dwarfeng.projwiz.launch;
 
+import java.util.Objects;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -11,25 +12,7 @@ import com.dwarfeng.dutil.develop.backgr.Task;
 import com.dwarfeng.projwiz.core.control.ProjWizard;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 
-/**
- * 单例启动器。
- * <p>
- * 该启动器创建一个 {@link Mh4w} 实例，并启动； 当实例运行结束时，虚拟机随即退出。
- * 
- * @author DwArFeng
- * @since 0.0.1-alpha
- */
-public class SingletonLauncher {
-
-	public static final SingletonLauncher INSTANCE = new SingletonLauncher();
-
-	/**
-	 * 新实例。
-	 */
-	private SingletonLauncher() {
-		projWizard = new ProjWizard();
-		projWizard.getToolkit().addProgramObverser(programObverser);
-	}
+public class BasicLauncher {
 
 	private final ProjWizard projWizard;
 
@@ -58,6 +41,17 @@ public class SingletonLauncher {
 	private boolean exitFlag = false;
 
 	private int exitCode = 0;
+
+	public BasicLauncher() {
+		projWizard = new ProjWizard();
+		projWizard.getToolkit().addProgramObverser(programObverser);
+	}
+
+	public BasicLauncher(String... args) throws NullPointerException {
+		Objects.requireNonNull(args, "入口参数 args 不能为 null。");
+		projWizard = new ProjWizard(args);
+		projWizard.getToolkit().addProgramObverser(programObverser);
+	}
 
 	/**
 	 * 启动程序。

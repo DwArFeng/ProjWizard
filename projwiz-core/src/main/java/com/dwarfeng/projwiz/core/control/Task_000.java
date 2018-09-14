@@ -8,7 +8,7 @@ import com.dwarfeng.projwiz.core.model.eum.LoggerStringKey;
 import com.dwarfeng.projwiz.core.util.Constants;
 
 /**
- * 抽象 Note Wizard 用任务。
+ * 抽象 ProjWizard 用任务。
  * 
  * @author DwArFeng
  * @since 0.0.1-alpha

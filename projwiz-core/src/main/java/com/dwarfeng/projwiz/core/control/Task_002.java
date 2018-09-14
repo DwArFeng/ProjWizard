@@ -22,6 +22,12 @@ import com.dwarfeng.projwiz.core.model.struct.Project;
 import com.dwarfeng.projwiz.core.model.struct.ProjectFilePair;
 import com.dwarfeng.projwiz.core.model.struct.Toolkit.BackgroundType;
 
+/**
+ * 用于程序结束的任务。
+ * 
+ * @author DwArFeng
+ * @since 0.0.3-alpha
+ */
 final class DisposeTask extends ProjWizTask {
 
 	private final class ViewGetter implements Runnable {

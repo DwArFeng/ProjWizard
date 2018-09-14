@@ -31,6 +31,10 @@
 			<groupId>com.dwarfeng</groupId>
 			<artifactId>projwiz-raefrm</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.dwarfeng</groupId>
+			<artifactId>projwiz-launch</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
